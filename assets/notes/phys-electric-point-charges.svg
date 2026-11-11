@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+  <defs>
+    <pattern id="gridPointCharge" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1e5d4" stroke-width="0.8"/>
+    </pattern>
+    <filter id="shadowPC" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- 背景信纸 -->
+  <rect width="640" height="380" rx="14" fill="#fdfbf7" filter="url(#shadowPC)"/>
+  <rect width="640" height="380" rx="14" fill="url(#gridPointCharge)"/>
+
+  <!-- 顶部标签 -->
+  <rect x="180" y="8" width="280" height="26" fill="rgba(14, 165, 233, 0.28)" rx="3" transform="rotate(-0.4 320 21)"/>
+  <text x="320" y="26" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="900" fill="#0369a1" text-anchor="middle" letter-spacing="1">
+    ★ 静电场基石图 · 正负孤立点电荷场线与等势面
+  </text>
+
+  <g transform="translate(30, 50)">
+    <rect width="580" height="300" rx="10" fill="#ffffff" stroke="#ebd9c3" stroke-width="1.5"/>
+
+    <!-- 左半区：正点电荷 (+Q) 辐射发散场 -->
+    <g transform="translate(145, 130)">
+      <!-- 同心圆等势线 (φ1 > φ2 > φ3) -->
+      <circle cx="0" cy="0" r="32" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
+      <circle cx="0" cy="0" r="54" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
+      <circle cx="0" cy="0" r="78" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="58" y="-58" font-family="'Courier New',sans-serif" font-size="10.5" font-weight="800" fill="#059669">φ₁ &gt; φ₂ &gt; φ₃ &gt; 0</text>
+
+      <!-- 8 方向辐射向外的电场线 (橙色带箭头) -->
+      <!-- 0° (向右) -->
+      <line x1="16" y1="0" x2="95" y2="0" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M 68 -3.5 L 76 0 L 68 3.5 Z" fill="#f59e0b"/>
+      <!-- 45° -->
+      <line x1="11" y1="-11" x2="68" y2="-68" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M 48 -55 L 56 -56 L 55 -48 Z" fill="#f59e0b"/>
+      <!-- 90° (向上) -->
+      <line x1="0" y1="-16" x2="0" y2="-95" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -3.5 -68 L 0 -76 L 3.5 -68 Z" fill="#f59e0b"/>
+      <!-- 135° -->
+      <line x1="-11" y1="-11" x2="-68" y2="-68" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -48 -55 L -56 -56 L -55 -48 Z" fill="#f59e0b"/>
+      <!-- 180° (向左) -->
+      <line x1="-16" y1="0" x2="-95" y2="0" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -68 -3.5 L -76 0 L -68 3.5 Z" fill="#f59e0b"/>
+      <!-- 225° -->
+      <line x1="-11" y1="11" x2="-68" y2="68" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -48 55 L -56 56 L -55 48 Z" fill="#f59e0b"/>
+      <!-- 270° (向下) -->
+      <line x1="0" y1="16" x2="0" y2="95" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -3.5 68 L 0 76 L 3.5 68 Z" fill="#f59e0b"/>
+      <!-- 315° -->
+      <line x1="11" y1="11" x2="68" y2="68" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M 48 55 L 56 56 L 55 48 Z" fill="#f59e0b"/>
+
+      <!-- 正电荷球体 -->
+      <circle cx="0" cy="0" r="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2.5"/>
+      <text x="0" y="6" font-family="sans-serif" font-size="18" font-weight="900" fill="#dc2626" text-anchor="middle">+</text>
+      <text x="0" y="112" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#b91c1c" text-anchor="middle">正点电荷 (+Q)：辐射发散</text>
+    </g>
+
+    <!-- 中间分割虚线 -->
+    <line x1="290" y1="20" x2="290" y2="250" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+    <!-- 右半区：负点电荷 (-Q) 汇聚收敛场 -->
+    <g transform="translate(435, 130)">
+      <!-- 同心圆等势线 (φ1 < φ2 < φ3 < 0) -->
+      <circle cx="0" cy="0" r="32" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
+      <circle cx="0" cy="0" r="54" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
+      <circle cx="0" cy="0" r="78" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="58" y="-58" font-family="'Courier New',sans-serif" font-size="10.5" font-weight="800" fill="#059669">φ₁ &lt; φ₂ &lt; φ₃ &lt; 0</text>
+
+      <!-- 8 方向向内汇聚的电场线 (箭头指向圆心) -->
+      <!-- 0° -->
+      <line x1="95" y1="0" x2="16" y2="0" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M 45 -3.5 L 37 0 L 45 3.5 Z" fill="#f59e0b"/>
+      <!-- 45° -->
+      <line x1="68" y1="-68" x2="11" y2="-11" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M 38 -29 L 30 -30 L 31 -38 Z" fill="#f59e0b"/>
+      <!-- 90° -->
+      <line x1="0" y1="-95" x2="0" y2="-16" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -3.5 -45 L 0 -37 L 3.5 -45 Z" fill="#f59e0b"/>
+      <!-- 135° -->
+      <line x1="-68" y1="-68" x2="-11" y2="-11" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -38 -29 L -30 -30 L -31 -38 Z" fill="#f59e0b"/>
+      <!-- 180° -->
+      <line x1="-95" y1="0" x2="-16" y2="0" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -45 -3.5 L -37 0 L -45 3.5 Z" fill="#f59e0b"/>
+      <!-- 225° -->
+      <line x1="-68" y1="68" x2="-11" y2="11" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -38 29 L -30 30 L -31 38 Z" fill="#f59e0b"/>
+      <!-- 270° -->
+      <line x1="0" y1="95" x2="0" y2="16" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M -3.5 45 L 0 37 L 3.5 45 Z" fill="#f59e0b"/>
+      <!-- 315° -->
+      <line x1="68" y1="68" x2="11" y2="11" stroke="#f59e0b" stroke-width="2"/>
+      <path d="M 38 29 L 30 30 L 31 38 Z" fill="#f59e0b"/>
+
+      <!-- 负电荷球体 -->
+      <circle cx="0" cy="0" r="16" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+      <text x="0" y="6" font-family="sans-serif" font-size="18" font-weight="900" fill="#2563eb" text-anchor="middle">−</text>
+      <text x="0" y="112" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#1d4ed8" text-anchor="middle">负点电荷 (−Q)：汇聚收敛</text>
+    </g>
+
+    <!-- 底部核心公式与结论卡 -->
+    <rect x="15" y="255" width="550" height="34" rx="6" fill="#f0fdf4" stroke="#86efac"/>
+    <text x="290" y="271" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#166534" text-anchor="middle">
+      点电荷场强：E = kQ / r²（与距离平方成反比）｜ 正电荷电场线向外辐射，负电荷电场线向内汇聚
+    </text>
+    <text x="290" y="284" font-family="'PingFang SC',sans-serif" font-size="10.5" fill="#15803d" text-anchor="middle">
+      无论正负电荷：顺着电场线方向电势一定降低；等势面皆为以电荷为中心的同心圆球（面面垂直）
+    </text>
+  </g>
+</svg>
