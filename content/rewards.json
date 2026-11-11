@@ -30,7 +30,31 @@
     "value_cny": 50,
     "daily_limit": 2,
     "code_length": 12,
-    "note": "100 积分换 1 张 50 元成就卡；每天最多 2 张（50–100 元）。改这里即可调整预算。"
+    "note": "100 积分换 1 张 50 元成就卡；每天最多 2 张（50–100 元）。改这里即可调整预算。",
+    "daily_draw": {
+      "enabled": true,
+      "per_day": 1,
+      "tiers": [
+        {
+          "value_cny": 5,
+          "weight": 50
+        },
+        {
+          "value_cny": 10,
+          "weight": 30
+        },
+        {
+          "value_cny": 20,
+          "weight": 15
+        },
+        {
+          "value_cny": 50,
+          "weight": 5
+        }
+      ],
+      "gift_to": "sunny",
+      "note": "每人每天 1 次免费随机卡，期望 11 元/天；抽到的卡可赠送给 sunny。"
+    }
   },
   "gacha": {
     "single_cost": 1,
@@ -59,32 +83,61 @@
   "sets": {
     "electromagnetic": {
       "name": "电磁双璧",
-      "cards": ["faraday", "maxwell"],
+      "cards": [
+        "faraday",
+        "maxwell"
+      ],
       "points": 50
     },
     "mechanics": {
       "name": "力学双子",
-      "cards": ["newton", "galileo"],
+      "cards": [
+        "newton",
+        "galileo"
+      ],
       "points": 50
     },
     "century": {
       "name": "世纪之光",
-      "cards": ["einstein", "curie"],
+      "cards": [
+        "einstein",
+        "curie"
+      ],
       "points": 50
     },
     "geometry": {
       "name": "几何三贤",
-      "cards": ["euclid", "archimedes", "descartes"],
+      "cards": [
+        "euclid",
+        "archimedes",
+        "descartes"
+      ],
       "points": 50
     },
     "mathmasters": {
       "name": "数学三杰",
-      "cards": ["gauss", "euler", "ramanujan"],
+      "cards": [
+        "gauss",
+        "euler",
+        "ramanujan"
+      ],
       "points": 50
     },
     "pioneers": {
       "name": "化学先驱",
-      "cards": ["lavoisier", "avogadro"],
+      "cards": [
+        "lavoisier",
+        "avogadro"
+      ],
+      "points": 50
+    },
+    "order": {
+      "name": "秩序发现者",
+      "cards": [
+        "coulomb",
+        "mendeleev",
+        "arrhenius"
+      ],
       "points": 50
     }
   }

@@ -224,6 +224,54 @@
       "trivia": "他的分子学说生前无人问津，死后近 50 年才被承认。没人数得清 6.02×10²³，但每个学化学的人都记得他的名字。",
       "topic": "chemistry-mole",
       "section": "boss"
+    },
+    {
+      "id": "coulomb",
+      "name": "库仑",
+      "en": "Charles-Augustin de Coulomb",
+      "life": "1736–1806",
+      "subject": "physics",
+      "rarity": "SR",
+      "image": "coulomb.jpg",
+      "set": "order",
+      "quote": "给我一根足够细的扭丝，我就能量出看不见的力。",
+      "contribution": "用扭秤实验测出电荷间作用力与距离的平方成反比，建立库仑定律，让「电」第一次可以被计算。",
+      "textbook": "必修三 · 静电场（库仑定律、电场强度）",
+      "trivia": "他研究摩擦、扭力、挡土墙，一生写过大量工程报告；晚年最出名的却是那条以他命名的平方反比定律。电荷量的单位 C 就取自他的姓氏。",
+      "topic": "physics-electric",
+      "section": "boss"
+    },
+    {
+      "id": "mendeleev",
+      "name": "门捷列夫",
+      "en": "Dmitri Mendeleev",
+      "life": "1834–1907",
+      "subject": "chemistry",
+      "rarity": "SR",
+      "image": "mendeleev.jpg",
+      "set": "order",
+      "quote": "元素的性质随着原子量呈周期性的变化。",
+      "contribution": "排出第一张元素周期表，用空格预言了镓、锗等未发现元素的性质，为周期律奠定基础。",
+      "textbook": "必修一 · 元素周期律与元素周期表",
+      "trivia": "传说他的周期表是做梦梦到的，实际是他把 63 种元素写在卡片上反复排了几天。真正的天才之处不是灵感，而是敢在表上留白。",
+      "topic": "chemistry-periodic",
+      "section": "boss"
+    },
+    {
+      "id": "arrhenius",
+      "name": "阿伦尼乌斯",
+      "en": "Svante Arrhenius",
+      "life": "1859–1927",
+      "subject": "chemistry",
+      "rarity": "SR",
+      "image": "arrhenius.jpg",
+      "set": "order",
+      "quote": "电解质在水中会自发解离成离子。",
+      "contribution": "提出电离学说，解释电解质溶液为何导电，并建立反应速率与温度的指数关系（阿伦尼乌斯方程）。",
+      "textbook": "必修一 · 离子反应（电解质与电离）",
+      "trivia": "他的电离学说在博士答辩上被评为「荒谬」，分数勉强及格；十七年后，同一个理论为他赢得诺贝尔化学奖。",
+      "topic": "chemistry-ionic",
+      "section": "boss"
     }
   ]
 }

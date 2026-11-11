@@ -6,8 +6,14 @@ import { el, toast, openSheet } from '../ui.js';
 let lastRedeemed = null;
 
 export async function renderAchievements(view) {
-  const data = await api.getAchievements();
+  const [data, daily] = await Promise.all([
+    api.getAchievements(),
+    api.getDailyDraw().catch(() => ({ enabled: false })),
+  ]);
+  const received = { cards: data.gifted_cards || [], total: (data.gifted_cards || []).length };
   const st = data.stats;
+  // 如果当前用户就是接收账号（如 sunny），就不该再看到「送给 sunny」
+  const isSelf = !!(data.username && daily.gift_to && data.username === daily.gift_to);
 
   const root = el('div', { class: 'stack' });
 
@@ -18,6 +24,79 @@ export async function renderAchievements(view) {
       el('div', { class: 'sub', text: `${st.points_per_card} 积分 = 1 张 ${st.value_cny} 元卡` }),
     ]),
   ]));
+
+  /* ---- 每日随机卡 ---- */
+  if (daily.enabled) {
+    const drawn = daily.left_today <= 0;
+    const dailyCard = el('section', {
+      class: 'panel',
+      style: 'background:linear-gradient(150deg,#fff8e8,#fffdf6);border-color:#f7dfae',
+    });
+
+    dailyCard.appendChild(el('div', { class: 'row-between' }, [
+      el('div', { class: 'row', style: 'gap:11px' }, [
+        el('div', {
+          style: 'width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:20px;background:#fef3c7;border:1px solid #fbe6b8',
+          text: '🎁',
+        }),
+        el('div', {}, [
+          el('div', { style: 'font-size:14px;font-weight:800', text: '每日随机卡' }),
+          el('div', {
+            style: 'font-size:11.5px;color:#b08954;margin-top:3px',
+            text: drawn ? '今天已经抽过了，明天再来' : '每人每天 1 次，免费抽',
+          }),
+        ]),
+      ]),
+      drawn
+        ? el('span', { class: 'chip', style: 'background:#f6ede0;border-color:#e8d9c4;color:#a3928a;font-size:10.5px', text: '明天再来' })
+        : el('button', {
+          class: 'btn sm', text: '抽一张',
+          onclick: async (e) => {
+            const btn = e.currentTarget;
+            btn.disabled = true;
+            btn.textContent = '抽卡中…';
+            try {
+              const res = await api.drawDaily();
+              drawReveal(res.card, daily, async () => {
+                const { render } = await import('../router.js');
+                render();
+              });
+            } catch (err) {
+              toast(err.message || '抽卡失败');
+              btn.disabled = false;
+              btn.textContent = '抽一张';
+            }
+          },
+        }),
+    ]));
+
+    // 概率条
+    const tiers = daily.tiers || [];
+    const bar = el('div', { style: 'display:flex;height:7px;border-radius:99px;overflow:hidden;margin-top:13px' });
+    const colors = ['#a7e8c8', '#7dd3fc', '#c4b5fd', '#fbbf24'];
+    tiers.forEach((t, i) => {
+      bar.appendChild(el('div', {
+        style: `flex:${t.weight};background:${colors[i % colors.length]}`,
+        title: `${t.value_cny} 元 ${t.weight}%`,
+      }));
+    });
+    dailyCard.appendChild(bar);
+    dailyCard.appendChild(el('div', {
+      style: 'display:flex;gap:10px;margin-top:7px;flex-wrap:wrap;font-size:10.5px;color:#a3928a',
+    }, tiers.map((t, i) => el('span', {
+      style: 'display:inline-flex;align-items:center;gap:4px',
+    }, [
+      el('i', { style: `width:7px;height:7px;border-radius:2px;background:${colors[i % colors.length]};display:inline-block` }),
+      el('span', { text: `¥${t.value_cny} ${t.weight}%` }),
+    ]))));
+
+    dailyCard.appendChild(el('div', {
+      style: 'font-size:11px;color:#b6a498;margin-top:10px;line-height:1.6',
+      text: `抽到的卡可以赠送给 ${daily.gift_target_nickname || 'sunny'}，也可以自己留着兑现。`,
+    }));
+
+    root.appendChild(dailyCard);
+  }
 
   /* ---- 今日进度 ---- */
   const todayPct = Math.round((st.today_count / Math.max(1, st.daily_limit)) * 100);
@@ -132,15 +211,18 @@ export async function renderAchievements(view) {
   root.appendChild(body);
 
   /* ---- 我的成就卡 ---- */
+  const ownTotal = data.cards.reduce((a, c) => a + c.value_cny, 0);
   root.appendChild(el('div', { class: 'section-head' }, [
-    el('h3', { text: '我的成就卡' }),
-    el('span', { class: 'hint', text: `共 ${st.total_count} 张 · ¥${st.total_value}` }),
+    el('h3', { text: '自己赚的卡' }),
+    el('span', { class: 'hint', text: `共 ${data.cards.length} 张 · ¥${ownTotal}` }),
   ]));
 
   if (!data.cards.length) {
     root.appendChild(el('div', {
-      style: 'text-align:center;padding:30px 18px;color:#a3928a;font-size:12.5px',
-      text: '还没有成就卡。攒够 100 积分就能换第一张。',
+      style: 'text-align:center;padding:26px 18px;color:#a3928a;font-size:12.5px;line-height:1.8',
+      text: received.total
+        ? '自己还没有卡。上面「收到的卡」是家人送你的。'
+        : '还没有成就卡。攒够 100 积分，或明天抽一张。',
     }));
   } else {
     for (const c of data.cards) {
@@ -162,12 +244,63 @@ export async function renderAchievements(view) {
               el('div', { style: 'font-size:10.5px;color:#a3928a;margin-top:3px', text: c.created_at }),
             ]),
           ]),
+          el('div', { class: 'row', style: 'gap:6px' }, [
+            el('span', {
+              class: 'chip',
+              style: isRedeemed
+                ? 'background:#f6ede0;border-color:#e8d9c4;color:#a3928a;font-size:10px'
+                : 'background:#ecfdf5;border-color:#a7f3d0;color:#047857;font-size:10px',
+              text: isRedeemed ? '已兑现' : '待兑现',
+            }),
+            !isRedeemed && daily.enabled && daily.gift_target_exists && !c.gifted_from && !isSelf
+              ? el('button', {
+                class: 'btn ghost sm',
+                style: 'font-size:10px;min-height:26px;padding:0 9px',
+                text: `送给${daily.gift_target_nickname || daily.gift_to}`,
+                onclick: () => confirmGift(c, daily),
+              })
+              : null,
+          ]),
+        ]),
+      ]));
+    }
+  }
+
+  /* ---- 收到的赠卡 ---- */
+  if (received.cards && received.cards.length) {
+    root.appendChild(el('div', { class: 'section-head' }, [
+      el('h3', { text: '收到的卡' }),
+      el('span', { class: 'hint', text: `${received.total} 张 · 家人送的` }),
+    ]));
+
+    for (const c of received.cards) {
+      const used = c.status === 'redeemed';
+      root.appendChild(el('div', {
+        style: `border:1px solid ${used ? '#f0e4d4' : '#fbe6b8'};background:linear-gradient(135deg,#fff9ec,#fff);border-radius:14px;padding:13px;opacity:${used ? '.72' : '1'}`,
+      }, [
+        el('div', { class: 'row-between' }, [
+          el('div', { class: 'row', style: 'gap:9px' }, [
+            el('div', {
+              style: 'width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:16px;font-weight:800;background:#fef3c7;color:#b45309',
+              text: `¥${c.value_cny}`,
+            }),
+            el('div', {}, [
+              el('div', {
+                style: 'font-family:ui-monospace,Menlo,monospace;font-size:13.5px;font-weight:800;letter-spacing:.06em;color:#3b2f2a',
+                text: c.code,
+              }),
+              el('div', {
+                style: 'font-size:10.5px;color:#b08954;margin-top:3px',
+                text: `来自 ${c.from_nickname || '家人'}${c.created_at ? ' · ' + c.created_at : ''}`,
+              }),
+            ]),
+          ]),
           el('span', {
             class: 'chip',
-            style: isRedeemed
+            style: used
               ? 'background:#f6ede0;border-color:#e8d9c4;color:#a3928a;font-size:10px'
-              : 'background:#ecfdf5;border-color:#a7f3d0;color:#047857;font-size:10px',
-            text: isRedeemed ? '已兑现' : '待兑现',
+              : 'background:#fef3c7;border-color:#fbe6b8;color:#b45309;font-size:10px',
+            text: used ? '已兑现' : '待兑现',
           }),
         ]),
       ]));
@@ -223,4 +356,92 @@ export function showRedeemedSheet(cards, pointsLeft, onClose) {
     list,
     close,
   ]), { title: '你获得了成就卡', sub: '同一个码只能核销一次' });
+}
+
+
+/* ---------- 抽卡揭晓 ---------- */
+
+export function drawReveal(card, daily, onClose) {
+  const box = el('div', { class: 'stack', style: 'gap:12px;text-align:center' });
+
+  box.appendChild(el('div', {
+    style: 'font-size:12px;color:#b08954;letter-spacing:.12em;font-weight:700',
+    text: 'DAILY CARD',
+  }));
+
+  box.appendChild(el('div', {
+    style: 'border:1.5px dashed #fbbf24;background:linear-gradient(135deg,#fffbeb,#fff);border-radius:16px;padding:22px 16px',
+  }, [
+    el('div', {
+      style: 'font-size:46px;font-weight:800;color:#b45309;line-height:1;letter-spacing:-.02em',
+      text: `¥${card.value_cny}`,
+    }),
+    el('div', {
+      style: 'font-family:ui-monospace,Menlo,monospace;font-size:15px;font-weight:800;letter-spacing:.1em;color:#3b2f2a;margin-top:14px',
+      text: card.code,
+    }),
+    el('div', { style: 'font-size:11px;color:#a3928a;margin-top:8px', text: '这是你的兑现码' }),
+  ]));
+
+  const targetName = daily.gift_target_nickname || daily.gift_to || 'sunny';
+  const giftBtn = el('button', {
+    class: 'btn full',
+    text: `送给 ${targetName}`,
+    onclick: async () => {
+      giftBtn.disabled = true;
+      giftBtn.textContent = '赠送中…';
+      try {
+        const res = await api.giftCard(card.id, daily.gift_to || 'sunny');
+        document.getElementById('overlay').hidden = true;
+        toast(`已送给 ${res.to_nickname}`);
+        onClose?.();
+      } catch (err) {
+        toast(err.message || '赠送失败');
+        giftBtn.disabled = false;
+        giftBtn.textContent = `送给 ${targetName}`;
+      }
+    },
+  });
+
+  box.appendChild(el('div', { class: 'row', style: 'gap:9px' }, [
+    el('button', {
+      class: 'btn ghost', style: 'flex:1', text: '自己留着',
+      onclick: () => { document.getElementById('overlay').hidden = true; onClose?.(); },
+    }),
+    el('div', { style: 'flex:1;display:flex' }, [giftBtn]),
+  ]));
+
+  openSheet(box, { title: '恭喜，抽到了！', sub: '每天一次，明天还能再来' });
+}
+
+/* ---------- 赠送确认 ---------- */
+
+function confirmGift(card, daily) {
+  const targetName = daily.gift_target_nickname || daily.gift_to || 'sunny';
+  const btn = el('button', {
+    class: 'btn full', style: 'margin-top:16px', text: `确认送给 ${targetName}`,
+    onclick: async () => {
+      btn.disabled = true;
+      btn.textContent = '赠送中…';
+      try {
+        const res = await api.giftCard(card.id, daily.gift_to || 'sunny');
+        document.getElementById('overlay').hidden = true;
+        toast(`已送给 ${res.to_nickname}`);
+        const { render } = await import('../router.js');
+        render();
+      } catch (err) {
+        toast(err.message || '赠送失败');
+        btn.disabled = false;
+        btn.textContent = `确认送给 ${targetName}`;
+      }
+    },
+  });
+
+  openSheet(el('div', {}, [
+    el('div', {
+      style: 'font-size:13px;color:#6b5b52;line-height:1.75',
+      text: `这张 ¥${card.value_cny} 的卡会转到 ${targetName} 名下，你自己将不再持有。赠送后不可撤回。`,
+    }),
+    btn,
+  ]), { title: '确认赠送', sub: card.code });
 }

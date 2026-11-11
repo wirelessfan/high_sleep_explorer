@@ -276,6 +276,99 @@ CAST = [
          element="气体定律", staff="molecule", skill="分子审判",
          taunt="同温同压，同体积必同分子数——这是我的定律，也是我的审判。",
          purified="他把分子模型递给你：数的桥，以后由你来架。"),
+    # ===== 物理 · 电场强度与电势 =====
+    dict(topic="physics-electric", subject="physics", section="quick",
+         name="摩擦豆", en="Frictio", element="电子抢夺", shape="round",
+         head="bulb", prop="bolt", overlay="spark", skill="静电粘身",
+         taunt="噼啪！冬天摸门把手的那一下，就是我干的。",
+         purified="豆子安静了：摩擦只是电子搬家，电荷总量从没变过。"),
+    dict(topic="physics-electric", subject="physics", section="basic",
+         name="扭秤妖", en="Torsio", element="平方反比陷阱", shape="round",
+         head="gauge", prop="weight", overlay="scale", skill="距离翻倍",
+         taunt="距离翻一倍，力减一半？你再想想。",
+         purified="扭丝回正：力与距离的平方成反比，1/4 才对。"),
+    dict(topic="physics-electric", subject="physics", section="summary",
+         name="场线怪", en="Fieldy", element="场线迷雾", shape="ghost",
+         head="field", prop="arrows", overlay="curve", skill="疏密迷阵",
+         taunt="我的线越密，你就越站不稳——猜猜哪边场强大？",
+         purified="迷雾散开：线密处场强大，切线就是场强方向。"),
+    dict(topic="physics-electric", subject="physics", section="hard",
+         name="零势鬼", en="Nullvolt", element="零势陷阱", shape="ghost",
+         head="mirror", prop="epsilon", overlay="layers", skill="势场错位",
+         taunt="这里电势是零哦——所以你一定推不出场强吧？",
+         purified="鬼影透明：电势为零，场强未必为零，两件事互不干扰。"),
+    dict(topic="physics-electric", subject="physics", section="practice",
+         name="等势盘", en="Equipo", element="等势面错位", shape="tank",
+         head="balance", prop="segment", overlay="diagonal", skill="路径迷惑",
+         taunt="沿我这一圈走，电场力做的功你敢说不是零？",
+         purified="盘面平放：等势面上移动电荷，电场力确实不做功。"),
+    dict(topic="physics-electric", subject="physics", section="boss",
+         tier="big", name="库仑", en="Charles-Augustin de Coulomb", card_id="coulomb",
+         element="平方反比", staff="orb", skill="扭丝审判",
+         taunt="我用一根扭丝量出了看不见的力。你，能量出自己错在哪吗？",
+         purified="他把带电小球放回原处：力与距离平方成反比，记住它。"),
+    # ===== 化学 · 元素周期律 =====
+    dict(topic="chemistry-periodic", subject="chemistry", section="quick",
+         name="周期蛙", en="Periodi", element="层数混淆", shape="round",
+         head="bulb", prop="segment", overlay="diagonal", skill="数层大法",
+         taunt="我住第三周期——你猜我有几层电子？",
+         purified="蛙眼一亮：周期数就是电子层数，别和族序数对调。"),
+    dict(topic="chemistry-periodic", subject="chemistry", section="basic",
+         name="族序怪", en="Groupy", element="族序错位", shape="round",
+         head="ruler", prop="arrows", overlay="layers", skill="横纵迷阵",
+         taunt="最外层 7 个电子，你说我在第ⅦB 族？",
+         purified="尺子摆正：最外层电子数 = 主族序数，是 A 不是 B。"),
+    dict(topic="chemistry-periodic", subject="chemistry", section="summary",
+         name="表匠", en="Gridsmith", element="方格迷宫", shape="tank",
+         head="gear", prop="crank", overlay="grid", skill="空格设伏",
+         taunt="我的表格里有空格——猜错了，整张表都要重排。",
+         purified="齿轮咬合：位置、结构、性质，三者可以互相推导。"),
+    dict(topic="chemistry-periodic", subject="chemistry", section="hard",
+         name="半径精", en="Radix", element="半径迷雾", shape="round",
+         head="gauge", prop="bubbles", overlay="spark", skill="大小幻术",
+         taunt="核电荷数越大，我就越大——信我你就输了。",
+         purified="雾气散去：电子层结构相同时，核电荷数越大半径越小。"),
+    dict(topic="chemistry-periodic", subject="chemistry", section="practice",
+         name="递变兽", en="Trendo", element="递变方向", shape="tank",
+         head="peaks", prop="arrows", overlay="curve", skill="方向反转",
+         taunt="往右走非金属性变弱？那我把整张表倒过来给你看。",
+         purified="箭头归位：横着走越来越非金属，竖着走越来越金属。"),
+    dict(topic="chemistry-periodic", subject="chemistry", section="boss",
+         tier="big", name="门捷列夫", en="Dmitri Mendeleev", card_id="mendeleev",
+         element="周期律", staff="grid", skill="空格预言",
+         taunt="我在表上留了空格，还写下了里面元素的颜色和密度。你敢填吗？",
+         purified="他把表铺开：镓、锗、锑——空格被实验一一填满。"),
+    # ===== 化学 · 离子反应 =====
+    dict(topic="chemistry-ionic", subject="chemistry", section="quick",
+         name="电离鬼", en="Ionix", element="电离迷雾", shape="ghost",
+         head="tube", prop="bubbles", overlay="spark", skill="真假电解质",
+         taunt="我溶于水就导电——所以我是电解质，对吧？",
+         purified="鬼影显形：先看是不是化合物，再看是不是自己在电离。"),
+    dict(topic="chemistry-ionic", subject="chemistry", section="basic",
+         name="拆写怪", en="Splitz", element="拆与不拆", shape="round",
+         head="mirror", prop="segment", overlay="diagonal", skill="乱拆一气",
+         taunt="碳酸钙？拆成 Ca²⁺ 和 CO₃²⁻ 多清爽！",
+         purified="镜子照回原形：难溶物写化学式，一步都不能拆。"),
+    dict(topic="chemistry-ionic", subject="chemistry", section="summary",
+         name="旁观猿", en="Bystando", element="旁观离子", shape="round",
+         head="zigzag", prop="epsilon", overlay="waves", skill="多余出场",
+         taunt="我什么都没干，可你的方程式里全是我的名字。",
+         purified="猿猴退场：不参加反应的离子，写完就该删掉。"),
+    dict(topic="chemistry-ionic", subject="chemistry", section="hard",
+         name="过量兽", en="Excess", element="少量过量", shape="tank",
+         head="balance", prop="weight", overlay="scale", skill="配比翻盘",
+         taunt="少量还是过量？我一句话就能让你的产物全变。",
+         purified="天平落定：先看谁少量，按少量物质的配比写方程。"),
+    dict(topic="chemistry-ionic", subject="chemistry", section="practice",
+         name="共存兽", en="Coexist", element="四类冲突", shape="tank",
+         head="magnet", prop="arrows", overlay="curve", skill="打架判定",
+         taunt="把 Ba²⁺ 和 SO₄²⁻ 放一个杯子里，你猜还剩几个？",
+         purified="磁力松开：沉淀、气体、弱电解质、氧化还原——四类才打架。"),
+    dict(topic="chemistry-ionic", subject="chemistry", section="boss",
+         tier="big", name="阿伦尼乌斯", en="Svante Arrhenius", card_id="arrhenius",
+         element="电离学说", staff="ion", skill="离子审判",
+         taunt="他们说我的学说荒谬。现在，请你告诉我谁在水里解离。",
+         purified="他把离子对举起来：电解质在水中自发解离，这就是导电的原因。"),
 ]
 
 # ---------------------------------------------------------------- SVG 部件库
@@ -675,6 +768,46 @@ def _scientist_staff(kind: str, c: dict) -> str:
                         f'stroke="{d}" stroke-width="1.8"/>' for x, y in pts)
         head = (f'<circle cx="196" cy="112" r="30" fill="url(#glow)"/>' + bonds + balls
                 + f'<circle cx="{pts[0][0]:.1f}" cy="{pts[0][1]:.1f}" r="3.2" fill="#fff"/>')
+    elif kind == "orb":
+        # 静电球：玻璃球罩 + 球内闪电 + 尖端放电火花
+        sparks = "".join(
+            f'<path d="M{196 + dx * 26} {112 + dy * 26} l{dx * 9} {dy * 9}" stroke="{a}" '
+            f'stroke-width="2.6" stroke-linecap="round" opacity=".85"/>'
+            for dx, dy in ((-1, -0.2), (0.95, 0.35), (0.15, -1), (-0.4, 0.95))
+        )
+        head = (f'<circle cx="196" cy="112" r="30" fill="url(#glow)"/>'
+                f'<circle cx="196" cy="112" r="22" fill="url(#glass)" stroke="{d}" stroke-width="2.4"/>'
+                f'<path d="M200 96 l-10 16 h6.5 l-3.5 16 12 -19 h-7.5z" fill="#fbbf24" '
+                f'stroke="#b45309" stroke-width="1.3" stroke-linejoin="round"/>'
+                f'<path d="M192 94 q-7 5 -8 11" fill="none" stroke="#fff" stroke-width="2.4" '
+                f'stroke-linecap="round" opacity=".75"/>' + sparks)
+    elif kind == "grid":
+        # 元素方阵：3×3 方格，中心格高亮（门捷列夫留下的那个空格）
+        cells = []
+        for r in range(3):
+            for col in range(3):
+                x = 171 + col * 18
+                y = 87 + r * 18
+                solid = (r, col) == (1, 1)
+                cells.append(
+                    f'<rect x="{x}" y="{y}" width="14" height="14" rx="3" '
+                    f'fill="{a if solid else "#f8fafc"}" stroke="{d}" stroke-width="1.8"/>'
+                    f'<path d="M{x + 3} {y + 7} h8" stroke="{d if solid else a}" '
+                    f'stroke-width="1.4" opacity=".65"/>'
+                )
+        head = (f'<circle cx="196" cy="112" r="32" fill="url(#glow)"/>'
+                + "".join(cells)
+                + f'<path d="M171 84 h50 M168 87 v44" stroke="{d}" stroke-width="2" opacity=".45"/>')
+    elif kind == "ion":
+        # 正负离子对：一正一负两颗小球，中间虚线相连
+        head = (f'<circle cx="196" cy="112" r="28" fill="url(#glow)"/>'
+                f'<path d="M188 104 L204 122" stroke="{d}" stroke-width="2" '
+                f'stroke-dasharray="3 3" opacity=".7"/>'
+                f'<circle cx="186" cy="102" r="14" fill="{a}" stroke="{d}" stroke-width="2.2"/>'
+                f'<path d="M186 96 v12 M180 102 h12" stroke="#fff" stroke-width="2.6" '
+                f'stroke-linecap="round"/>'
+                f'<circle cx="206" cy="124" r="14" fill="#f8fafc" stroke="{d}" stroke-width="2.2"/>'
+                f'<path d="M200 124 h12" stroke="{d}" stroke-width="2.8" stroke-linecap="round"/>')
     else:  # bell
         head = (f'<path d="M170 140 q26 -66 52 0" fill="none" stroke="{a}" stroke-width="4" '
                 f'stroke-linecap="round"/>'
@@ -823,6 +956,68 @@ def render_big(role: dict, c: dict) -> str:
                   '<path d="M106 122 q7 -4 12 1 M134 122 q-7 -4 -12 1" fill="none" '
                   'stroke="#475569" stroke-width="2.4" stroke-linecap="round"/>'),
             mouth=('<path d="M112 133 q8 6 16 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+        # 库仑：18 世纪假发中分 + 两侧三卷，圆脸无须，嘴角带点工程师的自信
+        "coulomb": dict(
+            badge="C",
+            hair=('<path d="M82 96 q-2 -50 38 -50 q40 0 38 50 q-2 24 -4 38 M82 96 '
+                  'q-4 24 0 38 M158 96 q4 24 0 38" fill="none" stroke="#f1f5f9" '
+                  'stroke-width="10" stroke-linecap="round"/>'
+                  '<path d="M84 88 q-2 -38 36 -38 q38 0 36 38 q-10 -18 -36 -18 q-26 0 -36 18z" '
+                  'fill="#f1f5f9" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M120 52 v14" stroke="#94a3b8" stroke-width="2" opacity=".7"/>'
+                  '<circle cx="88" cy="104" r="8.5" fill="#f1f5f9" stroke="#1e293b" stroke-width="1.8"/>'
+                  '<circle cx="88" cy="119" r="8.5" fill="#f1f5f9" stroke="#1e293b" stroke-width="1.8"/>'
+                  '<circle cx="152" cy="104" r="8.5" fill="#f1f5f9" stroke="#1e293b" stroke-width="1.8"/>'
+                  '<circle cx="152" cy="119" r="8.5" fill="#f1f5f9" stroke="#1e293b" stroke-width="1.8"/>'),
+            face=('<path d="M120 114 v8" stroke="#f4a26b" stroke-width="2" '
+                  'stroke-linecap="round" opacity=".7"/>'
+                  '<path d="M104 118 q6 -3 11 0 M136 118 q-6 -3 -11 0" fill="none" '
+                  'stroke="#cbd5e1" stroke-width="2.2" stroke-linecap="round"/>'
+                  '<path d="M96 142 q24 8 48 0" fill="none" stroke="#e2e8f0" '
+                  'stroke-width="3" stroke-linecap="round" opacity=".55"/>'),
+            mouth=('<path d="M112 132 q8 7 16 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+        # 门捷列夫：长发披肩 + 大络腮胡盖住下半脸，最显眼的是那把胡子
+        "mendeleev": dict(
+            badge="M",
+            hair=('<path d="M76 100 q-6 -56 44 -56 q50 0 44 56 q-6 34 -10 56 M76 100 '
+                  'q-4 34 -2 56 M164 100 q4 34 2 56" fill="none" stroke="#cbd5e1" '
+                  'stroke-width="11" stroke-linecap="round"/>'
+                  '<path d="M84 92 q-4 -42 36 -42 q40 0 36 42 q-14 -20 -36 -20 q-22 0 -36 20z" '
+                  'fill="#cbd5e1" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M96 70 q12 -8 24 -4 M120 66 q12 -4 24 4" fill="none" '
+                  'stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>'
+                  '<path d="M100 118 q20 40 40 0 q10 32 -20 34 q-30 -2 -20 -34z" '
+                  'fill="#cbd5e1" stroke="#1e293b" stroke-width="2.6"/>'
+                  '<path d="M110 132 q10 6 20 0 M120 130 v12" fill="none" stroke="#94a3b8" '
+                  'stroke-width="2" stroke-linecap="round" opacity=".8"/>'),
+            face=('<path d="M120 112 v8" stroke="#f4a26b" stroke-width="2" '
+                  'stroke-linecap="round" opacity=".7"/>'
+                  '<path d="M98 100 q6 -6 14 -2 M142 100 q-6 -6 -14 -2" fill="none" '
+                  'stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>'),
+            mouth=('<path d="M112 133 q8 4 16 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+        # 阿伦尼乌斯：深色短发后梳 + 小胡子 + 圆框眼镜，斯文的北欧学者
+        "arrhenius": dict(
+            badge="A",
+            hair=('<path d="M84 92 q-2 -40 36 -40 q38 0 36 40 q-8 -22 -36 -22 q-28 0 -36 22z" '
+                  'fill="#334155" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M92 78 q14 -12 28 -12" fill="none" stroke="#475569" '
+                  'stroke-width="2.6" stroke-linecap="round" opacity=".8"/>'
+                  '<path d="M86 96 q-4 16 -2 26 M154 96 q4 16 2 26" fill="none" '
+                  'stroke="#334155" stroke-width="7" stroke-linecap="round"/>'),
+            face=('<circle cx="104" cy="108" r="10" fill="none" stroke="#94a3b8" stroke-width="2.4"/>'
+                  '<circle cx="136" cy="108" r="10" fill="none" stroke="#94a3b8" stroke-width="2.4"/>'
+                  '<path d="M114 108 h12" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>'
+                  '<path d="M120 114 v8" stroke="#f4a26b" stroke-width="2" '
+                  'stroke-linecap="round" opacity=".7"/>'
+                  '<path d="M108 128 q6 -4 12 0 M132 128 q-6 -4 -12 0" fill="none" '
+                  'stroke="#334155" stroke-width="3.4" stroke-linecap="round"/>'),
+            mouth=('<path d="M112 136 q8 5 16 0" fill="none" stroke="#1e293b" '
                    'stroke-width="2.4" stroke-linecap="round"/>'),
         ),
     }

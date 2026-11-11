@@ -1,4 +1,4 @@
-/* 我的：积分、签到、同步码、统计 */
+/* 我的：账号、积分、签到、统计 */
 
 import * as api from '../api.js';
 import { el, toast, openSheet } from '../ui.js';
@@ -11,6 +11,30 @@ export async function renderMe(view) {
   root.appendChild(el('div', { style: 'padding:2px 2px 0' }, [
     el('div', { style: 'font-size:11px;letter-spacing:.16em;color:#a3928a;font-weight:700;text-transform:uppercase', text: 'Profile' }),
     el('div', { style: 'font-size:19px;font-weight:800;letter-spacing:-.01em;margin-top:2px', text: me.nickname }),
+    el('div', { style: 'font-size:11.5px;color:#b6a498;margin-top:2px', text: `账号 ${me.username || '—'}` }),
+  ]));
+
+  /* ---- 账号与安全 ---- */
+  root.appendChild(el('section', { class: 'panel' }, [
+    el('div', { style: 'font-size:13.5px;font-weight:800', text: '账号与安全' }),
+    el('div', {
+      style: 'font-size:11.5px;color:#a3928a;margin-top:3px;line-height:1.7',
+      text: `当前登录：${me.username || '—'}（${me.nickname}）`,
+    }),
+    el('div', { class: 'row', style: 'margin-top:12px;gap:8px' }, [
+      el('button', {
+        class: 'btn ghost sm', style: 'flex:1', text: '修改密码',
+        onclick: () => showPasswordSheet(),
+      }),
+      el('button', {
+        class: 'btn ghost sm', style: 'flex:1;color:#b45309;border-color:#fbe6b8', text: '退出登录',
+        onclick: () => {
+          api.logout();
+          location.hash = '#/login';
+          location.reload();
+        },
+      }),
+    ]),
   ]));
 
   /* ---- 数据卡 ---- */
@@ -66,6 +90,27 @@ export async function renderMe(view) {
     cal,
   ]));
 
+  /* ---- 每日抽卡入口 ---- */
+  root.appendChild(el('section', {
+    class: 'panel',
+    style: 'cursor:pointer;background:linear-gradient(135deg,#fff8e8,#fffdf6);border-color:#f7dfae',
+    onclick: () => { location.hash = '#/achievements'; },
+  }, [
+    el('div', { class: 'row-between' }, [
+      el('div', { class: 'row', style: 'gap:11px' }, [
+        el('div', {
+          style: 'width:40px;height:40px;border-radius:12px;background:#fef3c7;display:grid;place-items:center;font-size:18px',
+          text: '🎁',
+        }),
+        el('div', {}, [
+          el('div', { style: 'font-size:13.5px;font-weight:800', text: '每日随机卡' }),
+          el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: '每天 1 次 · ¥5 / ¥10 / ¥20 / ¥50' }),
+        ]),
+      ]),
+      el('div', { style: 'font-size:18px;color:#d9c8b4', text: '›' }),
+    ]),
+  ]));
+
   /* ---- 成就卡入口 ---- */
   root.appendChild(el('section', {
     class: 'panel',
@@ -101,60 +146,21 @@ export async function renderMe(view) {
     ]),
   ]));
 
-  /* ---- 同步码 ---- */
-  root.appendChild(el('section', { class: 'panel' }, [
-    el('div', { style: 'font-size:13.5px;font-weight:800', text: '跨设备同步' }),
-    el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px;line-height:1.7', text: '在新设备输入这串码，就能接着原来的进度' }),
-    el('div', {
-      style: 'margin-top:12px;background:#fdf8f0;border:1px dashed #d9c8b4;border-radius:11px;padding:13px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:17px;letter-spacing:.14em;font-weight:800;color:#3b2f2a',
-      text: me.sync_code,
-    }),
-    el('div', { class: 'row', style: 'margin-top:11px;gap:8px' }, [
-      el('button', {
-        class: 'btn ghost sm', style: 'flex:1', text: '复制同步码',
-        onclick: async () => {
-          try {
-            await navigator.clipboard.writeText(me.sync_code);
-            toast('已复制');
-          } catch {
-            toast('复制失败，请手动记录');
-          }
-        },
+  /* ---- 多设备说明 ---- */
+  root.appendChild(el('section', { class: 'panel', style: 'padding:14px' }, [
+    el('div', { class: 'row', style: 'gap:10px;align-items:flex-start' }, [
+      el('div', {
+        style: 'width:34px;height:34px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;font-size:15px;background:#fdf7ee;border:1px solid var(--line)',
+        text: '💡',
       }),
-      el('button', {
-        class: 'btn ghost sm', style: 'flex:1', text: '重置同步码',
-        onclick: () => {
-          openSheet(el('div', {}, [
-            el('div', { style: 'font-size:13px;color:#6b5b52;line-height:1.75', text: '重置后旧码立即失效，其他设备需要重新输入新码。' }),
-            el('button', {
-              class: 'btn full', style: 'margin-top:16px', text: '确认重置',
-              onclick: async (e) => {
-                e.currentTarget.disabled = true;
-                try {
-                  const r = await api.rotateCode();
-                  toast(`新同步码：${r.sync_code}`, 3600);
-                  document.getElementById('overlay').hidden = true;
-                  const { render } = await import('../router.js');
-                  render();
-                } catch (err) {
-                  toast(err.message || '重置失败');
-                }
-              },
-            }),
-          ]), { title: '重置同步码' });
-        },
-      }),
+      el('div', {}, [
+        el('div', { style: 'font-size:12.5px;font-weight:800', text: '换设备怎么办' }),
+        el('div', {
+          style: 'font-size:11.5px;color:#a3928a;margin-top:4px;line-height:1.75',
+          text: '在另一台设备上打开本站，直接选同一个账号登录即可，进度会自动同步。',
+        }),
+      ]),
     ]),
-  ]));
-
-  /* ---- 切换账号 ---- */
-  root.appendChild(el('section', { class: 'panel' }, [
-    el('div', { style: 'font-size:13.5px;font-weight:800', text: '切换同步码' }),
-    el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: '输入另一台设备的同步码，把当前设备切过去' }),
-    el('button', {
-      class: 'btn ghost full', style: 'margin-top:12px', text: '输入同步码',
-      onclick: () => showAdoptSheet(),
-    }),
   ]));
 
   /* ---- 规则说明 ---- */
@@ -198,41 +204,53 @@ function ruleRows(rows) {
   ]));
 }
 
-export function showAdoptSheet() {
-  const input = el('input', {
-    type: 'text',
-    placeholder: 'XXXX-XXXX-XXXX',
-    autocomplete: 'off',
-    spellcheck: 'false',
-    style: 'width:100%;min-height:48px;border:1.5px solid #efe2ce;border-radius:12px;padding:0 14px;font-family:ui-monospace,Menlo,monospace;font-size:15px;letter-spacing:.1em;text-align:center;outline:none',
-  });
-  input.addEventListener('focus', () => { input.style.borderColor = '#9ec9f5'; });
-  input.addEventListener('blur', () => { input.style.borderColor = '#efe2ce'; });
+/* ---------- 修改密码 ---------- */
+
+export function showPasswordSheet() {
+  const mkInput = (placeholder, autocomplete) => {
+    const i = el('input', {
+      type: 'password',
+      placeholder,
+      autocomplete,
+      style: 'width:100%;min-height:48px;border:1.5px solid #efe2ce;border-radius:12px;padding:0 14px;font-size:15px;outline:none;background:#fffdf8;margin-top:10px;box-sizing:border-box',
+    });
+    i.addEventListener('focus', () => { i.style.borderColor = '#fbbf24'; });
+    i.addEventListener('blur', () => { i.style.borderColor = '#efe2ce'; });
+    return i;
+  };
+
+  const oldPwd = mkInput('当前密码', 'current-password');
+  const newPwd = mkInput('新密码（至少 6 位）', 'new-password');
+  const again = mkInput('再输一次新密码', 'new-password');
 
   const btn = el('button', {
-    class: 'btn full', style: 'margin-top:14px', text: '切换',
+    class: 'btn full', style: 'margin-top:16px;width:100%', text: '保存新密码',
     onclick: async () => {
-      const code = input.value.trim();
-      if (!code) { toast('请输入同步码'); return; }
+      const o = oldPwd.value.trim();
+      const n = newPwd.value.trim();
+      const a = again.value.trim();
+
+      if (!o) { toast('请输入当前密码'); oldPwd.focus(); return; }
+      if (n.length < 6) { toast('新密码至少 6 位'); newPwd.focus(); return; }
+      if (n !== a) { toast('两次输入的新密码不一致'); again.focus(); return; }
+
       btn.disabled = true;
-      btn.textContent = '验证中…';
+      btn.textContent = '保存中…';
       try {
-        await api.adoptByCode(code);
-        toast('已切换');
+        await api.changePassword(o, n);
         document.getElementById('overlay').hidden = true;
-        const { render } = await import('../router.js');
-        render();
+        toast('密码已更新');
       } catch (err) {
-        toast(err.message || '同步码无效');
+        toast(err.message || '修改失败');
         btn.disabled = false;
-        btn.textContent = '切换';
+        btn.textContent = '保存新密码';
       }
     },
   });
 
-  openSheet(el('div', {}, [input, btn]), {
-    title: '输入同步码',
-    sub: '在原设备的「我的」页面可以找到',
+  openSheet(el('div', {}, [oldPwd, newPwd, again, btn]), {
+    title: '修改密码',
+    sub: '三个账号的密码互相独立',
   });
-  setTimeout(() => input.focus(), 150);
+  setTimeout(() => oldPwd.focus(), 150);
 }

@@ -69,6 +69,34 @@ export async function ensureSession() {
   return data;
 }
 
+/** 账号密码登录。成功后保存 token。 */
+export async function login(username, password) {
+  const data = await request('/session/login', {
+    method: 'POST',
+    body: { username, password },
+    auth: false,
+  });
+  setToken(data.token);
+  setMeCache(data);
+  return data;
+}
+
+/** 已登记账号（登录页展示，仅用户名与昵称）。 */
+export const listUsers = () => request('/session/users', { auth: false });
+
+/** 修改自己的密码。 */
+export const changePassword = (oldPassword, newPassword) =>
+  request('/session/password', {
+    method: 'POST',
+    body: { old_password: oldPassword, new_password: newPassword },
+  });
+
+/** 退出登录：清掉本地令牌。 */
+export function logout() {
+  setToken('');
+  setMeCache(null);
+}
+
 export async function adoptByCode(code) {
   const data = await request('/session/adopt', { method: 'POST', body: { sync_code: code }, auth: false });
   setToken(data.token);
@@ -89,12 +117,17 @@ export async function rotateCode() {
 /* ---------- 内容 ---------- */
 
 export const getCatalog = () => request('/catalog');
+export const getDaily = (day) => request(day ? `/daily?date=${encodeURIComponent(day)}` : '/daily');
+export const getHistory = (day) => request(day ? `/history?date=${encodeURIComponent(day)}` : '/history');
 export const getTopic = (id) => request(`/topics/${id}`);
-export const getSection = (id, sid) => request(`/topics/${id}/sections/${sid}`);
-export const submitSection = (id, sid, answers) =>
-  request(`/topics/${id}/sections/${sid}/submit`, { method: 'POST', body: { answers } });
-export const markRead = (id, sid) =>
-  request(`/topics/${id}/sections/${sid}/read`, { method: 'POST', body: { confirmed: true } });
+export const getSection = (id, sid, tier = 'basic') =>
+  request(`/topics/${id}/sections/${sid}?tier=${encodeURIComponent(tier)}`);
+export const submitSection = (id, sid, answers, tier = 'basic') =>
+  request(`/topics/${id}/sections/${sid}/submit?tier=${encodeURIComponent(tier)}`,
+    { method: 'POST', body: { answers } });
+export const markRead = (id, sid, tier = 'basic') =>
+  request(`/topics/${id}/sections/${sid}/read?tier=${encodeURIComponent(tier)}`,
+    { method: 'POST', body: { confirmed: true } });
 export const getProgress = () => request('/progress');
 
 /* ---------- 签到 ---------- */
@@ -117,3 +150,11 @@ export const redeemAchievement = (count = 1) =>
   request('/achievements/redeem', { method: 'POST', body: { count } });
 export const verifyAchievement = (code) =>
   request('/achievements/verify', { method: 'POST', body: { code } });
+
+/* ---------- 每日随机卡 / 赠送 ---------- */
+
+export const getDailyDraw = () => request('/achievements/daily');
+export const drawDaily = () => request('/achievements/daily/draw', { method: 'POST' });
+export const giftCard = (cardId, toUsername = 'sunny') =>
+  request('/achievements/gift', { method: 'POST', body: { card_id: cardId, to_username: toUsername } });
+export const getReceivedCards = () => request('/achievements/received');

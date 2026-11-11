@@ -477,3 +477,304 @@ def test_achievement_codes_unique(client, auth_headers):
         for _ in range(200):
             codes.add(achv._new_code(conn))
     assert len(codes) == 200
+
+
+# ---------- 账号登录 ----------
+
+def _make_account(client, username, password, nickname):
+    """测试用：直接在库里建一个带密码的账号。"""
+    from app import auth as _auth
+    with db.tx() as conn:
+        uid = _auth.new_id()
+        conn.execute(
+            "INSERT INTO users(id, token_hash, sync_code, nickname, username, password_hash, "
+            "created_at, last_seen) VALUES (?,?,?,?,?,?,?,?)",
+            (uid, _auth.hash_token(_auth.new_token()),
+             _auth.normalize_sync_code(_auth.new_sync_code()),
+             nickname, username, _auth.hash_password(password),
+             "2026-01-01T00:00:00", "2026-01-01T00:00:00"),
+        )
+    return uid
+
+
+def test_login_success(client):
+    _make_account(client, "dad", "123456", "爸爸")
+    r = client.post("/api/v1/session/login", json={"username": "dad", "password": "123456"})
+    assert r.status_code == 200
+    d = r.json()
+    assert d["username"] == "dad"
+    assert d["nickname"] == "爸爸"
+    assert d["has_password"] is True
+    assert d["token"]
+
+
+def test_login_wrong_password(client):
+    _make_account(client, "mom", "123456", "妈妈")
+    r = client.post("/api/v1/session/login", json={"username": "mom", "password": "bad"})
+    assert r.status_code == 401
+    assert "账号或密码" in r.json()["detail"]
+
+
+def test_login_unknown_user_same_message(client):
+    """不暴露账号是否存在。"""
+    r = client.post("/api/v1/session/login", json={"username": "ghost", "password": "123456"})
+    assert r.status_code == 401
+    assert r.json()["detail"] == "账号或密码不正确"
+
+
+def test_login_case_insensitive_username(client):
+    _make_account(client, "sunny", "123456", "sunny")
+    r = client.post("/api/v1/session/login", json={"username": "Sunny", "password": "123456"})
+    assert r.status_code == 200
+    assert r.json()["username"] == "sunny"
+
+
+def test_change_password_flow(client):
+    _make_account(client, "dad", "123456", "爸爸")
+    login = client.post("/api/v1/session/login",
+                        json={"username": "dad", "password": "123456"}).json()
+    h = {"Authorization": f"Bearer {login['token']}"}
+
+    r = client.post("/api/v1/session/password",
+                    json={"old_password": "123456", "new_password": "n3wpass"}, headers=h)
+    assert r.status_code == 200
+
+    # 旧密码失效
+    assert client.post("/api/v1/session/login",
+                       json={"username": "dad", "password": "123456"}).status_code == 401
+    # 新密码可用
+    assert client.post("/api/v1/session/login",
+                       json={"username": "dad", "password": "n3wpass"}).status_code == 200
+
+
+def test_change_password_rejects_wrong_old(client):
+    _make_account(client, "mom", "123456", "妈妈")
+    login = client.post("/api/v1/session/login",
+                        json={"username": "mom", "password": "123456"}).json()
+    h = {"Authorization": f"Bearer {login['token']}"}
+    r = client.post("/api/v1/session/password",
+                    json={"old_password": "wrong", "new_password": "abcdef"}, headers=h)
+    assert r.status_code == 400
+    assert "原密码不正确" in r.json()["detail"]
+
+
+def test_change_password_rejects_short(client):
+    _make_account(client, "mom", "123456", "妈妈")
+    login = client.post("/api/v1/session/login",
+                        json={"username": "mom", "password": "123456"}).json()
+    h = {"Authorization": f"Bearer {login['token']}"}
+    r = client.post("/api/v1/session/password",
+                    json={"old_password": "123456", "new_password": "123"}, headers=h)
+    assert r.status_code == 422  # Pydantic min_length
+
+
+def test_change_password_rejects_same(client):
+    _make_account(client, "mom", "123456", "妈妈")
+    login = client.post("/api/v1/session/login",
+                        json={"username": "mom", "password": "123456"}).json()
+    h = {"Authorization": f"Bearer {login['token']}"}
+    r = client.post("/api/v1/session/password",
+                    json={"old_password": "123456", "new_password": "123456"}, headers=h)
+    assert r.status_code == 400
+
+
+def test_list_users_no_secrets(client):
+    _make_account(client, "dad", "123456", "爸爸")
+    _make_account(client, "mom", "123456", "妈妈")
+    r = client.get("/api/v1/session/users")
+    assert r.status_code == 200
+    users = r.json()["users"]
+    names = {u["username"] for u in users}
+    assert {"dad", "mom"} <= names
+    for u in users:
+        assert set(u.keys()) == {"username", "nickname"}, "不应泄露任何敏感字段"
+
+
+def test_password_hash_not_plaintext(client):
+    uid = _make_account(client, "dad", "123456", "爸爸")
+    with db.ro() as conn:
+        row = conn.execute("SELECT password_hash FROM users WHERE id=?", (uid,)).fetchone()
+    assert row["password_hash"] != "123456"
+    assert row["password_hash"].startswith("pbkdf2_sha256$")
+
+
+# ---------- 每日随机卡与赠送 ----------
+
+def test_daily_draw_status_initial(client, auth_headers):
+    r = client.get("/api/v1/achievements/daily", headers=auth_headers)
+    assert r.status_code == 200
+    d = r.json()
+    assert d["enabled"] is True
+    assert d["left_today"] == 1
+    assert [t["value_cny"] for t in d["tiers"]] == [5, 10, 20, 50]
+    assert [t["weight"] for t in d["tiers"]] == [50, 30, 15, 5]
+    assert d["gift_to"] == "sunny"
+
+
+def test_daily_draw_once_per_day(client, auth_headers):
+    r1 = client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
+    assert r1.status_code == 200, r1.text
+    card = r1.json()["card"]
+    assert card["value_cny"] in (5, 10, 20, 50)
+    assert card["source"] == "daily"
+    assert card["code"]
+
+    r2 = client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
+    assert r2.status_code == 400
+    assert "已经抽过" in r2.json()["detail"]
+
+
+def test_daily_draw_is_free(client, auth_headers):
+    """抽卡不消耗积分，也不占积分兑换的日额度。"""
+    _set_points(client, auth_headers, 100)
+    client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
+    me = client.get("/api/v1/me", headers=auth_headers).json()
+    assert me["points"] == 100
+
+    redeem = client.post("/api/v1/achievements/redeem", json={"count": 1}, headers=auth_headers)
+    assert redeem.status_code == 200, "每日抽卡不应占用积分兑换额度"
+
+
+def test_daily_draw_distribution():
+    """权重抽样必须落在预期区间内。"""
+    from app.services import achievements as achv
+    tiers = [{"value_cny": 5, "weight": 50}, {"value_cny": 10, "weight": 30},
+             {"value_cny": 20, "weight": 15}, {"value_cny": 50, "weight": 5}]
+    counts = {5: 0, 10: 0, 20: 0, 50: 0}
+    N = 20000
+    for _ in range(N):
+        counts[achv._roll_value(tiers)] += 1
+    for v, expected in ((5, 50), (10, 30), (20, 15), (50, 5)):
+        pct = counts[v] / N * 100
+        assert abs(pct - expected) < 3.5, f"{v}元 {pct:.1f}% 偏离 {expected}%"
+
+
+def test_gift_card_to_sunny(client, auth_headers):
+    from app import auth as _auth
+    # 建 sunny 账号作为接收方
+    with db.tx() as conn:
+        conn.execute(
+            "INSERT INTO users(id, token_hash, sync_code, nickname, username, password_hash, "
+            "created_at, last_seen) VALUES (?,?,?,?,?,?,?,?)",
+            ("u_sunny_test", _auth.hash_token(_auth.new_token()),
+             _auth.normalize_sync_code(_auth.new_sync_code()),
+             "sunny", "sunny", _auth.hash_password("123456"), "2026-01-01T00:00:00", "2026-01-01T00:00:00"),
+        )
+
+    draw = client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
+    card = draw.json()["card"]
+
+    r = client.post("/api/v1/achievements/gift",
+                    json={"card_id": card["id"], "to_username": "sunny"},
+                    headers=auth_headers)
+    assert r.status_code == 200, r.text
+    assert r.json()["to_username"] == "sunny"
+    assert r.json()["value_cny"] == card["value_cny"]
+
+    # 原主人不再拥有
+    r2 = client.post("/api/v1/achievements/gift",
+                     json={"card_id": card["id"], "to_username": "sunny"},
+                     headers=auth_headers)
+    assert r2.status_code == 400
+
+
+def test_gift_unknown_target(client, auth_headers):
+    draw = client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
+    card = draw.json()["card"]
+    r = client.post("/api/v1/achievements/gift",
+                    json={"card_id": card["id"], "to_username": "nobody"},
+                    headers=auth_headers)
+    assert r.status_code == 400
+    assert "不存在" in r.json()["detail"]
+
+
+def test_gift_to_self_rejected(client, auth_headers):
+    me = client.get("/api/v1/me", headers=auth_headers).json()
+    # 匿名测试用户没有 username，先给它一个
+    with db.tx() as conn:
+        conn.execute("UPDATE users SET username='self_test' WHERE id=?", (me["id"],))
+    draw = client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
+    card = draw.json()["card"]
+    r = client.post("/api/v1/achievements/gift",
+                    json={"card_id": card["id"], "to_username": "self_test"},
+                    headers=auth_headers)
+    assert r.status_code == 400
+    assert "自己" in r.json()["detail"]
+
+
+def test_received_cards_lists_gifts(client):
+    from app import auth as _auth
+    # 两个账号：giver 抽卡送 sunny
+    giver = client.post("/api/v1/session").json()
+    gh = {"Authorization": f"Bearer {giver['token']}"}
+    with db.tx() as conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO users(id, token_hash, sync_code, nickname, username, "
+            "password_hash, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?)",
+            ("u_recv_sunny", _auth.hash_token(_auth.new_token()),
+             _auth.normalize_sync_code(_auth.new_sync_code()),
+             "sunny", "sunny", _auth.hash_password("123456"), "2026-01-01T00:00:00", "2026-01-01T00:00:00"),
+        )
+        conn.execute("UPDATE users SET username='giver' WHERE id=?", (giver["id"],))
+
+    card = client.post("/api/v1/achievements/daily/draw", headers=gh).json()["card"]
+    client.post("/api/v1/achievements/gift",
+                json={"card_id": card["id"], "to_username": "sunny"}, headers=gh)
+
+    # 以 sunny 身份查看（直接签发令牌）
+    token = _auth.new_token()
+    with db.tx() as conn:
+        conn.execute("UPDATE users SET token_hash=? WHERE id='u_recv_sunny'",
+                     (_auth.hash_token(token),))
+    sh = {"Authorization": f"Bearer {token}"}
+
+    r = client.get("/api/v1/achievements/received", headers=sh)
+    assert r.status_code == 200
+    d = r.json()
+    assert d["total"] == 1
+    assert d["cards"][0]["from_username"] == "giver"
+    assert d["cards"][0]["value_cny"] == card["value_cny"]
+
+
+def test_daily_draw_does_not_consume_redeem_quota(client, auth_headers):
+    """回归：每日抽卡不得占用积分兑换的日额度。"""
+    _set_points(client, auth_headers, 500)
+    client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
+
+    st = client.get("/api/v1/achievements", headers=auth_headers).json()["stats"]
+    assert st["today_count"] == 0, "抽卡不应计入兑换次数"
+    assert st["today_left"] == 2, "抽卡后仍应有完整的 2 次兑换额度"
+
+    # 两次兑换都应成功
+    for i in range(2):
+        r = client.post("/api/v1/achievements/redeem", json={"count": 1}, headers=auth_headers)
+        assert r.status_code == 200, f"第 {i+1} 次兑换应成功: {r.text}"
+
+    st2 = client.get("/api/v1/achievements", headers=auth_headers).json()["stats"]
+    assert st2["today_count"] == 2
+    assert st2["total_count"] == 3, "累计应包含抽卡 + 两张兑换"
+
+
+def test_gifting_does_not_reset_daily_quota(client, auth_headers):
+    """回归：抽完立刻送人，不能因此再抽一次。"""
+    from app import auth as _auth
+    with db.tx() as conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO users(id, token_hash, sync_code, nickname, username, "
+            "password_hash, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?)",
+            ("u_sunny_q", _auth.hash_token(_auth.new_token()),
+             _auth.normalize_sync_code(_auth.new_sync_code()),
+             "sunny", "sunny", _auth.hash_password("123456"),
+             "2026-01-01T00:00:00", "2026-01-01T00:00:00"),
+        )
+
+    card = client.post("/api/v1/achievements/daily/draw", headers=auth_headers).json()["card"]
+    client.post("/api/v1/achievements/gift",
+                json={"card_id": card["id"], "to_username": "sunny"}, headers=auth_headers)
+
+    # 状态必须仍显示今天已抽
+    st = client.get("/api/v1/achievements/daily", headers=auth_headers).json()
+    assert st["left_today"] == 0, "赠出后不应恢复抽卡次数"
+
+    r = client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
+    assert r.status_code == 400, "赠送不应绕过每日一次限制"

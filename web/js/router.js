@@ -72,7 +72,7 @@ export async function render() {
 function updateTabs(path) {
   const tabbar = document.getElementById('tabbar');
   const view = document.getElementById('view');
-  const hide = path.startsWith('/topic/') || path === '/welcome';
+  const hide = path.startsWith('/topic/') || path === '/login' || path === '/welcome';
   tabbar.hidden = hide;
   view.classList.toggle('no-tab', hide);
 

@@ -278,6 +278,105 @@
       "topic": "chemistry-mole",
       "role": "egg",
       "why": "三个公式的来龙去脉一次推清楚。"
+    },
+    {
+      "bvid": "BV1CxxYesEQM",
+      "title": "【高中物理】280电场强度",
+      "up": "陈老师敲黑板",
+      "duration": "08:08",
+      "play": 85334,
+      "like": 461,
+      "topic": "physics-electric",
+      "role": "micro",
+      "why": "陈老师把电场强度单独成一节，正是因为它决定后面电势、电容能否学通。"
+    },
+    {
+      "bvid": "BV1Sb411j72c",
+      "title": "【高中物理】182电势",
+      "up": "陈老师敲黑板",
+      "duration": "约10:00",
+      "play": null,
+      "like": null,
+      "topic": "physics-electric",
+      "role": "extension",
+      "why": "用高度类比把最抽象的电势讲成直觉。"
+    },
+    {
+      "bvid": "BV1UC4y187qx",
+      "title": "【高考物理】240飞机两翼的电势差",
+      "up": "陈老师敲黑板",
+      "duration": "约08:00",
+      "play": null,
+      "like": null,
+      "topic": "physics-electric",
+      "role": "egg",
+      "why": "真实情境题，把电势差、电场力做功和静电现象收在一起。"
+    },
+    {
+      "bvid": "BV1i3411x7s9",
+      "title": "【一化】物质结构、元素周期律 基础与解法全集|从零开始覆盖全部知识与方法",
+      "up": "一化儿",
+      "duration": "02:43:06",
+      "play": 4099000,
+      "like": 54000,
+      "topic": "chemistry-periodic",
+      "role": "extension",
+      "why": "一化儿完整体系课，410 万播放，本主题的「主教材」。"
+    },
+    {
+      "bvid": "BV17WNSeuE3i",
+      "title": "【高考系统课】物质结构与性质：元素周期律",
+      "up": "一化儿",
+      "duration": "01:59:23",
+      "play": 249000,
+      "like": 2642,
+      "topic": "chemistry-periodic",
+      "role": "micro",
+      "why": "2025 年新录版本，节奏更紧，适合查漏补缺。"
+    },
+    {
+      "bvid": "BV1u7411o7SF",
+      "title": "青花瓷版元素周期表之歌",
+      "up": "医语少年",
+      "duration": "03:54",
+      "play": 1158000,
+      "like": 2991,
+      "topic": "chemistry-periodic",
+      "role": "egg",
+      "why": "把整张周期表唱成一首歌，背不下来时听两遍。"
+    },
+    {
+      "bvid": "BV1gG4y1x7zQ",
+      "title": "【知识点串讲】必修一 离子反应重点梳理",
+      "up": "一化儿",
+      "duration": "21:05",
+      "play": 1214000,
+      "like": 7326,
+      "topic": "chemistry-ionic",
+      "role": "micro",
+      "why": "电解质、拆写、共存一次过完，最适合考前 20 分钟速刷。"
+    },
+    {
+      "bvid": "BV1LS421R75o",
+      "title": "【高考系统课】离子反应-电解质与电离-知识点+习题",
+      "up": "一化儿",
+      "duration": "01:15:24",
+      "play": 618000,
+      "like": 9268,
+      "topic": "chemistry-ionic",
+      "role": "extension",
+      "why": "知识点后紧跟习题，把「拆写」练成肌肉记忆。"
+    },
+    {
+      "bvid": "BV1bE411d7Ej",
+      "title": "NaCl在水中的电离",
+      "up": "化学玉",
+      "duration": "00:53",
+      "play": 64000,
+      "like": 32,
+      "topic": "chemistry-ionic",
+      "role": "egg",
+      "why": "53 秒动画，把水分子「拽下离子」的过程看得清清楚楚。"
     }
   ],
   "scoring": {

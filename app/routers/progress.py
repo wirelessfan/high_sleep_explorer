@@ -27,7 +27,7 @@ def _now() -> str:
 
 
 @router.post("/topics/{topic_id}/sections/{section_id}/submit")
-def submit(topic_id: str, section_id: str, body: SubmitIn,
+def submit(topic_id: str, section_id: str, body: SubmitIn, tier: str = "basic",
            user: sqlite3.Row = Depends(current_user)):
     try:
         data = content_loader.topic(topic_id)
@@ -39,18 +39,23 @@ def submit(topic_id: str, section_id: str, body: SubmitIn,
         raise HTTPException(status_code=404, detail="版块不存在")
     if sec["type"] == "reading":
         raise HTTPException(status_code=400, detail="该版块请用 /read 接口")
+    content = content_loader.tier_content(sec, tier)
+    if content is None:
+        raise HTTPException(status_code=400, detail="该难度档位尚未开放")
+    if tier not in content_loader.tier_ids():
+        raise HTTPException(status_code=400, detail="难度档位不存在")
     # 空提交既不该判分，也不该触发答案/解析下发。
     # 注意：levels 是逐关提交的，这里只要求「非空」，全量校验由各版块渲染器保证。
     if not body.answers:
         raise HTTPException(status_code=400, detail="请先作答后再提交")
 
-    result = grading.grade_section(sec, body.answers)
+    result = grading.grade_section(content, body.answers)
     passed = _is_passed(sec, result)
 
     with db.tx() as conn:
         prev = conn.execute(
-            "SELECT * FROM progress WHERE user_id=? AND topic_id=? AND section_id=?",
-            (user["id"], topic_id, section_id),
+            "SELECT * FROM progress WHERE user_id=? AND topic_id=? AND section_id=? AND tier=?",
+            (user["id"], topic_id, section_id, tier),
         ).fetchone()
         is_review = bool(prev and prev["status"] == "done")
         best = max(result["score"], prev["best_score"] if prev else 0)
@@ -58,38 +63,41 @@ def submit(topic_id: str, section_id: str, body: SubmitIn,
         if is_review:
             conn.execute(
                 "UPDATE progress SET attempts = attempts + 1, best_score = ?, updated_at=? "
-                "WHERE user_id=? AND topic_id=? AND section_id=?",
-                (best, _now(), user["id"], topic_id, section_id),
+                "WHERE user_id=? AND topic_id=? AND section_id=? AND tier=?",
+                (best, _now(), user["id"], topic_id, section_id, tier),
             )
         else:
             conn.execute(
-                "INSERT INTO progress(user_id, topic_id, section_id, status, best_score, attempts, "
-                "awarded, updated_at) VALUES (?,?,?,?,?,1,0,?) "
-                "ON CONFLICT(user_id, topic_id, section_id) DO UPDATE SET "
+                "INSERT INTO progress(user_id, topic_id, section_id, tier, status, best_score, "
+                "attempts, awarded, updated_at) VALUES (?,?,?,?,?,?,1,0,?) "
+                "ON CONFLICT(user_id, topic_id, section_id, tier) DO UPDATE SET "
                 "attempts = attempts + 1, best_score = ?, updated_at = ?",
-                (user["id"], topic_id, section_id, "open", result["score"], _now(), best, _now()),
+                (user["id"], topic_id, section_id, tier, "open", result["score"], _now(),
+                 best, _now()),
             )
 
         award = scoring.award_section(conn, user["id"], topic_id, section_id,
-                                      result["score"], passed and not is_review, is_review)
+                                      result["score"], passed and not is_review, is_review,
+                                      tier=tier)
 
         if passed and not is_review:
             conn.execute(
                 "UPDATE progress SET status='done', awarded=1, updated_at=? "
-                "WHERE user_id=? AND topic_id=? AND section_id=?",
-                (_now(), user["id"], topic_id, section_id),
+                "WHERE user_id=? AND topic_id=? AND section_id=? AND tier=?",
+                (_now(), user["id"], topic_id, section_id, tier),
             )
 
         row = conn.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
         section_ids = [s["id"] for s in data["sections"]]
         topic_reward = scoring.topic_complete(conn, user["id"], topic_id, section_ids)
         if sec["type"] == "boss" and passed and not is_review:
-            boss_tickets = scoring.boss_reward(conn, user["id"], topic_id, section_id, passed)
+            boss_tickets = scoring.boss_reward(conn, user["id"], topic_id, section_id, passed,
+                                               tier=tier)
             if boss_tickets:
                 row = conn.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
                 topic_reward = {**topic_reward, "tickets": topic_reward["tickets"] + boss_tickets}
 
-        unlocked = _next_section(data, section_id, conn, user["id"])
+        unlocked = _next_unit(data, topic_id, section_id, tier)
 
     details = result.get("details", [])
     skills = grading.weak_skills(details)
@@ -106,13 +114,15 @@ def submit(topic_id: str, section_id: str, body: SubmitIn,
         "points_reason": award["reason"],
         "total_points": row["points"],
         "is_review": is_review,
-        "next_section": unlocked,
+        "next_section": unlocked[0] if unlocked else None,
+        "next_tier": unlocked[1] if unlocked else None,
+        "tier": tier,
         "topic_reward": topic_reward,
     }
 
 
 @router.post("/topics/{topic_id}/sections/{section_id}/read")
-def mark_read(topic_id: str, section_id: str, body: ReadIn,
+def mark_read(topic_id: str, section_id: str, body: ReadIn, tier: str = "basic",
               user: sqlite3.Row = Depends(current_user)):
     """知识点总结版块：点「我记住了」即完成。"""
     try:
@@ -123,41 +133,45 @@ def mark_read(topic_id: str, section_id: str, body: ReadIn,
     sec = next((s for s in data["sections"] if s["id"] == section_id), None)
     if not sec or sec["type"] != "reading":
         raise HTTPException(status_code=400, detail="该版块不支持此操作")
+    if content_loader.tier_content(sec, tier) is None:
+        raise HTTPException(status_code=400, detail="该难度档位尚未开放")
     if not body.confirmed:
         raise HTTPException(status_code=400, detail="请确认已阅读完总结")
 
     with db.tx() as conn:
         prev = conn.execute(
-            "SELECT * FROM progress WHERE user_id=? AND topic_id=? AND section_id=?",
-            (user["id"], topic_id, section_id),
+            "SELECT * FROM progress WHERE user_id=? AND topic_id=? AND section_id=? AND tier=?",
+            (user["id"], topic_id, section_id, tier),
         ).fetchone()
         is_review = bool(prev and prev["status"] == "done")
 
         conn.execute(
-            "INSERT INTO progress(user_id, topic_id, section_id, status, best_score, attempts, "
-            "awarded, updated_at) VALUES (?,?,?,'done',100,1,0,?) "
-            "ON CONFLICT(user_id, topic_id, section_id) DO UPDATE SET "
+            "INSERT INTO progress(user_id, topic_id, section_id, tier, status, best_score, "
+            "attempts, awarded, updated_at) VALUES (?,?,?,?,'done',100,1,0,?) "
+            "ON CONFLICT(user_id, topic_id, section_id, tier) DO UPDATE SET "
             "status='done', attempts = attempts + 1, updated_at = ?",
-            (user["id"], topic_id, section_id, _now(), _now()),
+            (user["id"], topic_id, section_id, tier, _now(), _now()),
         )
         award = scoring.award_section(conn, user["id"], topic_id, section_id, 100,
-                                      not is_review, is_review)
+                                      not is_review, is_review, tier=tier)
         conn.execute(
-            "UPDATE progress SET awarded=1 WHERE user_id=? AND topic_id=? AND section_id=?",
-            (user["id"], topic_id, section_id),
+            "UPDATE progress SET awarded=1 WHERE user_id=? AND topic_id=? AND section_id=? AND tier=?",
+            (user["id"], topic_id, section_id, tier),
         )
 
         row = conn.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
         section_ids = [s["id"] for s in data["sections"]]
         topic_reward = scoring.topic_complete(conn, user["id"], topic_id, section_ids)
-        unlocked = _next_section(data, section_id, conn, user["id"])
+        unlocked = _next_unit(data, topic_id, section_id, tier)
 
     return {
         "ok": True,
         "points": award["points"],
         "total_points": row["points"],
         "is_review": is_review,
-        "next_section": unlocked,
+        "tier": tier,
+        "next_section": unlocked[0] if unlocked else None,
+        "next_tier": unlocked[1] if unlocked else None,
         "topic_reward": topic_reward,
     }
 
@@ -173,6 +187,7 @@ def get_progress(user: sqlite3.Row = Depends(current_user)):
             {
                 "topic_id": r["topic_id"],
                 "section_id": r["section_id"],
+                "tier": r["tier"],
                 "status": r["status"],
                 "best_score": r["best_score"],
                 "attempts": r["attempts"],
@@ -193,13 +208,14 @@ def skill_stats(user: sqlite3.Row = Depends(current_user)):
         except content_loader.ContentError:
             continue
         for sec in data["sections"]:
-            for q in _iter_questions(sec):
-                skill = q.get("skill")
-                if not skill:
-                    continue
-                agg.setdefault(skill, {"skill": skill, "total": 0, "topics": set()})
-                agg[skill]["total"] += 1
-                agg[skill]["topics"].add(t["id"])
+            for content in content_loader.section_tiers(sec).values():
+                for q in _iter_questions(content):
+                    skill = q.get("skill")
+                    if not skill:
+                        continue
+                    agg.setdefault(skill, {"skill": skill, "total": 0, "topics": set()})
+                    agg[skill]["total"] += 1
+                    agg[skill]["topics"].add(t["id"])
 
     return {
         "skills": [
@@ -238,12 +254,12 @@ def _is_passed(section: dict, result: dict) -> bool:
     return False
 
 
-def _next_section(data: dict, current_id: str, conn: sqlite3.Connection, user_id: str) -> str | None:
-    ids = [s["id"] for s in data["sections"]]
+def _next_unit(data: dict, topic_id: str, current_section: str,
+               current_tier: str) -> tuple[str, str] | None:
+    """下一学习单元：基础的六个版块走完，再进进阶、高级。"""
+    pairs = content_loader.topic_pairs(topic_id)
     try:
-        idx = ids.index(current_id)
+        idx = pairs.index((current_section, current_tier))
     except ValueError:
         return None
-    if idx + 1 >= len(ids):
-        return None
-    return ids[idx + 1]
+    return pairs[idx + 1] if idx + 1 < len(pairs) else None

@@ -5,10 +5,13 @@ import { el, toast, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR } from '../ui.js
 import { navigate } from '../router.js';
 
 export async function renderHome(view) {
-  const [catalog, me, checkin] = await Promise.all([
+  const [catalog, me, checkin, daily, history] = await Promise.all([
     api.getCatalog(),
     api.fetchMe(),
     api.getCheckin(),
+    api.getDaily(),
+    /* 历史事件库为空或接口异常时不应拖垮整个首页 */
+    api.getHistory().catch(() => null),
   ]);
 
   const topics = catalog.subjects.flatMap((s) =>
@@ -20,12 +23,13 @@ export async function renderHome(view) {
   const root = el('div', { class: 'stack' });
 
   /* ---- 顶部问候 ---- */
+  const who = (me.username || me.nickname || 'sunny').toLowerCase();
   root.appendChild(el('div', { class: 'row-between', style: 'padding:2px 2px 0' }, [
     el('div', {}, [
       el('div', { style: 'font-size:11px;letter-spacing:.16em;color:var(--ink-3);font-weight:700;text-transform:uppercase', text: 'Sunny · Exploring' }),
       el('div', {
         style: 'font-size:20px;font-weight:800;letter-spacing:-.01em;margin-top:2px',
-        text: 'hello, sunny',
+        text: `hello, ${who}`,
       }),
     ]),
     el('div', { class: 'row', style: 'gap:6px' }, [
@@ -33,6 +37,9 @@ export async function renderHome(view) {
       el('span', { class: 'chip', text: `🎟 ${me.tickets}` }),
     ]),
   ]));
+
+  /* ---- 每日主题（节日特辑优先） ---- */
+  root.appendChild(renderDaily(daily));
 
   /* ---- 今日任务 ---- */
   if (next) {
@@ -98,6 +105,9 @@ export async function renderHome(view) {
     ]),
   ]);
   root.appendChild(checkinPanel);
+
+  /* ---- 历史上的今天 ---- */
+  if (history && history.entry) root.appendChild(renderHistory(history));
 
   /* ---- 学习进度 ---- */
   const totalTopics = topics.length;
@@ -168,3 +178,148 @@ export async function renderHome(view) {
   view.innerHTML = '';
   view.appendChild(root);
 }
+
+/* ---------- 每日主题卡片 ---------- */
+
+function fmtDate(iso) {
+  const parts = String(iso || '').split('-');
+  if (parts.length !== 3) return '';
+  return `${Number(parts[1])} 月 ${Number(parts[2])} 日`;
+}
+
+function renderDaily(daily) {
+  const s = daily.special;
+  const t = daily.topic;
+  const wrap = el('section', {
+    class: `panel daily${s ? ` acc-${s.accent || 'fresh'}` : ''}`,
+    'data-daily': daily.date,
+  });
+
+  /* 头部：特辑用节日 emoji，平日用日历 */
+  wrap.appendChild(el('div', { class: 'daily-head' }, [
+    el('span', { class: 'daily-emoji', text: s ? (s.emoji || '📅') : '📅' }),
+    el('div', { class: 'daily-head-txt' }, [
+      el('div', {
+        class: 'daily-eyebrow',
+        text: `${s ? '节日特辑' : '今日主题'} · ${daily.weekday} · ${fmtDate(daily.date)}`,
+      }),
+      el('h2', { class: 'daily-title', text: s ? s.title : t.title }),
+    ]),
+  ]));
+
+  if (s) {
+    if (s.tagline) wrap.appendChild(el('p', { class: 'daily-tag', text: s.tagline }));
+    if (s.description) wrap.appendChild(el('p', { class: 'daily-desc', text: s.description }));
+
+    /* 三道「算一算」：点击展开答案，不判分、不落库 */
+    for (const item of s.digest || []) {
+      const ans = el('div', { class: 'digest-a', hidden: true, text: item.a });
+      const more = el('span', { class: 'digest-more', text: '看答案' });
+      const btn = el('button', { class: 'digest-q', type: 'button' }, [
+        el('span', { class: 'digest-mark', text: 'Q' }),
+        el('span', { class: 'digest-txt', text: item.q }),
+        more,
+      ]);
+      btn.addEventListener('click', () => {
+        ans.hidden = !ans.hidden;
+        btn.classList.toggle('open', !ans.hidden);
+        more.textContent = ans.hidden ? '看答案' : '收起';
+      });
+      wrap.appendChild(el('div', { class: 'digest' }, [btn, ans]));
+    }
+
+    if (s.aside) wrap.appendChild(el('div', { class: 'daily-aside', text: s.aside }));
+  } else {
+    wrap.appendChild(el('p', { class: 'daily-tag', text: t.subtitle }));
+    wrap.appendChild(el('p', { class: 'daily-desc', text: t.description }));
+    if (daily.quote) {
+      wrap.appendChild(el('div', { class: 'daily-quote' }, [
+        el('span', { text: daily.quote.text }),
+        el('b', { text: `— ${daily.quote.by}` }),
+      ]));
+    }
+  }
+
+  /* 底部：今日主题的身份 + 入口 */
+  wrap.appendChild(el('div', { class: 'daily-foot' }, [
+    el('div', { class: 'row', style: 'gap:6px;flex-wrap:wrap' }, [
+      el('span', { class: `chip ${SUBJECT_CLASS[t.subject]}`, text: t.subject_name }),
+      el('span', { class: 'chip', text: `⏱ ${t.minutes} 分钟` }),
+      el('span', { class: 'chip', text: t.complete ? '✓ 已全通' : `${t.done}/${t.total} 版块` }),
+    ]),
+    el('button', {
+      class: 'btn sm',
+      text: s ? '开始今日主题' : (t.complete ? '复习一遍' : '去闯关'),
+      onclick: () => navigate(`#/topic/${t.id}`),
+    }),
+  ]));
+  return wrap;
+}
+
+/* ---------- 历史上的今天 ---------- */
+
+function offsetLabel(n) {
+  if (!n) return '';
+  return n < 0 ? `${Math.abs(n)} 天前` : `${n} 天后`;
+}
+
+function renderHistory(h) {
+  const e = h.entry;
+  const wrap = el('section', { class: 'panel history', 'data-history': h.date });
+
+  /* 头部：日期 + 标题 */
+  const eyebrow = h.fallback
+    ? `历史上的今天 · 最近的一条 ${h.entry_date}（${offsetLabel(h.offset_days)}）`
+    : `历史上的今天 · ${h.entry_date}`;
+  wrap.appendChild(el('div', { class: 'history-head' }, [
+    el('span', { class: 'history-emoji', text: '🔭' }),
+    el('div', { class: 'history-head-txt' }, [
+      el('div', { class: 'history-eyebrow', text: eyebrow }),
+      el('h2', { class: 'history-title', text: e.title }),
+    ]),
+  ]));
+
+  /* 年代 / 领域 / 人物 */
+  const chips = [];
+  if (e.year) chips.push(el('span', { class: 'chip history-year', text: `${e.year} 年` }));
+  if (e.field) chips.push(el('span', { class: 'chip', text: e.field }));
+  if (e.person) chips.push(el('span', { class: 'chip', text: `👤 ${e.person}` }));
+  if (chips.length) {
+    wrap.appendChild(el('div', { class: 'row', style: 'gap:6px;flex-wrap:wrap;margin-top:10px' }, chips));
+  }
+
+  /* 故事正文；长文默认折起，避免首页被一段长故事撑满 */
+  const story = el('p', { class: 'history-story', text: e.story });
+  wrap.appendChild(story);
+  if ((e.story || '').length > 96) {
+    story.classList.add('clamp');
+    const more = el('button', { class: 'history-more', type: 'button', text: '展开全文 ↓' });
+    more.addEventListener('click', () => {
+      story.classList.toggle('clamp');
+      more.textContent = story.classList.contains('clamp') ? '展开全文 ↓' : '收起 ↑';
+    });
+    wrap.appendChild(more);
+  }
+
+  /* 一句话记住 */
+  if (e.learn) {
+    wrap.appendChild(el('div', { class: 'history-learn' }, [
+      el('span', { class: 'history-learn-mark', text: '记' }),
+      el('span', { text: e.learn }),
+    ]));
+  }
+
+  /* 关联主题：从故事跳到课本 */
+  if (h.topic) {
+    wrap.appendChild(el('div', { class: 'history-foot' }, [
+      el('span', { class: 'history-foot-hint', text: '这件事和你的课本有关' }),
+      el('button', {
+        class: 'btn sm ghost',
+        text: `${h.topic.title} →`,
+        onclick: () => navigate(`#/topic/${h.topic.id}`),
+      }),
+    ]));
+  }
+  return wrap;
+}
+

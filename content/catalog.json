@@ -7,14 +7,14 @@
       "name": "物理",
       "color": "#3B82F6",
       "icon": "⚛",
-      "topics": ["physics-induction", "physics-newton", "physics-energy"]
+      "topics": ["physics-induction", "physics-newton", "physics-energy", "physics-electric"]
     },
     {
       "id": "chemistry",
       "name": "化学",
       "color": "#10B981",
       "icon": "⚗",
-      "topics": ["chemistry-equilibrium", "chemistry-redox", "chemistry-mole"]
+      "topics": ["chemistry-equilibrium", "chemistry-redox", "chemistry-mole", "chemistry-periodic", "chemistry-ionic"]
     },
     {
       "id": "math",
@@ -68,6 +68,20 @@
       ]
     },
     {
+      "id": "physics-electric",
+      "subject": "physics",
+      "title": "电场强度与电势",
+      "subtitle": "从库仑定律到电势差",
+      "grade": "高二",
+      "minutes": 25,
+      "cover": "physics",
+      "reward_card": "coulomb",
+      "description": "电荷之间怎么「隔着空气」用力？先有力（库仑定律），再有场（E=F/q），最后有势（U=Ed）——一条线串起静电学。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    },
+    {
       "id": "chemistry-equilibrium",
       "subject": "chemistry",
       "title": "化学平衡",
@@ -110,6 +124,34 @@
       ]
     },
     {
+      "id": "chemistry-periodic",
+      "subject": "chemistry",
+      "title": "元素周期律",
+      "subtitle": "位—构—性 三角关系",
+      "grade": "高一",
+      "minutes": 25,
+      "cover": "chemistry",
+      "reward_card": "mendeleev",
+      "description": "位置、结构、性质，三者互相推导——看到元素先定位，定完位置推性质。一化儿把周期表称作化学的「地图」。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    },
+    {
+      "id": "chemistry-ionic",
+      "subject": "chemistry",
+      "title": "离子反应",
+      "subtitle": "电解质、离子方程式与共存",
+      "grade": "高一",
+      "minutes": 25,
+      "cover": "chemistry",
+      "reward_card": "arrhenius",
+      "description": "溶液中真正上场的往往只有几种离子。学会「拆」与「不拆」，再学会「共存」的四类冲突。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    },
+    {
       "id": "math-derivative",
       "subject": "math",
       "title": "导数的几何意义",
@@ -131,5 +173,28 @@
     {"id": "hard", "name": "难点剖析", "minutes": 5, "icon": "🔍"},
     {"id": "practice", "name": "实战巩固", "minutes": 8, "icon": "✏️"},
     {"id": "boss", "name": "Boss 彩蛋", "minutes": 5, "icon": "👾"}
+  ],
+  "tiers": [
+    {
+      "id": "basic",
+      "name": "基础",
+      "score": "70–80 分",
+      "multiplier": 1.0,
+      "desc": "课本原文难度：概念、公式、常规例题。目标是「该拿的分不丢」。"
+    },
+    {
+      "id": "advanced",
+      "name": "进阶",
+      "score": "80–90 分",
+      "multiplier": 1.3,
+      "desc": "综合与易错：多步推理、图像与情境题、常见陷阱。目标是「中档题不失手」。"
+    },
+    {
+      "id": "expert",
+      "name": "高级",
+      "score": "90–95 分",
+      "multiplier": 1.6,
+      "desc": "压轴与联动：多知识点交叉、与量有关、边界条件。目标是「拉开差距的那几分」。"
+    }
   ]
 }

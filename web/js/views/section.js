@@ -7,8 +7,34 @@ import { bossBanner, bindBossProgress } from '../boss.js';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-export async function renderSection(view, { id, sid }) {
-  const data = await api.getSection(id, sid);
+let ACTIVE_TIER = 'basic';
+
+export async function renderSection(view, { id, sid, tier }) {
+  ACTIVE_TIER = tier || 'basic';
+  const data = await api.getSection(id, sid, ACTIVE_TIER);
+
+  // 该难度尚未建设：给一个明确的空状态，而不是白屏或 404
+  if (!data.available) {
+    const wrap = el('div', { class: 'stack' });
+    wrap.appendChild(el('div', { class: 'topbar' }, [
+      el('button', { class: 'back', text: '‹', onclick: () => navigate(`#/topic/${id}`) }),
+      el('div', { style: 'flex:1' }, [
+        el('h1', { text: '该难度还在建设中' }),
+        el('div', { class: 'sub', text: `${data.tier?.name || ''} · ${data.tier?.score || ''}` }),
+      ]),
+    ]));
+    wrap.appendChild(el('section', { class: 'panel' }, [
+      el('div', { style: 'font-size:14px;font-weight:800', text: '这一档题目正在出，先把基础打牢' }),
+      el('div', { style: 'font-size:12.5px;color:#8a7a70;margin-top:6px;line-height:1.7',
+        text: '基础档覆盖课本常规题（70–80 分）。进阶（80–90）与高级（90–95）会陆续补齐，先把基础档六个版块全部走通，收益最大。' }),
+      el('button', { class: 'btn sm', style: 'margin-top:14px', text: '回到基础档',
+        onclick: () => navigate(`#/topic/${id}/${sid}/basic`) }),
+    ]));
+    view.innerHTML = '';
+    view.appendChild(wrap);
+    return;
+  }
+
   const sec = data.section;
 
   const root = el('div', { class: 'stack' });
@@ -20,6 +46,9 @@ export async function renderSection(view, { id, sid }) {
       el('div', { class: 'sub', text: sec.intro || '' }),
     ]),
   ]));
+
+  // 难度开关：基础 / 进阶 / 高级
+  root.appendChild(tierSwitcher(data.tiers || [], ACTIVE_TIER, id, sid));
 
   // 守关者横幅：每个版块一只小 boss，boss 版块是科学家大 boss
   const banner = bossBanner(data.boss, { status: data.status });
@@ -40,6 +69,31 @@ export async function renderSection(view, { id, sid }) {
   view.appendChild(root);
   // 挂载完成后再绑定，避免渲染期的 DOM 变动干扰观察器
   if (banner) bindBossProgress(root, banner, data.boss);
+}
+
+/* ---------- 难度档位切换 ---------- */
+
+function tierSwitcher(tiers, active, topicId, sid) {
+  if (!tiers.length) return el('div');
+  const wrap = el('div', { class: 'tier-switch' });
+  tiers.forEach((t) => {
+    const locked = !t.available;
+    wrap.appendChild(el('button', {
+      class: `tier-pill${t.id === active ? ' on' : ''}${locked ? ' locked' : ''}`,
+      type: 'button',
+      title: locked ? '该难度正在建设中' : (t.desc || ''),
+      onclick: () => {
+        if (locked) return;
+        if (t.id === active) return;
+        navigate(`#/topic/${topicId}/${sid}/${t.id}`);
+      },
+    }, [
+      el('span', { class: 'tp-name', text: t.name }),
+      el('span', { class: 'tp-score', text: locked ? '建设中' : t.score }),
+      t.status === 'done' ? el('span', { class: 'tp-done', text: '✓' }) : null,
+    ]));
+  });
+  return wrap;
 }
 
 /* ---------- 通用：选项组 ---------- */
@@ -149,7 +203,7 @@ function afterSubmit(root, res, topicId, sectionId) {
       class: 'btn', style: 'flex:1', text: '下一版块 ›',
       onclick: () => {
         const { render } = window.__router || {};
-        location.hash = `#/topic/${topicId}/${res.next_section}`;
+        location.hash = `#/topic/${topicId}/${res.next_section}/${res.next_tier || ACTIVE_TIER}`;
       },
     }));
   }
@@ -183,7 +237,7 @@ async function renderQuiz(body, topicId, sectionId, sec) {
     submit.btn.disabled = true;
     submit.btn.textContent = '判分中…';
     try {
-      const res = await api.submitSection(topicId, sectionId, answers);
+      const res = await api.submitSection(topicId, sectionId, answers, ACTIVE_TIER);
       submitted = true;
       applyResults(optWrap, res.details);
 
@@ -259,7 +313,7 @@ async function renderLevels(body, topicId, sectionId, sec) {
         btn.disabled = true;
         btn.textContent = '判分中…';
         try {
-          const res = await api.submitSection(topicId, sectionId, answers);
+          const res = await api.submitSection(topicId, sectionId, answers, ACTIVE_TIER);
           const lvRes = res.levels.find((l) => l.id === lv.id);
           applyResults(optWrap, lvRes.details);
 
@@ -340,7 +394,7 @@ async function renderReading(body, topicId, sectionId, sec) {
       btn.disabled = true;
       btn.textContent = '记录中…';
       try {
-        const res = await api.markRead(topicId, sectionId);
+        const res = await api.markRead(topicId, sectionId, ACTIVE_TIER);
         toast(res.points ? `+${res.points} 积分` : '已记录');
         const hero = resultHero({
           score: 100, correct: 1, total: 1,
@@ -449,7 +503,7 @@ async function renderMyths(body, topicId, sectionId, sec) {
     submit.btn.disabled = true;
     submit.btn.textContent = '判分中…';
     try {
-      const res = await api.submitSection(topicId, sectionId, answers);
+      const res = await api.submitSection(topicId, sectionId, answers, ACTIVE_TIER);
       // 逐块回填
       body.querySelectorAll('[data-myth-index]').forEach((block, mi) => {
         const d = res.details[mi];
@@ -535,7 +589,7 @@ async function renderSteps(body, topicId, sectionId, sec) {
     submit.btn.disabled = true;
     submit.btn.textContent = '判分中…';
     try {
-      const res = await api.submitSection(topicId, sectionId, answers);
+      const res = await api.submitSection(topicId, sectionId, answers, ACTIVE_TIER);
       let di = 0;
       problems.forEach((p) => {
         p.steps.forEach(() => {
@@ -608,7 +662,7 @@ async function renderBoss(body, topicId, sectionId, sec) {
     submit.btn.disabled = true;
     submit.btn.textContent = '判分中…';
     try {
-      const res = await api.submitSection(topicId, sectionId, answers);
+      const res = await api.submitSection(topicId, sectionId, answers, ACTIVE_TIER);
       applyResults(optWrap, res.details);
 
       const hero = resultHero({

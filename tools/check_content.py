@@ -12,6 +12,22 @@ def load(p):
     return json.loads((CONTENT / p).read_text(encoding="utf-8"))
 
 
+CONTENT_KEYS = ("questions", "levels", "blocks", "videos", "myths", "problems", "egg")
+TIERS = ("basic", "advanced", "expert")
+
+
+def section_tiers(sec):
+    """与 app.content_loader.section_tiers 同口径：顶层内容 = 基础档。"""
+    out = {}
+    if any(k in sec for k in CONTENT_KEYS):
+        out["basic"] = {k: v for k, v in sec.items() if k != "tiers"}
+    for tid, payload in (sec.get("tiers") or {}).items():
+        item = {k: v for k, v in sec.items() if k not in CONTENT_KEYS and k != "tiers"}
+        item.update(payload or {})
+        out[tid] = item
+    return out
+
+
 def questions_of(sec):
     t = sec.get("type")
     if t in ("quiz", "boss"):
@@ -50,25 +66,40 @@ def main():
             errors.append(f"{tid}: 版块顺序 {sec_ids} != {expect}")
 
         total_q = 0
+        tier_counts = {t: 0 for t in TIERS}
         for sec in data["sections"]:
-            for qid, q in questions_of(sec):
-                total_q += 1
+            tiers = section_tiers(sec)
+            seen_ids = set()
+            for tier_id in tiers:
+                if tier_id not in TIERS:
+                    errors.append(f"{tid}/{sec['id']}: 未知档位 {tier_id}")
+            for tier_id, content in tiers.items():
+                for qid, q in questions_of(content):
+                    total_q += 1
+                    tier_counts[tier_id] = tier_counts.get(tier_id, 0) + 1
+                    # myths / steps 的 id 是按下标合成的（m0、p0s0），跨档位重复属正常
+                    if content["type"] in ("quiz", "levels", "boss"):
+                        if qid in seen_ids:
+                            errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 同版块内题号重复")
+                        seen_ids.add(qid)
                 opts = q.get("options") or []
                 if len(opts) < 2:
-                    errors.append(f"{tid}/{sec['id']}/{qid}: 选项少于 2 个")
+                    errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 选项少于 2 个")
                 if len(set(opts)) != len(opts):
-                    errors.append(f"{tid}/{sec['id']}/{qid}: 选项重复")
+                    errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 选项重复")
                 ans = q.get("answer")
                 if not isinstance(ans, int) or not (0 <= ans < len(opts)):
-                    errors.append(f"{tid}/{sec['id']}/{qid}: answer 越界 ({ans})")
+                    errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: answer 越界 ({ans})")
                 if not (q.get("explain") or "").strip():
-                    errors.append(f"{tid}/{sec['id']}/{qid}: 解析为空")
-                if "skill" not in q and sec["type"] in ("quiz", "levels", "boss"):
-                    warnings.append(f"{tid}/{sec['id']}/{qid}: 缺少 skill 标签")
+                    errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 解析为空")
+                if "skill" not in q and content["type"] in ("quiz", "levels", "boss"):
+                    warnings.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 缺少 skill 标签")
 
-            if sec["type"] == "reading" and not sec.get("blocks"):
-                errors.append(f"{tid}/{sec['id']}: 阅读版块无内容")
-        print(f"  {tid}: {len(data['sections'])} 版块 / {total_q} 题")
+            for tier_id, content in tiers.items():
+                if content["type"] == "reading" and not content.get("blocks"):
+                    errors.append(f"{tid}/{sec['id']}/{tier_id}: 阅读版块无内容")
+        print(f"  {tid}: {len(data['sections'])} 版块 / {total_q} 题 "
+              f"(基础 {tier_counts['basic']} · 进阶 {tier_counts['advanced']} · 高级 {tier_counts['expert']})")
 
     # 卡片
     cards = load("cards/cards.json")["cards"]

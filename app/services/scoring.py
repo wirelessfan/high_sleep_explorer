@@ -84,16 +84,25 @@ def section_points(section_id: str) -> int:
     return int(_cfg()["sections"].get(section_id, 0))
 
 
+def tier_multiplier(tier: str) -> float:
+    """档位系数：基础 1.0 / 进阶 1.3 / 高级 1.6（见 catalog.tiers）。"""
+    meta = content_loader.tier_meta_of(tier) or {}
+    try:
+        return float(meta.get("multiplier", 1.0))
+    except (TypeError, ValueError):
+        return 1.0
+
+
 def award_section(conn: sqlite3.Connection, user_id: str, topic_id: str, section_id: str,
-                  score: int, passed: bool, is_review: bool) -> dict:
+                  score: int, passed: bool, is_review: bool, tier: str = "basic") -> dict:
     """版块完成发分。首通按版块分值，复习固定 +3（日上限）。
 
     幂等：同一次提交不会重复发分（由 events.key 唯一约束保证）。
     """
     cfg = _cfg()
     row = conn.execute(
-        "SELECT * FROM progress WHERE user_id=? AND topic_id=? AND section_id=?",
-        (user_id, topic_id, section_id),
+        "SELECT * FROM progress WHERE user_id=? AND topic_id=? AND section_id=? AND tier=?",
+        (user_id, topic_id, section_id, tier),
     ).fetchone()
 
     already_awarded = bool(row and row["awarded"])
@@ -112,15 +121,15 @@ def award_section(conn: sqlite3.Connection, user_id: str, topic_id: str, section
         reason = "review"
         # 事件必须写成功才发分；冲突说明这次提交已经处理过。
         if points > 0 and not _log_event(
-            conn, user_id, f"review:{topic_id}:{section_id}:{today_str()}:{used}",
-            "review", {"points": points, "section": section_id}
+            conn, user_id, f"review:{topic_id}:{section_id}:{tier}:{today_str()}:{used}",
+            "review", {"points": points, "section": section_id, "tier": tier}
         ):
             points = 0
     elif passed:
-        points = section_points(section_id)
+        points = round(section_points(section_id) * tier_multiplier(tier))
         reason = "first"
-        if not _log_event(conn, user_id, f"first:{topic_id}:{section_id}", "first",
-                          {"points": points, "section": section_id}):
+        if not _log_event(conn, user_id, f"first:{topic_id}:{section_id}:{tier}", "first",
+                          {"points": points, "section": section_id, "tier": tier}):
             points = 0
 
     if points:
@@ -140,12 +149,19 @@ def _log_event(conn: sqlite3.Connection, user_id: str, key: str, kind: str, payl
 
 def topic_complete(conn: sqlite3.Connection, user_id: str, topic_id: str, section_ids: list[str]) -> dict:
     """检查主题是否全通，全通则发券 + 首次集卡奖励。"""
+    try:
+        pairs = content_loader.topic_pairs(topic_id)
+    except content_loader.ContentError:
+        pairs = [(sid, "basic") for sid in section_ids]
+    if not pairs:  # 内容缺失时退回到调用方给的版块列表
+        pairs = [(sid, "basic") for sid in section_ids]
+
     rows = conn.execute(
-        "SELECT section_id, status FROM progress WHERE user_id=? AND topic_id=?",
+        "SELECT section_id, tier, status FROM progress WHERE user_id=? AND topic_id=?",
         (user_id, topic_id),
     ).fetchall()
-    done = {r["section_id"] for r in rows if r["status"] == "done"}
-    complete = all(s in done for s in section_ids)
+    done = {(r["section_id"], r["tier"]) for r in rows if r["status"] == "done"}
+    complete = all(pair in done for pair in pairs)
 
     awarded = {"tickets": 0, "complete": False}
     if not complete:
@@ -160,15 +176,15 @@ def topic_complete(conn: sqlite3.Connection, user_id: str, topic_id: str, sectio
 
 
 def boss_reward(conn: sqlite3.Connection, user_id: str, topic_id: str, section_id: str,
-                passed: bool) -> int:
+                passed: bool, tier: str = "basic") -> int:
     """Boss 版块首通额外发卡包（与 50 积分分开计）。"""
     if not passed:
         return 0
     tickets = int(_cfg()["tickets"].get("boss_first", 0))
     if tickets <= 0:
         return 0
-    if _log_event(conn, user_id, f"boss:{topic_id}:{section_id}", "boss_first",
-                  {"tickets": tickets}):
+    if _log_event(conn, user_id, f"boss:{topic_id}:{section_id}:{tier}", "boss_first",
+                  {"tickets": tickets, "tier": tier}):
         conn.execute("UPDATE users SET tickets = tickets + ? WHERE id = ?", (tickets, user_id))
         return tickets
     return 0

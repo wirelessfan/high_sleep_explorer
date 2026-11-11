@@ -148,7 +148,8 @@ class TestSchemaAndTx(WithTempDb):
         with db.ro() as conn:
             version = conn.execute("SELECT version FROM schema_version WHERE id=1").fetchone()["version"]
             n = conn.execute("SELECT COUNT(*) AS n FROM events").fetchone()["n"]
-        self.assertEqual(version, 2)
+        # 版本号会随 schema 演进增长，这里只要求「已迁移到最新」且旧数据还在
+        self.assertEqual(version, db.SCHEMA_VERSION)
         self.assertEqual(n, 1, "迁移必须保留旧事件")
         # 迁移后同一业务键允许不同用户共存（旧库里会互相挡住）
         with db.tx() as conn:

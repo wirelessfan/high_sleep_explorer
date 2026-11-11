@@ -21,6 +21,16 @@ class NicknameIn(BaseModel):
     nickname: str = Field(min_length=1, max_length=20)
 
 
+class LoginIn(BaseModel):
+    username: str = Field(min_length=1, max_length=32)
+    password: str = Field(min_length=1, max_length=128)
+
+
+class PasswordIn(BaseModel):
+    old_password: str = Field(min_length=1, max_length=128)
+    new_password: str = Field(min_length=6, max_length=128)
+
+
 def _now() -> str:
     return datetime.now().isoformat(timespec="seconds")
 
@@ -43,9 +53,12 @@ def current_user(authorization: str | None = Header(default=None)) -> sqlite3.Ro
 
 
 def _user_payload(row: sqlite3.Row, token: str | None = None) -> dict:
+    keys = row.keys()
     data = {
         "id": row["id"],
         "nickname": row["nickname"],
+        "username": row["username"] if "username" in keys else None,
+        "has_password": bool(row["password_hash"]) if "password_hash" in keys else False,
         "points": row["points"],
         "streak": row["streak"],
         "tickets": row["tickets"],
@@ -84,6 +97,56 @@ def create_session():
         row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
 
     return _user_payload(row, token=token)
+
+
+@router.post("/session/login")
+def login(body: LoginIn, request: Request):
+    """账号 + 密码登录。"""
+    if not ratelimit.allow(f"login:{ratelimit.client_ip(request)}", limit=10, window_seconds=600):
+        raise HTTPException(status_code=429, detail="登录尝试过多，请稍后再试")
+
+    username = auth.normalize_username(body.username)
+    with db.tx() as conn:
+        row = conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+        if not row or not auth.verify_password(body.password, row["password_hash"]):
+            # 不区分「账号不存在」和「密码错误」，避免枚举账号
+            raise HTTPException(status_code=401, detail="账号或密码不正确")
+
+        token = auth.new_token()
+        conn.execute(
+            "UPDATE users SET token_hash = ?, last_seen = ? WHERE id = ?",
+            (auth.hash_token(token), _now(), row["id"]),
+        )
+        row = conn.execute("SELECT * FROM users WHERE id = ?", (row["id"],)).fetchone()
+
+    return _user_payload(row, token=token)
+
+
+@router.get("/session/users")
+def list_public_users():
+    """登录页展示已有账号名（不含任何敏感信息）。"""
+    with db.ro() as conn:
+        rows = conn.execute(
+            "SELECT nickname, username FROM users WHERE username IS NOT NULL ORDER BY username"
+        ).fetchall()
+    return {"users": [{"username": r["username"], "nickname": r["nickname"]} for r in rows]}
+
+
+@router.post("/session/password")
+def change_password(body: PasswordIn, user: sqlite3.Row = Depends(current_user)):
+    """修改自己的密码，需验证旧密码。"""
+    with db.tx() as conn:
+        row = conn.execute("SELECT * FROM users WHERE id = ?", (user["id"],)).fetchone()
+        if row["password_hash"] and not auth.verify_password(body.old_password, row["password_hash"]):
+            raise HTTPException(status_code=400, detail="原密码不正确")
+        if auth.verify_password(body.new_password, row["password_hash"]):
+            raise HTTPException(status_code=400, detail="新密码不能与原密码相同")
+
+        conn.execute(
+            "UPDATE users SET password_hash = ? WHERE id = ?",
+            (auth.hash_password(body.new_password), user["id"]),
+        )
+    return {"ok": True}
 
 
 @router.post("/session/adopt")

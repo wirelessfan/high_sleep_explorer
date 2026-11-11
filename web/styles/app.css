@@ -458,3 +458,141 @@ a{color:inherit;text-decoration:none}
 .sec-item{position:relative;background:#fff}
 .sec-item .ico{background:#fffaf2;border-color:#f3e9d9}
 .sec-item.done .ico{background:#ecfdf5;border-color:#bbf7d0}
+
+/* ---------- 登录页 ---------- */
+.login-wrap{max-width:420px;margin:0 auto;padding-top:8px}
+.login-hero{position:relative;border-radius:var(--radius);overflow:hidden;margin-bottom:14px;
+  border:1px solid #f3e3c9;background:linear-gradient(180deg,#fff7e6,#eaf7ff)}
+.login-hero img{width:100%;display:block}
+.login-hero .lh-text{padding:12px 15px 15px}
+.login-hero .lh-title{font-size:17px;font-weight:800;letter-spacing:-.01em;color:#3b2f2a}
+.login-hero .lh-sub{font-size:11.5px;color:#a3928a;margin-top:3px}
+.login-card{padding:16px}
+.login-users{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.login-user{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:13px 6px;border-radius:14px;border:1.5px solid #efe2ce;background:#fffdf8;
+  transition:border-color .14s ease,background .14s ease,transform .14s ease;
+}
+.login-user:active{transform:scale(.97)}
+.login-user.on{border-color:#fbbf24;background:#fffbeb;box-shadow:0 0 0 3px #fef3c7}
+.login-user .lu-avatar{font-size:24px;line-height:1}
+.login-user .lu-name{font-size:12.5px;font-weight:800;color:#3b2f2a}
+.login-user .lu-id{font-size:9.5px;color:#b6a498;letter-spacing:.04em}
+
+/* ---------- 每日主题 ---------- */
+.daily{position:relative;overflow:hidden;border-color:#f3e3c9}
+.daily.acc-sale{background:linear-gradient(180deg,#fff1f2,#fff8ef);border-color:#fecdd3}
+.daily.acc-fresh{background:linear-gradient(180deg,#f0fdfa,#f7fee7);border-color:#bbf7d0}
+.daily.acc-focus{background:linear-gradient(180deg,#eff6ff,#f8fafc);border-color:#bfdbfe}
+.daily.acc-warm{background:linear-gradient(180deg,#fff7ed,#fffbeb);border-color:#fed7aa}
+.daily-head{display:flex;align-items:flex-start;gap:11px}
+.daily-emoji{
+  width:44px;height:44px;flex:0 0 auto;border-radius:14px;
+  display:grid;place-items:center;font-size:23px;line-height:1;
+  background:rgba(255,255,255,.85);border:1px solid rgba(120,80,30,.1);
+}
+.daily-head-txt{min-width:0;flex:1}
+.daily-eyebrow{font-size:10.5px;letter-spacing:.14em;font-weight:800;color:#a3928a;text-transform:uppercase}
+.daily-title{font-size:18px;font-weight:800;letter-spacing:-.01em;margin-top:3px;line-height:1.3}
+.daily-tag{font-size:12.5px;color:#7a6257;margin-top:9px;font-weight:700;line-height:1.6}
+.daily-desc{font-size:12.5px;color:var(--ink-2);margin-top:7px;line-height:1.75}
+.daily-quote{
+  margin-top:11px;padding:9px 12px;border-left:3px solid #fcd34d;background:#fffdf5;
+  border-radius:0 10px 10px 0;font-size:12px;color:#8a7362;line-height:1.6;
+  display:flex;flex-direction:column;gap:3px;
+}
+.daily-quote b{font-size:11px;color:#a3928a;font-weight:700}
+.digest{margin-top:9px;border:1px solid rgba(120,80,30,.1);border-radius:12px;background:rgba(255,255,255,.75);overflow:hidden}
+.digest + .digest{margin-top:7px}
+.digest-q{
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+  padding:10px 11px;font-size:12.5px;font-weight:700;color:#5c4b42;
+}
+.digest-q.open{background:#fffbeb}
+.digest-q .digest-mark{
+  width:20px;height:20px;border-radius:6px;flex:0 0 auto;
+  background:#fde68a;color:#92400e;display:grid;place-items:center;font-size:11px;font-weight:800;
+}
+.digest-q .digest-txt{flex:1;min-width:0;line-height:1.55}
+.digest-q .digest-more{font-size:11px;color:#b45309;font-weight:800;flex:0 0 auto}
+.digest-a{padding:0 11px 11px 40px;font-size:12px;color:#6b5b52;line-height:1.8;background:#fffbeb}
+.daily-aside{margin-top:10px;font-size:12px;color:#b45309;font-weight:800}
+.daily-foot{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:13px;flex-wrap:wrap}
+
+/* ---------- 历史上的今天 ---------- */
+.history{
+  position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#fbf7f0,#fffdf8);
+  border-color:#e8dcc8;
+}
+.history::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,#c2a878,#8b6f47);
+}
+.history-head{display:flex;align-items:flex-start;gap:11px}
+.history-emoji{
+  width:44px;height:44px;flex:0 0 auto;border-radius:50%;
+  display:grid;place-items:center;font-size:21px;line-height:1;
+  background:#fff;border:1px solid #e8dcc8;
+}
+.history-head-txt{min-width:0;flex:1}
+.history-eyebrow{
+  font-size:10.5px;letter-spacing:.1em;font-weight:800;color:#a08a6a;
+  line-height:1.55;text-transform:uppercase;
+}
+.history-title{
+  font-size:16.5px;font-weight:800;letter-spacing:-.01em;line-height:1.35;
+  margin-top:3px;color:#453626;
+}
+.history-year{background:#f4ecd9;color:#8b6f47;border-color:#e8dcc8;font-weight:800}
+.history-story{
+  margin-top:11px;font-size:12.5px;line-height:1.9;color:#5c4f42;
+  text-align:justify;
+}
+.history-story.clamp{
+  display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;
+}
+.history-more{
+  margin-top:6px;padding:0;border:0;background:none;cursor:pointer;
+  font-size:11.5px;font-weight:800;color:#8b6f47;letter-spacing:.02em;
+}
+.history-learn{
+  margin-top:11px;padding:9px 12px;border-radius:11px;
+  background:#fff;border:1px dashed #ddc9a8;
+  display:flex;gap:9px;align-items:flex-start;
+  font-size:12px;line-height:1.75;color:#6b5b45;
+}
+.history-learn-mark{
+  width:19px;height:19px;flex:0 0 auto;margin-top:1px;border-radius:6px;
+  background:#8b6f47;color:#fff;display:grid;place-items:center;
+  font-size:10.5px;font-weight:800;
+}
+.history-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:9px;
+  margin-top:12px;flex-wrap:wrap;
+}
+.history-foot-hint{font-size:11px;font-weight:700;color:#b0a08a}
+
+/* ---------- 难度档位（基础 / 进阶 / 高级） ---------- */
+.tier-switch{display:flex;gap:7px}
+.tier-switch.tight{margin-top:2px}
+.tier-pill{
+  flex:1;min-width:0;position:relative;
+  display:flex;flex-direction:column;align-items:flex-start;gap:1px;
+  padding:8px 10px;border-radius:11px;border:1.5px solid var(--line);background:#fffdf8;
+  transition:border-color .13s ease,background .13s ease;
+}
+.tier-pill .tp-name{font-size:12.5px;font-weight:800;color:#5c4b42}
+.tier-pill .tp-score{font-size:10.5px;color:#a3928a;font-weight:700}
+.tier-pill.on{border-color:#fbbf24;background:#fffbeb;box-shadow:0 0 0 3px #fef3c7}
+.tier-pill.done{background:#f2fdf7;border-color:#c8f0e0}
+.tier-pill.done .tp-name{color:#047857}
+.tier-pill.locked{opacity:.6;background:#faf7f2;border-style:dashed}
+.tier-pill .tp-done{position:absolute;right:8px;top:7px;font-size:10px;font-weight:800;color:#10b981}
+.tier-card{flex-direction:column;align-items:stretch;gap:9px}
+.tier-legend{display:grid;gap:6px;margin-top:13px;padding-top:11px;border-top:1px dashed var(--line)}
+.tier-legend-item{display:flex;align-items:baseline;gap:6px;font-size:11px;color:#8a7a70}
+.tier-legend-item b{font-size:11px;color:#5c4b42;flex:0 0 auto}
+.tier-legend-item span{font-weight:800;color:#b45309;flex:0 0 auto}
+.tier-legend-item i{font-style:normal;color:#a3928a;flex:1;min-width:0;line-height:1.5}

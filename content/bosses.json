@@ -856,6 +856,366 @@
         "accent": "#38bdf8"
       },
       "card_id": "avogadro"
+    },
+    {
+      "id": "physics-electric-quick",
+      "topic_id": "physics-electric",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "摩擦豆",
+      "en": "Frictio",
+      "code": "No.36",
+      "element": "电子抢夺",
+      "skill": "静电粘身",
+      "hp": 5,
+      "taunt": "噼啪！冬天摸门把手的那一下，就是我干的。",
+      "purified": "豆子安静了：摩擦只是电子搬家，电荷总量从没变过。",
+      "svg": "/assets/bosses/physics-electric-quick.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-electric-basic",
+      "topic_id": "physics-electric",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "扭秤妖",
+      "en": "Torsio",
+      "code": "No.37",
+      "element": "平方反比陷阱",
+      "skill": "距离翻倍",
+      "hp": 10,
+      "taunt": "距离翻一倍，力减一半？你再想想。",
+      "purified": "扭丝回正：力与距离的平方成反比，1/4 才对。",
+      "svg": "/assets/bosses/physics-electric-basic.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-electric-summary",
+      "topic_id": "physics-electric",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "场线怪",
+      "en": "Fieldy",
+      "code": "No.38",
+      "element": "场线迷雾",
+      "skill": "疏密迷阵",
+      "hp": 1,
+      "taunt": "我的线越密，你就越站不稳——猜猜哪边场强大？",
+      "purified": "迷雾散开：线密处场强大，切线就是场强方向。",
+      "svg": "/assets/bosses/physics-electric-summary.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-electric-hard",
+      "topic_id": "physics-electric",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "零势鬼",
+      "en": "Nullvolt",
+      "code": "No.39",
+      "element": "零势陷阱",
+      "skill": "势场错位",
+      "hp": 3,
+      "taunt": "这里电势是零哦——所以你一定推不出场强吧？",
+      "purified": "鬼影透明：电势为零，场强未必为零，两件事互不干扰。",
+      "svg": "/assets/bosses/physics-electric-hard.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-electric-practice",
+      "topic_id": "physics-electric",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "等势盘",
+      "en": "Equipo",
+      "code": "No.40",
+      "element": "等势面错位",
+      "skill": "路径迷惑",
+      "hp": 8,
+      "taunt": "沿我这一圈走，电场力做的功你敢说不是零？",
+      "purified": "盘面平放：等势面上移动电荷，电场力确实不做功。",
+      "svg": "/assets/bosses/physics-electric-practice.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-electric-boss",
+      "topic_id": "physics-electric",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "库仑",
+      "en": "Charles-Augustin de Coulomb",
+      "code": "BOSS",
+      "element": "平方反比",
+      "skill": "扭丝审判",
+      "hp": 1,
+      "taunt": "我用一根扭丝量出了看不见的力。你，能量出自己错在哪吗？",
+      "purified": "他把带电小球放回原处：力与距离平方成反比，记住它。",
+      "svg": "/assets/bosses/physics-electric-boss.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": "coulomb"
+    },
+    {
+      "id": "chemistry-periodic-quick",
+      "topic_id": "chemistry-periodic",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "周期蛙",
+      "en": "Periodi",
+      "code": "No.41",
+      "element": "层数混淆",
+      "skill": "数层大法",
+      "hp": 5,
+      "taunt": "我住第三周期——你猜我有几层电子？",
+      "purified": "蛙眼一亮：周期数就是电子层数，别和族序数对调。",
+      "svg": "/assets/bosses/chemistry-periodic-quick.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-periodic-basic",
+      "topic_id": "chemistry-periodic",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "族序怪",
+      "en": "Groupy",
+      "code": "No.42",
+      "element": "族序错位",
+      "skill": "横纵迷阵",
+      "hp": 10,
+      "taunt": "最外层 7 个电子，你说我在第ⅦB 族？",
+      "purified": "尺子摆正：最外层电子数 = 主族序数，是 A 不是 B。",
+      "svg": "/assets/bosses/chemistry-periodic-basic.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-periodic-summary",
+      "topic_id": "chemistry-periodic",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "表匠",
+      "en": "Gridsmith",
+      "code": "No.43",
+      "element": "方格迷宫",
+      "skill": "空格设伏",
+      "hp": 1,
+      "taunt": "我的表格里有空格——猜错了，整张表都要重排。",
+      "purified": "齿轮咬合：位置、结构、性质，三者可以互相推导。",
+      "svg": "/assets/bosses/chemistry-periodic-summary.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-periodic-hard",
+      "topic_id": "chemistry-periodic",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "半径精",
+      "en": "Radix",
+      "code": "No.44",
+      "element": "半径迷雾",
+      "skill": "大小幻术",
+      "hp": 3,
+      "taunt": "核电荷数越大，我就越大——信我你就输了。",
+      "purified": "雾气散去：电子层结构相同时，核电荷数越大半径越小。",
+      "svg": "/assets/bosses/chemistry-periodic-hard.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-periodic-practice",
+      "topic_id": "chemistry-periodic",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "递变兽",
+      "en": "Trendo",
+      "code": "No.45",
+      "element": "递变方向",
+      "skill": "方向反转",
+      "hp": 8,
+      "taunt": "往右走非金属性变弱？那我把整张表倒过来给你看。",
+      "purified": "箭头归位：横着走越来越非金属，竖着走越来越金属。",
+      "svg": "/assets/bosses/chemistry-periodic-practice.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-periodic-boss",
+      "topic_id": "chemistry-periodic",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "门捷列夫",
+      "en": "Dmitri Mendeleev",
+      "code": "BOSS",
+      "element": "周期律",
+      "skill": "空格预言",
+      "hp": 1,
+      "taunt": "我在表上留了空格，还写下了里面元素的颜色和密度。你敢填吗？",
+      "purified": "他把表铺开：镓、锗、锑——空格被实验一一填满。",
+      "svg": "/assets/bosses/chemistry-periodic-boss.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": "mendeleev"
+    },
+    {
+      "id": "chemistry-ionic-quick",
+      "topic_id": "chemistry-ionic",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "电离鬼",
+      "en": "Ionix",
+      "code": "No.46",
+      "element": "电离迷雾",
+      "skill": "真假电解质",
+      "hp": 5,
+      "taunt": "我溶于水就导电——所以我是电解质，对吧？",
+      "purified": "鬼影显形：先看是不是化合物，再看是不是自己在电离。",
+      "svg": "/assets/bosses/chemistry-ionic-quick.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-ionic-basic",
+      "topic_id": "chemistry-ionic",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "拆写怪",
+      "en": "Splitz",
+      "code": "No.47",
+      "element": "拆与不拆",
+      "skill": "乱拆一气",
+      "hp": 10,
+      "taunt": "碳酸钙？拆成 Ca²⁺ 和 CO₃²⁻ 多清爽！",
+      "purified": "镜子照回原形：难溶物写化学式，一步都不能拆。",
+      "svg": "/assets/bosses/chemistry-ionic-basic.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-ionic-summary",
+      "topic_id": "chemistry-ionic",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "旁观猿",
+      "en": "Bystando",
+      "code": "No.48",
+      "element": "旁观离子",
+      "skill": "多余出场",
+      "hp": 1,
+      "taunt": "我什么都没干，可你的方程式里全是我的名字。",
+      "purified": "猿猴退场：不参加反应的离子，写完就该删掉。",
+      "svg": "/assets/bosses/chemistry-ionic-summary.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-ionic-hard",
+      "topic_id": "chemistry-ionic",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "过量兽",
+      "en": "Excess",
+      "code": "No.49",
+      "element": "少量过量",
+      "skill": "配比翻盘",
+      "hp": 3,
+      "taunt": "少量还是过量？我一句话就能让你的产物全变。",
+      "purified": "天平落定：先看谁少量，按少量物质的配比写方程。",
+      "svg": "/assets/bosses/chemistry-ionic-hard.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-ionic-practice",
+      "topic_id": "chemistry-ionic",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "共存兽",
+      "en": "Coexist",
+      "code": "No.50",
+      "element": "四类冲突",
+      "skill": "打架判定",
+      "hp": 8,
+      "taunt": "把 Ba²⁺ 和 SO₄²⁻ 放一个杯子里，你猜还剩几个？",
+      "purified": "磁力松开：沉淀、气体、弱电解质、氧化还原——四类才打架。",
+      "svg": "/assets/bosses/chemistry-ionic-practice.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-ionic-boss",
+      "topic_id": "chemistry-ionic",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "阿伦尼乌斯",
+      "en": "Svante Arrhenius",
+      "code": "BOSS",
+      "element": "电离学说",
+      "skill": "离子审判",
+      "hp": 1,
+      "taunt": "他们说我的学说荒谬。现在，请你告诉我谁在水里解离。",
+      "purified": "他把离子对举起来：电解质在水中自发解离，这就是导电的原因。",
+      "svg": "/assets/bosses/chemistry-ionic-boss.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": "arrhenius"
     }
   ]
 }
