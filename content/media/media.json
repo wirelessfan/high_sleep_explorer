@@ -377,6 +377,60 @@
       "topic": "chemistry-ionic",
       "role": "egg",
       "why": "53 秒动画，把水分子「拽下离子」的过程看得清清楚楚。"
+    },
+    {
+      "bvid": "BV16x411X7L9",
+      "title": "【高中物理】252 电磁感应的发现",
+      "up": "陈老师敲黑板",
+      "duration": "08:54",
+      "topic": "physics-induction",
+      "role": "micro",
+      "why": "法拉第实验到「变化才有电」的推理链。"
+    },
+    {
+      "bvid": "BV1E4411A7mU",
+      "title": "【高中物理】255 探究感应电流的方向——楞次定律",
+      "up": "陈老师敲黑板",
+      "duration": "08:53",
+      "topic": "physics-induction",
+      "role": "micro",
+      "why": "楞次定律主线，方向判断的完整逻辑。"
+    },
+    {
+      "bvid": "BV1m4411L7ng",
+      "title": "【高中物理】232 初识磁通量",
+      "up": "陈老师敲黑板",
+      "duration": "08:07",
+      "topic": "physics-induction",
+      "role": "micro",
+      "why": "磁通量概念的入门打底。"
+    },
+    {
+      "bvid": "BV1vt411w7Ki",
+      "title": "【高中物理】271 电磁感应之求电荷量",
+      "up": "陈老师敲黑板",
+      "duration": "07:48",
+      "topic": "physics-induction",
+      "role": "micro",
+      "why": "q = nΔΦ/R 的推导与用法。"
+    },
+    {
+      "bvid": "BV1st411u7i7",
+      "title": "【高中物理】275 电磁感应之含电容电路",
+      "up": "陈老师敲黑板",
+      "duration": "09:59",
+      "topic": "physics-induction",
+      "role": "stretch",
+      "why": "延伸：电磁感应与电容结合的综合题。"
+    },
+    {
+      "bvid": "BV1ek4y1Z7Cr",
+      "title": "【高中物理】174 动能与动能定理",
+      "up": "陈老师敲黑板",
+      "duration": "08:49",
+      "topic": "physics-energy",
+      "role": "micro",
+      "why": "动能定理的典型题型串讲。"
     }
   ],
   "scoring": {

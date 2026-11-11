@@ -169,20 +169,22 @@ def test_reading_awards_five(client, auth_headers):
 
 
 def test_topic_complete_gives_tickets(client, auth_headers):
-    data = content_loader.topic("physics-induction")
-    for sec in data["sections"]:
-        if sec["type"] == "reading":
-            client.post("/api/v1/topics/physics-induction/sections/summary/read",
-                        json={"confirmed": True}, headers=auth_headers)
-            continue
-        answers = _all_answers(sec)
-        r = client.post(f"/api/v1/topics/physics-induction/sections/{sec['id']}/submit",
-                        json={"answers": answers}, headers=auth_headers)
-        assert r.status_code == 200
+    """全通按「单元」计（版块 × 已开放档位），所以要逐档走完。"""
+    tid = "physics-induction"
+    by_id = {sec["id"]: sec for sec in content_loader.topic(tid)["sections"]}
+    for sid, tier in content_loader.topic_pairs(tid):
+        content = content_loader.section_tiers(by_id[sid])[tier]
+        if content["type"] == "reading":
+            r = client.post(f"/api/v1/topics/{tid}/sections/{sid}/read?tier={tier}",
+                            json={"confirmed": True}, headers=auth_headers)
+        else:
+            r = client.post(f"/api/v1/topics/{tid}/sections/{sid}/submit?tier={tier}",
+                            json={"answers": _all_answers(content)}, headers=auth_headers)
+        assert r.status_code == 200, f"{sid}/{tier}: {r.text}"
 
     me = client.get("/api/v1/me", headers=auth_headers).json()
-    # boss_first(1) + topic_complete(2) = 3
-    assert me["tickets"] == 3
+    # 两个档位各首杀 Boss 一次（1 + 1）+ 主题全通（2）= 4
+    assert me["tickets"] == 4
 
 
 # ---------- 签到 ----------

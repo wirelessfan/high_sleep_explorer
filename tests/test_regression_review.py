@@ -57,13 +57,15 @@ class WithTempDb(unittest.TestCase):
         return row
 
     def mark_all_done(self, uid, topic_id="physics-induction"):
+        """按「版块 × 已开放档位」逐单元标记完成，与全通判定同口径。"""
+        pairs = content_loader.topic_pairs(topic_id)
         with db.tx() as conn:
-            for sid in SECTION_IDS:
+            for sid, tier in pairs:
                 conn.execute(
                     "INSERT OR REPLACE INTO progress"
-                    "(user_id, topic_id, section_id, status, best_score, attempts, awarded, updated_at) "
-                    "VALUES (?,?,?,'done',100,1,1,?)",
-                    (uid, topic_id, sid, NOW),
+                    "(user_id, topic_id, section_id, tier, status, best_score, attempts, awarded, updated_at) "
+                    "VALUES (?,?,?,?,'done',100,1,1,?)",
+                    (uid, topic_id, sid, tier, NOW),
                 )
 
 
