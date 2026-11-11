@@ -183,8 +183,9 @@ def test_topic_complete_gives_tickets(client, auth_headers):
         assert r.status_code == 200, f"{sid}/{tier}: {r.text}"
 
     me = client.get("/api/v1/me", headers=auth_headers).json()
-    # 两个档位各首杀 Boss 一次（1 + 1）+ 主题全通（2）= 4
-    assert me["tickets"] == 4
+    # 每个已开放档位首杀 Boss 一次（各 1 张）+ 主题全通（2 张）
+    tiers = {tier for _, tier in content_loader.topic_pairs(tid)}
+    assert me["tickets"] == len(tiers) + 2
 
 
 # ---------- 签到 ----------
