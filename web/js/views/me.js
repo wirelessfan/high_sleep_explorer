@@ -66,6 +66,27 @@ export async function renderMe(view) {
     cal,
   ]));
 
+  /* ---- 成就卡入口 ---- */
+  root.appendChild(el('section', {
+    class: 'panel',
+    style: 'cursor:pointer;background:linear-gradient(135deg,#fffbf0,#fff);border-color:#fbe6b8',
+    onclick: () => { location.hash = '#/achievements'; },
+  }, [
+    el('div', { class: 'row-between' }, [
+      el('div', { class: 'row', style: 'gap:11px' }, [
+        el('div', {
+          style: 'width:40px;height:40px;border-radius:12px;background:#fef3c7;display:grid;place-items:center;font-size:17px;font-weight:800;color:#b45309',
+          text: '¥',
+        }),
+        el('div', {}, [
+          el('div', { style: 'font-size:13.5px;font-weight:800', text: '成就卡' }),
+          el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: '100 积分 = 1 张 50 元卡 · 每天最多 2 张' }),
+        ]),
+      ]),
+      el('div', { style: 'font-size:18px;color:#d9c8b4', text: '›' }),
+    ]),
+  ]));
+
   /* ---- 卡包 / 碎片 ---- */
   root.appendChild(el('section', { class: 'panel' }, [
     el('div', { class: 'row-between' }, [

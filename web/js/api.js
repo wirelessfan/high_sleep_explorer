@@ -109,3 +109,11 @@ export const drawCards = (count, key) =>
   request('/cards/draw', { method: 'POST', body: { count, idempotency_key: key } });
 export const craftCard = (cardId) =>
   request('/cards/craft', { method: 'POST', body: { card_id: cardId } });
+
+/* ---------- 成就卡 ---------- */
+
+export const getAchievements = () => request('/achievements');
+export const redeemAchievement = (count = 1) =>
+  request('/achievements/redeem', { method: 'POST', body: { count } });
+export const verifyAchievement = (code) =>
+  request('/achievements/verify', { method: 'POST', body: { code } });

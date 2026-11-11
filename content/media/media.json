@@ -102,10 +102,191 @@
       "topic": "math-derivative",
       "role": "egg",
       "why": "Boss 彩蛋用，3D 视角看切平面，超前但直观。"
+    },
+    {
+      "bvid": "BV1MW411S71P",
+      "title": "【高中物理】46 牛顿第二定律",
+      "up": "陈老师敲黑板",
+      "duration": "07:14",
+      "play": 30000,
+      "like": 1200,
+      "topic": "physics-newton",
+      "role": "micro",
+      "why": "清华附中陈老师 7 分钟讲透 F=ma 的矢量性。"
+    },
+    {
+      "bvid": "BV1nW41167zU",
+      "title": "【高中物理】45 牛顿第二定律实验的误差（难点）",
+      "up": "陈老师敲黑板",
+      "duration": "07:30",
+      "play": 20000,
+      "like": 900,
+      "topic": "physics-newton",
+      "role": "micro",
+      "why": "验证牛二实验的两大误差来源一次讲清。"
+    },
+    {
+      "bvid": "BV11341187tg",
+      "title": "【高中物理】新力学篇（必修一、必修二）",
+      "up": "陈老师敲黑板",
+      "duration": "23:26:55",
+      "play": 711000,
+      "like": 1381,
+      "topic": "physics-newton",
+      "role": "extension",
+      "why": "陈老师力学篇完整合集，牛顿定律章节就在其中。"
+    },
+    {
+      "bvid": "BV1nM411y7zF",
+      "title": "【高中物理】76 牛顿第二定律的两类问题 IV 雨滴下落",
+      "up": "陈老师敲黑板",
+      "duration": "03:15",
+      "play": 11000,
+      "like": 3,
+      "topic": "physics-newton",
+      "role": "egg",
+      "why": "收尾速度模型：为什么雨滴砸不死人。"
+    },
+    {
+      "bvid": "BV17t411a7h8",
+      "title": "【高中物理】111 机械能守恒定律",
+      "up": "陈老师敲黑板",
+      "duration": "07:12",
+      "play": 66000,
+      "like": 353,
+      "topic": "physics-energy",
+      "role": "micro",
+      "why": "守恒定律的表达式与成立条件。"
+    },
+    {
+      "bvid": "BV1fp4y1x7T5",
+      "title": "【高中物理】116 实验：验证机械能守恒定律 I",
+      "up": "陈老师敲黑板",
+      "duration": "07:42",
+      "play": 177000,
+      "like": 541,
+      "topic": "physics-energy",
+      "role": "micro",
+      "why": "必修二必考实验的原理与数据处理。"
+    },
+    {
+      "bvid": "BV11341187tg",
+      "title": "【高中物理】新力学篇（必修一、必修二）",
+      "up": "陈老师敲黑板",
+      "duration": "23:26:55",
+      "play": 711000,
+      "like": 1381,
+      "topic": "physics-energy",
+      "role": "extension",
+      "why": "能量与功章节在新力学篇合集中。"
+    },
+    {
+      "bvid": "BV1wFoeB6EwE",
+      "title": "《能量守恒定律》——用永动机「饮水小鸭」讲能量",
+      "up": "骆洛物理",
+      "duration": "29:13",
+      "play": 33840,
+      "like": 0,
+      "topic": "physics-energy",
+      "role": "egg",
+      "why": "一只鸭子讲清能量守恒与机械能守恒的区别。"
+    },
+    {
+      "bvid": "BV15dbpzLERS",
+      "title": "【初高衔接】高一化学必修第一册：氧化还原基本概念",
+      "up": "一化儿",
+      "duration": "38:52",
+      "play": 0,
+      "like": 0,
+      "topic": "chemistry-redox",
+      "role": "micro",
+      "why": "一化儿从零推导氧化还原概念，不跳步。"
+    },
+    {
+      "bvid": "BV1jEh56LEuW",
+      "title": "【高一化学】氧化还原反应中电子转移的表示方法",
+      "up": "一化儿",
+      "duration": "38:44",
+      "play": 0,
+      "like": 0,
+      "topic": "chemistry-redox",
+      "role": "micro",
+      "why": "双线桥、单线桥逐笔示范。"
+    },
+    {
+      "bvid": "BV1Qb4y1a7WK",
+      "title": "【一化】氧化还原 基础与方法全集！",
+      "up": "一化儿",
+      "duration": "02:16:35",
+      "play": 0,
+      "like": 0,
+      "topic": "chemistry-redox",
+      "role": "extension",
+      "why": "氧化还原重难点全覆盖的系统合集。"
+    },
+    {
+      "bvid": "BV1gGeLzFEQn",
+      "title": "【初高衔接】高一化学必修第一册：氧化剂与还原剂",
+      "up": "一化儿",
+      "duration": "44:29",
+      "play": 0,
+      "like": 0,
+      "topic": "chemistry-redox",
+      "role": "egg",
+      "why": "把「谁氧化谁」的判断练到肌肉记忆。"
+    },
+    {
+      "bvid": "BV1s1SKBSE9y",
+      "title": "【高一化学】物质的量 + 阿伏加德罗常数 + 摩尔质量｜0 基础开始学！",
+      "up": "一化儿",
+      "duration": "01:05:35",
+      "play": 721000,
+      "like": 12000,
+      "topic": "chemistry-mole",
+      "role": "micro",
+      "why": "一化儿 2025 重制版，从零开始讲三个公式。"
+    },
+    {
+      "bvid": "BV1Yd23BqEWj",
+      "title": "【高一化学】物质的量——气体摩尔体积",
+      "up": "一化儿",
+      "duration": "39:02",
+      "play": 483000,
+      "like": 4422,
+      "topic": "chemistry-mole",
+      "role": "micro",
+      "why": "22.4 L/mol 的两个前提与 NA 判断题陷阱专讲。"
+    },
+    {
+      "bvid": "BV1Lb4y187RH",
+      "title": "【一化】物质的量 知识与解法全集！",
+      "up": "一化儿",
+      "duration": "02:10:31",
+      "play": 6307000,
+      "like": 95000,
+      "topic": "chemistry-mole",
+      "role": "extension",
+      "why": "物质的量题型全覆盖。"
+    },
+    {
+      "bvid": "BV1PB4y1i7MD",
+      "title": "【化学计量】物质的量、摩尔质量、摩尔体积等基本概念",
+      "up": "一化儿",
+      "duration": "40:58",
+      "play": 2074000,
+      "like": 7308,
+      "topic": "chemistry-mole",
+      "role": "egg",
+      "why": "三个公式的来龙去脉一次推清楚。"
     }
   ],
   "scoring": {
     "formula": "0.40*log(play) + 0.30*log(like) + 0.15*like/play + 0.15*authority",
-    "authority_whitelist": ["陈老师敲黑板", "HE物理课堂", "一化儿", "赵大神数学"]
+    "authority_whitelist": [
+      "陈老师敲黑板",
+      "HE物理课堂",
+      "一化儿",
+      "赵大神数学"
+    ]
   }
 }

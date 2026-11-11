@@ -51,6 +51,8 @@ SECTION_NAME = {
     "hard": "难点剖析", "practice": "实战巩固", "boss": "Boss 彩蛋",
 }
 
+PAL_SUBJECT = {"physics": "物理", "chemistry": "化学", "math": "数学"}
+
 # ---------------------------------------------------------------- 角色表
 # shape: round / tank / ghost —— 躯干轮廓
 # head:  头顶装饰  prop: 手持道具  overlay: 躯干纹理
@@ -150,6 +152,130 @@ CAST = [
          element="数学王子", staff="bell", skill="极限审判",
          taunt="少一点，但成熟一点。先把定义讲清楚。",
          purified="他在钟形曲线旁签下名字：这一关，你过了。"),
+    # ===== 物理 · 牛顿运动定律 =====
+    dict(topic="physics-newton", subject="physics", section="quick",
+         name="惯性球", en="Inerto", element="固执惯性", shape="round",
+         head="gauge", prop="weight", overlay="scale", skill="原地装死",
+         taunt="不动！我就是不动！有本事把我的合外力变成零再来。",
+         purified="它终于滚动起来：力不是维持运动的原因，是改变运动的原因。"),
+    dict(topic="physics-newton", subject="physics", section="basic",
+         name="斜面兽", en="Inclino", element="变幻斜坡", shape="round",
+         head="triangle", prop="slash", overlay="diagonal", skill="倾角乱变",
+         taunt="θ 取什么值，我的加速度就唱什么歌～",
+         purified="斜面放平：a = g·sinθ，两个极端检验全过。"),
+    dict(topic="physics-newton", subject="physics", section="summary",
+         name="矢量雾", en="Vecto", element="迷失方向", shape="ghost",
+         head="field", prop="none", overlay="waves", skill="分量障眼法",
+         taunt="F 和 a 被我拆得七零八落，你还拼得回来吗？",
+         purified="雾中分量归位：x 方向 y 方向，各列各的牛二。"),
+    dict(topic="physics-newton", subject="physics", section="hard",
+         name="失重幽灵", en="Floaty", element="视重错觉", shape="ghost",
+         head="mirror", prop="bubbles", overlay="layers", skill="视重戏法",
+         taunt="我轻了！我失重了！——不，是你的支持力在骗你。",
+         purified="幽灵现形：重力没变，变的只是体重计的读数。"),
+    dict(topic="physics-newton", subject="physics", section="practice",
+         name="传送带将", en="Belty", element="皮带空转", shape="tank",
+         head="gear", prop="crank", overlay="cogs", skill="摩擦反转",
+         taunt="我的摩擦力一会儿向前一会儿向后，你猜猜看？",
+         purified="皮带停稳：摩擦力方向看相对运动趋势，不再靠猜。"),
+    dict(topic="physics-newton", subject="physics", section="boss",
+         tier="big", name="牛顿", en="Isaac Newton", card_id="newton",
+         element="万有引力与三定律", staff="apple", skill="巨肩审判",
+         taunt="如果说我看得更远，那是因为我站在巨人的肩上。现在，轮到你往上爬了。",
+         purified="他从苹果树下起身：这颗果实，交给你了。"),
+    # ===== 物理 · 机械能与功能关系 =====
+    dict(topic="physics-energy", subject="physics", section="quick",
+         name="焦耳豆", en="Jouly", element="乱窜热量", shape="round",
+         head="bulb", prop="bolt", overlay="spark", skill="能量乱窜",
+         taunt="能量守恒！可我藏在哪个口袋里，你找不到～",
+         purified="豆子亮起来：能量没有消失，只是换了口袋。"),
+    dict(topic="physics-energy", subject="physics", section="basic",
+         name="动能兽", en="Kineco", element="速度平方陷阱", shape="round",
+         head="gauge", prop="segment", overlay="diagonal", skill="平方迷惑",
+         taunt="速度翻倍？我可不是翻倍那么简单。",
+         purified="它排成一行：½mv²，那个平方终于被看清了。"),
+    dict(topic="physics-energy", subject="physics", section="summary",
+         name="守恒钟", en="Conso", element="恒定总量", shape="tank",
+         head="balance", prop="weight", overlay="scale", skill="天平摇摆",
+         taunt="左边动能右边势能，加减你来算！",
+         purified="天平放平：Ek + Ep，左右永远相等。"),
+    dict(topic="physics-energy", subject="physics", section="hard",
+         name="摩擦双生", en="Fricto", element="生热诡辩", shape="round",
+         head="mirror", prop="bubbles", overlay="layers", skill="相对路程",
+         taunt="我做的功和产生的热，可不是一回事哦～",
+         purified="双生合体：Q = f × 相对路程，这才是完整答案。"),
+    dict(topic="physics-energy", subject="physics", section="practice",
+         name="过山车将", en="Coaster", element="竖直圆环", shape="tank",
+         head="peaks", prop="arrows", overlay="curve", skill="环顶失重",
+         taunt="最高点为什么掉不下来？先算算你的向心加速度！",
+         purified="轨道贯通：守恒求速度，牛二求力，一气呵成。"),
+    dict(topic="physics-energy", subject="physics", section="boss",
+         tier="big", name="伽利略", en="Galileo Galilei", card_id="galileo",
+         element="理想实验", staff="pendulum", skill="斜面审判",
+         taunt="我的斜面没有摩擦，我的推理没有终点。来，接住这个摆锤。",
+         purified="他把摆锤挂回原位：它还会摆回来，这就是守恒。"),
+    # ===== 化学 · 氧化还原反应 =====
+    dict(topic="chemistry-redox", subject="chemistry", section="quick",
+         name="电子跳蚤", en="Fleco", element="电子乱窜", shape="round",
+         head="bulb", prop="bolt", overlay="spark", skill="电子争夺",
+         taunt="抢电子！谁先抢到听谁的！",
+         purified="跳蚤安分下来：得失电子总数终于相等了。"),
+    dict(topic="chemistry-redox", subject="chemistry", section="basic",
+         name="歪价签", en="Tagger", element="乱标价态", shape="round",
+         head="ruler", prop="segment", overlay="grid", skill="价态涂鸦",
+         taunt="0、+1、+5、−1……我随口报数，你敢接吗？",
+         purified="价签排齐：先定 H 是 +1、O 是 −2，再解未知数。"),
+    dict(topic="chemistry-redox", subject="chemistry", section="summary",
+         name="双线桥怪", en="Bridgey", element="桥线缠绕", shape="ghost",
+         head="zigzag", prop="none", overlay="waves", skill="箭头打结",
+         taunt="两条线该从谁指到谁？绕晕你为止～",
+         purified="线桥理顺：双线桥自指前后，单线桥跨元素。"),
+    dict(topic="chemistry-redox", subject="chemistry", section="hard",
+         name="歧化双脸", en="Disco", element="价态分裂", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="一升一降",
+         taunt="我一半升高一半降低，中间价态最刺激！",
+         purified="双脸合拢：归中不交叉，歧化各一半。"),
+    dict(topic="chemistry-redox", subject="chemistry", section="practice",
+         name="配平天平将", en="Stoi", element="系数乱配", shape="tank",
+         head="balance", prop="weight", overlay="scale", skill="守恒偷懒",
+         taunt="电子守恒？我先随便配个系数凑合一下～",
+         purified="天平锁定：得失电子相等，系数自然落位。"),
+    dict(topic="chemistry-redox", subject="chemistry", section="boss",
+         tier="big", name="拉瓦锡", en="Antoine Lavoisier", card_id="lavoisier",
+         element="质量守恒", staff="burner", skill="天平审判",
+         taunt="无物新生，无物消亡——先称一称，你到底带来了什么。",
+         purified="他把天平递给你：质量守恒，现在也归你保管了。"),
+    # ===== 化学 · 物质的量 =====
+    dict(topic="chemistry-mole", subject="chemistry", section="quick",
+         name="摩尔豆", en="Moley", element="数不清粒子", shape="round",
+         head="tube", prop="bubbles", overlay="bubbles", skill="数数大法",
+         taunt="6.02×10²³ 个粒子，你慢慢数～",
+         purified="豆子排成整齐一列：n = N/NA，数数有了公式。"),
+    dict(topic="chemistry-mole", subject="chemistry", section="basic",
+         name="天平兽", en="Weighy", element="称量错位", shape="round",
+         head="balance", prop="weight", overlay="scale", skill="单位陷阱",
+         taunt="18、18 g、18 g/mol——你分得清我是谁？",
+         purified="三张标签贴对位置：数值相等，身份不同。"),
+    dict(topic="chemistry-mole", subject="chemistry", section="summary",
+         name="量筒怪", en="Beako", element="刻度失真", shape="ghost",
+         head="beaker", prop="none", overlay="layers", skill="液体冒充",
+         taunt="标况下我也是 22.4 L 哦——真的吗？",
+         purified="刻度清晰起来：22.4 L/mol 只属于标况下的气体。"),
+    dict(topic="chemistry-mole", subject="chemistry", section="hard",
+         name="22.4 幽灵", en="Gasly", element="气体幻影", shape="ghost",
+         head="field", prop="epsilon", overlay="waves", skill="条件隐身",
+         taunt="常温常压下我也能当 22.4 L……你就说信不信吧。",
+         purified="幽灵退散：标况 + 气体，两个前提缺一不可。"),
+    dict(topic="chemistry-mole", subject="chemistry", section="practice",
+         name="配液将", en="Solution", element="浓度错配", shape="tank",
+         head="gauge", prop="wrench", overlay="cogs", skill="定容迷惑",
+         taunt="溶剂体积就是溶液体积？天真的孩子。",
+         purified="容量瓶刻度线落定：c = n/V，V 是溶液的体积。"),
+    dict(topic="chemistry-mole", subject="chemistry", section="boss",
+         tier="big", name="阿伏伽德罗", en="Amedeo Avogadro", card_id="avogadro",
+         element="气体定律", staff="molecule", skill="分子审判",
+         taunt="同温同压，同体积必同分子数——这是我的定律，也是我的审判。",
+         purified="他把分子模型递给你：数的桥，以后由你来架。"),
 ]
 
 # ---------------------------------------------------------------- SVG 部件库
@@ -515,6 +641,40 @@ def _scientist_staff(kind: str, c: dict) -> str:
                 f'<path d="M196 88 v22 l-16 26 a6 6 0 0 0 5 9 h22 a6 6 0 0 0 5 -9 l-16 -26z" '
                 f'fill="url(#glass)" stroke="{d}" stroke-width="2.4"/>'
                 f'<path d="M184 128 h24 l4 9 a6 6 0 0 1 -5 9 h-22 a6 6 0 0 1 -5 -9z" fill="{a}" opacity=".8"/>')
+    elif kind == "apple":
+        head = (f'<circle cx="196" cy="112" r="26" fill="url(#glow)"/>'
+                f'<path d="M196 90 a20 19 0 0 1 0 38 a20 19 0 0 1 0 -38z" '
+                f'fill="#f87171" stroke="{d}" stroke-width="2.2"/>'
+                f'<path d="M196 90 q2 -10 8 -14" fill="none" stroke="#7c4a12" stroke-width="2.6" '
+                f'stroke-linecap="round"/>'
+                f'<path d="M204 76 q12 -4 14 6 q-12 6 -14 -6z" fill="#4ade80" stroke="{d}" stroke-width="1.6"/>'
+                f'<path d="M186 104 q6 -6 12 -2" fill="none" stroke="#fff" stroke-width="3" '
+                f'stroke-linecap="round" opacity=".7"/>')
+    elif kind == "pendulum":
+        head = (f'<circle cx="196" cy="112" r="24" fill="url(#glow)"/>'
+                f'<path d="M196 86 v44" stroke="{d}" stroke-width="3" stroke-linecap="round"/>'
+                f'<path d="M196 86 l16 34" stroke="{a}" stroke-width="2.6" '
+                f'stroke-linecap="round" opacity=".85"/>'
+                f'<circle cx="196" cy="132" r="9" fill="url(#gold)" stroke="#b45309" stroke-width="1.8"/>'
+                f'<path d="M182 86 h28" stroke="{d}" stroke-width="4" stroke-linecap="round"/>')
+    elif kind == "burner":
+        head = (f'<circle cx="196" cy="112" r="26" fill="url(#glow)"/>'
+                f'<path d="M182 128 h28 l-4 10 h-20z" fill="url(#metal)" stroke="{d}" stroke-width="2"/>'
+                f'<path d="M196 124 q-10 -10 -4 -20 q3 6 4 4 q2 -10 8 -12 q-2 8 2 12 q6 -4 4 6 '
+                f'q-2 10 -14 10z" fill="#fbbf24" stroke="#b45309" stroke-width="1.6"/>'
+                f'<path d="M196 120 q-4 -5 -1 -10 q1 4 3 2 q1 -4 4 -5 q-1 4 1 6 q3 -1 1 4 '
+                f'q-2 5 -8 3z" fill="#fde68a" opacity=".9"/>')
+    elif kind == "molecule":
+        import math
+        pts = [(196 + 20 * math.cos(math.pi * 2 * i / 6 - math.pi / 2),
+                112 + 20 * math.sin(math.pi * 2 * i / 6 - math.pi / 2)) for i in range(6)]
+        bonds = "".join(f'<line x1="{pts[i][0]:.1f}" y1="{pts[i][1]:.1f}" '
+                        f'x2="{pts[(i + 1) % 6][0]:.1f}" y2="{pts[(i + 1) % 6][1]:.1f}" '
+                        f'stroke="{d}" stroke-width="2.2" opacity=".8"/>' for i in range(6))
+        balls = "".join(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="7" fill="{a}" '
+                        f'stroke="{d}" stroke-width="1.8"/>' for x, y in pts)
+        head = (f'<circle cx="196" cy="112" r="30" fill="url(#glow)"/>' + bonds + balls
+                + f'<circle cx="{pts[0][0]:.1f}" cy="{pts[0][1]:.1f}" r="3.2" fill="#fff"/>')
     else:  # bell
         head = (f'<path d="M170 140 q26 -66 52 0" fill="none" stroke="{a}" stroke-width="4" '
                 f'stroke-linecap="round"/>'
@@ -587,6 +747,82 @@ def render_big(role: dict, c: dict) -> str:
                   '<path d="M102 142 q18 8 36 0" fill="none" stroke="#cbd5e1" '
                   'stroke-width="5" stroke-linecap="round"/>'),
             mouth=('<path d="M111 133 h18" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+        # 牛顿：灰白长卷发垂到肩，无胡须，嘴角微扬
+        "newton": dict(
+            badge="N",
+            hair=('<path d="M78 96 q-10 -46 42 -46 q52 0 42 46 q-6 26 -10 44 M78 96 '
+                  'q-2 26 2 44" fill="none" stroke="#e2e8f0" stroke-width="10" '
+                  'stroke-linecap="round"/>'
+                  '<path d="M84 92 q-4 -38 36 -38 q40 0 36 38 q-12 -18 -36 -18 q-24 0 -36 18z" '
+                  'fill="#f1f5f9" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M82 94 q0 28 4 42 M158 94 q0 28 -4 42" fill="none" '
+                  'stroke="#f1f5f9" stroke-width="9" stroke-linecap="round"/>'
+                  '<path d="M96 74 q10 -6 20 -2 M124 72 q12 -4 20 4" fill="none" '
+                  'stroke="#cbd5e1" stroke-width="3" stroke-linecap="round"/>'),
+            face=('<path d="M100 120 q4 14 12 18 M140 120 q-4 14 -12 18" fill="none" '
+                  'stroke="#cbd5e1" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>'
+                  '<path d="M120 114 v8" stroke="#f4a26b" stroke-width="2" '
+                  'stroke-linecap="round" opacity=".7"/>'),
+            mouth=('<path d="M112 133 q8 6 16 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+        # 伽利略：秃顶 + 两侧白发 + 白色大络腮胡
+        "galileo": dict(
+            badge="G",
+            hair=('<path d="M86 92 q0 -20 10 -28 M154 92 q0 -20 -10 -28" fill="none" '
+                  'stroke="#e2e8f0" stroke-width="9" stroke-linecap="round"/>'
+                  '<path d="M88 84 q6 -18 16 -20 M152 84 q-6 -18 -16 -20" fill="none" '
+                  'stroke="#e2e8f0" stroke-width="7" stroke-linecap="round"/>'
+                  '<path d="M104 118 q16 26 32 0 q6 22 -16 22 q-22 0 -16 -22z" '
+                  'fill="#f1f5f9" stroke="#1e293b" stroke-width="2.4"/>'),
+            face=('<path d="M96 100 q2 10 6 14 M144 100 q-2 10 -6 14" fill="none" '
+                  'stroke="#e2e8f0" stroke-width="5" stroke-linecap="round"/>'
+                  '<path d="M104 112 q16 -8 32 0" fill="none" stroke="#e2e8f0" '
+                  'stroke-width="4" stroke-linecap="round"/>'
+                  '<path d="M120 114 v6" stroke="#f4a26b" stroke-width="2" '
+                  'stroke-linecap="round" opacity=".7"/>'),
+            mouth=('<path d="M112 132 h16" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+        # 拉瓦锡：18 世纪灰白假发，两侧三卷，无胡须，神态严肃
+        "lavoisier": dict(
+            badge="L",
+            hair=('<path d="M80 98 q-4 -46 40 -46 q44 0 40 46 q-4 24 -6 40 M80 98 '
+                  'q-2 22 0 40 M160 98 q2 22 0 40" fill="none" stroke="#e2e8f0" '
+                  'stroke-width="9" stroke-linecap="round"/>'
+                  '<path d="M84 90 q-2 -38 36 -38 q38 0 36 38 q-12 -18 -36 -18 q-24 0 -36 18z" '
+                  'fill="#f1f5f9" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<circle cx="86" cy="106" r="9" fill="#f1f5f9" stroke="#1e293b" stroke-width="1.8"/>'
+                  '<circle cx="86" cy="122" r="9" fill="#f1f5f9" stroke="#1e293b" stroke-width="1.8"/>'
+                  '<circle cx="154" cy="106" r="9" fill="#f1f5f9" stroke="#1e293b" stroke-width="1.8"/>'
+                  '<circle cx="154" cy="122" r="9" fill="#f1f5f9" stroke="#1e293b" stroke-width="1.8"/>'),
+            face=('<path d="M120 114 v8" stroke="#f4a26b" stroke-width="2" '
+                  'stroke-linecap="round" opacity=".7"/>'
+                  '<path d="M108 121 q6 -3 10 1 M132 121 q-6 -3 -10 1" fill="none" '
+                  'stroke="#cbd5e1" stroke-width="2" stroke-linecap="round" opacity=".8"/>'),
+            mouth=('<path d="M113 134 h14" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.6" stroke-linecap="round"/>'),
+        ),
+        # 阿伏伽德罗：深色短发前秃 + 长鬓角，神态温和
+        "avogadro": dict(
+            badge="A",
+            hair=('<path d="M86 96 q0 -14 12 -22 M154 96 q0 -14 -12 -22" fill="none" '
+                  'stroke="#475569" stroke-width="10" stroke-linecap="round"/>'
+                  '<path d="M90 84 q8 -24 30 -26 q22 -2 34 26 q-10 -14 -32 -14 q-22 0 -32 14z" '
+                  'fill="#475569" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M84 92 q-2 22 2 38 M156 92 q2 22 -2 38" fill="none" '
+                  'stroke="#475569" stroke-width="8" stroke-linecap="round"/>'
+                  '<path d="M120 86 q0 6 -2 10" fill="none" stroke="#64748b" '
+                  'stroke-width="2" stroke-linecap="round" opacity=".6"/>'),
+            face=('<path d="M86 108 v20 q0 8 6 10 M154 108 v20 q0 8 -6 10" fill="none" '
+                  'stroke="#475569" stroke-width="5" stroke-linecap="round"/>'
+                  '<path d="M120 114 v8" stroke="#f4a26b" stroke-width="2" '
+                  'stroke-linecap="round" opacity=".7"/>'
+                  '<path d="M106 122 q7 -4 12 1 M134 122 q-7 -4 -12 1" fill="none" '
+                  'stroke="#475569" stroke-width="2.4" stroke-linecap="round"/>'),
+            mouth=('<path d="M112 133 q8 6 16 0" fill="none" stroke="#1e293b" '
                    'stroke-width="2.4" stroke-linecap="round"/>'),
         ),
     }
@@ -785,11 +1021,11 @@ def build() -> None:
                          encoding="utf-8")
 
     groups = []
-    for topic, subject, label, dot in (
-        ("physics-induction", "physics", "物理 · 电磁感应", "#6366f1"),
-        ("chemistry-equilibrium", "chemistry", "化学 · 化学平衡", "#10b981"),
-        ("math-derivative", "math", "数学 · 导数的几何意义", "#f59e0b"),
-    ):
+    catalog = json.loads((ROOT / "content" / "catalog.json").read_text(encoding="utf-8"))
+    for t in catalog["topics"]:
+        topic, subject = t["id"], t["subject"]
+        label = f'{PAL_SUBJECT[subject]} · {t["title"]}'
+        dot = PAL[subject]["main"]
         cards = []
         for b in bosses:
             if b["topic_id"] != topic:

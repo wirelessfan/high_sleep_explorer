@@ -192,6 +192,38 @@
       "trivia": "他梦到女神写下公式，醒来就能写出别人看不懂的恒等式。",
       "topic": "math-derivative",
       "section": "hard"
+    },
+    {
+      "id": "lavoisier",
+      "name": "拉瓦锡",
+      "en": "Antoine Lavoisier",
+      "life": "1743–1794",
+      "subject": "chemistry",
+      "rarity": "SR",
+      "image": "lavoisier.jpg",
+      "set": "pioneers",
+      "quote": "无物新生，无物消亡，万物皆转化。",
+      "contribution": "定量化学之父：确立质量守恒定律与燃烧的氧化学说，首次列出 33 种元素表。",
+      "textbook": "必修一 · 氧化还原反应",
+      "trivia": "他把「燃素」送进了化学史的垃圾桶，却在法国大革命中走上了断头台。法官说：共和国不需要科学家。",
+      "topic": "chemistry-redox",
+      "section": "boss"
+    },
+    {
+      "id": "avogadro",
+      "name": "阿伏伽德罗",
+      "en": "Amedeo Avogadro",
+      "life": "1776–1856",
+      "subject": "chemistry",
+      "rarity": "SR",
+      "image": "avogadro.jpg",
+      "set": "pioneers",
+      "quote": "同温同压下，相同体积的任何气体含有相同数目的分子。",
+      "contribution": "提出阿伏加德罗定律与分子概念，为「物质的量」奠基；NA 以他的名字命名。",
+      "textbook": "必修一 · 物质的量",
+      "trivia": "他的分子学说生前无人问津，死后近 50 年才被承认。没人数得清 6.02×10²³，但每个学化学的人都记得他的名字。",
+      "topic": "chemistry-mole",
+      "section": "boss"
     }
   ]
 }

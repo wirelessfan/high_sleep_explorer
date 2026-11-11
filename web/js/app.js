@@ -10,6 +10,7 @@ import { renderTopic } from './views/topic.js';
 import { renderSection } from './views/section.js';
 import { renderAlbum } from './views/album.js';
 import { renderMe, showAdoptSheet } from './views/me.js';
+import { renderAchievements } from './views/achievements.js';
 
 /* ---- 首次访问：自动建号 ---- */
 
@@ -35,6 +36,7 @@ async function boot() {
   route('/topic/:id/:sid', renderSection);
   route('/album', renderAlbum);
   route('/me', renderMe);
+  route('/achievements', renderAchievements);
 
   startRouter();
 }

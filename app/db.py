@@ -84,6 +84,22 @@ CREATE TABLE IF NOT EXISTS events (
     UNIQUE (user_id, key)
 );
 
+-- 成就卡：积分兑换出的凭证，code 即兑现码
+CREATE TABLE IF NOT EXISTS achievements (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    code TEXT NOT NULL UNIQUE,
+    ymd TEXT NOT NULL,             -- 兑换日 YYYY-MM-DD，用于日上限
+    points INTEGER NOT NULL,       -- 消耗积分
+    value_cny INTEGER NOT NULL,    -- 面值（元）
+    status TEXT NOT NULL DEFAULT 'issued',  -- issued / redeemed / void
+    created_at TEXT NOT NULL,
+    redeemed_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_achv_user ON achievements(user_id, ymd);
+CREATE INDEX IF NOT EXISTS idx_achv_code ON achievements(code);
+
 -- progress / checkins 的复合主键已覆盖 (user_id, ...) 前缀，不需要重复索引。
 CREATE INDEX IF NOT EXISTS idx_draws_user ON draws(user_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_events_user_kind ON events(user_id, kind, created_at);

@@ -270,9 +270,11 @@ def test_card_list_hides_nothing_but_tracks_owned(client, auth_headers):
     r = client.get("/api/v1/cards", headers=auth_headers)
     assert r.status_code == 200
     data = r.json()
-    assert len(data["cards"]) == 12
+    # 卡池会随内容扩充增长，不写死数字；只校验与内容文件一致
+    expected = len(content_loader.cards()["cards"])
+    assert len(data["cards"]) == expected
     assert data["owned_total"] == 0
-    assert len(data["sets"]) == 5
+    assert len(data["sets"]) == len(content_loader.rewards()["sets"])
 
 
 # ---------- 同步码 ----------
@@ -365,3 +367,113 @@ def test_duplicate_cards_convert_to_shards(client, auth_headers):
         total_shards += data["shards_gained"]
     assert dup_seen > 0, "6 次十连应有重复卡（卡池仅 12 张）"
     assert total_shards > 0
+
+
+# ---------- 成就卡 ----------
+
+def _set_points(client, headers, points):
+    with db.tx() as conn:
+        conn.execute(
+            "UPDATE users SET points=? WHERE token_hash=?",
+            (points, __import__("app.auth", fromlist=["x"]).hash_token(
+                headers["Authorization"][7:])),
+        )
+
+
+def test_achievement_stats_initial(client, auth_headers):
+    r = client.get("/api/v1/achievements", headers=auth_headers)
+    assert r.status_code == 200
+    d = r.json()
+    assert d["stats"]["points_per_card"] == 100
+    assert d["stats"]["value_cny"] == 50
+    assert d["stats"]["daily_limit"] == 2
+    assert d["stats"]["today_left"] == 2
+    assert d["cards"] == []
+    assert d["can_redeem"] is False
+
+
+def test_achievement_redeem_insufficient(client, auth_headers):
+    _set_points(client, auth_headers, 50)
+    r = client.post("/api/v1/achievements/redeem", json={"count": 1}, headers=auth_headers)
+    assert r.status_code == 400
+    assert "积分不足" in r.json()["detail"]
+
+
+def test_achievement_redeem_success(client, auth_headers):
+    _set_points(client, auth_headers, 250)
+    r = client.post("/api/v1/achievements/redeem", json={"count": 1}, headers=auth_headers)
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert d["points"] == 150
+    assert d["spent"] == 100
+    assert len(d["cards"]) == 1
+    card = d["cards"][0]
+    assert card["value_cny"] == 50
+    assert card["status"] == "issued"
+    assert len(card["code"]) >= 12
+    assert d["stats"]["today_count"] == 1
+    assert d["stats"]["today_left"] == 1
+
+
+def test_achievement_daily_limit(client, auth_headers):
+    """一天最多 2 张：第 3 张必须拒绝。"""
+    _set_points(client, auth_headers, 1000)
+    for i in range(2):
+        r = client.post("/api/v1/achievements/redeem", json={"count": 1}, headers=auth_headers)
+        assert r.status_code == 200, f"第 {i+1} 张应成功: {r.text}"
+    r3 = client.post("/api/v1/achievements/redeem", json={"count": 1}, headers=auth_headers)
+    assert r3.status_code == 400
+    assert "兑满" in r3.json()["detail"]
+
+    # 积分只被扣了 2 次
+    me = client.get("/api/v1/me", headers=auth_headers).json()
+    assert me["points"] == 800
+
+
+def test_achievement_redeem_two_at_once(client, auth_headers):
+    _set_points(client, auth_headers, 500)
+    r = client.post("/api/v1/achievements/redeem", json={"count": 2}, headers=auth_headers)
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert len(d["cards"]) == 2
+    assert d["spent"] == 200
+    assert d["cards"][0]["code"] != d["cards"][1]["code"]
+    assert d["today_left"] == 0
+
+
+def test_achievement_cannot_exceed_daily_limit_in_one_call(client, auth_headers):
+    _set_points(client, auth_headers, 1000)
+    r = client.post("/api/v1/achievements/redeem", json={"count": 3}, headers=auth_headers)
+    assert r.status_code == 400
+    assert "还能兑 2 张" in r.json()["detail"]
+
+
+def test_achievement_verify_once(client, auth_headers):
+    _set_points(client, auth_headers, 200)
+    r = client.post("/api/v1/achievements/redeem", json={"count": 1}, headers=auth_headers)
+    code = r.json()["cards"][0]["code"]
+
+    v1 = client.post("/api/v1/achievements/verify", json={"code": code}, headers=auth_headers)
+    assert v1.status_code == 200, v1.text
+    assert v1.json()["value_cny"] == 50
+
+    v2 = client.post("/api/v1/achievements/verify", json={"code": code}, headers=auth_headers)
+    assert v2.status_code == 400
+    assert "已经兑现" in v2.json()["detail"]
+
+
+def test_achievement_verify_unknown_code(client, auth_headers):
+    r = client.post("/api/v1/achievements/verify",
+                    json={"code": "AAAA-BBBB-CCCC"}, headers=auth_headers)
+    assert r.status_code == 400
+    assert "不存在" in r.json()["detail"]
+
+
+def test_achievement_codes_unique(client, auth_headers):
+    """批量生成不应撞码。"""
+    codes = set()
+    with db.tx() as conn:
+        from app.services import achievements as achv
+        for _ in range(200):
+            codes.add(achv._new_code(conn))
+    assert len(codes) == 200

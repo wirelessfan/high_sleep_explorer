@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import content_loader, db
-from app.routers import bosses, cards, content, progress, rewards, session
+from app.routers import achievements, bosses, cards, content, progress, rewards, session
 BASE_DIR = Path(__file__).resolve().parent.parent
 WEB_DIR = BASE_DIR / "web"
 ASSETS_DIR = BASE_DIR / "assets"
@@ -83,6 +83,7 @@ app.include_router(progress.router, prefix="/api/v1")
 app.include_router(rewards.router, prefix="/api/v1")
 app.include_router(cards.router, prefix="/api/v1")
 app.include_router(bosses.router, prefix="/api/v1")
+app.include_router(achievements.router, prefix="/api/v1")
 
 # 静态资源：卡片图、示意图
 if ASSETS_DIR.exists():

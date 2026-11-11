@@ -7,14 +7,14 @@
       "name": "物理",
       "color": "#3B82F6",
       "icon": "⚛",
-      "topics": ["physics-induction"]
+      "topics": ["physics-induction", "physics-newton", "physics-energy"]
     },
     {
       "id": "chemistry",
       "name": "化学",
       "color": "#10B981",
       "icon": "⚗",
-      "topics": ["chemistry-equilibrium"]
+      "topics": ["chemistry-equilibrium", "chemistry-redox", "chemistry-mole"]
     },
     {
       "id": "math",
@@ -40,6 +40,34 @@
       ]
     },
     {
+      "id": "physics-newton",
+      "subject": "physics",
+      "title": "牛顿运动定律",
+      "subtitle": "受力分析与 F=ma",
+      "grade": "高一",
+      "minutes": 25,
+      "cover": "physics",
+      "reward_card": "newton",
+      "description": "从「推一下箱子」出发，把受力分析 → F=ma → 两类问题一次走通。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    },
+    {
+      "id": "physics-energy",
+      "subject": "physics",
+      "title": "机械能与功能关系",
+      "subtitle": "动能定理与机械能守恒",
+      "grade": "高一",
+      "minutes": 25,
+      "cover": "physics",
+      "reward_card": "galileo",
+      "description": "功是能量转化的量度。三句话吃透力学能量问题：W合=ΔEk、W重=−ΔEp、只有重力做功时机械能守恒。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    },
+    {
       "id": "chemistry-equilibrium",
       "subject": "chemistry",
       "title": "化学平衡",
@@ -49,6 +77,34 @@
       "cover": "equilibrium",
       "reward_card": "curie",
       "description": "浓度、压强、温度改变时平衡往哪边移？用「对抗改变」四个字吃透。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    },
+    {
+      "id": "chemistry-redox",
+      "subject": "chemistry",
+      "title": "氧化还原反应",
+      "subtitle": "化合价升降与电子转移",
+      "grade": "高一",
+      "minutes": 25,
+      "cover": "chemistry",
+      "reward_card": "lavoisier",
+      "description": "「升失氧、降得还」六个字吃透氧化还原；从得氧失氧到电子转移，一次讲清本质。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    },
+    {
+      "id": "chemistry-mole",
+      "subject": "chemistry",
+      "title": "物质的量",
+      "subtitle": "摩尔与阿伏加德罗常数",
+      "grade": "高一",
+      "minutes": 25,
+      "cover": "chemistry",
+      "reward_card": "avogadro",
+      "description": "物质的量是连接「微观粒子」和「宏观称量」的桥。三个公式走天下：n=N/NA、n=m/M、n=V/Vm。",
       "sections": [
         "quick", "basic", "summary", "hard", "practice", "boss"
       ]

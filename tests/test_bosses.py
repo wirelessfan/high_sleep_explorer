@@ -26,17 +26,11 @@ except Exception:  # pragma: no cover
     HAS_CLIENT = False
 
 ASSETS = ROOT / "assets" / "bosses"
-TOPICS = {
-    "physics-induction": "physics",
-    "chemistry-equilibrium": "chemistry",
-    "math-derivative": "math",
-}
-SECTION_IDS = ["quick", "basic", "summary", "hard", "practice", "boss"]
-SCIENTIST = {
-    "physics-induction": "faraday",
-    "chemistry-equilibrium": "curie",
-    "math-derivative": "gauss",
-}
+_catalog = json.loads((ROOT / "content" / "catalog.json").read_text(encoding="utf-8"))
+TOPICS = {t["id"]: t["subject"] for t in _catalog["topics"]}
+SECTION_IDS = [s["id"] for s in _catalog["sections"]]
+# 每个主题的大 BOSS = 该主题的 reward_card（守关科学家即奖励卡）
+SCIENTIST = {t["id"]: t["reward_card"] for t in _catalog["topics"]}
 
 
 def load_json(path: Path):
@@ -76,7 +70,7 @@ class BossCatalogTests(unittest.TestCase):
         self.assertIn("公有领域", series["license"])
 
     def test_every_section_has_exactly_one_boss(self):
-        self.assertEqual(len(self.bosses), 18)
+        self.assertEqual(len(self.bosses), len(TOPICS) * len(SECTION_IDS))
         seen = set()
         for b in self.bosses:
             key = (b["topic_id"], b["section_id"])
@@ -88,7 +82,7 @@ class BossCatalogTests(unittest.TestCase):
 
     def test_scientists_are_the_big_bosses(self):
         big = [b for b in self.bosses if b["tier"] == "big"]
-        self.assertEqual(len(big), 3)
+        self.assertEqual(len(big), len(TOPICS))
         for b in big:
             self.assertEqual(b["section_id"], "boss")
             card_id = b["card_id"]
@@ -123,7 +117,7 @@ class BossCatalogTests(unittest.TestCase):
 
     def test_svg_assets_valid(self):
         files = sorted(ASSETS.glob("*.svg"))
-        self.assertEqual(len(files), 18)
+        self.assertEqual(len(files), len(TOPICS) * len(SECTION_IDS))
         for b in self.bosses:
             path = ASSETS / Path(b["svg"]).name
             self.assertTrue(path.is_file(), f"缺立绘: {path}")
@@ -148,7 +142,8 @@ class BossLoaderTests(unittest.TestCase):
         content_loader.clear_cache()
 
     def test_boss_for_lookup_and_fallback(self):
-        b = content_loader.boss_for("physics-induction", "boss")
+        faraday_topic = next(t for t, s in SCIENTIST.items() if s == "faraday")
+        b = content_loader.boss_for(faraday_topic, "boss")
         self.assertEqual(b["name"], "法拉第")
         self.assertEqual(b["tier"], "big")
         self.assertEqual(content_loader.boss_for("physics-induction", "nope"), None)
@@ -189,8 +184,10 @@ class BossApiTests(unittest.TestCase):
         r = self.ctx.get("/api/v1/bosses", headers=self.headers)
         self.assertEqual(r.status_code, 200)
         d = r.json()
-        self.assertEqual((d["total"], d["mini"], d["big"]), (18, 15, 3))
-        self.assertEqual(len(d["bosses"]), 18)
+        total = len(TOPICS) * len(SECTION_IDS)
+        self.assertEqual((d["total"], d["mini"], d["big"]),
+                         (total, total - len(TOPICS), len(TOPICS)))
+        self.assertEqual(len(d["bosses"]), total)
         self.assertEqual(d["series"]["name"], "谬误研究所")
 
     def test_topic_and_section_embed_boss(self):

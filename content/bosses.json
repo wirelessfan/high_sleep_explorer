@@ -376,6 +376,486 @@
         "accent": "#fb7185"
       },
       "card_id": "gauss"
+    },
+    {
+      "id": "physics-newton-quick",
+      "topic_id": "physics-newton",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "惯性球",
+      "en": "Inerto",
+      "code": "No.16",
+      "element": "固执惯性",
+      "skill": "原地装死",
+      "hp": 5,
+      "taunt": "不动！我就是不动！有本事把我的合外力变成零再来。",
+      "purified": "它终于滚动起来：力不是维持运动的原因，是改变运动的原因。",
+      "svg": "/assets/bosses/physics-newton-quick.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-newton-basic",
+      "topic_id": "physics-newton",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "斜面兽",
+      "en": "Inclino",
+      "code": "No.17",
+      "element": "变幻斜坡",
+      "skill": "倾角乱变",
+      "hp": 10,
+      "taunt": "θ 取什么值，我的加速度就唱什么歌～",
+      "purified": "斜面放平：a = g·sinθ，两个极端检验全过。",
+      "svg": "/assets/bosses/physics-newton-basic.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-newton-summary",
+      "topic_id": "physics-newton",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "矢量雾",
+      "en": "Vecto",
+      "code": "No.18",
+      "element": "迷失方向",
+      "skill": "分量障眼法",
+      "hp": 1,
+      "taunt": "F 和 a 被我拆得七零八落，你还拼得回来吗？",
+      "purified": "雾中分量归位：x 方向 y 方向，各列各的牛二。",
+      "svg": "/assets/bosses/physics-newton-summary.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-newton-hard",
+      "topic_id": "physics-newton",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "失重幽灵",
+      "en": "Floaty",
+      "code": "No.19",
+      "element": "视重错觉",
+      "skill": "视重戏法",
+      "hp": 3,
+      "taunt": "我轻了！我失重了！——不，是你的支持力在骗你。",
+      "purified": "幽灵现形：重力没变，变的只是体重计的读数。",
+      "svg": "/assets/bosses/physics-newton-hard.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-newton-practice",
+      "topic_id": "physics-newton",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "传送带将",
+      "en": "Belty",
+      "code": "No.20",
+      "element": "皮带空转",
+      "skill": "摩擦反转",
+      "hp": 8,
+      "taunt": "我的摩擦力一会儿向前一会儿向后，你猜猜看？",
+      "purified": "皮带停稳：摩擦力方向看相对运动趋势，不再靠猜。",
+      "svg": "/assets/bosses/physics-newton-practice.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-newton-boss",
+      "topic_id": "physics-newton",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "牛顿",
+      "en": "Isaac Newton",
+      "code": "BOSS",
+      "element": "万有引力与三定律",
+      "skill": "巨肩审判",
+      "hp": 1,
+      "taunt": "如果说我看得更远，那是因为我站在巨人的肩上。现在，轮到你往上爬了。",
+      "purified": "他从苹果树下起身：这颗果实，交给你了。",
+      "svg": "/assets/bosses/physics-newton-boss.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": "newton"
+    },
+    {
+      "id": "physics-energy-quick",
+      "topic_id": "physics-energy",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "焦耳豆",
+      "en": "Jouly",
+      "code": "No.21",
+      "element": "乱窜热量",
+      "skill": "能量乱窜",
+      "hp": 5,
+      "taunt": "能量守恒！可我藏在哪个口袋里，你找不到～",
+      "purified": "豆子亮起来：能量没有消失，只是换了口袋。",
+      "svg": "/assets/bosses/physics-energy-quick.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-energy-basic",
+      "topic_id": "physics-energy",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "动能兽",
+      "en": "Kineco",
+      "code": "No.22",
+      "element": "速度平方陷阱",
+      "skill": "平方迷惑",
+      "hp": 10,
+      "taunt": "速度翻倍？我可不是翻倍那么简单。",
+      "purified": "它排成一行：½mv²，那个平方终于被看清了。",
+      "svg": "/assets/bosses/physics-energy-basic.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-energy-summary",
+      "topic_id": "physics-energy",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "守恒钟",
+      "en": "Conso",
+      "code": "No.23",
+      "element": "恒定总量",
+      "skill": "天平摇摆",
+      "hp": 1,
+      "taunt": "左边动能右边势能，加减你来算！",
+      "purified": "天平放平：Ek + Ep，左右永远相等。",
+      "svg": "/assets/bosses/physics-energy-summary.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-energy-hard",
+      "topic_id": "physics-energy",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "摩擦双生",
+      "en": "Fricto",
+      "code": "No.24",
+      "element": "生热诡辩",
+      "skill": "相对路程",
+      "hp": 3,
+      "taunt": "我做的功和产生的热，可不是一回事哦～",
+      "purified": "双生合体：Q = f × 相对路程，这才是完整答案。",
+      "svg": "/assets/bosses/physics-energy-hard.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-energy-practice",
+      "topic_id": "physics-energy",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "过山车将",
+      "en": "Coaster",
+      "code": "No.25",
+      "element": "竖直圆环",
+      "skill": "环顶失重",
+      "hp": 8,
+      "taunt": "最高点为什么掉不下来？先算算你的向心加速度！",
+      "purified": "轨道贯通：守恒求速度，牛二求力，一气呵成。",
+      "svg": "/assets/bosses/physics-energy-practice.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-energy-boss",
+      "topic_id": "physics-energy",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "伽利略",
+      "en": "Galileo Galilei",
+      "code": "BOSS",
+      "element": "理想实验",
+      "skill": "斜面审判",
+      "hp": 1,
+      "taunt": "我的斜面没有摩擦，我的推理没有终点。来，接住这个摆锤。",
+      "purified": "他把摆锤挂回原位：它还会摆回来，这就是守恒。",
+      "svg": "/assets/bosses/physics-energy-boss.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": "galileo"
+    },
+    {
+      "id": "chemistry-redox-quick",
+      "topic_id": "chemistry-redox",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "电子跳蚤",
+      "en": "Fleco",
+      "code": "No.26",
+      "element": "电子乱窜",
+      "skill": "电子争夺",
+      "hp": 5,
+      "taunt": "抢电子！谁先抢到听谁的！",
+      "purified": "跳蚤安分下来：得失电子总数终于相等了。",
+      "svg": "/assets/bosses/chemistry-redox-quick.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-redox-basic",
+      "topic_id": "chemistry-redox",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "歪价签",
+      "en": "Tagger",
+      "code": "No.27",
+      "element": "乱标价态",
+      "skill": "价态涂鸦",
+      "hp": 10,
+      "taunt": "0、+1、+5、−1……我随口报数，你敢接吗？",
+      "purified": "价签排齐：先定 H 是 +1、O 是 −2，再解未知数。",
+      "svg": "/assets/bosses/chemistry-redox-basic.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-redox-summary",
+      "topic_id": "chemistry-redox",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "双线桥怪",
+      "en": "Bridgey",
+      "code": "No.28",
+      "element": "桥线缠绕",
+      "skill": "箭头打结",
+      "hp": 1,
+      "taunt": "两条线该从谁指到谁？绕晕你为止～",
+      "purified": "线桥理顺：双线桥自指前后，单线桥跨元素。",
+      "svg": "/assets/bosses/chemistry-redox-summary.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-redox-hard",
+      "topic_id": "chemistry-redox",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "歧化双脸",
+      "en": "Disco",
+      "code": "No.29",
+      "element": "价态分裂",
+      "skill": "一升一降",
+      "hp": 3,
+      "taunt": "我一半升高一半降低，中间价态最刺激！",
+      "purified": "双脸合拢：归中不交叉，歧化各一半。",
+      "svg": "/assets/bosses/chemistry-redox-hard.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-redox-practice",
+      "topic_id": "chemistry-redox",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "配平天平将",
+      "en": "Stoi",
+      "code": "No.30",
+      "element": "系数乱配",
+      "skill": "守恒偷懒",
+      "hp": 8,
+      "taunt": "电子守恒？我先随便配个系数凑合一下～",
+      "purified": "天平锁定：得失电子相等，系数自然落位。",
+      "svg": "/assets/bosses/chemistry-redox-practice.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-redox-boss",
+      "topic_id": "chemistry-redox",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "拉瓦锡",
+      "en": "Antoine Lavoisier",
+      "code": "BOSS",
+      "element": "质量守恒",
+      "skill": "天平审判",
+      "hp": 1,
+      "taunt": "无物新生，无物消亡——先称一称，你到底带来了什么。",
+      "purified": "他把天平递给你：质量守恒，现在也归你保管了。",
+      "svg": "/assets/bosses/chemistry-redox-boss.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": "lavoisier"
+    },
+    {
+      "id": "chemistry-mole-quick",
+      "topic_id": "chemistry-mole",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "摩尔豆",
+      "en": "Moley",
+      "code": "No.31",
+      "element": "数不清粒子",
+      "skill": "数数大法",
+      "hp": 5,
+      "taunt": "6.02×10²³ 个粒子，你慢慢数～",
+      "purified": "豆子排成整齐一列：n = N/NA，数数有了公式。",
+      "svg": "/assets/bosses/chemistry-mole-quick.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-mole-basic",
+      "topic_id": "chemistry-mole",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "天平兽",
+      "en": "Weighy",
+      "code": "No.32",
+      "element": "称量错位",
+      "skill": "单位陷阱",
+      "hp": 10,
+      "taunt": "18、18 g、18 g/mol——你分得清我是谁？",
+      "purified": "三张标签贴对位置：数值相等，身份不同。",
+      "svg": "/assets/bosses/chemistry-mole-basic.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-mole-summary",
+      "topic_id": "chemistry-mole",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "量筒怪",
+      "en": "Beako",
+      "code": "No.33",
+      "element": "刻度失真",
+      "skill": "液体冒充",
+      "hp": 1,
+      "taunt": "标况下我也是 22.4 L 哦——真的吗？",
+      "purified": "刻度清晰起来：22.4 L/mol 只属于标况下的气体。",
+      "svg": "/assets/bosses/chemistry-mole-summary.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-mole-hard",
+      "topic_id": "chemistry-mole",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "22.4 幽灵",
+      "en": "Gasly",
+      "code": "No.34",
+      "element": "气体幻影",
+      "skill": "条件隐身",
+      "hp": 3,
+      "taunt": "常温常压下我也能当 22.4 L……你就说信不信吧。",
+      "purified": "幽灵退散：标况 + 气体，两个前提缺一不可。",
+      "svg": "/assets/bosses/chemistry-mole-hard.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-mole-practice",
+      "topic_id": "chemistry-mole",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "配液将",
+      "en": "Solution",
+      "code": "No.35",
+      "element": "浓度错配",
+      "skill": "定容迷惑",
+      "hp": 8,
+      "taunt": "溶剂体积就是溶液体积？天真的孩子。",
+      "purified": "容量瓶刻度线落定：c = n/V，V 是溶液的体积。",
+      "svg": "/assets/bosses/chemistry-mole-practice.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-mole-boss",
+      "topic_id": "chemistry-mole",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "阿伏伽德罗",
+      "en": "Amedeo Avogadro",
+      "code": "BOSS",
+      "element": "气体定律",
+      "skill": "分子审判",
+      "hp": 1,
+      "taunt": "同温同压，同体积必同分子数——这是我的定律，也是我的审判。",
+      "purified": "他把分子模型递给你：数的桥，以后由你来架。",
+      "svg": "/assets/bosses/chemistry-mole-boss.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": "avogadro"
     }
   ]
 }
