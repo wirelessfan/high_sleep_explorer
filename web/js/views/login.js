@@ -90,6 +90,41 @@ export async function renderLogin(view) {
       style: 'font-size:11px;color:#b6a498;text-align:center;margin-top:12px',
       text: '首次登录后可在「我的」页修改密码',
     }));
+
+    /* ---- 访客免密演示通道 ---- */
+    const guestDivider = el('div', {
+      style: 'display:flex;align-items:center;gap:10px;margin:20px 0 12px;color:#a3928a;font-size:12px',
+    }, [
+      el('div', { style: 'flex:1;height:1px;background:#f0e4d4' }),
+      el('span', { text: '或 免密码体验' }),
+      el('div', { style: 'flex:1;height:1px;background:#f0e4d4' }),
+    ]);
+    card.appendChild(guestDivider);
+
+    const guestBtn = el('button', {
+      class: 'btn ghost full',
+      style: 'background:#fdfaf3;border:1.5px solid #ebd9b8;color:#92400e;font-weight:800;border-radius:12px',
+      text: '✨ 访客一键体验（免密演示）',
+      onclick: async () => {
+        guestBtn.disabled = true;
+        guestBtn.textContent = '正在进入演示环境…';
+        try {
+          await api.guestLogin();
+          toast('已以演示访客身份进入');
+          location.hash = '#/';
+          location.reload();
+        } catch (err) {
+          toast(err.message || '访客模式进入失败');
+          guestBtn.disabled = false;
+          guestBtn.textContent = '✨ 访客一键体验（免密演示）';
+        }
+      },
+    });
+    card.appendChild(guestBtn);
+    card.appendChild(el('div', {
+      style: 'font-size:11px;color:#8a7a70;text-align:center;margin-top:8px;line-height:1.5',
+      text: '演示模式：可自由浏览全学科知识图解、SVG 动效及做题体验，管理权限受限',
+    }));
   }
 
   root.appendChild(card);

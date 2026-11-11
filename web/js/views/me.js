@@ -10,19 +10,41 @@ export async function renderMe(view) {
 
   root.appendChild(el('div', { style: 'padding:2px 2px 0' }, [
     el('div', { style: 'font-size:11px;letter-spacing:.16em;color:#a3928a;font-weight:700;text-transform:uppercase', text: 'Profile' }),
-    el('div', { style: 'font-size:19px;font-weight:800;letter-spacing:-.01em;margin-top:2px', text: me.nickname }),
+    el('div', { class: 'row', style: 'gap:8px;align-items:center;margin-top:2px' }, [
+      el('div', { style: 'font-size:19px;font-weight:800;letter-spacing:-.01em', text: me.nickname }),
+      me.is_guest ? el('span', {
+        class: 'chip',
+        style: 'background:#fef3c7;border-color:#fcd34d;color:#92400e;font-size:11px;font-weight:800;padding:2px 8px',
+        text: '演示访客',
+      }) : null,
+    ]),
     el('div', { style: 'font-size:11.5px;color:#b6a498;margin-top:2px', text: `账号 ${me.username || '—'}` }),
   ]));
+
+  /* ---- 演示访客专用提示卡 ---- */
+  if (me.is_guest) {
+    root.appendChild(el('section', {
+      class: 'panel',
+      style: 'background:#fefce8;border:1.5px dashed #facc15;padding:12px 14px',
+    }, [
+      el('div', { style: 'font-size:13px;font-weight:800;color:#854d0e;margin-bottom:4px', text: '💡 当前处于演示访客体验模式' }),
+      el('div', { style: 'font-size:12px;color:#713f12;line-height:1.6',
+        text: '本模式用于展示全站数理化核心功能、板书图解与 60fps 动态模拟实验。无需密码，管理权限受限（不支持修改密码、真实礼品核销）。' }),
+    ]));
+  }
 
   /* ---- 账号与安全 ---- */
   root.appendChild(el('section', { class: 'panel' }, [
     el('div', { style: 'font-size:13.5px;font-weight:800', text: '账号与安全' }),
     el('div', {
       style: 'font-size:11.5px;color:#a3928a;margin-top:3px;line-height:1.7',
-      text: `当前登录：${me.username || '—'}（${me.nickname}）`,
+      text: me.is_guest ? '当前为免密公开演示账号，所有功能即开即用' : `当前登录：${me.username || '—'}（${me.nickname}）`,
     }),
     el('div', { class: 'row', style: 'margin-top:12px;gap:8px' }, [
-      el('button', {
+      me.is_guest ? el('button', {
+        class: 'btn ghost sm', style: 'flex:1;opacity:.65', text: '免密账号',
+        onclick: () => toast('演示访客账号无需修改密码'),
+      }) : el('button', {
         class: 'btn ghost sm', style: 'flex:1', text: '修改密码',
         onclick: () => showPasswordSheet(),
       }),
