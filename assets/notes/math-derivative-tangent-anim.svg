@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 340" width="100%" height="100%">
+  <defs>
+    <pattern id="gridMathAnim" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#fef3c7" stroke-width="0.8"/>
+    </pattern>
+    <filter id="shadowMathAnim" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+
+    <style>
+      /* 动点 Q 沿曲线滑向切点 P 的极限过程 (5s 循环) */
+      @keyframes pointQSlide {
+        0% { transform: translate(360px, 80px); }
+        35% { transform: translate(290px, 108px); }
+        70% { transform: translate(230px, 136px); }
+        85%, 95% { transform: translate(202px, 149px); }
+        100% { transform: translate(360px, 80px); }
+      }
+      /* 割线旋转逼近切线 (斜率由 -0.75 旋转至 -0.5 切线极限) */
+      @keyframes secantRotate {
+        0% { transform: rotate(-7deg); }
+        35% { transform: rotate(-4deg); }
+        70% { transform: rotate(-1.5deg); }
+        85%, 95% { transform: rotate(0deg); }
+        100% { transform: rotate(-7deg); }
+      }
+      /* 极限重合高亮光晕 */
+      @keyframes limitGlow {
+        0%, 75% { opacity: 0; }
+        85%, 95% { opacity: 1; filter: drop-shadow(0 0 6px #dc2626); }
+        100% { opacity: 0; }
+      }
+
+      .anim-point-q {
+        animation: pointQSlide 5s ease-in-out infinite;
+      }
+      .anim-secant-line {
+        transform-origin: 200px 150px;
+        animation: secantRotate 5s ease-in-out infinite;
+      }
+      .limit-flash {
+        animation: limitGlow 5s infinite;
+      }
+    </style>
+  </defs>
+
+  <rect width="640" height="340" rx="14" fill="#fffdfa" filter="url(#shadowMathAnim)"/>
+  <rect width="640" height="340" rx="14" fill="url(#gridMathAnim)"/>
+
+  <!-- 顶部标签 -->
+  <rect x="180" y="8" width="280" height="26" fill="rgba(245, 158, 11, 0.3)" rx="3" transform="rotate(-0.4 320 21)"/>
+  <text x="320" y="26" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="900" fill="#92400e" text-anchor="middle" letter-spacing="1">
+    ⚡ 动态演练 · 割线逼近切线的极限全过程
+  </text>
+
+  <g transform="translate(40, 48)">
+    <rect width="560" height="265" rx="10" fill="#ffffff" stroke="#fde68a" stroke-width="1.5"/>
+
+    <!-- 坐标系 -->
+    <line x1="50" y1="215" x2="50" y2="30" stroke="#64748b" stroke-width="2"/>
+    <path d="M 47 35 L 50 25 L 53 35 Z" fill="#64748b"/>
+    <text x="35" y="38" font-family="sans-serif" font-size="13" font-weight="800" fill="#334155">y</text>
+
+    <line x1="50" y1="215" x2="510" y2="215" stroke="#64748b" stroke-width="2"/>
+    <path d="M 505 212 L 515 215 L 505 218 Z" fill="#64748b"/>
+    <text x="515" y="220" font-family="sans-serif" font-size="13" font-weight="800" fill="#334155">x</text>
+
+    <!-- 函数曲线 y = f(x) -->
+    <path d="M 60 215 Q 160 170, 200 150 Q 280 110, 430 65" fill="none" stroke="#2563eb" stroke-width="3"/>
+    <text x="435" y="62" font-family="'Courier New',sans-serif" font-size="13" font-weight="900" fill="#2563eb">y = f(x)</text>
+
+    <!-- 动态割线：绕切点 P(200, 150) 旋转，最终与切线重合 -->
+    <g class="anim-secant-line">
+      <line x1="80" y1="210" x2="360" y2="70" stroke="#f59e0b" stroke-width="2.2" stroke-dasharray="4,3"/>
+      <text x="330" y="65" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="900" fill="#d97706">割线 (平均斜率)</text>
+    </g>
+
+    <!-- 红色基准切线 (极限目标态) -->
+    <line x1="90" y1="205" x2="330" y2="85" stroke="#dc2626" stroke-width="2.5" opacity="0.6"/>
+    <text x="92" y="195" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="900" fill="#dc2626">切线极限 T</text>
+
+    <!-- 固定切点 P(200, 150) -->
+    <circle cx="200" cy="150" r="5" fill="#dc2626" stroke="#991b1b" stroke-width="1.8"/>
+    <text x="180" y="140" font-family="'Courier New',sans-serif" font-size="12" font-weight="900" fill="#dc2626">P(x₀,y₀)</text>
+    <line x1="200" y1="150" x2="200" y2="215" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2,2"/>
+    <text x="200" y="228" font-family="sans-serif" font-size="11" font-weight="700" fill="#475569" text-anchor="middle">x₀</text>
+
+    <!-- 动态滑动的邻近点 Q (沿曲线滑向 P) -->
+    <g class="anim-point-q">
+      <circle cx="0" cy="0" r="6" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
+      <text x="8" y="-4" font-family="'Courier New',sans-serif" font-size="12" font-weight="900" fill="#d97706">Q(x₀+Δx)</text>
+    </g>
+
+    <!-- 极限重合提示气泡 (在 P 点闪烁) -->
+    <g class="limit-flash" transform="translate(170, 105)">
+      <rect x="0" y="0" width="135" height="24" rx="4" fill="#fee2e2" stroke="#ef4444"/>
+      <text x="67" y="16" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="900" fill="#b91c1c" text-anchor="middle">
+        Δx → 0 极限到达！
+      </text>
+    </g>
+
+    <!-- 右侧核心公式与演变推导卡片 -->
+    <g transform="translate(370, 95)">
+      <rect width="175" height="110" rx="8" fill="#fef9c3" stroke="#fde047" stroke-width="1.2"/>
+      <text x="87" y="22" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#854d0e" text-anchor="middle">★ 导数动态本质</text>
+
+      <!-- 极限式 -->
+      <text x="87" y="44" font-family="'Courier New',sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">
+        k = lim(Δx→0) Δy/Δx
+      </text>
+
+      <!-- 切线斜率 -->
+      <text x="87" y="66" font-family="'Courier New',sans-serif" font-size="12" font-weight="900" fill="#dc2626" text-anchor="middle">
+        f′(x₀) = 切线斜率 k
+      </text>
+
+      <line x1="12" y1="78" x2="163" y2="78" stroke="#fef08a" stroke-width="1"/>
+
+      <!-- 总结结论 -->
+      <text x="87" y="96" font-family="'PingFang SC',sans-serif" font-size="10" font-weight="800" fill="#a16207" text-anchor="middle">
+        割线在无限逼近中的极限就是切线！
+      </text>
+    </g>
+
+    <!-- 底部结论便签 -->
+    <rect x="25" y="235" width="510" height="20" rx="4" fill="#f0fdf4"/>
+    <text x="280" y="249" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#15803d" text-anchor="middle">
+      直观领悟：平均变化率是割线斜率，让自变量增量趋近于零，瞬时变化率就是切线斜率！
+    </text>
+  </g>
+</svg>

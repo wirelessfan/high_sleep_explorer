@@ -570,14 +570,14 @@
         {
           "h": "三、两类问题：一条链，反着走也通",
           "p": "「由力求运动」：受力分析 → F=ma 求加速度 → 运动学求 v、s。「由运动求力」：运动学先求 a → 回填 F=ma 解出未知力。中间那个 a 是枢纽，两类问题的全部秘密就是把 a 当成高速公路的换乘站。",
-          "image": "/assets/notes/phys-newton-two-problems.svg",
-          "caption": "牛顿力学两类基本问题解题逻辑：以加速度 a 为核心枢纽换乘站"
+          "image": "/assets/notes/phys-newton-two-problems-anim.svg",
+          "caption": "⚡ 动态模拟：两类基本问题以加速度 a 为中枢的正反向流动演练"
         },
         {
           "h": "四、超重与失重：看加速度，不看速度",
           "p": "加速度向上（加速上升、减速下降）→ 超重，N = m(g+a)；加速度向下（加速下降、减速上升）→ 失重，N = m(g−a)；a = g → 完全失重。口诀「上超下失」说的都是加速度方向，速度方向只是烟雾弹。",
-          "image": "/assets/notes/phys-newton-weight.svg",
-          "caption": "超重与失重视重对比：口诀「上超下失」，永远只看加速度 a 方向！"
+          "image": "/assets/notes/phys-newton-weight-anim.svg",
+          "caption": "⚡ 动态模拟：电梯升降中的视重跳变与超失重演化全过程"
         },
         {
           "h": "五、力学单位制：用单位检查答案",

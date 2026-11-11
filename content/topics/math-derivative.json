@@ -254,8 +254,8 @@
         {
           "h": "二、几何意义：切线斜率",
           "p": "f′(x₀) 就是曲线 y = f(x) 在点 (x₀, f(x₀)) 处切线的斜率。割线 PQ 当 Δx→0 时的极限就是切线。切线方程：y − f(x₀) = f′(x₀)(x − x₀)。",
-          "image": "/assets/notes/math-derivative-tangent.svg",
-          "caption": "导数的几何意义：割线逼近切线的极限过程与切线方程解析"
+          "image": "/assets/notes/math-derivative-tangent-anim.svg",
+          "caption": "⚡ 动态模拟：动点 Q 沿曲线滑向切点 P、割线逼近切线的极限演化全过程"
         },
         {
           "h": "三、基本求导公式",
