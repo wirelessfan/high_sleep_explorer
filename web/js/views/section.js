@@ -1,7 +1,7 @@
 /* 版块学习：六种类型的渲染与提交 */
 
 import * as api from '../api.js';
-import { el, toast, openSheet, biliEmbed, biliLink } from '../ui.js';
+import { el, toast, openSheet, biliEmbed, biliLink, previewImage } from '../ui.js';
 import { navigate } from '../router.js';
 import { bossBanner, bindBossProgress } from '../boss.js';
 
@@ -67,6 +67,15 @@ export async function renderSection(view, { id, sid, tier }) {
 
   view.innerHTML = '';
   view.appendChild(root);
+
+  // 绑定状元草图/笔记图片点击放大预览
+  root.addEventListener('click', (e) => {
+    const target = e.target.closest('.scholar-sketch, img.zoomable');
+    if (target && target.src) {
+      previewImage(target.src, target.alt || '状元手写笔记草图');
+    }
+  });
+
   // 挂载完成后再绑定，避免渲染期的 DOM 变动干扰观察器
   if (banner) bindBossProgress(root, banner, data.boss);
 }

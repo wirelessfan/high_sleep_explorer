@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+  <defs>
+    <pattern id="grid3" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1e5d4" stroke-width="0.8"/>
+    </pattern>
+    <filter id="shadow3" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- 背景信纸 -->
+  <rect width="640" height="380" rx="14" fill="#fdfcf7" filter="url(#shadow3)"/>
+  <rect width="640" height="380" rx="14" fill="url(#grid3)"/>
+
+  <!-- 顶部标签胶带 -->
+  <rect x="200" y="8" width="240" height="26" fill="rgba(245, 158, 11, 0.3)" rx="3" transform="rotate(-0.8 320 21)"/>
+  <text x="320" y="26" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="900" fill="#92400e" text-anchor="middle" letter-spacing="1">
+    ★ 状元秒杀图 · 楞次定律解题流水线
+  </text>
+
+  <!-- 左侧：经典四步法卡片 -->
+  <g transform="translate(30, 55)">
+    <rect width="270" height="295" rx="10" fill="#ffffff" stroke="#e6d5be" stroke-width="1.5"/>
+    <text x="16" y="25" font-family="'PingFang SC',sans-serif" font-size="13" font-weight="900" fill="#0f172a">
+      【常规题：四步流水线判断】
+    </text>
+
+    <!-- Step 1 -->
+    <g transform="translate(16, 40)">
+      <circle cx="10" cy="10" r="10" fill="#eff6ff"/>
+      <text x="10" y="14" font-family="sans-serif" font-size="11" font-weight="900" fill="#2563eb" text-anchor="middle">1</text>
+      <text x="26" y="14" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="700" fill="#1e293b">明确原磁场方向 B原</text>
+    </g>
+    <!-- 下箭头 -->
+    <path d="M 26 66 L 26 74 M 23 71 L 26 75 L 29 71" stroke="#94a3b8" stroke-width="2" fill="none"/>
+
+    <!-- Step 2 -->
+    <g transform="translate(16, 80)">
+      <circle cx="10" cy="10" r="10" fill="#fef3c7"/>
+      <text x="10" y="14" font-family="sans-serif" font-size="11" font-weight="900" fill="#d97706" text-anchor="middle">2</text>
+      <text x="26" y="14" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="700" fill="#1e293b">判断磁通量变化 ΔΦ （增 / 减）</text>
+    </g>
+    <path d="M 26 106 L 26 114 M 23 111 L 26 115 L 29 111" stroke="#94a3b8" stroke-width="2" fill="none"/>
+
+    <!-- Step 3 (高亮核心) -->
+    <g transform="translate(16, 120)">
+      <circle cx="10" cy="10" r="10" fill="#fee2e2"/>
+      <text x="10" y="14" font-family="sans-serif" font-size="11" font-weight="900" fill="#dc2626" text-anchor="middle">3</text>
+      <text x="26" y="14" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#b91c1c">楞次定方向：「增反减同」</text>
+      <text x="26" y="32" font-family="'PingFang SC',sans-serif" font-size="11" fill="#64748b">Φ 增加则 B感 与 B原 反向；减则同向</text>
+    </g>
+    <path d="M 26 160 L 26 168 M 23 165 L 26 169 L 29 165" stroke="#94a3b8" stroke-width="2" fill="none"/>
+
+    <!-- Step 4 -->
+    <g transform="translate(16, 175)">
+      <circle cx="10" cy="10" r="10" fill="#dcfce7"/>
+      <text x="10" y="14" font-family="sans-serif" font-size="11" font-weight="900" fill="#16a34a" text-anchor="middle">4</text>
+      <text x="26" y="14" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="700" fill="#1e293b">右手安培螺旋定则确定 I感</text>
+    </g>
+
+    <!-- 底部红笔批注 -->
+    <rect x="14" y="232" width="242" height="48" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+    <text x="135" y="252" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#c2410c" text-anchor="middle">
+      考场警示：感应磁场 B感 不是去「消灭」
+    </text>
+    <text x="135" y="268" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#c2410c" text-anchor="middle">
+      原磁场，而仅仅是「阻碍它的变化」！
+    </text>
+  </g>
+
+  <!-- 右侧：秒杀技巧卡 -->
+  <g transform="translate(320, 55)">
+    <rect width="290" height="295" rx="10" fill="#ffffff" stroke="#e6d5be" stroke-width="1.5"/>
+
+    <text x="18" y="26" font-family="'PingFang SC',sans-serif" font-size="13" font-weight="900" fill="#1e293b">
+      【选择题秒杀神器 · 二级结论】
+    </text>
+
+    <!-- 技巧 1: 来拒去留 -->
+    <g transform="translate(18, 44)">
+      <rect x="0" y="0" width="84" height="20" rx="4" fill="#fef3c7"/>
+      <text x="42" y="14" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#92400e" text-anchor="middle">① 来拒去留</text>
+      <text x="0" y="36" font-family="'PingFang SC',sans-serif" font-size="12" fill="#334155">
+        磁体靠近线圈 → 线圈<tspan fill="#dc2626" font-weight="800">排斥</tspan>阻碍靠近
+      </text>
+      <text x="0" y="54" font-family="'PingFang SC',sans-serif" font-size="12" fill="#334155">
+        磁体远离线圈 → 线圈<tspan fill="#2563eb" font-weight="800">吸引</tspan>阻碍远离
+      </text>
+      <text x="0" y="72" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#059669">
+        👉 免去 4 步推导，5 秒直接选出受力方向！
+      </text>
+    </g>
+
+    <line x1="18" y1="130" x2="272" y2="130" stroke="#f1e5d4" stroke-width="1"/>
+
+    <!-- 技巧 2: 增缩减扩 -->
+    <g transform="translate(18, 142)">
+      <rect x="0" y="0" width="84" height="20" rx="4" fill="#e0e7ff"/>
+      <text x="42" y="14" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#3730a3" text-anchor="middle">② 增缩减扩</text>
+      <text x="0" y="36" font-family="'PingFang SC',sans-serif" font-size="12" fill="#334155">
+        穿过回路磁通量增加 → 回路面积<tspan fill="#dc2626" font-weight="800">收缩</tspan>
+      </text>
+      <text x="0" y="54" font-family="'PingFang SC',sans-serif" font-size="12" fill="#334155">
+        穿过回路磁通量减少 → 回路面积<tspan fill="#2563eb" font-weight="800">扩张</tspan>
+      </text>
+    </g>
+
+    <!-- 底部口诀 -->
+    <g transform="translate(18, 228)">
+      <rect x="0" y="0" width="254" height="48" rx="8" fill="#fdf4ff" stroke="#f0abfc" stroke-width="1.2"/>
+      <text x="127" y="22" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#86198f" text-anchor="middle">
+        核心思想：一切感应效果
+      </text>
+      <text x="127" y="38" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#86198f" text-anchor="middle">
+        都是为了「对抗引起它的改变」！
+      </text>
+    </g>
+  </g>
+</svg>
