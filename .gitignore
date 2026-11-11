@@ -37,3 +37,7 @@ design/mockup/_*.png
 
 # 开发期临时截图
 .boss_*.png
+
+# 一次性脚本
+_tmp_*.py
+tools/_tmp_*.py

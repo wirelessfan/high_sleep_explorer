@@ -1,77 +1,214 @@
-# 高中理科学习助手
+# Sunny 的高中探索旅程
 
-面向高中生的物理 / 化学 / 数学微学习网站。每天 20–30 分钟精炼一个小主题，六大版块闯关，积分签到 + 名人卡收集。
+面向高中生的物理 / 化学 / 数学微学习网站。每天 20–30 分钟精炼一个小主题，六大版块、三档难度闯关，积分签到 + 名人卡收集 + 每日随机卡。
 
-- 部署目标：阿里云轻量 `123.56.217.104`，独立端口 **8090**（与同机 Hugo 博客隔离）
-- 技术栈：FastAPI + SQLite / 原生 ES Modules（无构建链）
-- 完整设计见 [实施计划.md](实施计划.md)
+- 线上地址：<https://123-56-217-104.sslip.io:8090/>
+- 部署目标：阿里云轻量 `123.56.217.104`，独立端口 **8090**（与同机 Hugo 博客的 `:80` 隔离）
+- 技术栈：FastAPI + SQLite / 原生 ES Modules（**无构建链**，改完刷新即生效）
+- 设计文档：[实施计划.md](实施计划.md)
 
-## 当前状态
+---
 
-**已上线可用**：https://123-56-217-104.sslip.io:8090/
+## 一、换一台电脑继续开发（从这里开始）
 
-| 阶段 | 内容 | 状态 |
-|---|---|---|
-| P0 | 骨架上线（FastAPI + Caddy 8090 + systemd） | 完成 |
-| P1 | 内容框架 + 三主题内容（3×6×27 = 81 题） | 完成 |
-| P2 | 六版块学习流程 + 即时判分 + 薄弱点 | 完成 |
-| P3 | 积分 · 签到 · 集卡（12 张卡 / 5 套装） | 完成 |
-| P4 | 移动端打磨与验收 | 进行中 |
+### 1. 装基础环境
 
-## 本地运行
+| 需要 | 说明 |
+|---|---|
+| Python 3.11+ | <https://www.python.org/downloads/>，安装时勾选 **Add Python to PATH** |
+| Git | <https://git-scm.com/downloads> |
+| Node.js（可选） | 只有跑 `check_frontend.mjs` 才需要，<https://nodejs.org/> |
+
+> 不需要 Docker、不需要 npm install、不需要任何前端构建工具。
+
+### 2. 克隆仓库
+
+```bash
+git clone https://gitee.com/matrix_python/learning_highschool.git
+cd learning_highschool
+```
+
+首次会要求输入 Gitee 账号密码（或已在系统里保存的凭据）。
+
+### 3. 建虚拟环境并装依赖
+
+**Windows（Git Bash / PowerShell 均可）：**
 
 ```bash
 python -m venv .venv
-.venv/bin/pip install -r requirements.txt      # Windows: .venv\Scripts\pip
-.venv/bin/python -m uvicorn app.main:app --reload --port 8011
-# 打开 http://127.0.0.1:8011
+.venv/Scripts/python.exe -m pip install -r requirements.txt
 ```
 
-自检与测试：
+**macOS / Linux：**
 
 ```bash
-python tools/check_content.py       # 内容完整性（选项重复/答案越界/解析为空）
-python tools/balance_answers.py     # 正确答案位置均衡（默认写回，--dry-run 只统计）
-node tools/check_frontend.mjs .     # 前端 import 路径（静态 + 动态）
-python -m pytest tests -q           # 40 个后端用例
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
 ```
 
-## 部署
+以后所有命令都用 `.venv/Scripts/python.exe`（Win）或 `.venv/bin/python`（Mac/Linux），不要用系统 Python。
+
+### 4. 本地跑起来
+
+```bash
+# Windows
+.venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8011
+# macOS / Linux
+.venv/bin/python -m uvicorn app.main:app --reload --port 8011
+```
+
+打开 <http://127.0.0.1:8011>。
+
+**本地没有账号**，需要先建测试账号：
+
+```bash
+python tools/seed_users.py --password 123456
+```
+
+会创建 `sunny` / `dad` / `mom` 三个账号，密码 `123456`。
+
+> 本地数据库在 `data/app.db`，已加入 `.gitignore`，不会污染仓库。想重置就删掉 `data/` 目录。
+
+### 5. 改完代码后的自检
+
+```bash
+python tools/check_content.py     # 内容完整性：选项重复、答案越界、解析为空、卡片缺图
+python tools/check_frontend.mjs . # 前端 import 路径 + 语法（需要 Node）
+python -m pytest tests -q         # 后端用例
+```
+
+**改内容必跑 `check_content.py`**，它能抓出缺图、答案越界这类问题。
+
+### 6. 提交并推回 Gitee
+
+```bash
+git add -A
+git commit -m "feat(content): 新增 XXX 主题"
+git push origin master
+```
+
+### 7. 部署到线上（可选，需要 VPS 权限）
 
 ```bash
 bash deploy/deploy.sh
 ```
 
-脚本会建用户、装 venv、写 systemd 与 Caddy `:8090` 配置、健康检查、装备份 cron。
-不会改动同机 `:80` 的 Hugo 博客。
+脚本会同步代码、装依赖、重启服务、健康检查，**不会碰同机 `:80` 的博客**。
+需要本机能 `ssh aliyun` 直连（详见 [SSH 配置](#ssh-配置)）。
 
-## 目录
+---
+
+## 二、内容怎么加
+
+### 目录结构
 
 ```
-.
-├── 任务书.txt                  # 原始需求
-├── 实施计划.md                 # 完整实施方案（架构/数据/API/部署/验收）
-└── design/mockup/              # 视觉样稿
-    ├── cards_v1.html           # 集卡册整页（浏览器直接打开）
-    ├── card_detail.html        # 单卡 + 详情弹层
-    ├── img/                    # 12 张公有领域肖像（已统一调色）
-    └── shot_*.png              # 渲染截图
+content/
+├── catalog.json           # 科目、主题索引、版块元数据
+├── topics/*.json          # 每个主题一个文件（六大版块 + 三档难度）
+├── cards/cards.json       # 卡片定义（图片、稀有度、套装、关联知识点）
+├── rewards.json           # 积分、抽卡概率、兑换比例、核销白名单
+├── bosses.json            # 守关怪图鉴（由 tools/generate_bosses.py 生成）
+├── daily.json             # 每日主题（节日特辑等）
+├── history.json           # 历史故事
+└── media/media.json       # B 站视频素材与入选理由
+
+web/js/views/              # 页面：home / subjects / topic / section / album / me / achievements / login
+app/routers/               # API：session / content / progress / rewards / cards / achievements / bosses
+app/services/              # 业务：grading / scoring / gacha / achievements / events / ratelimit
 ```
 
-## 六大版块
+### 新增一个主题
 
-快速测试 → 基础闯关 → 知识点总结 → 难点剖析 → 实战巩固 → Boss 彩蛋
+1. 在 `content/topics/` 下新建 `<科目>-<主题>.json`（照抄现成文件改）
+2. 在 `content/catalog.json` 的 `topics` 数组里登记，并挂到对应科目的 `topics` 列表
+3. 跑 `python tools/check_content.py` 校验
+4. 需要 Boss 立绘就改 `tools/generate_bosses.py` 的配置后重新生成
 
-## 集卡系统
+### 题目档位
 
-12 张物理/数学名人卡（牛顿、伽利略、法拉第、麦克斯韦、居里夫人、爱因斯坦、欧几里得、阿基米德、笛卡尔、高斯、欧拉、拉马努金），稀有度 N/R/SR/SSR，双保底，重复转碎片，5 个套装。
+每个版块支持 `basic` / `advanced` / `expert` 三档，内容放在 `sections[].tiers` 里。
+全通判定按「版块 × 已开放档位」的单元计。
 
-卡面素材来自 Wikimedia Commons 公有领域肖像，统一双色调处理，单张 10–22KB。
+### 答案位置
 
-## 部署
+`python tools/balance_answers.py` 会把正确答案轮换到 A/B/C/D，避免全选 A 就能得分。
+默认直接写回文件，加 `--dry-run` 只统计。
 
-见 [实施计划.md](实施计划.md) 第 10 节。
+---
 
-## 许可
+## 三、当前内容量
 
-人物肖像素材均为 Public Domain，来源与授权记录见 `实施计划.md` 附录 15.1。
+| 项 | 数量 |
+|---|---|
+| 主题 | 10 个（物理 4 / 化学 5 / 数学 1） |
+| 题目 | 491 题（基础 / 进阶 / 高级三档） |
+| 卡片 | 17 张，5 个套装 |
+| Boss 立绘 | 60 张 SVG |
+| 后端测试 | 126 个用例 |
+
+> 内容仍在持续扩充。准确数字以 `python tools/check_content.py` 的输出为准。
+
+## 四、功能概览
+
+**六大版块**：快速测试 → 基础闯关 → 知识点总结 → 难点剖析 → 实战巩固 → Boss 彩蛋
+
+**账号**：`sunny` / `dad` / `mom`，密码登录，可自助修改密码。首次登录后可在「我的」页改。
+
+**积分**：签到（连签加成）、版块首通、Boss、主题全通、复习（日上限）
+
+**成就卡**（真金白银，注意预算）：
+- `100 积分 = 1 张 50 元卡`，每天最多兑 2 张（50–100 元/天）
+- 每日随机卡：每人每天 1 次，¥5(50%) / ¥10(30%) / ¥20(15%) / ¥50(5%)，期望 ¥11/天
+- 抽到的卡可赠送给 `sunny`
+- **核销只能由 `dad` / `mom` 操作**，白名单在 `rewards.json` 的 `achievement.redeem_by`
+
+**数值都在 `content/rewards.json` 里**，改配置不用改代码。
+
+## 五、部署与运维
+
+| 项 | 位置 |
+|---|---|
+| 代码 | `/opt/learning_highschool` |
+| 数据库 | `/var/lib/learning-highschool/app.db` |
+| 备份 | `/var/backups/learning-highschool/`（每日 4:15，保留 14 天） |
+| 服务 | `systemctl status learning-highschool` |
+| 日志 | `journalctl -u learning-highschool -f` |
+| 反向代理 | Caddy `/etc/caddy/Caddyfile` 的 `:8090` 块 |
+
+### SSH 配置
+
+本机 `~/.ssh/config` 加：
+
+```
+Host aliyun
+    HostName 123.56.217.104
+    User root
+    IdentityFile ~/.ssh/aliyun_matrix2004.pem
+    IdentitiesOnly yes
+```
+
+密钥文件**不入库**（`.gitignore` 已排除 `*.pem`）。
+
+## 六、常见问题
+
+**Q：页面改了但浏览器没变**
+代码无构建链，浏览器可能缓存了旧 JS/CSS。服务端已对 `.html/.css/.js` 设置 `no-cache`，若仍不生效就硬刷新（Ctrl+Shift+R）。
+
+**Q：本地起不来，报 `ModuleNotFoundError`**
+用了系统 Python。改用 `.venv/Scripts/python.exe -m uvicorn ...`。
+
+**Q：`seed_users.py` 建完账号登录不了**
+确认用的是同一个数据库。默认读 `data/app.db`，可用 `LEARN_DB` 环境变量指定：
+
+```bash
+LEARN_DB=/path/to/app.db python tools/seed_users.py
+```
+
+**Q：改了 `db.py` 加字段，老数据怎么办**
+在 `init_db()` 里加迁移函数，按「列是否存在」判断并执行（幂等），不要只依赖版本号比较——历史上出现过两个迁移撞同一个版本号被跳过的问题。
+
+## 七、许可
+
+人物肖像来自 Wikimedia Commons，均为 Public Domain，来源记录见 [实施计划.md](实施计划.md) 附录 15.1。
+卡通插画（`assets/art/`）与 Boss 立绘（`assets/bosses/`）为原创 SVG。
