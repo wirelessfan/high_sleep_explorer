@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>集卡系统 · 视觉样稿</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#0f172a; --ink-2:#475569; --ink-3:#94a3b8;
+    --line:#e8edf3; --bg:#f7f9fc; --card:#fff;
+    --n:#94a3b8; --r:#38bdf8; --sr:#a78bfa; --ssr:#f59e0b;
+  }
+  body{
+    font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -10%,#eef4ff 0%,#f7f9fc 55%,#f4f7fb 100%);
+    color:var(--ink); padding:28px 20px 40px; min-height:100vh;
+  }
+  .wrap{max-width:1080px;margin:0 auto}
+  .eyebrow{font-size:12px;letter-spacing:.22em;color:var(--ink-3);text-transform:uppercase;margin-bottom:6px}
+  h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
+  h1 span{color:var(--ink-2);font-weight:500;font-size:13px;margin-left:10px;letter-spacing:0}
+  .sub{color:var(--ink-2);font-size:13px;margin-top:6px}
+
+  .panel{
+    background:linear-gradient(180deg,#fff,#fcfdff);
+    border:1px solid var(--line); border-radius:18px;
+    padding:18px; box-shadow:0 8px 30px -18px rgba(15,23,42,.25);
+    margin-top:18px; position:relative; overflow:hidden;
+  }
+  .panel::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(1px 1px at 12% 22%,#cbd5e1 50%,transparent 51%),
+      radial-gradient(1px 1px at 76% 12%,#cbd5e1 50%,transparent 51%),
+      radial-gradient(1.5px 1.5px at 44% 68%,#dbe3ec 50%,transparent 51%),
+      radial-gradient(1px 1px at 88% 54%,#dbe3ec 50%,transparent 51%),
+      radial-gradient(1px 1px at 28% 84%,#dbe3ec 50%,transparent 51%);
+  }
+  .hero{display:flex;gap:18px;align-items:center;position:relative;z-index:1}
+  .hero-art{
+    width:112px;height:140px;border-radius:14px;overflow:hidden;flex:0 0 auto;
+    border:1px solid #f0d9ae;background:#fff8ec;position:relative;
+    box-shadow:0 0 0 4px #fdf3e2,0 10px 22px -14px rgba(245,158,11,.8);
+  }
+  .hero-art img{width:100%;height:100%;object-fit:cover;display:block}
+  .hero-art .badge{position:absolute;top:6px;left:6px}
+  .hero-body{flex:1;min-width:0}
+  .hero-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .hero-name{font-size:19px;font-weight:800}
+  .tag{
+    font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 7px;border-radius:6px;
+    background:linear-gradient(135deg,#fde68a,#f59e0b);color:#7c2d12;border:1px solid #fcd34d;
+  }
+  .hero-desc{color:var(--ink-2);font-size:12.5px;line-height:1.6;margin-top:6px;max-width:52ch}
+  .chips{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#334155;
+    border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;
+  }
+  .chip b{font-variant-numeric:tabular-nums}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    background:var(--ink);color:#fff;border:0;border-radius:999px;
+    font-family:inherit;font-size:12.5px;font-weight:700;padding:9px 16px;cursor:pointer;
+  }
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid #d5dee8}
+  .hero-side{margin-left:auto;flex:0 0 auto;text-align:center}
+  .hero-side .lbl{font-size:11px;color:var(--ink-3);margin-bottom:6px}
+  .mini-row{display:flex;gap:8px}
+  .mini{
+    width:60px;border:1px solid var(--line);border-radius:10px;background:#fff;
+    padding:5px 4px;text-align:center;
+  }
+  .mini.on{border-color:#5eead4;box-shadow:0 0 0 3px #ecfdf5}
+  .mini .thumb{height:48px;border-radius:6px;overflow:hidden;background:#f1f5f9;display:flex;align-items:center;justify-content:center}
+  .mini .thumb img{width:100%;height:100%;object-fit:cover}
+  .mini .lock{font-size:16px;color:#cbd5e1}
+  .mini .nm{font-size:9.5px;color:var(--ink-2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .strip{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  .stat{
+    display:flex;align-items:center;gap:10px;background:#f1faf6;border:1px solid #d9f2e6;
+    border-radius:12px;padding:10px 12px;
+  }
+  .stat .ico{width:26px;height:26px;border-radius:8px;background:#fff;display:grid;place-items:center;font-size:13px;border:1px solid #e2f3ea}
+  .stat .txt{font-size:11.5px;color:#3f6b57;line-height:1.35}
+  .stat .txt b{color:#134e3a;font-weight:800;font-size:12.5px}
+  .stat .act{margin-left:auto;background:#fff;border:1px solid #d5e8df;border-radius:999px;font-size:11.5px;font-weight:700;color:#134e3a;padding:6px 12px;font-family:inherit;cursor:pointer}
+
+  .sec-h{display:flex;align-items:baseline;gap:10px;margin:26px 0 12px}
+  .sec-h h2{font-size:16px;font-weight:800}
+  .sec-h .hint{font-size:11.5px;color:var(--ink-3)}
+  .sec-h .more{margin-left:auto;font-size:11.5px;color:var(--ink-2);border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px}
+
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .card{
+    position:relative;border-radius:14px;overflow:hidden;background:#fff;
+    border:1px solid var(--line);box-shadow:0 2px 10px -8px rgba(15,23,42,.4);
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .card:hover{transform:translateY(-3px);box-shadow:0 14px 26px -18px rgba(15,23,42,.55)}
+  .card .art{position:relative;aspect-ratio:21/26;background:#eef2f7;overflow:hidden}
+  .card .art img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.02)}
+  .card .art::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,transparent 55%,rgba(15,23,42,.06) 100%);
+  }
+  .card .rar{
+    position:absolute;top:6px;left:6px;z-index:3;font-size:9px;font-weight:900;letter-spacing:.05em;
+    padding:2px 6px;border-radius:5px;color:#fff;
+  }
+  .rar.r-N{background:#94a3b8}.rar.r-R{background:#0ea5e9}.rar.r-SR{background:#8b5cf6}.rar.r-SSR{background:linear-gradient(135deg,#f59e0b,#d97706)}
+  .card.r-N .art{box-shadow:inset 0 0 0 2px #eef2f7}
+  .card.r-R .art{box-shadow:inset 0 0 0 2px #e0f2fe}
+  .card.r-SR .art{box-shadow:inset 0 0 0 2px #ede9fe}
+  .card.r-SSR .art{box-shadow:inset 0 0 0 2px #fef3c7}
+  .card .meta{padding:7px 8px 8px;text-align:center}
+  .card .nm{font-size:11.5px;font-weight:800;letter-spacing:.01em}
+  .card .en{font-size:8.5px;color:var(--ink-3);margin-top:1px;letter-spacing:.05em;text-transform:uppercase}
+  .card .cnt{font-size:9px;color:var(--ink-3);margin-top:3px}
+  .card.locked .art img{filter:brightness(0) opacity(.14)}
+  .card.locked .art{background:linear-gradient(160deg,#f1f5f9,#e8eef6)}
+  .card.locked .q{position:absolute;inset:0;display:grid;place-items:center;font-size:26px;font-weight:900;color:#cbd5e1}
+
+  .sets{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .set{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px}
+  .set .t{font-size:11px;font-weight:800;margin-bottom:6px}
+  .set .bar{height:5px;border-radius:99px;background:#eef2f7;overflow:hidden}
+  .set .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#34d399,#10b981)}
+  .set .p{font-size:9.5px;color:var(--ink-3);margin-top:5px;font-variant-numeric:tabular-nums}
+  .set.done{border-color:#a7f3d0;background:#f0fdf8}
+
+  .foot{margin-top:22px;font-size:11px;color:var(--ink-3);line-height:1.7;max-width:70ch}
+  .foot b{color:var(--ink-2)}
+  .credit{font-size:10px;color:#a8b3c2;margin-top:14px}
+
+  /* ---------- 移动端 ---------- */
+  @media (max-width: 760px){
+    body{padding:16px 12px 28px}
+    h1{font-size:19px;line-height:1.35}
+    h1 span{display:block;margin:4px 0 0;font-size:12px}
+    .panel{padding:14px;border-radius:16px}
+    .hero{flex-wrap:wrap;gap:12px}
+    .hero-art{width:86px;height:108px;border-radius:12px}
+    .hero-body{flex:1 1 auto;min-width:0}
+    .hero-name{font-size:17px}
+    .hero-desc{font-size:12px;max-width:none}
+    .chips{gap:6px;margin-top:9px}
+    .chip{font-size:11px;padding:4px 9px}
+    .btn{font-size:12px;padding:8px 13px}
+    .hero-side{margin:2px 0 0;width:100%;text-align:left}
+    .hero-side .lbl{margin-bottom:5px}
+    .mini{width:52px}
+    .mini .thumb{height:42px}
+    .strip{grid-template-columns:1fr;gap:8px}
+    .stat{padding:9px 10px}
+    .stat .txt{font-size:11px}
+    .stat .act{padding:5px 10px;font-size:11px}
+    .sec-h{margin:20px 0 10px;flex-wrap:wrap;gap:6px}
+    .sec-h h2{font-size:15px}
+    .sec-h .hint{font-size:10.5px;flex:1 1 100%}
+    .sec-h .more{margin-left:0;font-size:10.5px}
+    .grid{grid-template-columns:repeat(3,1fr);gap:8px}
+    .card{border-radius:11px}
+    .card .rar{font-size:8px;padding:1.5px 5px;top:4px;left:4px}
+    .card .meta{padding:6px 4px 7px}
+    .card .nm{font-size:10.5px}
+    .card .en{font-size:7.5px;letter-spacing:.02em}
+    .card .cnt{font-size:8px;margin-top:2px}
+    .sets{grid-template-columns:repeat(2,1fr);gap:8px}
+    .set{padding:8px}
+    .set .t{font-size:10.5px}
+    .set .p{font-size:9px}
+    .foot{font-size:10.5px}
+  }
+  @media (max-width: 380px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .sets{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Learning · Rewards</div>
+  <h1>理科名人集卡册 <span>12 张 · 5 个套装</span></h1>
+  <div class="sub">做主题、攒能量、开卡包 —— 每一张卡都对应一个知识点入口</div>
+
+  <!-- 主面板 -->
+  <section class="panel">
+    <div class="hero">
+      <div class="hero-art">
+        <span class="badge tag">SSR</span>
+        <img src="img/einstein.jpg" alt="爱因斯坦">
+      </div>
+      <div class="hero-body">
+        <div class="hero-title">
+          <span class="hero-name">爱因斯坦</span>
+          <span class="tag">SSR</span>
+          <span class="chip">世纪之光 1/2</span>
+        </div>
+        <div class="hero-desc">完成主题可积累能量，每消耗 10 能量开启一次卡包。集齐套装解锁徽章与额外积分。</div>
+        <div class="chips">
+          <span class="chip">🎟 卡包 <b>8</b>/10</span>
+          <span class="chip">⚡ 能量 <b>1240</b></span>
+          <button class="btn">🎁 开启卡包</button>
+          <button class="btn ghost">查看图鉴</button>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div class="lbl">最近获得</div>
+        <div class="mini-row">
+          <div class="mini on">
+            <div class="thumb"><img src="img/einstein.jpg" alt=""></div>
+            <div class="nm">爱因斯坦</div>
+          </div>
+          <div class="mini">
+            <div class="thumb"><span class="lock">🔒</span></div>
+            <div class="nm">未解锁</div>
+          </div>
+          <div class="mini">
+            <div class="thumb"><span class="lock">🔒</span></div>
+            <div class="nm">未解锁</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strip">
+      <div class="stat">
+        <div class="ico">🔥</div>
+        <div class="txt">本月已连签 <b>6 天</b><br>+2 能量 · +1 补签卡 · +1 抽卡券</div>
+        <button class="act">查看</button>
+      </div>
+      <div class="stat">
+        <div class="ico">🃏</div>
+        <div class="txt">距保底 SSR 还需 <b>14 抽</b><br>每 40 抽必出一张 SSR</div>
+        <button class="act">概率说明</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 图鉴 -->
+  <div class="sec-h">
+    <h2>我的图鉴</h2>
+    <span class="hint">已收集 8 / 12 · 重复卡自动转碎片</span>
+    <span class="more">碎片 46 · 可兑换</span>
+  </div>
+
+  <div class="grid">
+    <!-- 物理 -->
+    <div class="card r-SR"><div class="art"><span class="rar r-SR">SR</span><img src="img/newton.jpg" alt="牛顿"></div>
+      <div class="meta"><div class="nm">牛顿</div><div class="en">Isaac Newton</div><div class="cnt">×2</div></div></div>
+
+    <div class="card r-R"><div class="art"><span class="rar r-R">R</span><img src="img/galileo.jpg" alt="伽利略"></div>
+      <div class="meta"><div class="nm">伽利略</div><div class="en">Galileo Galilei</div><div class="cnt">×1</div></div></div>
+
+    <div class="card r-SR"><div class="art"><span class="rar r-SR">SR</span><img src="img/faraday.jpg" alt="法拉第"></div>
+      <div class="meta"><div class="nm">法拉第</div><div class="en">Michael Faraday</div><div class="cnt">×1</div></div></div>
+
+    <div class="card r-SSR"><div class="art"><span class="rar r-SSR">SSR</span><img src="img/maxwell.jpg" alt="麦克斯韦"></div>
+      <div class="meta"><div class="nm">麦克斯韦</div><div class="en">J. C. Maxwell</div><div class="cnt">×1</div></div></div>
+
+    <div class="card r-SR"><div class="art"><span class="rar r-SR">SR</span><img src="img/curie.jpg" alt="居里夫人"></div>
+      <div class="meta"><div class="nm">居里夫人</div><div class="en">Marie Curie</div><div class="cnt">×1</div></div></div>
+
+    <div class="card r-SSR"><div class="art"><span class="rar r-SSR">SSR</span><img src="img/einstein.jpg" alt="爱因斯坦"></div>
+      <div class="meta"><div class="nm">爱因斯坦</div><div class="en">Albert Einstein</div><div class="cnt">×1</div></div></div>
+
+    <!-- 数学 -->
+    <div class="card r-N"><div class="art"><span class="rar r-N">N</span><img src="img/euclid.jpg" alt="欧几里得"></div>
+      <div class="meta"><div class="nm">欧几里得</div><div class="en">Euclid</div><div class="cnt">×3</div></div></div>
+
+    <div class="card r-R"><div class="art"><span class="rar r-R">R</span><img src="img/archimedes.jpg" alt="阿基米德"></div>
+      <div class="meta"><div class="nm">阿基米德</div><div class="en">Archimedes</div><div class="cnt">×1</div></div></div>
+
+    <div class="card locked"><div class="art"><span class="rar r-N">N</span><div class="q">?</div></div>
+      <div class="meta"><div class="nm">？？？</div><div class="en">Locked</div><div class="cnt">集齐 5 张数学卡解锁</div></div></div>
+
+    <div class="card locked"><div class="art"><span class="rar r-SR">SR</span><div class="q">?</div></div>
+      <div class="meta"><div class="nm">？？？</div><div class="en">Locked</div><div class="cnt">完成导数主题解锁</div></div></div>
+
+    <div class="card locked"><div class="art"><span class="rar r-SSR">SSR</span><div class="q">?</div></div>
+      <div class="meta"><div class="nm">？？？</div><div class="en">Locked</div><div class="cnt">40 抽保底必得</div></div></div>
+
+    <div class="card locked"><div class="art"><span class="rar r-R">R</span><div class="q">?</div></div>
+      <div class="meta"><div class="nm">？？？</div><div class="en">Locked</div><div class="cnt">碎片兑换 25</div></div></div>
+  </div>
+
+  <!-- 套装 -->
+  <div class="sec-h">
+    <h2>套装进度</h2>
+    <span class="hint">集齐即发徽章 + 50 积分，永久展示在个人页</span>
+  </div>
+  <div class="sets">
+    <div class="set done"><div class="t">电磁双璧</div><div class="bar"><i style="width:100%"></i></div><div class="p">法拉第 + 麦克斯韦 · 2/2 ✓</div></div>
+    <div class="set"><div class="t">力学双子</div><div class="bar"><i style="width:50%"></i></div><div class="p">牛顿 + 伽利略 · 2/2</div></div>
+    <div class="set"><div class="t">世纪之光</div><div class="bar"><i style="width:0%"></i></div><div class="p">爱因斯坦 + 居里 · 0/2</div></div>
+    <div class="set"><div class="t">几何三贤</div><div class="bar"><i style="width:66%"></i></div><div class="p">欧几里得 + 阿基米德 + 笛卡尔 · 2/3</div></div>
+    <div class="set"><div class="t">数学三杰</div><div class="bar"><i style="width:33%"></i></div><div class="p">高斯 + 欧拉 + 拉马努金 · 1/3</div></div>
+  </div>
+
+  <div class="foot">
+    <b>样稿说明：</b>此页为视觉方向确认用，图片取自 Wikimedia Commons 公有领域肖像（12 张均已核对授权），仅用于评估版式。
+    正式版会把肖像统一做「单色调 + 描边」或换成原创 Q 版插画，以保证 12 张风格一致、单卡体积 &lt; 40KB。
+    卡面点击后进入「人物卡详情」：生平一句话、代表性贡献、关联知识点直达链接。
+  </div>
+  <div class="credit">Portraits: Wikimedia Commons · Public Domain</div>
+</div>
+</body>
+</html>
