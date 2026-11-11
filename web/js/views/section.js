@@ -380,12 +380,28 @@ async function renderLevels(body, topicId, sectionId, sec) {
 async function renderReading(body, topicId, sectionId, sec) {
   const blocks = el('section', { class: 'panel' });
   (sec.blocks || []).forEach((b) => {
-    const node = el('div', { class: 'read-block' }, [
+    const children = [
       el('h4', { text: b.h }),
-      el('p', { text: b.p }),
-    ]);
-    if (b.formula) node.appendChild(el('div', { class: 'formula', text: b.formula }));
-    blocks.appendChild(node);
+      el('p', { html: b.p }),
+    ];
+    if (b.image || b.diagram) {
+      const src = b.image || b.diagram;
+      const fig = el('div', { class: 'read-figure' }, [
+        el('img', {
+          src,
+          class: 'scholar-sketch',
+          alt: b.caption || b.h || '知识点图解',
+          loading: 'lazy',
+        }),
+        el('div', {
+          class: 'sketch-caption',
+          html: `🔍 ${b.caption || '点击图片可放大查看高清图解'}`,
+        }),
+      ]);
+      children.push(fig);
+    }
+    if (b.formula) children.push(el('div', { class: 'formula', text: b.formula }));
+    blocks.appendChild(el('div', { class: 'read-block' }, children));
   });
   body.appendChild(blocks);
 
