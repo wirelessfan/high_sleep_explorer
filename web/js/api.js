@@ -158,3 +158,7 @@ export const drawDaily = () => request('/achievements/daily/draw', { method: 'PO
 export const giftCard = (cardId, toUsername = 'sunny') =>
   request('/achievements/gift', { method: 'POST', body: { card_id: cardId, to_username: toUsername } });
 export const getReceivedCards = () => request('/achievements/received');
+
+/* ---------- 核销权限 ---------- */
+
+export const getVerifyPermission = () => request('/achievements/verify-permission');

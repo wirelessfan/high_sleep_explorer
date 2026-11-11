@@ -6,9 +6,10 @@ import { el, toast, openSheet } from '../ui.js';
 let lastRedeemed = null;
 
 export async function renderAchievements(view) {
-  const [data, daily] = await Promise.all([
+  const [data, daily, perm] = await Promise.all([
     api.getAchievements(),
     api.getDailyDraw().catch(() => ({ enabled: false })),
+    api.getVerifyPermission().catch(() => ({ can_verify: false, allowed: [] })),
   ]);
   const received = { cards: data.gifted_cards || [], total: (data.gifted_cards || []).length };
   const st = data.stats;
@@ -96,6 +97,37 @@ export async function renderAchievements(view) {
     }));
 
     root.appendChild(dailyCard);
+  }
+
+  /* ---- 家长核销（仅 dad / mom 可见） ---- */
+  if (perm.can_verify) {
+    root.appendChild(el('section', {
+      class: 'panel',
+      style: 'background:linear-gradient(135deg,#f0fdf9,#fff);border-color:#bbf7d0',
+    }, [
+      el('div', { class: 'row-between' }, [
+        el('div', { class: 'row', style: 'gap:11px' }, [
+          el('div', {
+            style: 'width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:19px;background:#ecfdf5;border:1px solid #bbf7d0',
+            text: '🔑',
+          }),
+          el('div', {}, [
+            el('div', { style: 'font-size:14px;font-weight:800', text: '家长核销' }),
+            el('div', {
+              style: 'font-size:11.5px;color:#5f7a6d;margin-top:3px',
+              text: `只有 ${perm.allowed.join(' / ')} 可以给钱后核销`,
+            }),
+          ]),
+        ]),
+        el('button', {
+          class: 'btn sm', style: 'background:#059669', text: '去核销',
+          onclick: () => showVerifySheet(async () => {
+            const { render } = await import('../router.js');
+            render();
+          }),
+        }),
+      ]),
+    ]));
   }
 
   /* ---- 今日进度 ---- */
@@ -444,4 +476,69 @@ function confirmGift(card, daily) {
     }),
     btn,
   ]), { title: '确认赠送', sub: card.code });
+}
+
+
+/* ---------- 家长核销弹层 ---------- */
+
+export function showVerifySheet(onDone) {
+  const input = el('input', {
+    type: 'text',
+    placeholder: 'XXXX-XXXX-XXXX',
+    autocomplete: 'off',
+    spellcheck: 'false',
+    style: 'width:100%;min-height:52px;border:1.5px solid #d7e8e0;border-radius:12px;padding:0 14px;font-family:ui-monospace,Menlo,monospace;font-size:16px;letter-spacing:.1em;text-align:center;outline:none;background:#fbfefc;box-sizing:border-box',
+  });
+  input.addEventListener('focus', () => { input.style.borderColor = '#34d399'; });
+  input.addEventListener('blur', () => { input.style.borderColor = '#d7e8e0'; });
+
+  const result = el('div', { style: 'margin-top:12px' });
+
+  const btn = el('button', {
+    class: 'btn full', style: 'margin-top:14px;width:100%;background:#059669', text: '确认核销',
+    onclick: async () => {
+      const code = input.value.trim();
+      if (!code) { toast('请输入兑现码'); input.focus(); return; }
+
+      btn.disabled = true;
+      btn.textContent = '核销中…';
+      result.innerHTML = '';
+      try {
+        const res = await api.verifyAchievement(code);
+        result.appendChild(el('div', {
+          style: 'background:#ecfdf5;border:1px solid #a7f3d0;border-radius:11px;padding:13px;text-align:center',
+        }, [
+          el('div', { style: 'font-size:22px;font-weight:800;color:#047857', text: `¥${res.value_cny}` }),
+          el('div', { style: 'font-size:12px;color:#065f46;margin-top:5px', text: '核销成功，可以给钱了' }),
+          el('div', { style: 'font-size:11px;color:#5f7a6d;margin-top:3px', text: `由 ${res.redeemed_by} 核销` }),
+        ]));
+        input.value = '';
+        btn.textContent = '再核销一张';
+        btn.disabled = false;
+        onDone?.();
+      } catch (err) {
+        result.appendChild(el('div', {
+          style: 'background:#fef2f2;border:1px solid #fecaca;border-radius:11px;padding:12px;text-align:center',
+        }, [
+          el('div', { style: 'font-size:13px;font-weight:700;color:#b91c1c', text: '核销失败' }),
+          el('div', { style: 'font-size:12px;color:#991b1b;margin-top:4px', text: err.message || '请检查兑现码' }),
+        ]));
+        btn.disabled = false;
+        btn.textContent = '确认核销';
+      }
+    },
+  });
+
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') btn.click(); });
+
+  openSheet(el('div', {}, [
+    el('div', {
+      style: 'font-size:12.5px;color:#5f7a6d;line-height:1.75;margin-bottom:13px',
+      text: '输入孩子给你的兑现码，确认后这张卡就标记为已兑现。同一个码只能核销一次。',
+    }),
+    input,
+    result,
+    btn,
+  ]), { title: '核销成就卡', sub: '只给已付款的卡核销' });
+  setTimeout(() => input.focus(), 150);
 }

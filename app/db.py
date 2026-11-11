@@ -11,8 +11,10 @@ DB_PATH = Path(os.environ.get("LEARN_DB", Path(__file__).resolve().parent.parent
 
 # v1 = 初版（events.key 全局唯一）；v2 = events 改为按 (user_id, key) 唯一；
 # v3 = users 增加 username / password_hash（账号登录）；
-# v4 = progress 增加 tier（基础/进阶/高级三档难度），主键改为四元组。
-SCHEMA_VERSION = 4
+# v4 = progress 增加 tier（基础/进阶/高级三档难度），主键改为四元组；
+#     achievements 增加 source / gifted_from / gifted_at（每日抽卡与赠予）；
+# v5 = achievements 增加 redeemed_by（只有家长可核销）。
+SCHEMA_VERSION = 5
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS schema_version (
@@ -102,6 +104,7 @@ CREATE TABLE IF NOT EXISTS achievements (
     gifted_from TEXT,              -- 赠予人 user_id；NULL 表示自己获得
     created_at TEXT NOT NULL,
     redeemed_at TEXT,
+    redeemed_by TEXT,              -- 核销人 user_id（只能是家长账号）
     gifted_at TEXT
 );
 
@@ -233,6 +236,8 @@ def _migrate_achievements_gift(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE achievements ADD COLUMN gifted_from TEXT")
     if "gifted_at" not in cols:
         conn.execute("ALTER TABLE achievements ADD COLUMN gifted_at TEXT")
+    if "redeemed_by" not in cols:
+        conn.execute("ALTER TABLE achievements ADD COLUMN redeemed_by TEXT")
 
 
 def init_db() -> None:

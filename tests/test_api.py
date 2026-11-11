@@ -22,10 +22,13 @@ from app.services import grading  # noqa: E402
 
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
-    """每个用例一个独立数据库。"""
+    """每个用例一个独立数据库，并清空进程内限流计数。"""
     dbfile = tmp_path / "test.db"
     monkeypatch.setattr(db, "DB_PATH", dbfile)
     content_loader.clear_cache()
+    # 限流是进程级内存计数，用例之间会互相影响（登录限流 10 次/10 分钟）
+    from app.services import ratelimit
+    ratelimit.reset()
     with TestClient(app) as c:
         yield c
 
@@ -449,22 +452,25 @@ def test_achievement_cannot_exceed_daily_limit_in_one_call(client, auth_headers)
 
 
 def test_achievement_verify_once(client, auth_headers):
+    """核销需家长账号：用 dad 核销，验证只能核销一次。"""
     _set_points(client, auth_headers, 200)
     r = client.post("/api/v1/achievements/redeem", json={"count": 1}, headers=auth_headers)
     code = r.json()["cards"][0]["code"]
 
-    v1 = client.post("/api/v1/achievements/verify", json={"code": code}, headers=auth_headers)
+    dad_h, _ = _login_as(client, "dad")
+    v1 = client.post("/api/v1/achievements/verify", json={"code": code}, headers=dad_h)
     assert v1.status_code == 200, v1.text
     assert v1.json()["value_cny"] == 50
 
-    v2 = client.post("/api/v1/achievements/verify", json={"code": code}, headers=auth_headers)
+    v2 = client.post("/api/v1/achievements/verify", json={"code": code}, headers=dad_h)
     assert v2.status_code == 400
     assert "已经兑现" in v2.json()["detail"]
 
 
 def test_achievement_verify_unknown_code(client, auth_headers):
+    dad_h, _ = _login_as(client, "dad")
     r = client.post("/api/v1/achievements/verify",
-                    json={"code": "AAAA-BBBB-CCCC"}, headers=auth_headers)
+                    json={"code": "AAAA-BBBB-CCCC"}, headers=dad_h)
     assert r.status_code == 400
     assert "不存在" in r.json()["detail"]
 
@@ -778,3 +784,93 @@ def test_gifting_does_not_reset_daily_quota(client, auth_headers):
 
     r = client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
     assert r.status_code == 400, "赠送不应绕过每日一次限制"
+
+
+# ---------- 核销权限 ----------
+
+def _login_as(client, username, password="123456"):
+    """建账号并登录，返回 (headers, me)。"""
+    from app import auth as _auth
+    with db.tx() as conn:
+        exists = conn.execute("SELECT id FROM users WHERE username=?", (username,)).fetchone()
+        if not exists:
+            conn.execute(
+                "INSERT INTO users(id, token_hash, sync_code, nickname, username, password_hash, "
+                "created_at, last_seen) VALUES (?,?,?,?,?,?,?,?)",
+                (_auth.new_id(), _auth.hash_token(_auth.new_token()),
+                 _auth.normalize_sync_code(_auth.new_sync_code()),
+                 username, username, _auth.hash_password(password),
+                 "2026-01-01T00:00:00", "2026-01-01T00:00:00"),
+            )
+    r = client.post("/api/v1/session/login", json={"username": username, "password": password})
+    assert r.status_code == 200, r.text
+    d = r.json()
+    return {"Authorization": f"Bearer {d['token']}"}, d
+
+
+def _issue_card(client, headers):
+    """用每日抽卡拿一张卡，返回卡对象。"""
+    r = client.post("/api/v1/achievements/daily/draw", headers=headers)
+    assert r.status_code == 200, r.text
+    return r.json()["card"]
+
+
+def test_sunny_cannot_verify(client):
+    """sunny 自己不能核销。"""
+    sunny_h, _ = _login_as(client, "sunny")
+    card = _issue_card(client, sunny_h)
+
+    r = client.post("/api/v1/achievements/verify", json={"code": card["code"]}, headers=sunny_h)
+    assert r.status_code == 403
+    assert "只有家长" in r.json()["detail"]
+
+    # 卡仍然是待兑现状态
+    lst = client.get("/api/v1/achievements", headers=sunny_h).json()
+    statuses = [c["status"] for c in lst["cards"] + lst["gifted_cards"]]
+    assert "issued" in statuses
+
+
+def test_dad_can_verify(client):
+    dad_h, dad = _login_as(client, "dad")
+    sunny_h, _ = _login_as(client, "sunny")
+    card = _issue_card(client, sunny_h)
+
+    r = client.post("/api/v1/achievements/verify", json={"code": card["code"]}, headers=dad_h)
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert d["value_cny"] == card["value_cny"]
+    assert d["redeemed_by"] == "dad"
+
+
+def test_mom_can_verify(client):
+    mom_h, _ = _login_as(client, "mom")
+    sunny_h, _ = _login_as(client, "sunny")
+    card = _issue_card(client, sunny_h)
+
+    r = client.post("/api/v1/achievements/verify", json={"code": card["code"]}, headers=mom_h)
+    assert r.status_code == 200
+    assert r.json()["redeemed_by"] == "mom"
+
+
+def test_verify_permission_endpoint(client):
+    sunny_h, _ = _login_as(client, "sunny")
+    dad_h, _ = _login_as(client, "dad")
+
+    a = client.get("/api/v1/achievements/verify-permission", headers=sunny_h).json()
+    assert a["can_verify"] is False
+    assert set(a["allowed"]) == {"dad", "mom"}
+
+    b = client.get("/api/v1/achievements/verify-permission", headers=dad_h).json()
+    assert b["can_verify"] is True
+
+
+def test_cannot_verify_twice(client):
+    dad_h, _ = _login_as(client, "dad")
+    card = _issue_card(client, dad_h)
+
+    assert client.post("/api/v1/achievements/verify",
+                       json={"code": card["code"]}, headers=dad_h).status_code == 200
+    r2 = client.post("/api/v1/achievements/verify",
+                     json={"code": card["code"]}, headers=dad_h)
+    assert r2.status_code == 400
+    assert "已经兑现" in r2.json()["detail"]

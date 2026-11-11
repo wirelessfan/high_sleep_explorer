@@ -60,13 +60,33 @@ def redeem(body: RedeemIn, user: sqlite3.Row = Depends(current_user)):
 
 @router.post("/achievements/verify")
 def verify(body: VerifyIn, user: sqlite3.Row = Depends(current_user)):
-    """核销兑换码。线下给钱后调用，防止同一张卡被兑现两次。"""
+    """核销兑换码。只能由家长账号操作（配置见 achievement.redeem_by）。"""
+    if not achievements.can_redeem(user):
+        raise HTTPException(status_code=403, detail=achievements.redeem_permission_error(user))
+
     with db.tx() as conn:
         try:
-            res = achievements.mark_redeemed(conn, body.code)
+            res = achievements.mark_redeemed(conn, body.code, user["id"])
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
+    # 补上操作人信息，便于家长核对
+    res["redeemed_by"] = user["username"]
     return res
+
+
+@router.post("/achievements/redeem-code")
+def redeem_by_code(body: VerifyIn, user: sqlite3.Row = Depends(current_user)):
+    """家长核销并立即给出结论（与 verify 等价，语义更贴家长操作）。"""
+    return verify(body, user)
+
+
+@router.get("/achievements/verify-permission")
+def verify_permission(user: sqlite3.Row = Depends(current_user)):
+    """前端判断是否显示「核销」入口。"""
+    return {
+        "can_verify": achievements.can_redeem(user),
+        "allowed": achievements.allowed_verifiers(),
+    }
 
 
 # ---------- 每日随机卡 ----------

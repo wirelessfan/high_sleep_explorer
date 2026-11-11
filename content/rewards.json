@@ -54,7 +54,12 @@
       ],
       "gift_to": "sunny",
       "note": "每人每天 1 次免费随机卡，期望 11 元/天；抽到的卡可赠送给 sunny。"
-    }
+    },
+    "redeem_by": [
+      "dad",
+      "mom"
+    ],
+    "redeem_note": "只有家长账号可以核销兑现码；sunny 自己不能核销。"
   },
   "gacha": {
     "single_cost": 1,

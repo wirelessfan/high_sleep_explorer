@@ -145,7 +145,27 @@ def list_cards(conn: sqlite3.Connection, user_id: str, limit: int = 40) -> list[
     ]
 
 
-def mark_redeemed(conn: sqlite3.Connection, code: str) -> dict:
+def can_redeem(user: sqlite3.Row) -> bool:
+    """是否为有核销权限的账号（默认 dad / mom）。
+
+    核销等于「确认已经付钱」，必须由家长操作，孩子不能自己核销。
+    """
+    allowed = _cfg().get("redeem_by") or []
+    username = (user["username"] or "").lower() if "username" in user.keys() else ""
+    return username in {u.lower() for u in allowed}
+
+
+def allowed_verifiers() -> list[str]:
+    """有核销权限的账号名列表。"""
+    return list(_cfg().get("redeem_by") or [])
+
+
+def redeem_permission_error(user: sqlite3.Row) -> str:
+    allowed = allowed_verifiers()
+    return f"只有家长账号可以核销（{'、'.join(allowed)}），当前账号无权操作"
+
+
+def mark_redeemed(conn: sqlite3.Connection, code: str, operator_id: str) -> dict:
     """核销兑现码（家长/老师线下给钱后标记）。"""
     normalized = code.strip().upper().replace(" ", "")
     row = conn.execute("SELECT * FROM achievements WHERE code = ?", (normalized,)).fetchone()
@@ -157,8 +177,8 @@ def mark_redeemed(conn: sqlite3.Connection, code: str) -> dict:
         raise ValueError("这张卡已作废")
 
     conn.execute(
-        "UPDATE achievements SET status='redeemed', redeemed_at=? WHERE id=?",
-        (today_str(), row["id"]),
+        "UPDATE achievements SET status='redeemed', redeemed_at=?, redeemed_by=? WHERE id=?",
+        (today_str(), operator_id, row["id"]),
     )
     return {
         "id": row["id"],
