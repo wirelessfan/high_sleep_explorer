@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "checkin": {
+    "base": 10,
+    "streak_step": 2,
+    "max_bonus": 10,
+    "makeup_cost": 50,
+    "makeup_per_month": 2
+  },
+  "sections": {
+    "quick": 15,
+    "basic": 10,
+    "summary": 5,
+    "hard": 15,
+    "practice": 20,
+    "boss": 50
+  },
+  "review_points": 3,
+  "review_daily_cap": 20,
+  "tickets": {
+    "topic_complete": 2,
+    "boss_first": 1,
+    "streak_3": 1,
+    "streak_7": 2,
+    "points_per_ticket": 100,
+    "exchange_daily_limit": 1
+  },
+  "gacha": {
+    "single_cost": 1,
+    "ten_cost": 9,
+    "rarity": {
+      "N": 55,
+      "R": 30,
+      "SR": 12,
+      "SSR": 3
+    },
+    "duplicate_shards": {
+      "N": 1,
+      "R": 2,
+      "SR": 4,
+      "SSR": 8
+    },
+    "craft_cost": {
+      "N": 10,
+      "R": 25,
+      "SR": 60,
+      "SSR": 120
+    },
+    "pity_sr": 10,
+    "pity_ssr": 40
+  },
+  "sets": {
+    "electromagnetic": {
+      "name": "电磁双璧",
+      "cards": ["faraday", "maxwell"],
+      "points": 50
+    },
+    "mechanics": {
+      "name": "力学双子",
+      "cards": ["newton", "galileo"],
+      "points": 50
+    },
+    "century": {
+      "name": "世纪之光",
+      "cards": ["einstein", "curie"],
+      "points": 50
+    },
+    "geometry": {
+      "name": "几何三贤",
+      "cards": ["euclid", "archimedes", "descartes"],
+      "points": 50
+    },
+    "mathmasters": {
+      "name": "数学三杰",
+      "cards": ["gauss", "euler", "ramanujan"],
+      "points": 50
+    }
+  }
+}

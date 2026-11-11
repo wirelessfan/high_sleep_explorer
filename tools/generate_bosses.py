@@ -1,0 +1,809 @@
+"""生成「谬误研究所」怪人军团：SVG 立绘 + 角色表 + 预览图鉴。
+
+设计说明
+--------
+不复用任何商业卡通 / 游戏的现成角色，避免版权问题；改用公有领域的
+「科学怪人 / 实验室造物」母题作为统一班底：缝合线、颈部螺栓、玻璃罩、
+电极、绷带、Q 版三头身、实验编号牌。18 个角色共享同一套骨架与部件库，
+只替换配色、头部装饰、手持道具与躯干纹理，因此天然像同一部片子的角色表。
+
+- 每个主题前 5 个版块 = 1 只小 boss（用「错误概念」培育的实验体）。
+- 每个主题最后的 boss 版块 = 该主题对应的科学家，作为研究所所长 / 大 boss，
+  并绑定 content/cards/cards.json 里的卡片 id。
+
+用法::
+
+    python tools/generate_bosses.py
+
+产物::
+    assets/bosses/*.svg        18 个独立立绘（透明底，viewBox 0 0 240 280）
+    content/bosses.json        角色表（供后端读取）
+    design/bosses/gallery.html 离线预览图鉴
+
+本脚本只依赖标准库，可重复执行；不改动任何已有业务文件。
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from string import Template
+
+ROOT = Path(__file__).resolve().parent.parent
+SVG_DIR = ROOT / "assets" / "bosses"
+GALLERY = ROOT / "design" / "bosses" / "gallery.html"
+BOSS_JSON = ROOT / "content" / "bosses.json"
+TOPIC_DIR = ROOT / "content" / "topics"
+
+# ---------------------------------------------------------------- 配色班底
+
+PAL = {
+    "physics": dict(main="#6366f1", dark="#312e81", light="#a5b4fc",
+                    accent="#fbbf24", halo="#c7d2fe", line="#4338ca"),
+    "chemistry": dict(main="#10b981", dark="#065f46", light="#6ee7b7",
+                      accent="#38bdf8", halo="#a7f3d0", line="#047857"),
+    "math": dict(main="#f59e0b", dark="#b45309", light="#fcd34d",
+                 accent="#fb7185", halo="#fde68a", line="#d97706"),
+}
+
+SECTION_NAME = {
+    "quick": "快速测试", "basic": "基础闯关", "summary": "知识点总结",
+    "hard": "难点剖析", "practice": "实战巩固", "boss": "Boss 彩蛋",
+}
+
+# ---------------------------------------------------------------- 角色表
+# shape: round / tank / ghost —— 躯干轮廓
+# head:  头顶装饰  prop: 手持道具  overlay: 躯干纹理
+# tier=big 的角色使用科学家骨架，head/prop 决定权杖与徽记。
+
+CAST = [
+    # ===== 物理 · 电磁感应 =====
+    dict(topic="physics-induction", subject="physics", section="quick",
+         name="火花豆", en="Sparky", element="静电火花", shape="round",
+         head="bulb", prop="bolt", overlay="spark", skill="静电乱流",
+         taunt="噼啪！先把磁通量想清楚再碰我。",
+         purified="火花收进灯泡，它终于安静了。"),
+    dict(topic="physics-induction", subject="physics", section="basic",
+         name="线圈兽", en="Coily", element="乱绕线圈", shape="round",
+         head="magnet", prop="coil", overlay="coils", skill="匝数迷阵",
+         taunt="绕啊绕……你数得清我身上几匝吗？",
+         purified="线圈理顺了，感应电动势有了方向。"),
+    dict(topic="physics-induction", subject="physics", section="summary",
+         name="磁通雾", en="Fluxy", element="模糊磁通", shape="ghost",
+         head="field", prop="none", overlay="waves", skill="力线障眼法",
+         taunt="穿过我的到底是 B、S，还是 BS？",
+         purified="雾散了，力线一根根排得整整齐齐。"),
+    dict(topic="physics-induction", subject="physics", section="hard",
+         name="楞次双脸", en="Lenz", element="反向直觉", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="来拒去留",
+         taunt="你增我就减，你走我就留——猜猜我朝哪边？",
+         purified="两张脸终于达成共识：总是阻碍变化。"),
+    dict(topic="physics-induction", subject="physics", section="practice",
+         name="齿轮将", en="Dynamo", element="空转发电机", shape="tank",
+         head="gear", prop="crank", overlay="cogs", skill="无功耗空转",
+         taunt="想发电？先说说能量从哪儿来！",
+         purified="齿轮咬合上，机械能真的变成了电能。"),
+    dict(topic="physics-induction", subject="physics", section="boss",
+         tier="big", name="法拉第", en="Michael Faraday", card_id="faraday",
+         element="电磁感应定律", staff="coil", skill="力线审判",
+         taunt="只要磁通量在变，我就有办法。你，准备好了吗？",
+         purified="他把线圈递给你：现在，这间实验室归你了。"),
+    # ===== 化学 · 化学平衡 =====
+    dict(topic="chemistry-equilibrium", subject="chemistry", section="quick",
+         name="气泡怪", en="Bubbly", element="乱冒气泡", shape="round",
+         head="tube", prop="bubbles", overlay="bubbles", skill="假沸腾",
+         taunt="咕嘟咕嘟～看到气泡就是反应在动？",
+         purified="气泡停了，它承认自己只是被搅动了一下。"),
+    dict(topic="chemistry-equilibrium", subject="chemistry", section="basic",
+         name="歪天平", en="Tilty", element="失衡浓度", shape="round",
+         head="balance", prop="weight", overlay="scale", skill="左右摇摆",
+         taunt="这边多一点，那边少一点，反正永远不平衡～",
+         purified="横梁放平：正逆速率相等，才是真的平衡。"),
+    dict(topic="chemistry-equilibrium", subject="chemistry", section="summary",
+         name="浓度云", en="Cloudy", element="浓度错觉", shape="ghost",
+         head="beaker", prop="none", overlay="layers", skill="稀释迷雾",
+         taunt="加水之后，所有浓度都变小了哦……真的吗？",
+         purified="云雾分层沉淀，Q 和 K 各归其位。"),
+    dict(topic="chemistry-equilibrium", subject="chemistry", section="hard",
+         name="双面勒夏", en="Le Chatelier", element="条件误判", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="压强诡辩",
+         taunt="升温！加压！我到底该往哪边躲？",
+         purified="两张脸同时点头：只向着减弱改变的方向移动。"),
+    dict(topic="chemistry-equilibrium", subject="chemistry", section="practice",
+         name="反应釜将", en="Kettle", element="催化误会", shape="tank",
+         head="gauge", prop="wrench", overlay="cogs", skill="催化剂偷渡",
+         taunt="加一勺催化剂，平衡就该往右跑了吧？",
+         purified="压力表归零：催化剂只改快慢，不改终点。"),
+    dict(topic="chemistry-equilibrium", subject="chemistry", section="boss",
+         tier="big", name="居里夫人", en="Marie Curie", card_id="curie",
+         element="放射性研究", staff="flask", skill="恒心审判",
+         taunt="没有什么可怕的，只有值得理解的东西。",
+         purified="她把发光的烧瓶放在你手里：别怕，慢慢来。"),
+    # ===== 数学 · 导数的几何意义 =====
+    dict(topic="math-derivative", subject="math", section="quick",
+         name="切线豆", en="Tangy", element="斜线乱切", shape="round",
+         head="ruler", prop="slash", overlay="diagonal", skill="斜率碰瓷",
+         taunt="随手画条线就说自己是切线，你能证吗？",
+         purified="它把直尺摆到极限位置：这才是切线。"),
+    dict(topic="math-derivative", subject="math", section="basic",
+         name="割线虫", en="Secant", element="两点硬凑", shape="round",
+         head="zigzag", prop="segment", overlay="grid", skill="Δx 拖堂",
+         taunt="我就赖在两个点上，绝不让你取极限～",
+         purified="Δx 终于趋近 0，虫子蜷成了切线。"),
+    dict(topic="math-derivative", subject="math", section="summary",
+         name="斜率方士", en="Slopey", element="坐标错位", shape="tank",
+         head="triangle", prop="none", overlay="grid", skill=" Rise over Run",
+         taunt="纵坐标除以横坐标？先看清是谁除以谁。",
+         purified="三角板转正，导数有了几何的样子。"),
+    dict(topic="math-derivative", subject="math", section="hard",
+         name="极值双生", en="Extrema", element="导数为零", shape="round",
+         head="peaks", prop="arrows", overlay="curve", skill="驻点伪装",
+         taunt="f′=0 就是极值？山顶和山谷我可都占着。",
+         purified="双胞胎分开站好：还要看两侧符号怎么变。"),
+    dict(topic="math-derivative", subject="math", section="practice",
+         name="ε 幽灵", en="Epsilon", element="无穷小", shape="ghost",
+         head="field", prop="epsilon", overlay="waves", skill="趋近未达",
+         taunt="我无限接近 0，可我从来不等于 0。",
+         purified="幽灵淡到看不见，极限却稳稳落了下来。"),
+    dict(topic="math-derivative", subject="math", section="boss",
+         tier="big", name="高斯", en="C. F. Gauss", card_id="gauss",
+         element="数学王子", staff="bell", skill="极限审判",
+         taunt="少一点，但成熟一点。先把定义讲清楚。",
+         purified="他在钟形曲线旁签下名字：这一关，你过了。"),
+]
+
+# ---------------------------------------------------------------- SVG 部件库
+
+
+def _defs(c: dict, big: bool) -> str:
+    gold = "#fbbf24"
+    return f"""<defs>
+  <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="{c['light']}"/>
+    <stop offset=".55" stop-color="{c['main']}"/>
+    <stop offset="1" stop-color="{c['dark']}"/>
+  </linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffffff" stop-opacity=".75"/>
+    <stop offset=".45" stop-color="#ffffff" stop-opacity=".08"/>
+    <stop offset="1" stop-color="#ffffff" stop-opacity=".35"/>
+  </linearGradient>
+  <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f1f5f9"/>
+    <stop offset="1" stop-color="#94a3b8"/>
+  </linearGradient>
+  <radialGradient id="halo">
+    <stop offset="0" stop-color="{c['halo']}" stop-opacity=".85"/>
+    <stop offset=".7" stop-color="{c['halo']}" stop-opacity=".22"/>
+    <stop offset="1" stop-color="{c['halo']}" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="glow">
+    <stop offset="0" stop-color="{c['accent']}" stop-opacity=".9"/>
+    <stop offset="1" stop-color="{c['accent']}" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="robe" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffffff"/>
+    <stop offset="1" stop-color="#dbe4f0"/>
+  </linearGradient>
+  {'<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#d97706"/></linearGradient>' if big else ''}
+</defs>"""
+
+
+def _stage(c: dict, big: bool) -> str:
+    ring = "#fbbf24" if big else c["line"]
+    return f"""<ellipse cx="120" cy="258" rx="66" ry="9" fill="#0f172a" opacity=".10"/>
+<circle cx="120" cy="140" r="98" fill="url(#halo)"/>
+<ellipse cx="120" cy="248" rx="58" ry="10" fill="none" stroke="{ring}" stroke-width="2" opacity=".45"/>
+<ellipse cx="120" cy="248" rx="46" ry="7" fill="none" stroke="{ring}" stroke-width="1" opacity=".25" stroke-dasharray="4 5"/>"""
+
+
+def _bolt(cx: float, cy: float, c: dict, gold: bool = False) -> str:
+    fill = "url(#gold)" if gold else "url(#metal)"
+    stroke = "#b45309" if gold else "#64748b"
+    return f"""<g transform="translate({cx} {cy})">
+  <polygon points="-9,-5 0,-10 9,-5 9,5 0,10 -9,5" fill="{fill}" stroke="{stroke}" stroke-width="1.5"/>
+  <path d="M-4 0 H4 M0 -4 V4" stroke="{stroke}" stroke-width="1.6" stroke-linecap="round"/>
+</g>"""
+
+
+def _stitches(y: float = 80, x1: float = 84, x2: float = 156, color: str = "#1e293b") -> str:
+    """额头缝合线：怪人军团的统一印记。"""
+    seg = f'<path d="M{x1} {y} Q120 {y + 5} {x2} {y}" fill="none" stroke="{color}" stroke-width="2" opacity=".7"/>'
+    ticks = "".join(
+        f'<path d="M{x} {y - 6} l3 11" stroke="{color}" stroke-width="1.7" stroke-linecap="round" opacity=".7"/>'
+        for x in range(int(x1) + 8, int(x2) - 4, 13)
+    )
+    return seg + ticks
+
+
+def _eyes(kind: str, c: dict) -> str:
+    """眼型：round 圆眼 / sly 眯眼 / twin 四眼 / spark 星眼。"""
+    def eye(x: int, y: int, r: float = 11) -> str:
+        return (f'<circle cx="{x}" cy="{y}" r="{r}" fill="#fff" stroke="#1e293b" stroke-width="2"/>'
+                f'<circle cx="{x + 2}" cy="{y + 1}" r="{r * .5:.1f}" fill="#1e293b"/>'
+                f'<circle cx="{x}" cy="{y - 2}" r="{r * .24:.1f}" fill="#fff"/>')
+
+    def star(x: int, y: int) -> str:
+        return (f'<path d="M{x} {y-4} l1.3 2.7 2.7 1.3 -2.7 1.3 -1.3 2.7 '
+                f'-1.3 -2.7 -2.7 -1.3 2.7 -1.3z" fill="{c["accent"]}"/>')
+
+    if kind == "sly":
+        return (f'<path d="M92 108 q11 -10 22 0 M126 108 q11 -10 22 0" fill="none" '
+                f'stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>'
+                f'<circle cx="103" cy="112" r="2" fill="{c["dark"]}"/>'
+                f'<circle cx="137" cy="112" r="2" fill="{c["dark"]}"/>')
+    if kind == "twin":
+        return (eye(100, 100, 8) + eye(140, 100, 8)
+                + eye(102, 126, 6) + eye(138, 126, 6))
+    if kind == "spark":
+        return eye(103, 108) + eye(137, 108) + star(116, 94) + star(150, 94)
+    return eye(103, 108) + eye(137, 108)
+
+
+def _mouth(mood: str, dy: int = 0) -> str:
+    if mood == "grin":
+        inner = ('<path d="M104 130 q16 16 32 0 q-16 6 -32 0z" fill="#1e293b"/>'
+                 '<path d="M110 133 l3 5 3 -4 3 5 3 -4 3 5 3 -4" fill="none" stroke="#fff" stroke-width="1.6"/>')
+    elif mood == "o":
+        inner = ('<ellipse cx="120" cy="133" rx="7" ry="9" fill="#1e293b"/>'
+                 '<ellipse cx="120" cy="136" rx="3" ry="3" fill="#fb7185"/>')
+    else:
+        inner = ('<path d="M106 132 q14 12 28 0" fill="none" stroke="#1e293b" '
+                 'stroke-width="2.6" stroke-linecap="round"/>'
+                 '<path d="M120 132 v4" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>')
+    return f'<g transform="translate(0 {dy})">{inner}</g>'
+
+
+def _body(shape: str, c: dict) -> str:
+    """躯干轮廓 + 围裙 + 螺栓 + 手臂 + 脚。"""
+    if shape == "tank":
+        outline = ('<path d="M76 168 q0 -18 20 -18 h48 q20 0 20 18 v58 '
+                   'q0 18 -20 18 h-48 q-20 0 -20 -18z" fill="url(#body)" '
+                   'stroke="#1e293b" stroke-width="3"/>')
+    elif shape == "ghost":
+        outline = ('<path d="M78 168 q0 -20 22 -20 h40 q22 0 22 20 v58 '
+                   'l-12 12 -12 -12 -12 12 -12 -12 -12 12 -12 -12z" '
+                   'fill="url(#body)" stroke="#1e293b" stroke-width="3" opacity=".92"/>')
+    else:
+        outline = ('<path d="M74 176 q0 -26 26 -26 h40 q26 0 26 26 v46 '
+                   'q0 22 -24 22 h-44 q-24 0 -24 -22z" fill="url(#body)" '
+                   'stroke="#1e293b" stroke-width="3"/>')
+    apron = (f'<path d="M96 158 h48 l8 76 q-32 12 -64 0z" fill="#f8fafc" opacity=".92"/>'
+             f'<path d="M96 158 h48 l8 76 q-32 12 -64 0z" fill="none" stroke="{c["line"]}" '
+             f'stroke-width="1.6" opacity=".5"/>'
+             f'<path d="M104 196 h32 v18 h-32z" fill="none" stroke="{c["line"]}" '
+             f'stroke-width="1.6" opacity=".55"/>'
+             f'<path d="M120 196 v18" stroke="{c["line"]}" stroke-width="1.4" opacity=".4"/>')
+    arms = (f'<g><rect x="58" y="166" width="20" height="46" rx="10" fill="{c["main"]}" '
+            f'stroke="#1e293b" stroke-width="2.6"/>'
+            f'<rect x="162" y="166" width="20" height="46" rx="10" fill="{c["main"]}" '
+            f'stroke="#1e293b" stroke-width="2.6"/>'
+            f'<circle cx="68" cy="214" r="10" fill="{c["light"]}" stroke="#1e293b" stroke-width="2.4"/>'
+            f'<circle cx="172" cy="214" r="10" fill="{c["light"]}" stroke="#1e293b" stroke-width="2.4"/>'
+            # 左手绷带：统一细节
+            f'<path d="M59 186 l18 -7 M59 196 l18 -7" stroke="#f8fafc" stroke-width="4" '
+            f'stroke-linecap="round" opacity=".95"/></g>')
+    feet = (f'<rect x="94" y="232" width="22" height="16" rx="8" fill="{c["dark"]}" stroke="#1e293b" stroke-width="2"/>'
+            f'<rect x="124" y="232" width="22" height="16" rx="8" fill="{c["dark"]}" stroke="#1e293b" stroke-width="2"/>')
+    return outline + apron + arms + feet + _bolt(88, 154, c) + _bolt(152, 154, c)
+
+
+def _overlay(kind: str, c: dict) -> str:
+    """躯干纹理：让同谱系的角色各有辨识度。"""
+    if kind == "spark":
+        return (f'<path d="M104 176 l6 10 -6 8 9 -2 M136 190 l-5 9 7 6" fill="none" '
+                f'stroke="{c["accent"]}" stroke-width="3" stroke-linecap="round" opacity=".9"/>'
+                f'<circle cx="112" cy="214" r="3" fill="{c["accent"]}"/>'
+                f'<circle cx="130" cy="220" r="2" fill="{c["accent"]}"/>')
+    if kind == "coils":
+        return "".join(
+            f'<path d="M92 {y} q28 12 56 0" fill="none" stroke="{c["accent"]}" '
+            f'stroke-width="3" opacity=".85"/>' for y in (176, 192, 208, 224))
+    if kind == "waves":
+        return "".join(
+            f'<path d="M88 {y} q16 -10 32 0 t32 0" fill="none" stroke="{c["accent"]}" '
+            f'stroke-width="2.4" opacity=".7"/>' for y in (180, 198, 216))
+    if kind == "reverse":
+        return (f'<path d="M96 188 h44 m0 0 l-9 -7 m9 7 l-9 7" stroke="{c["accent"]}" '
+                f'stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+                f'<path d="M144 212 h-44 m0 0 l9 -7 m-9 7 l9 7" stroke="{c["accent"]}" '
+                f'stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>')
+    if kind == "cogs":
+        return (f'<circle cx="120" cy="204" r="22" fill="none" stroke="{c["accent"]}" stroke-width="3" opacity=".8"/>'
+                f'<circle cx="120" cy="204" r="7" fill="none" stroke="{c["accent"]}" stroke-width="3" opacity=".8"/>'
+                + "".join(f'<path d="M120 {182 - 0} v-8" stroke="{c["accent"]}" stroke-width="3" '
+                          f'transform="rotate({a} 120 204)"/>' for a in range(0, 360, 45)))
+    if kind == "bubbles":
+        return "".join(
+            f'<circle cx="{x}" cy="{y}" r="{r}" fill="none" stroke="{c["accent"]}" stroke-width="2" opacity=".85"/>'
+            for x, y, r in ((104, 184, 5), (128, 176, 3), (136, 206, 7), (106, 220, 4)))
+    if kind == "scale":
+        return "".join(
+            f'<path d="M100 {y} h40" stroke="{c["accent"]}" stroke-width="2" opacity=".65"/>'
+            for y in (180, 192, 204, 216, 228))
+    if kind == "layers":
+        return (f'<path d="M92 190 q28 8 56 0 v14 q-28 8 -56 0z" fill="{c["accent"]}" opacity=".35"/>'
+                f'<path d="M92 212 q28 8 56 0 v14 q-28 8 -56 0z" fill="{c["accent"]}" opacity=".55"/>')
+    if kind == "diagonal":
+        return (f'<path d="M92 228 L148 172" stroke="{c["accent"]}" stroke-width="4" '
+                f'stroke-linecap="round" opacity=".85"/>'
+                f'<path d="M92 228 l0 -12 M148 172 l0 12" stroke="{c["accent"]}" stroke-width="2" opacity=".6"/>')
+    if kind == "grid":
+        return ("".join(f'<path d="M96 {y} h48" stroke="{c["accent"]}" stroke-width="1.4" opacity=".45"/>'
+                        for y in (178, 192, 206, 220))
+                + "".join(f'<path d="M{x} 170 v62" stroke="{c["accent"]}" stroke-width="1.4" opacity=".45"/>'
+                          for x in (104, 120, 136)))
+    if kind == "curve":
+        return (f'<path d="M92 222 q14 -46 28 -20 t28 -22" fill="none" '
+                f'stroke="{c["accent"]}" stroke-width="3.2" stroke-linecap="round"/>'
+                f'<path d="M92 226 h56" stroke="{c["accent"]}" stroke-width="1.6" opacity=".6"/>')
+    return ""
+
+
+def _head(kind: str, c: dict) -> str:
+    """头顶装饰：每只怪的标志物。"""
+    a = c["accent"]
+    d = c["dark"]
+    if kind == "bulb":
+        return (f'<circle cx="120" cy="46" r="26" fill="url(#glow)"/>'
+                f'<path d="M120 22 a17 17 0 0 1 11 30 v7 h-22 v-7 a17 17 0 0 1 11 -30z" '
+                f'fill="#fef9c7" stroke="{d}" stroke-width="2.4"/>'
+                f'<path d="M112 59 h16 v8 a8 8 0 0 1 -16 0z" fill="url(#metal)" stroke="{d}" stroke-width="2"/>'
+                f'<path d="M114 34 q-6 8 -2 16" stroke="#fff" stroke-width="3" fill="none" opacity=".8"/>'
+                f'<path d="M120 68 v8" stroke="{d}" stroke-width="3"/>')
+    if kind == "magnet":
+        return (f'<path d="M96 66 v-24 a24 24 0 0 1 48 0 v24" fill="none" stroke="{a}" '
+                f'stroke-width="11" stroke-linecap="round"/>'
+                f'<path d="M96 58 h12 M132 58 h12" stroke="#f8fafc" stroke-width="11"/>'
+                f'<path d="M96 42 v24 M144 42 v24" stroke="{d}" stroke-width="1.4" opacity=".4"/>')
+    if kind == "field":
+        return (f'<g fill="none" stroke="{a}" stroke-width="2.4" opacity=".9">'
+                f'<ellipse cx="120" cy="50" rx="34" ry="12"/>'
+                f'<ellipse cx="120" cy="50" rx="24" ry="7"/>'
+                f'<ellipse cx="120" cy="50" rx="13" ry="3"/></g>'
+                f'<circle cx="120" cy="50" r="4" fill="{a}"/>')
+    if kind == "mirror":
+        return (f'<path d="M120 28 l-10 12 h20z" fill="{a}" stroke="{d}" stroke-width="2"/>'
+                f'<path d="M120 70 l10 -12 h-20z" fill="{a}" stroke="{d}" stroke-width="2"/>'
+                f'<path d="M120 32 v34" stroke="{d}" stroke-width="2" stroke-dasharray="3 4" opacity=".6"/>')
+    if kind == "gear":
+        pts = []
+        import math
+        for i in range(16):
+            ang = math.pi * 2 * i / 16
+            r = 24 if i % 2 == 0 else 18
+            pts.append(f"{120 + r * math.cos(ang):.1f},{50 + r * math.sin(ang):.1f}")
+        return (f'<polygon points="{" ".join(pts)}" fill="url(#metal)" stroke="{d}" stroke-width="2.2"/>'
+                f'<circle cx="120" cy="50" r="8" fill="{a}" stroke="{d}" stroke-width="2"/>')
+    if kind == "tube":
+        return (f'<rect x="108" y="24" width="24" height="46" rx="6" fill="url(#glass)" '
+                f'stroke="{d}" stroke-width="2.4"/>'
+                f'<path d="M108 54 q12 5 24 0 v10 a6 6 0 0 1 -6 6 h-12 a6 6 0 0 1 -6 -6z" '
+                f'fill="{a}" opacity=".8"/>'
+                f'<rect x="104" y="20" width="32" height="7" rx="3" fill="url(#metal)" stroke="{d}" stroke-width="1.6"/>')
+    if kind == "balance":
+        return (f'<path d="M88 46 h64" stroke="{d}" stroke-width="3.4" stroke-linecap="round"/>'
+                f'<path d="M120 46 v-16" stroke="{d}" stroke-width="3"/>'
+                f'<circle cx="120" cy="28" r="4" fill="{a}" stroke="{d}" stroke-width="1.6"/>'
+                f'<path d="M88 46 l-9 14 h18z M152 46 l-9 14 h18z" fill="{a}" stroke="{d}" stroke-width="2"/>')
+    if kind == "beaker":
+        return (f'<path d="M104 26 h32 l-4 40 a8 8 0 0 1 -8 7 h-8 a8 8 0 0 1 -8 -7z" '
+                f'fill="url(#glass)" stroke="{d}" stroke-width="2.4"/>'
+                f'<path d="M106 54 h28 l-2 12 a8 8 0 0 1 -8 7 h-8 a8 8 0 0 1 -8 -7z" '
+                f'fill="{a}" opacity=".75"/>'
+                f'<circle cx="114" cy="42" r="3" fill="#fff" opacity=".9"/>'
+                f'<circle cx="126" cy="34" r="2" fill="#fff" opacity=".9"/>')
+    if kind == "gauge":
+        return (f'<circle cx="120" cy="48" r="22" fill="#f8fafc" stroke="{d}" stroke-width="2.6"/>'
+                f'<path d="M104 56 a16 16 0 0 1 32 0" fill="none" stroke="{a}" stroke-width="2.4"/>'
+                f'<path d="M120 48 l10 -10" stroke="#ef4444" stroke-width="2.6" stroke-linecap="round"/>'
+                f'<circle cx="120" cy="48" r="3" fill="{d}"/>')
+    if kind == "ruler":
+        return (f'<rect x="82" y="26" width="76" height="20" rx="3" fill="url(#metal)" '
+                f'stroke="{d}" stroke-width="2.2" transform="rotate(-12 120 36)"/>'
+                + "".join(f'<path d="M{x} 26 v7" stroke="{d}" stroke-width="1.6" '
+                          f'transform="rotate(-12 120 36)"/>' for x in range(90, 155, 10)))
+    if kind == "zigzag":
+        return (f'<path d="M88 62 l14 -18 16 14 16 -18 14 18" fill="none" stroke="{a}" '
+                f'stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>'
+                f'<circle cx="88" cy="62" r="3.5" fill="{d}"/><circle cx="148" cy="58" r="3.5" fill="{d}"/>')
+    if kind == "triangle":
+        return (f'<path d="M94 66 L120 22 L146 66z" fill="url(#glass)" stroke="{d}" stroke-width="2.6"/>'
+                f'<path d="M120 36 L136 62 H104z" fill="none" stroke="{a}" stroke-width="2" opacity=".8"/>')
+    if kind == "peaks":
+        return (f'<path d="M86 66 q14 -34 28 -6 q6 -34 20 -30 q14 4 20 36" fill="none" '
+                f'stroke="{a}" stroke-width="4" stroke-linecap="round"/>'
+                f'<circle cx="108" cy="52" r="4" fill="{d}"/><circle cx="140" cy="34" r="4" fill="{d}"/>')
+    return ""
+
+
+def _prop(kind: str, c: dict) -> str:
+    """右手 / 双手持物。"""
+    a, d = c["accent"], c["dark"]
+    if kind == "bolt":
+        return (f'<path d="M186 168 l-14 20 h10 l-8 20 20 -26 h-11 l8 -14z" fill="{a}" '
+                f'stroke="{d}" stroke-width="2.2" stroke-linejoin="round"/>')
+    if kind == "coil":
+        return ("".join(f'<ellipse cx="186" cy="{y}" rx="14" ry="5" fill="none" '
+                        f'stroke="{a}" stroke-width="3"/>' for y in (176, 186, 196, 206)))
+    if kind == "arrows":
+        return (f'<path d="M178 174 h22 m0 0 l-7 -6 m7 6 l-7 6" stroke="{a}" stroke-width="3" '
+                f'fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+                f'<path d="M200 198 h-22 m0 0 l7 -6 m-7 6 l7 6" stroke="{a}" stroke-width="3" '
+                f'fill="none" stroke-linecap="round" stroke-linejoin="round"/>')
+    if kind == "crank":
+        return (f'<path d="M172 208 l20 -22" stroke="{d}" stroke-width="4" stroke-linecap="round"/>'
+                f'<circle cx="194" cy="184" r="8" fill="url(#metal)" stroke="{d}" stroke-width="2"/>')
+    if kind == "bubbles":
+        return (f'<rect x="178" y="182" width="18" height="36" rx="5" fill="url(#glass)" stroke="{d}" stroke-width="2"/>'
+                f'<path d="M178 202 h18 v11 a5 5 0 0 1 -5 5 h-8 a5 5 0 0 1 -5 -5z" fill="{a}" opacity=".8"/>'
+                f'<circle cx="187" cy="170" r="4" fill="none" stroke="{a}" stroke-width="2"/>'
+                f'<circle cx="196" cy="158" r="2.5" fill="none" stroke="{a}" stroke-width="2"/>')
+    if kind == "weight":
+        return (f'<path d="M178 206 h22 l-3 14 h-16z" fill="url(#metal)" stroke="{d}" stroke-width="2"/>'
+                f'<path d="M189 206 v-14" stroke="{d}" stroke-width="2"/>'
+                f'<circle cx="189" cy="190" r="4" fill="{a}" stroke="{d}" stroke-width="1.6"/>')
+    if kind == "wrench":
+        return (f'<path d="M188 168 a10 10 0 1 0 8 16 l-24 24 6 6 24 -24" fill="none" '
+                f'stroke="{d}" stroke-width="5" stroke-linecap="round"/>')
+    if kind == "slash":
+        return (f'<path d="M176 216 L206 172" stroke="{a}" stroke-width="6" stroke-linecap="round"/>'
+                f'<path d="M176 216 l0 -12 M206 172 l0 12" stroke="{d}" stroke-width="2"/>')
+    if kind == "segment":
+        return (f'<path d="M176 212 L206 178" stroke="{a}" stroke-width="4" stroke-linecap="round"/>'
+                f'<circle cx="176" cy="212" r="4" fill="#fff" stroke="{d}" stroke-width="2"/>'
+                f'<circle cx="206" cy="178" r="4" fill="#fff" stroke="{d}" stroke-width="2"/>')
+    if kind == "epsilon":
+        return (f'<text x="176" y="212" font-family="Georgia,serif" font-size="46" '
+                f'font-style="italic" fill="{a}" stroke="{d}" stroke-width=".8">ε</text>')
+    return ""
+
+
+def _number_tag(code: str, big: bool) -> str:
+    fill = "url(#gold)" if big else "#f8fafc"
+    stroke = "#b45309" if big else "#94a3b8"
+    label = "BOSS" if big else code
+    return (f'<g><rect x="176" y="18" width="46" height="20" rx="10" fill="{fill}" '
+            f'stroke="{stroke}" stroke-width="1.6"/>'
+            f'<text x="199" y="32" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" '
+            f'font-size="11" font-weight="bold" fill="#1e293b">{label}</text></g>')
+
+
+def render_mini(role: dict, c: dict, code: str) -> str:
+    shape = role["shape"]
+    head_kind = role["head"]
+    eye_by_section = {"quick": "spark", "basic": "sly", "summary": "round",
+                      "hard": "twin", "practice": "round"}
+    eye_kind = ("twin" if head_kind in ("mirror", "peaks")
+                else eye_by_section.get(role["section"], "round"))
+    mood = "grin" if role["section"] == "quick" else ("o" if shape == "ghost" else "smile")
+    mouth_dy = 12 if eye_kind == "twin" else 0
+    parts = [
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" width="240" height="280" '
+        'role="img" aria-label="' + role["name"] + '">',
+        _defs(c, False),
+        _stage(c, False),
+        _number_tag(code, False),
+        _head(head_kind, c),
+        _body(shape, c),
+        _overlay(role["overlay"], c),
+        # 头（盖在身体上）
+        f'<rect x="76" y="66" width="88" height="86" rx="34" fill="{c["light"]}" '
+        f'stroke="#1e293b" stroke-width="3.2"/>',
+        f'<path d="M76 108 q44 -26 88 0 v10 q-44 -22 -88 0z" fill="#fff" opacity=".18"/>',
+        _stitches(80, 88, 152),
+        _eyes(eye_kind, c),
+        _mouth(mood, mouth_dy),
+        f'<ellipse cx="90" cy="126" rx="7" ry="4" fill="#fb7185" opacity=".45"/>'
+        f'<ellipse cx="150" cy="126" rx="7" ry="4" fill="#fb7185" opacity=".45"/>',
+        _prop(role["prop"], c),
+        # 玻璃罩高光：统一班底的最后一笔
+        f'<path d="M84 78 q-8 24 2 46" fill="none" stroke="#fff" stroke-width="4" '
+        f'stroke-linecap="round" opacity=".55"/>',
+        '</svg>',
+    ]
+    return "\n".join(parts)
+
+
+def _scientist_staff(kind: str, c: dict) -> str:
+    a, d = c["accent"], c["dark"]
+    if kind == "coil":
+        head = ("".join(f'<ellipse cx="196" cy="{y}" rx="13" ry="5" fill="none" '
+                        f'stroke="{a}" stroke-width="3"/>' for y in (96, 108, 120, 132)))
+    elif kind == "flask":
+        head = (f'<circle cx="196" cy="112" r="26" fill="url(#glow)"/>'
+                f'<path d="M196 88 v22 l-16 26 a6 6 0 0 0 5 9 h22 a6 6 0 0 0 5 -9 l-16 -26z" '
+                f'fill="url(#glass)" stroke="{d}" stroke-width="2.4"/>'
+                f'<path d="M184 128 h24 l4 9 a6 6 0 0 1 -5 9 h-22 a6 6 0 0 1 -5 -9z" fill="{a}" opacity=".8"/>')
+    else:  # bell
+        head = (f'<path d="M170 140 q26 -66 52 0" fill="none" stroke="{a}" stroke-width="4" '
+                f'stroke-linecap="round"/>'
+                f'<path d="M170 140 h52" stroke="{d}" stroke-width="2" opacity=".5"/>'
+                f'<circle cx="196" cy="76" r="3.5" fill="{a}" opacity=".9"/>')
+    # 注意：竖线的对象包围盒宽度为 0，线性渐变会失效导致整根杆消失，
+    # 因此这里用纯色描边 + 一条浅色高光，而不是 url(#gold)。
+    return (head
+            + f'<path d="M196 134 v100" stroke="#b45309" stroke-width="8" stroke-linecap="round"/>'
+            + f'<path d="M194 142 v88" stroke="#fde68a" stroke-width="2" '
+              f'stroke-linecap="round" opacity=".9"/>'
+            + f'<rect x="190" y="146" width="12" height="7" rx="2" fill="url(#gold)" '
+              f'stroke="#b45309" stroke-width="1.4"/>'
+            + f'<circle cx="196" cy="236" r="7" fill="url(#gold)" stroke="#b45309" stroke-width="1.6"/>')
+
+
+def render_big(role: dict, c: dict) -> str:
+    """科学家大 boss：同款 Q 版比例与螺栓印记，白袍 + 光环 + 权杖 + 金框。"""
+    a, d = c["accent"], c["dark"]
+    # 三位所长必须一眼分得清：发型、胡须、眼镜、嘴型、胸前字母各不相同。
+    LOOK = {
+        "faraday": dict(
+            badge="F",
+            hair=('<path d="M84 88 q-4 -34 36 -34 q40 0 36 34 q-10 -18 -36 -18 q-26 0 -36 18z" '
+                  'fill="#475569" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M86 92 q-8 20 -2 30 M154 92 q8 20 2 30" fill="none" '
+                  'stroke="#475569" stroke-width="7" stroke-linecap="round"/>'
+                  '<path d="M120 56 v12" stroke="#1e293b" stroke-width="1.5" opacity=".45"/>'),
+            face=('<path d="M86 116 q2 26 20 32 M154 116 q-2 26 -20 32" fill="none" '
+                  'stroke="#475569" stroke-width="6" stroke-linecap="round"/>'
+                  '<path d="M102 142 q18 11 36 0" fill="none" stroke="#475569" '
+                  'stroke-width="7" stroke-linecap="round"/>'
+                  '<path d="M106 125 q7 -4 13 2 M134 125 q-7 -4 -13 2" fill="none" '
+                  'stroke="#475569" stroke-width="3" stroke-linecap="round"/>'),
+            mouth=('<path d="M110 131 q10 7 20 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+        "curie": dict(
+            badge="M",
+            hair=('<path d="M82 96 q-6 -46 38 -46 q44 0 38 46 q-12 -22 -38 -22 q-26 0 -38 22z" '
+                  'fill="#57534e" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<circle cx="120" cy="48" r="16" fill="#57534e" stroke="#1e293b" stroke-width="2.2"/>'
+                  '<path d="M110 40 q10 8 20 0" fill="none" stroke="#78716c" stroke-width="2"/>'
+                  '<path d="M84 96 q-6 16 -2 26 M156 96 q6 16 2 26" fill="none" '
+                  'stroke="#57534e" stroke-width="6" stroke-linecap="round"/>'),
+            face=('<path d="M96 99 l-3 -5 M104 98 l1 -5 M136 98 l-1 -5 M144 99 l3 -5" '
+                  'stroke="#1e293b" stroke-width="1.6" stroke-linecap="round"/>'
+                  '<circle cx="82" cy="120" r="3.2" fill="url(#gold)" stroke="#b45309" stroke-width="1.2"/>'
+                  '<circle cx="158" cy="120" r="3.2" fill="url(#gold)" stroke="#b45309" stroke-width="1.2"/>'
+                  '<ellipse cx="94" cy="126" rx="6" ry="3.5" fill="#fb7185" opacity=".35"/>'
+                  '<ellipse cx="146" cy="126" rx="6" ry="3.5" fill="#fb7185" opacity=".35"/>'
+                  '<path d="M114 138 q6 3 12 0" fill="none" stroke="#e11d48" '
+                  'stroke-width="2" stroke-linecap="round" opacity=".65"/>'),
+            mouth=('<path d="M112 131 q8 6 16 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.3" stroke-linecap="round"/>'),
+        ),
+        "gauss": dict(
+            badge="G",
+            hair=('<path d="M82 90 q-4 -40 38 -40 q42 0 38 40 q-14 -20 -38 -20 q-24 0 -38 20z" '
+                  'fill="#cbd5e1" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M84 90 q-8 18 -2 30 M156 90 q8 18 2 30" fill="none" '
+                  'stroke="#cbd5e1" stroke-width="7" stroke-linecap="round"/>'
+                  '<path d="M94 94 h18 M128 94 h18" stroke="#94a3b8" stroke-width="3.4" '
+                  'stroke-linecap="round"/>'),
+            face=('<circle cx="136" cy="108" r="14" fill="none" stroke="#94a3b8" stroke-width="2.6"/>'
+                  '<path d="M148 118 l6 16" stroke="#94a3b8" stroke-width="1.8" '
+                  'stroke-linecap="round"/>'
+                  '<path d="M104 128 q8 6 14 0 M136 128 q-8 6 -14 0" fill="none" '
+                  'stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/>'
+                  '<path d="M102 142 q18 8 36 0" fill="none" stroke="#cbd5e1" '
+                  'stroke-width="5" stroke-linecap="round"/>'),
+            mouth=('<path d="M111 133 h18" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+    }
+    look = LOOK[role["card_id"]]
+    parts = [
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" width="240" height="280" '
+        'role="img" aria-label="' + role["name"] + ' 大 Boss">',
+        _defs(c, True),
+        f'<ellipse cx="120" cy="258" rx="70" ry="10" fill="#0f172a" opacity=".12"/>'
+        f'<circle cx="120" cy="140" r="102" fill="url(#halo)"/>'
+        # 大 boss 光环 + 外框
+        f'<ellipse cx="120" cy="46" rx="62" ry="15" fill="none" stroke="url(#gold)" '
+        f'stroke-width="5" opacity=".95"/>'
+        f'<ellipse cx="120" cy="248" rx="62" ry="11" fill="none" stroke="url(#gold)" '
+        f'stroke-width="2.4" opacity=".7"/>'
+        f'<path d="M28 150 l-8 6 8 6 M212 150 l8 6 -8 6" fill="none" stroke="{a}" '
+        f'stroke-width="3" stroke-linecap="round" opacity=".7"/>',
+        _number_tag("", True),
+        _scientist_staff(role["staff"], c),
+        # 白袍躯干
+        f'<path d="M78 162 q42 -16 84 0 l16 78 q-58 20 -116 0z" fill="url(#robe)" '
+        f'stroke="#1e293b" stroke-width="3"/>'
+        f'<path d="M120 148 v96" stroke="{c["line"]}" stroke-width="2" opacity=".35"/>'
+        f'<path d="M104 152 l16 22 16 -22" fill="{a}" stroke="{d}" stroke-width="2.2"/>'
+        f'<circle cx="120" cy="196" r="12" fill="url(#gold)" stroke="#b45309" stroke-width="2"/>'
+        f'<text x="120" y="201" text-anchor="middle" font-family="Georgia,serif" '
+        f'font-size="13" font-weight="bold" fill="#78350f">{look["badge"]}</text>'
+        f'<rect x="58" y="166" width="20" height="48" rx="10" fill="#e2e8f0" stroke="#1e293b" stroke-width="2.4"/>'
+        f'<rect x="162" y="166" width="20" height="48" rx="10" fill="#e2e8f0" stroke="#1e293b" stroke-width="2.4"/>'
+        f'<circle cx="68" cy="216" r="10" fill="#f8fafc" stroke="#1e293b" stroke-width="2.2"/>'
+        f'<circle cx="172" cy="216" r="10" fill="#f8fafc" stroke="#1e293b" stroke-width="2.2"/>'
+        + _bolt(90, 154, c, gold=True) + _bolt(150, 154, c, gold=True)
+        # 头
+        + f'<rect x="80" y="66" width="80" height="82" rx="30" fill="#ffe9cf" stroke="#1e293b" stroke-width="3"/>'
+        + look["hair"]
+        + f'<circle cx="104" cy="108" r="9" fill="#fff" stroke="#1e293b" stroke-width="1.8"/>'
+        + f'<circle cx="136" cy="108" r="9" fill="#fff" stroke="#1e293b" stroke-width="1.8"/>'
+        + f'<circle cx="105" cy="109" r="4" fill="#1e293b"/><circle cx="137" cy="109" r="4" fill="#1e293b"/>'
+        + f'<circle cx="103" cy="106" r="1.8" fill="#fff"/><circle cx="135" cy="106" r="1.8" fill="#fff"/>'
+        + look["face"]
+        + look["mouth"]
+        + f'<path d="M84 80 q-8 24 2 44" fill="none" stroke="#fff" stroke-width="4" '
+          f'stroke-linecap="round" opacity=".55"/>',
+        '</svg>',
+    ]
+    return "\n".join(parts)
+
+
+# ---------------------------------------------------------------- 题量 → HP
+
+
+def section_hp(topic_id: str, section_id: str) -> int:
+    data = json.loads((TOPIC_DIR / f"{topic_id}.json").read_text(encoding="utf-8"))
+    sec = next(s for s in data["sections"] if s["id"] == section_id)
+    t = sec["type"]
+    if t in ("quiz", "boss"):
+        return len(sec.get("questions", [])) or 1
+    if t == "levels":
+        return sum(len(l["questions"]) for l in sec.get("levels", [])) or 1
+    if t == "myths":
+        return len(sec.get("myths", [])) or 1
+    if t == "steps":
+        return sum(len(p["steps"]) for p in sec.get("problems", [])) or 1
+    return 1  # reading
+
+
+# ---------------------------------------------------------------- 预览图鉴
+
+GALLERY_TPL = Template("""<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>谬误研究所 · 怪人军团图鉴</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:36px 24px 64px;background:#f5f7fb;color:#1e293b;
+ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1280px;margin:0 auto}
+header{text-align:center;margin-bottom:12px}
+h1{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
+.tag{display:inline-block;padding:5px 12px;border-radius:999px;background:#eef2ff;
+ color:#4338ca;font-size:12px;font-weight:700;margin:0 4px}
+.lead{max-width:720px;margin:16px auto 0;font-size:14px;line-height:1.8;color:#475569}
+.note{font-size:12px;color:#94a3b8;margin-top:8px}
+h2{font-size:19px;font-weight:800;margin:38px 0 6px;display:flex;align-items:center;gap:9px}
+h2 .dot{width:11px;height:11px;border-radius:50%;background:$dot}
+.sub{font-size:12.5px;color:#94a3b8;margin:0 0 16px}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+@media(max-width:1080px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:680px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:12px;
+ box-shadow:0 2px 10px rgba(15,23,42,.04);transition:transform .18s,box-shadow .18s}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(15,23,42,.09)}
+.card.big{border:2px solid #fbbf24;background:linear-gradient(180deg,#fffbeb,#fff)}
+.pic{height:190px;display:flex;align-items:center;justify-content:center;
+ background:radial-gradient(circle at 50% 55%,$halo,transparent 68%);border-radius:12px}
+.pic img{width:100%;height:100%;object-fit:contain}
+.nm{font-size:15px;font-weight:800;margin-top:10px;display:flex;align-items:center;gap:6px}
+.en{font-size:11px;color:#94a3b8;font-weight:600}
+.meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.pill{font-size:10.5px;padding:2px 7px;border-radius:6px;background:#f1f5f9;color:#475569;font-weight:700}
+.pill.boss{background:#fef3c7;color:#92400e}
+.pill.hp{background:#fee2e2;color:#b91c1c}
+.quote{font-size:12px;line-height:1.65;color:#64748b;margin-top:9px;min-height:40px}
+.pure{font-size:11px;color:#059669;margin-top:7px;line-height:1.6}
+footer{margin-top:44px;text-align:center;font-size:12px;color:#94a3b8;line-height:1.9}
+</style></head><body><div class="wrap">
+<header>
+ <h1>谬误研究所 · 怪人军团图鉴</h1>
+ <div><span class="tag">The Fallacy Lab</span><span class="tag">18 名角色</span>
+ <span class="tag">3 条谱系</span><span class="tag">原创 SVG</span></div>
+ <p class="lead">每个学科里最常见的<strong>错误概念</strong>，被研究所培育成了怪人。
+ 它们共用一套造物特征：额头缝合线、颈部螺栓、玻璃罩高光、绷带、实验编号牌。
+ 前五关是实验体；最后一关的守关者是创造它们的<strong>科学家 · 大 Boss</strong>，
+ 通关后其卡片进入图鉴。答对一题，就净化一格 HP。</p>
+ <p class="note">美术设定取公有领域的「科学怪人／实验室造物」母题，角色、名称、台词均为本项目原创，
+ 未使用任何商业卡通或游戏 IP 的现成形象。</p>
+</header>
+$groups
+<footer>生成自 <code>tools/generate_bosses.py</code> · 立绘位于 <code>assets/bosses/</code> ·
+角色表位于 <code>content/bosses.json</code><br>重跑脚本即可同步更新图鉴与角色表。</footer>
+</div></body></html>""")
+
+CARD_TPL = Template("""<div class="card $cls">
+ <div class="pic"><img src="../../assets/bosses/$svg" alt="$name"></div>
+ <div class="nm">$name <span class="en">$en</span></div>
+ <div class="meta"><span class="pill">$section</span>
+ <span class="pill $bosscls">$tier</span><span class="pill hp">HP $hp</span></div>
+ <div class="quote">「$taunt」</div>
+ <div class="pure">净化后：$purified</div>
+</div>""")
+
+
+def build() -> None:
+    SVG_DIR.mkdir(parents=True, exist_ok=True)
+    GALLERY.parent.mkdir(parents=True, exist_ok=True)
+
+    bosses = []
+    mini_no = 1
+    for role in CAST:
+        c = PAL[role["subject"]]
+        big = role.get("tier") == "big"
+        code = "No.%02d" % mini_no
+        if not big:
+            mini_no += 1
+        bid = f"{role['topic']}-{role['section']}"
+        fname = f"{bid}.svg"
+        (SVG_DIR / fname).write_text(
+            render_big(role, c) if big else render_mini(role, c, code),
+            encoding="utf-8",
+        )
+        bosses.append({
+            "id": bid,
+            "topic_id": role["topic"],
+            "section_id": role["section"],
+            "tier": "big" if big else "mini",
+            "name": role["name"],
+            "en": role["en"],
+            "code": "BOSS" if big else code,
+            "element": role["element"],
+            "skill": role["skill"].strip(),
+            "hp": section_hp(role["topic"], role["section"]),
+            "taunt": role["taunt"],
+            "purified": role["purified"],
+            "svg": f"/assets/bosses/{fname}",
+            "colors": {"main": c["main"], "accent": c["accent"]},
+            "card_id": role.get("card_id"),
+        })
+
+    payload = {
+        "version": 1,
+        "series": {
+            "name": "谬误研究所",
+            "en": "The Fallacy Lab",
+            "tagline": "答对一题，净化一只怪人",
+            "setting": "每个学科里最常见的错误概念被培育成实验体，科学家是研究所所长兼最终守关者。",
+            "art_style": ["额头缝合线", "颈部六角螺栓", "玻璃罩高光", "左手绷带",
+                          "Q 版三头身", "实验编号牌", "统一底座光环"],
+            "license": "原创角色；仅取公有领域的科学怪人／实验室造物母题，"
+                       "未使用任何商业卡通或游戏 IP 的现成形象。",
+        },
+        "bosses": bosses,
+    }
+    BOSS_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+                         encoding="utf-8")
+
+    groups = []
+    for topic, subject, label, dot in (
+        ("physics-induction", "physics", "物理 · 电磁感应", "#6366f1"),
+        ("chemistry-equilibrium", "chemistry", "化学 · 化学平衡", "#10b981"),
+        ("math-derivative", "math", "数学 · 导数的几何意义", "#f59e0b"),
+    ):
+        cards = []
+        for b in bosses:
+            if b["topic_id"] != topic:
+                continue
+            cards.append(CARD_TPL.substitute(
+                cls="big" if b["tier"] == "big" else "",
+                svg=Path(b["svg"]).name, name=b["name"], en=b["en"],
+                section=SECTION_NAME[b["section_id"]],
+                bosscls="boss" if b["tier"] == "big" else "",
+                tier="大 BOSS" if b["tier"] == "big" else "小 BOSS",
+                hp=b["hp"], taunt=b["taunt"], purified=b["purified"],
+            ))
+        groups.append(
+            f'<h2><span class="dot" style="background:{dot}"></span>{label}</h2>'
+            f'<p class="sub">1 位研究所所长 + 5 只实验体 · 共 {len(cards)} 名角色</p>'
+            f'<div class="grid">{"".join(cards)}</div>'
+        )
+    GALLERY.write_text(
+        GALLERY_TPL.substitute(groups="\n".join(groups), dot="#6366f1",
+                               halo="#eef2ff"),
+        encoding="utf-8",
+    )
+
+    print(f"生成 {len(bosses)} 名角色 → {SVG_DIR.relative_to(ROOT)}")
+    print(f"角色表 → {BOSS_JSON.relative_to(ROOT)}")
+    print(f"预览图鉴 → {GALLERY.relative_to(ROOT)}")
+
+
+if __name__ == "__main__":
+    build()

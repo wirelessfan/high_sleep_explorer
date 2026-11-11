@@ -1,0 +1,381 @@
+{
+  "version": 1,
+  "series": {
+    "name": "谬误研究所",
+    "en": "The Fallacy Lab",
+    "tagline": "答对一题，净化一只怪人",
+    "setting": "每个学科里最常见的错误概念被培育成实验体，科学家是研究所所长兼最终守关者。",
+    "art_style": [
+      "额头缝合线",
+      "颈部六角螺栓",
+      "玻璃罩高光",
+      "左手绷带",
+      "Q 版三头身",
+      "实验编号牌",
+      "统一底座光环"
+    ],
+    "license": "原创角色；仅取公有领域的科学怪人／实验室造物母题，未使用任何商业卡通或游戏 IP 的现成形象。"
+  },
+  "bosses": [
+    {
+      "id": "physics-induction-quick",
+      "topic_id": "physics-induction",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "火花豆",
+      "en": "Sparky",
+      "code": "No.01",
+      "element": "静电火花",
+      "skill": "静电乱流",
+      "hp": 5,
+      "taunt": "噼啪！先把磁通量想清楚再碰我。",
+      "purified": "火花收进灯泡，它终于安静了。",
+      "svg": "/assets/bosses/physics-induction-quick.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-induction-basic",
+      "topic_id": "physics-induction",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "线圈兽",
+      "en": "Coily",
+      "code": "No.02",
+      "element": "乱绕线圈",
+      "skill": "匝数迷阵",
+      "hp": 10,
+      "taunt": "绕啊绕……你数得清我身上几匝吗？",
+      "purified": "线圈理顺了，感应电动势有了方向。",
+      "svg": "/assets/bosses/physics-induction-basic.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-induction-summary",
+      "topic_id": "physics-induction",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "磁通雾",
+      "en": "Fluxy",
+      "code": "No.03",
+      "element": "模糊磁通",
+      "skill": "力线障眼法",
+      "hp": 1,
+      "taunt": "穿过我的到底是 B、S，还是 BS？",
+      "purified": "雾散了，力线一根根排得整整齐齐。",
+      "svg": "/assets/bosses/physics-induction-summary.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-induction-hard",
+      "topic_id": "physics-induction",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "楞次双脸",
+      "en": "Lenz",
+      "code": "No.04",
+      "element": "反向直觉",
+      "skill": "来拒去留",
+      "hp": 3,
+      "taunt": "你增我就减，你走我就留——猜猜我朝哪边？",
+      "purified": "两张脸终于达成共识：总是阻碍变化。",
+      "svg": "/assets/bosses/physics-induction-hard.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-induction-practice",
+      "topic_id": "physics-induction",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "齿轮将",
+      "en": "Dynamo",
+      "code": "No.05",
+      "element": "空转发电机",
+      "skill": "无功耗空转",
+      "hp": 8,
+      "taunt": "想发电？先说说能量从哪儿来！",
+      "purified": "齿轮咬合上，机械能真的变成了电能。",
+      "svg": "/assets/bosses/physics-induction-practice.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": null
+    },
+    {
+      "id": "physics-induction-boss",
+      "topic_id": "physics-induction",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "法拉第",
+      "en": "Michael Faraday",
+      "code": "BOSS",
+      "element": "电磁感应定律",
+      "skill": "力线审判",
+      "hp": 1,
+      "taunt": "只要磁通量在变，我就有办法。你，准备好了吗？",
+      "purified": "他把线圈递给你：现在，这间实验室归你了。",
+      "svg": "/assets/bosses/physics-induction-boss.svg",
+      "colors": {
+        "main": "#6366f1",
+        "accent": "#fbbf24"
+      },
+      "card_id": "faraday"
+    },
+    {
+      "id": "chemistry-equilibrium-quick",
+      "topic_id": "chemistry-equilibrium",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "气泡怪",
+      "en": "Bubbly",
+      "code": "No.06",
+      "element": "乱冒气泡",
+      "skill": "假沸腾",
+      "hp": 5,
+      "taunt": "咕嘟咕嘟～看到气泡就是反应在动？",
+      "purified": "气泡停了，它承认自己只是被搅动了一下。",
+      "svg": "/assets/bosses/chemistry-equilibrium-quick.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-equilibrium-basic",
+      "topic_id": "chemistry-equilibrium",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "歪天平",
+      "en": "Tilty",
+      "code": "No.07",
+      "element": "失衡浓度",
+      "skill": "左右摇摆",
+      "hp": 10,
+      "taunt": "这边多一点，那边少一点，反正永远不平衡～",
+      "purified": "横梁放平：正逆速率相等，才是真的平衡。",
+      "svg": "/assets/bosses/chemistry-equilibrium-basic.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-equilibrium-summary",
+      "topic_id": "chemistry-equilibrium",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "浓度云",
+      "en": "Cloudy",
+      "code": "No.08",
+      "element": "浓度错觉",
+      "skill": "稀释迷雾",
+      "hp": 1,
+      "taunt": "加水之后，所有浓度都变小了哦……真的吗？",
+      "purified": "云雾分层沉淀，Q 和 K 各归其位。",
+      "svg": "/assets/bosses/chemistry-equilibrium-summary.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-equilibrium-hard",
+      "topic_id": "chemistry-equilibrium",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "双面勒夏",
+      "en": "Le Chatelier",
+      "code": "No.09",
+      "element": "条件误判",
+      "skill": "压强诡辩",
+      "hp": 3,
+      "taunt": "升温！加压！我到底该往哪边躲？",
+      "purified": "两张脸同时点头：只向着减弱改变的方向移动。",
+      "svg": "/assets/bosses/chemistry-equilibrium-hard.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-equilibrium-practice",
+      "topic_id": "chemistry-equilibrium",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "反应釜将",
+      "en": "Kettle",
+      "code": "No.10",
+      "element": "催化误会",
+      "skill": "催化剂偷渡",
+      "hp": 8,
+      "taunt": "加一勺催化剂，平衡就该往右跑了吧？",
+      "purified": "压力表归零：催化剂只改快慢，不改终点。",
+      "svg": "/assets/bosses/chemistry-equilibrium-practice.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": null
+    },
+    {
+      "id": "chemistry-equilibrium-boss",
+      "topic_id": "chemistry-equilibrium",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "居里夫人",
+      "en": "Marie Curie",
+      "code": "BOSS",
+      "element": "放射性研究",
+      "skill": "恒心审判",
+      "hp": 1,
+      "taunt": "没有什么可怕的，只有值得理解的东西。",
+      "purified": "她把发光的烧瓶放在你手里：别怕，慢慢来。",
+      "svg": "/assets/bosses/chemistry-equilibrium-boss.svg",
+      "colors": {
+        "main": "#10b981",
+        "accent": "#38bdf8"
+      },
+      "card_id": "curie"
+    },
+    {
+      "id": "math-derivative-quick",
+      "topic_id": "math-derivative",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "切线豆",
+      "en": "Tangy",
+      "code": "No.11",
+      "element": "斜线乱切",
+      "skill": "斜率碰瓷",
+      "hp": 5,
+      "taunt": "随手画条线就说自己是切线，你能证吗？",
+      "purified": "它把直尺摆到极限位置：这才是切线。",
+      "svg": "/assets/bosses/math-derivative-quick.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-derivative-basic",
+      "topic_id": "math-derivative",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "割线虫",
+      "en": "Secant",
+      "code": "No.12",
+      "element": "两点硬凑",
+      "skill": "Δx 拖堂",
+      "hp": 10,
+      "taunt": "我就赖在两个点上，绝不让你取极限～",
+      "purified": "Δx 终于趋近 0，虫子蜷成了切线。",
+      "svg": "/assets/bosses/math-derivative-basic.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-derivative-summary",
+      "topic_id": "math-derivative",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "斜率方士",
+      "en": "Slopey",
+      "code": "No.13",
+      "element": "坐标错位",
+      "skill": "Rise over Run",
+      "hp": 1,
+      "taunt": "纵坐标除以横坐标？先看清是谁除以谁。",
+      "purified": "三角板转正，导数有了几何的样子。",
+      "svg": "/assets/bosses/math-derivative-summary.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-derivative-hard",
+      "topic_id": "math-derivative",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "极值双生",
+      "en": "Extrema",
+      "code": "No.14",
+      "element": "导数为零",
+      "skill": "驻点伪装",
+      "hp": 3,
+      "taunt": "f′=0 就是极值？山顶和山谷我可都占着。",
+      "purified": "双胞胎分开站好：还要看两侧符号怎么变。",
+      "svg": "/assets/bosses/math-derivative-hard.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-derivative-practice",
+      "topic_id": "math-derivative",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "ε 幽灵",
+      "en": "Epsilon",
+      "code": "No.15",
+      "element": "无穷小",
+      "skill": "趋近未达",
+      "hp": 8,
+      "taunt": "我无限接近 0，可我从来不等于 0。",
+      "purified": "幽灵淡到看不见，极限却稳稳落了下来。",
+      "svg": "/assets/bosses/math-derivative-practice.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-derivative-boss",
+      "topic_id": "math-derivative",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "高斯",
+      "en": "C. F. Gauss",
+      "code": "BOSS",
+      "element": "数学王子",
+      "skill": "极限审判",
+      "hp": 1,
+      "taunt": "少一点，但成熟一点。先把定义讲清楚。",
+      "purified": "他在钟形曲线旁签下名字：这一关，你过了。",
+      "svg": "/assets/bosses/math-derivative-boss.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": "gauss"
+    }
+  ]
+}

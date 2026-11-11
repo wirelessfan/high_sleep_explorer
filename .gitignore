@@ -14,6 +14,7 @@ venv/
 *.key
 
 # Database
+data/
 *.db
 *.db-wal
 *.db-shm
@@ -30,6 +31,9 @@ desktop.ini
 # Logs
 *.log
 
-# 设计过程产物（保留样稿与最终截图，忽略临时文件）
+# 设计过程临时文件
 design/mockup/_*.html
 design/mockup/_*.png
+
+# 开发期临时截图
+.boss_*.png

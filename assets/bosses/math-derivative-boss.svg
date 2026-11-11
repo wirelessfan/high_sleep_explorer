@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" width="240" height="280" role="img" aria-label="高斯 大 Boss">
+<defs>
+  <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#fcd34d"/>
+    <stop offset=".55" stop-color="#f59e0b"/>
+    <stop offset="1" stop-color="#b45309"/>
+  </linearGradient>
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffffff" stop-opacity=".75"/>
+    <stop offset=".45" stop-color="#ffffff" stop-opacity=".08"/>
+    <stop offset="1" stop-color="#ffffff" stop-opacity=".35"/>
+  </linearGradient>
+  <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f1f5f9"/>
+    <stop offset="1" stop-color="#94a3b8"/>
+  </linearGradient>
+  <radialGradient id="halo">
+    <stop offset="0" stop-color="#fde68a" stop-opacity=".85"/>
+    <stop offset=".7" stop-color="#fde68a" stop-opacity=".22"/>
+    <stop offset="1" stop-color="#fde68a" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="glow">
+    <stop offset="0" stop-color="#fb7185" stop-opacity=".9"/>
+    <stop offset="1" stop-color="#fb7185" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="robe" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#ffffff"/>
+    <stop offset="1" stop-color="#dbe4f0"/>
+  </linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#d97706"/></linearGradient>
+</defs>
+<ellipse cx="120" cy="258" rx="70" ry="10" fill="#0f172a" opacity=".12"/><circle cx="120" cy="140" r="102" fill="url(#halo)"/><ellipse cx="120" cy="46" rx="62" ry="15" fill="none" stroke="url(#gold)" stroke-width="5" opacity=".95"/><ellipse cx="120" cy="248" rx="62" ry="11" fill="none" stroke="url(#gold)" stroke-width="2.4" opacity=".7"/><path d="M28 150 l-8 6 8 6 M212 150 l8 6 -8 6" fill="none" stroke="#fb7185" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+<g><rect x="176" y="18" width="46" height="20" rx="10" fill="url(#gold)" stroke="#b45309" stroke-width="1.6"/><text x="199" y="32" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="bold" fill="#1e293b">BOSS</text></g>
+<path d="M170 140 q26 -66 52 0" fill="none" stroke="#fb7185" stroke-width="4" stroke-linecap="round"/><path d="M170 140 h52" stroke="#b45309" stroke-width="2" opacity=".5"/><circle cx="196" cy="76" r="3.5" fill="#fb7185" opacity=".9"/><path d="M196 134 v100" stroke="#b45309" stroke-width="8" stroke-linecap="round"/><path d="M194 142 v88" stroke="#fde68a" stroke-width="2" stroke-linecap="round" opacity=".9"/><rect x="190" y="146" width="12" height="7" rx="2" fill="url(#gold)" stroke="#b45309" stroke-width="1.4"/><circle cx="196" cy="236" r="7" fill="url(#gold)" stroke="#b45309" stroke-width="1.6"/>
+<path d="M78 162 q42 -16 84 0 l16 78 q-58 20 -116 0z" fill="url(#robe)" stroke="#1e293b" stroke-width="3"/><path d="M120 148 v96" stroke="#d97706" stroke-width="2" opacity=".35"/><path d="M104 152 l16 22 16 -22" fill="#fb7185" stroke="#b45309" stroke-width="2.2"/><circle cx="120" cy="196" r="12" fill="url(#gold)" stroke="#b45309" stroke-width="2"/><text x="120" y="201" text-anchor="middle" font-family="Georgia,serif" font-size="13" font-weight="bold" fill="#78350f">G</text><rect x="58" y="166" width="20" height="48" rx="10" fill="#e2e8f0" stroke="#1e293b" stroke-width="2.4"/><rect x="162" y="166" width="20" height="48" rx="10" fill="#e2e8f0" stroke="#1e293b" stroke-width="2.4"/><circle cx="68" cy="216" r="10" fill="#f8fafc" stroke="#1e293b" stroke-width="2.2"/><circle cx="172" cy="216" r="10" fill="#f8fafc" stroke="#1e293b" stroke-width="2.2"/><g transform="translate(90 154)">
+  <polygon points="-9,-5 0,-10 9,-5 9,5 0,10 -9,5" fill="url(#gold)" stroke="#b45309" stroke-width="1.5"/>
+  <path d="M-4 0 H4 M0 -4 V4" stroke="#b45309" stroke-width="1.6" stroke-linecap="round"/>
+</g><g transform="translate(150 154)">
+  <polygon points="-9,-5 0,-10 9,-5 9,5 0,10 -9,5" fill="url(#gold)" stroke="#b45309" stroke-width="1.5"/>
+  <path d="M-4 0 H4 M0 -4 V4" stroke="#b45309" stroke-width="1.6" stroke-linecap="round"/>
+</g><rect x="80" y="66" width="80" height="82" rx="30" fill="#ffe9cf" stroke="#1e293b" stroke-width="3"/><path d="M82 90 q-4 -40 38 -40 q42 0 38 40 q-14 -20 -38 -20 q-24 0 -38 20z" fill="#cbd5e1" stroke="#1e293b" stroke-width="2.4"/><path d="M84 90 q-8 18 -2 30 M156 90 q8 18 2 30" fill="none" stroke="#cbd5e1" stroke-width="7" stroke-linecap="round"/><path d="M94 94 h18 M128 94 h18" stroke="#94a3b8" stroke-width="3.4" stroke-linecap="round"/><circle cx="104" cy="108" r="9" fill="#fff" stroke="#1e293b" stroke-width="1.8"/><circle cx="136" cy="108" r="9" fill="#fff" stroke="#1e293b" stroke-width="1.8"/><circle cx="105" cy="109" r="4" fill="#1e293b"/><circle cx="137" cy="109" r="4" fill="#1e293b"/><circle cx="103" cy="106" r="1.8" fill="#fff"/><circle cx="135" cy="106" r="1.8" fill="#fff"/><circle cx="136" cy="108" r="14" fill="none" stroke="#94a3b8" stroke-width="2.6"/><path d="M148 118 l6 16" stroke="#94a3b8" stroke-width="1.8" stroke-linecap="round"/><path d="M104 128 q8 6 14 0 M136 128 q-8 6 -14 0" fill="none" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round"/><path d="M102 142 q18 8 36 0" fill="none" stroke="#cbd5e1" stroke-width="5" stroke-linecap="round"/><path d="M111 133 h18" fill="none" stroke="#1e293b" stroke-width="2.4" stroke-linecap="round"/><path d="M84 80 q-8 24 2 44" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+</svg>

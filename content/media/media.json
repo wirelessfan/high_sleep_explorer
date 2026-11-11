@@ -1,0 +1,111 @@
+{
+  "version": 1,
+  "retrieved_at": "2026-11-11",
+  "source": "bilibili",
+  "note": "播放量与点赞数为抓取时快照，仅用于入选排序参考。长合集只作延伸资源，不进 25 分钟微学习。",
+  "videos": [
+    {
+      "bvid": "BV1oqwVzHEH6",
+      "title": "从零开始！带你吃透楞次定律与感应电流！沉浸式高效学习，全动画演示",
+      "up": "HE物理课堂",
+      "duration": "27:41",
+      "play": 453784,
+      "like": 2193,
+      "topic": "physics-induction",
+      "role": "micro",
+      "why": "全动画演示磁感线变化，建立方向感最快。"
+    },
+    {
+      "bvid": "BV1fD5FzEEGm",
+      "title": "[高中物理]必修三系统课开更！高质网课拯救你的电磁学",
+      "up": "HE物理课堂",
+      "duration": "11:27",
+      "play": 570608,
+      "like": 1014,
+      "topic": "physics-induction",
+      "role": "micro",
+      "why": "电荷与静电感应的打底内容，11 分钟长度合适。"
+    },
+    {
+      "bvid": "BV1W44y1D7tW",
+      "title": "【合集III】电磁学必修（静电场，电路，磁场）",
+      "up": "陈老师敲黑板",
+      "duration": "727:15",
+      "play": 50785,
+      "like": 1085,
+      "topic": "physics-induction",
+      "role": "extension",
+      "why": "用户指定的「陈老师讲物理」。12 小时系统课，只做延伸资源外链。"
+    },
+    {
+      "bvid": "BV1Sr4y1575k",
+      "title": "【化学平衡】影响化学平衡因素与勒夏特列原理",
+      "up": "一化儿",
+      "duration": "36:17",
+      "play": 1663655,
+      "like": 58201,
+      "topic": "chemistry-equilibrium",
+      "role": "micro",
+      "why": "166 万播放、5.8 万赞，三类影响因素讲得系统。"
+    },
+    {
+      "bvid": "BV1514y1B7aQ",
+      "title": "深入讲解化学反应速率与化学平衡之间的关系（高中化学）",
+      "up": "讲历史的化学周老师",
+      "duration": "15:21",
+      "play": 14688,
+      "like": 2437,
+      "topic": "chemistry-equilibrium",
+      "role": "micro",
+      "why": "专门辨析「速率」与「平衡」两个易混概念。"
+    },
+    {
+      "bvid": "BV1gQu16BEjT",
+      "title": "【选择性必修一】化学平衡移动+勒夏特列原理",
+      "up": "一化儿",
+      "duration": "91:50",
+      "play": 350199,
+      "like": 33622,
+      "topic": "chemistry-equilibrium",
+      "role": "extension",
+      "why": "长专题课，平衡移动题型全覆盖，做延伸资源。"
+    },
+    {
+      "bvid": "BV1gg4y1z7S8",
+      "title": "高中数学基础-导数的概念和几何意义",
+      "up": "赵大神数学",
+      "duration": "8:37",
+      "play": 165299,
+      "like": 3614,
+      "topic": "math-derivative",
+      "role": "micro",
+      "why": "8 分钟讲完概念与几何直观，节奏紧凑。"
+    },
+    {
+      "bvid": "BV1DP4y167b8",
+      "title": "导数3：导数的几何意义",
+      "up": "会放羊的教书匠",
+      "duration": "11:44",
+      "play": 107885,
+      "like": 1986,
+      "topic": "math-derivative",
+      "role": "micro",
+      "why": "把「割线趋于切线」的过程画得很清楚。"
+    },
+    {
+      "bvid": "BV1cK411j7Ee",
+      "title": "【3d动画】偏导数的几何意义",
+      "up": "心一学长",
+      "duration": "7:07",
+      "play": 252093,
+      "like": 7669,
+      "topic": "math-derivative",
+      "role": "egg",
+      "why": "Boss 彩蛋用，3D 视角看切平面，超前但直观。"
+    }
+  ],
+  "scoring": {
+    "formula": "0.40*log(play) + 0.30*log(like) + 0.15*like/play + 0.15*authority",
+    "authority_whitelist": ["陈老师敲黑板", "HE物理课堂", "一化儿", "赵大神数学"]
+  }
+}

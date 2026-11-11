@@ -1,0 +1,79 @@
+{
+  "title": "高中理科学习助手",
+  "version": 1,
+  "subjects": [
+    {
+      "id": "physics",
+      "name": "物理",
+      "color": "#3B82F6",
+      "icon": "⚛",
+      "topics": ["physics-induction"]
+    },
+    {
+      "id": "chemistry",
+      "name": "化学",
+      "color": "#10B981",
+      "icon": "⚗",
+      "topics": ["chemistry-equilibrium"]
+    },
+    {
+      "id": "math",
+      "name": "数学",
+      "color": "#F59E0B",
+      "icon": "∑",
+      "topics": ["math-derivative"]
+    }
+  ],
+  "topics": [
+    {
+      "id": "physics-induction",
+      "subject": "physics",
+      "title": "电磁感应",
+      "subtitle": "楞次定律与感应电流方向",
+      "grade": "高二",
+      "minutes": 25,
+      "cover": "induction",
+      "reward_card": "faraday",
+      "description": "从「磁铁插进线圈」这个实验出发，把感应电流的方向判断一次讲透。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    },
+    {
+      "id": "chemistry-equilibrium",
+      "subject": "chemistry",
+      "title": "化学平衡",
+      "subtitle": "勒夏特列原理与平衡移动",
+      "grade": "高二",
+      "minutes": 25,
+      "cover": "equilibrium",
+      "reward_card": "curie",
+      "description": "浓度、压强、温度改变时平衡往哪边移？用「对抗改变」四个字吃透。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    },
+    {
+      "id": "math-derivative",
+      "subject": "math",
+      "title": "导数的几何意义",
+      "subtitle": "切线斜率与单调性",
+      "grade": "高二",
+      "minutes": 25,
+      "cover": "derivative",
+      "reward_card": "gauss",
+      "description": "导数不是公式，是「瞬时变化率」。先看图，再算数。",
+      "sections": [
+        "quick", "basic", "summary", "hard", "practice", "boss"
+      ]
+    }
+  ],
+  "sections": [
+    {"id": "quick", "name": "快速测试", "minutes": 4, "icon": "⚡"},
+    {"id": "basic", "name": "基础闯关", "minutes": 9, "icon": "🧩"},
+    {"id": "summary", "name": "知识点总结", "minutes": 5, "icon": "📘"},
+    {"id": "hard", "name": "难点剖析", "minutes": 5, "icon": "🔍"},
+    {"id": "practice", "name": "实战巩固", "minutes": 8, "icon": "✏️"},
+    {"id": "boss", "name": "Boss 彩蛋", "minutes": 5, "icon": "👾"}
+  ]
+}
