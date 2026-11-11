@@ -22,8 +22,11 @@ export async function renderHome(view) {
   /* ---- 顶部问候 ---- */
   root.appendChild(el('div', { class: 'row-between', style: 'padding:2px 2px 0' }, [
     el('div', {}, [
-      el('div', { style: 'font-size:11px;letter-spacing:.16em;color:#94a3b8;font-weight:700;text-transform:uppercase', text: 'Today' }),
-      el('div', { style: 'font-size:19px;font-weight:800;letter-spacing:-.01em;margin-top:2px', text: `你好，${me.nickname}` }),
+      el('div', { style: 'font-size:11px;letter-spacing:.16em;color:var(--ink-3);font-weight:700;text-transform:uppercase', text: 'Sunny · Exploring' }),
+      el('div', {
+        style: 'font-size:20px;font-weight:800;letter-spacing:-.01em;margin-top:2px',
+        text: 'hello, sunny',
+      }),
     ]),
     el('div', { class: 'row', style: 'gap:6px' }, [
       el('span', { class: 'chip', text: `⚡ ${me.points}` }),
@@ -36,6 +39,10 @@ export async function renderHome(view) {
     const left = next.total - next.done;
     const mins = Math.max(5, Math.min(30, Math.round(next.minutes * (left / next.total))));
     root.appendChild(el('section', { class: 'panel hero' }, [
+      el('div', { class: 'hero-art' }, [
+        el('img', { src: '/assets/art/hero-journey.svg', alt: '', loading: 'eager' }),
+        el('span', { class: 'badge', text: '☀️ 今天的探险' }),
+      ]),
       el('div', { class: 'eyebrow', text: '今日 25 分钟' }),
       el('h2', { text: next.title }),
       el('p', { text: next.description || next.subtitle }),
@@ -46,7 +53,7 @@ export async function renderHome(view) {
       ]),
       el('div', { class: 'row', style: 'margin-top:16px;gap:9px' }, [
         el('button', {
-          class: 'btn', text: next.done ? '继续学习' : '开始闯关',
+          class: 'btn', text: next.done ? '继续探险' : '出发闯关',
           onclick: () => navigate(`#/topic/${next.id}`),
         }),
         el('button', {
@@ -67,7 +74,7 @@ export async function renderHome(view) {
         }),
         el('div', {}, [
           el('div', { style: 'font-size:13.5px;font-weight:800', text: doneToday ? '今天已签到' : '还没签到' }),
-          el('div', { style: 'font-size:11.5px;color:#94a3b8;margin-top:2px', text: `连签 ${checkin.streak} 天 · 累计 ${me.points} 分` }),
+          el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:2px', text: `连签 ${checkin.streak} 天 · 累计 ${me.points} 分` }),
         ]),
       ]),
       doneToday ? el('span', { class: 'chip', text: '已领取' }) : el('button', {
@@ -106,7 +113,7 @@ export async function renderHome(view) {
       ]),
       el('div', { style: 'flex:1' }, [
         el('div', { style: 'font-size:14px;font-weight:800', text: '总体进度' }),
-        el('div', { style: 'font-size:11.5px;color:#94a3b8;margin-top:3px', text: `${doneSections}/${totalSections} 个版块 · ${doneTopics}/${totalTopics} 个主题全通` }),
+        el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: `${doneSections}/${totalSections} 个版块 · ${doneTopics}/${totalTopics} 个主题全通` }),
       ]),
     ]),
   ]));
@@ -125,7 +132,7 @@ export async function renderHome(view) {
       el('div', { class: 'row-between', style: 'margin-bottom:10px' }, [
         el('div', { class: 'row', style: 'gap:8px' }, [
           el('span', { class: `chip ${SUBJECT_CLASS[subj.id]}`, text: subj.name }),
-          el('span', { style: 'font-size:11.5px;color:#94a3b8', text: allDone ? '已完成' : `${items.filter(t=>t.complete).length}/${items.length} 主题` }),
+          el('span', { style: 'font-size:11.5px;color:#a3928a', text: allDone ? '已完成' : `${items.filter(t=>t.complete).length}/${items.length} 主题` }),
         ]),
         el('button', {
           style: `font-size:12px;font-weight:700;color:${SUBJECT_COLOR[subj.id]}`,
@@ -146,7 +153,7 @@ export async function renderHome(view) {
               el('i', { style: `width:${t.percent}%;background:${SUBJECT_COLOR[subj.id]}` }),
             ]),
           ]),
-          el('div', { style: 'font-size:11px;font-weight:800;color:#94a3b8;flex:0 0 auto', text: `${t.done}/${t.total}` }),
+          el('div', { style: 'font-size:11px;font-weight:800;color:#a3928a;flex:0 0 auto', text: `${t.done}/${t.total}` }),
         ])
       )),
     ]));

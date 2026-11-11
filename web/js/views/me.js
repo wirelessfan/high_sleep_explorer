@@ -9,7 +9,7 @@ export async function renderMe(view) {
   const root = el('div', { class: 'stack' });
 
   root.appendChild(el('div', { style: 'padding:2px 2px 0' }, [
-    el('div', { style: 'font-size:11px;letter-spacing:.16em;color:#94a3b8;font-weight:700;text-transform:uppercase', text: 'Profile' }),
+    el('div', { style: 'font-size:11px;letter-spacing:.16em;color:#a3928a;font-weight:700;text-transform:uppercase', text: 'Profile' }),
     el('div', { style: 'font-size:19px;font-weight:800;letter-spacing:-.01em;margin-top:2px', text: me.nickname }),
   ]));
 
@@ -43,7 +43,7 @@ export async function renderMe(view) {
     el('div', { class: 'row-between' }, [
       el('div', {}, [
         el('div', { style: 'font-size:14px;font-weight:800', text: '每日签到' }),
-        el('div', { style: 'font-size:11.5px;color:#94a3b8;margin-top:2px', text: `连签 ${me.streak} 天 · 连签第 3 天得卡包` }),
+        el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:2px', text: `连签 ${me.streak} 天 · 连签第 3 天得卡包` }),
       ]),
       checkin.checked_today
         ? el('span', { class: 'chip', text: '今天已签' })
@@ -71,7 +71,7 @@ export async function renderMe(view) {
     el('div', { class: 'row-between' }, [
       el('div', {}, [
         el('div', { style: 'font-size:13.5px;font-weight:800', text: '卡包与碎片' }),
-        el('div', { style: 'font-size:11.5px;color:#94a3b8;margin-top:3px', text: `卡包 ${me.tickets} 张 · 碎片 ${me.shards} 个` }),
+        el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: `卡包 ${me.tickets} 张 · 碎片 ${me.shards} 个` }),
       ]),
       el('button', {
         class: 'btn ghost sm', text: '去图鉴',
@@ -83,9 +83,9 @@ export async function renderMe(view) {
   /* ---- 同步码 ---- */
   root.appendChild(el('section', { class: 'panel' }, [
     el('div', { style: 'font-size:13.5px;font-weight:800', text: '跨设备同步' }),
-    el('div', { style: 'font-size:11.5px;color:#94a3b8;margin-top:3px;line-height:1.7', text: '在新设备输入这串码，就能接着原来的进度' }),
+    el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px;line-height:1.7', text: '在新设备输入这串码，就能接着原来的进度' }),
     el('div', {
-      style: 'margin-top:12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:11px;padding:13px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:17px;letter-spacing:.14em;font-weight:800;color:#0f172a',
+      style: 'margin-top:12px;background:#fdf8f0;border:1px dashed #d9c8b4;border-radius:11px;padding:13px;text-align:center;font-family:ui-monospace,Menlo,monospace;font-size:17px;letter-spacing:.14em;font-weight:800;color:#3b2f2a',
       text: me.sync_code,
     }),
     el('div', { class: 'row', style: 'margin-top:11px;gap:8px' }, [
@@ -104,7 +104,7 @@ export async function renderMe(view) {
         class: 'btn ghost sm', style: 'flex:1', text: '重置同步码',
         onclick: () => {
           openSheet(el('div', {}, [
-            el('div', { style: 'font-size:13px;color:#475569;line-height:1.75', text: '重置后旧码立即失效，其他设备需要重新输入新码。' }),
+            el('div', { style: 'font-size:13px;color:#6b5b52;line-height:1.75', text: '重置后旧码立即失效，其他设备需要重新输入新码。' }),
             el('button', {
               class: 'btn full', style: 'margin-top:16px', text: '确认重置',
               onclick: async (e) => {
@@ -129,7 +129,7 @@ export async function renderMe(view) {
   /* ---- 切换账号 ---- */
   root.appendChild(el('section', { class: 'panel' }, [
     el('div', { style: 'font-size:13.5px;font-weight:800', text: '切换同步码' }),
-    el('div', { style: 'font-size:11.5px;color:#94a3b8;margin-top:3px', text: '输入另一台设备的同步码，把当前设备切过去' }),
+    el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: '输入另一台设备的同步码，把当前设备切过去' }),
     el('button', {
       class: 'btn ghost full', style: 'margin-top:12px', text: '输入同步码',
       onclick: () => showAdoptSheet(),
@@ -164,16 +164,16 @@ export async function renderMe(view) {
 function statCell(value, label) {
   return el('div', { style: 'flex:1;text-align:center' }, [
     el('div', { style: 'font-size:21px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums', text: value }),
-    el('div', { style: 'font-size:10.5px;color:#94a3b8;margin-top:3px', text: label }),
+    el('div', { style: 'font-size:10.5px;color:#a3928a;margin-top:3px', text: label }),
   ]);
 }
 
 function ruleRows(rows) {
   return rows.map(([k, v]) => el('div', {
-    style: 'display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #f8fafc;font-size:12px',
+    style: 'display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-top:1px solid #fdf8f0;font-size:12px',
   }, [
-    el('span', { style: 'color:#475569;font-weight:600;flex:0 0 auto', text: k }),
-    el('span', { style: 'color:#94a3b8;text-align:right', text: v }),
+    el('span', { style: 'color:#6b5b52;font-weight:600;flex:0 0 auto', text: k }),
+    el('span', { style: 'color:#a3928a;text-align:right', text: v }),
   ]));
 }
 
@@ -183,10 +183,10 @@ export function showAdoptSheet() {
     placeholder: 'XXXX-XXXX-XXXX',
     autocomplete: 'off',
     spellcheck: 'false',
-    style: 'width:100%;min-height:48px;border:1.5px solid #e2e8f0;border-radius:12px;padding:0 14px;font-family:ui-monospace,Menlo,monospace;font-size:15px;letter-spacing:.1em;text-align:center;outline:none',
+    style: 'width:100%;min-height:48px;border:1.5px solid #efe2ce;border-radius:12px;padding:0 14px;font-family:ui-monospace,Menlo,monospace;font-size:15px;letter-spacing:.1em;text-align:center;outline:none',
   });
-  input.addEventListener('focus', () => { input.style.borderColor = '#93c5fd'; });
-  input.addEventListener('blur', () => { input.style.borderColor = '#e2e8f0'; });
+  input.addEventListener('focus', () => { input.style.borderColor = '#9ec9f5'; });
+  input.addEventListener('blur', () => { input.style.borderColor = '#efe2ce'; });
 
   const btn = el('button', {
     class: 'btn full', style: 'margin-top:14px', text: '切换',

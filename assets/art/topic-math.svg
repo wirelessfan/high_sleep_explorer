@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="mBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/><stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+    <linearGradient id="mCurve" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="120" height="120" rx="26" fill="url(#mBg)"/>
+
+  <!-- 坐标轴 -->
+  <g stroke="#b45309" stroke-width="2.4" stroke-linecap="round" opacity=".55">
+    <path d="M22 92h78"/>
+    <path d="M30 100V22"/>
+  </g>
+  <g fill="#b45309" opacity=".55">
+    <path d="M100 88l6 4-6 4z"/>
+    <path d="M26 20l4-6 4 6z"/>
+  </g>
+
+  <!-- 抛物线 -->
+  <path d="M28 88q22-56 58-30" stroke="url(#mCurve)" stroke-width="4.2" stroke-linecap="round" fill="none"/>
+
+  <!-- 切线 -->
+  <g>
+    <path d="M36 94L92 50" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+    <!-- 切点 -->
+    <circle cx="64" cy="72" r="5.4" fill="#fff" stroke="#3b82f6" stroke-width="3"/>
+    <!-- 斜率三角 -->
+    <path d="M64 72h16v-11" stroke="#3b82f6" stroke-width="1.8" stroke-dasharray="3 3" fill="none" opacity=".8"/>
+  </g>
+
+  <!-- 割线（淡） -->
+  <path d="M40 84l58-14" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round" opacity=".7"/>
+
+  <!-- 公式标签 -->
+  <g transform="translate(76 26)">
+    <rect x="-18" y="-11" width="40" height="21" rx="6" fill="#fff" opacity=".92"/>
+    <text x="2" y="4" text-anchor="middle" font-family="Georgia,serif" font-size="12" font-style="italic" fill="#b45309">f′(x)</text>
+  </g>
+</svg>

@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     token_hash TEXT NOT NULL UNIQUE,
     sync_code TEXT NOT NULL UNIQUE,
-    nickname TEXT NOT NULL DEFAULT '同学',
+    nickname TEXT NOT NULL DEFAULT 'sunny',
     points INTEGER NOT NULL DEFAULT 0,
     streak INTEGER NOT NULL DEFAULT 0,
     last_checkin TEXT,

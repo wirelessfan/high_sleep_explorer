@@ -98,10 +98,25 @@ export function bindBossProgress(rootEl, bannerEl, boss) {
   const hpFill = bannerEl.querySelector('.boss-hp i');
   const state = bannerEl.querySelector('.boss-state');
   const say = bannerEl.querySelector('.boss-say');
+  const WATCH = { childList: true, subtree: true };
+  let lastLabel = '';
 
-  const apply = (correct, total) => {
-    const t = Math.max(1, Number(total) || 1);
-    const left = Math.max(0, hp - Math.round(Math.min(correct, t) / t * hp));
+  const obs = new MutationObserver(() => {
+    // 版块渲染期间 root 可能尚未挂到 document（await 让出了控制权），
+    // 此时只是暂时不处理，绝不能断开观察器，否则后续提交再也收不到。
+    if (!rootEl.isConnected) return;
+    const heroes = rootEl.querySelectorAll('.result-hero');
+    if (!heroes.length) return;
+    const lbl = heroes[heroes.length - 1].querySelector('.lbl')?.textContent || '';
+    const m = lbl.match(/答对\s*(\d+)\s*\/\s*(\d+)/);
+    if (!m || lbl === lastLabel) return;
+    lastLabel = lbl;
+
+    // 关键：下面要改 banner 内的文本节点（属于被观察的子树），
+    // 若不断开观察器，自己的写入会再次触发回调，形成无限微任务循环。
+    obs.disconnect();
+    const t = Math.max(1, Number(m[2]) || 1);
+    const left = Math.max(0, hp - Math.round(Math.min(Number(m[1]), t) / t * hp));
     if (hpFill) hpFill.style.width = `${Math.round(left / hp * 100)}%`;
     if (state) state.textContent = left === 0 ? '✓ 已净化' : `HP ${left}/${hp}`;
     if (left === 0) {
@@ -110,20 +125,8 @@ export function bindBossProgress(rootEl, bannerEl, boss) {
     } else if (say && left < hp) {
       say.textContent = `还剩 ${left} 格 HP，继续净化！`;
     }
-  };
-
-  const scan = () => {
-    // 版块渲染期间 root 可能尚未挂到 document（await 让出了控制权），
-    // 此时只是暂时不处理，绝不能断开观察器，否则后续提交再也收不到。
-    if (!rootEl.isConnected) return;
-    const heroes = rootEl.querySelectorAll('.result-hero');
-    if (!heroes.length) return;
-    const lbl = heroes[heroes.length - 1].querySelector('.lbl')?.textContent || '';
-    const m = lbl.match(/答对\s*(\d+)\s*\/\s*(\d+)/);
-    if (m) apply(Number(m[1]), Number(m[2]));
-  };
-
-  const obs = new MutationObserver(scan);
-  obs.observe(rootEl, { childList: true, subtree: true });
+    obs.observe(rootEl, WATCH);
+  });
+  obs.observe(rootEl, WATCH);
   _activeObserver = obs;
 }

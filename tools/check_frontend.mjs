@@ -9,6 +9,7 @@ const files = [
   'web/js/api.js',
   'web/js/ui.js',
   'web/js/router.js',
+  'web/js/boss.js',
   'web/js/views/home.js',
   'web/js/views/subjects.js',
   'web/js/views/topic.js',

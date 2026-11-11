@@ -13,9 +13,9 @@ export async function renderAlbum(view) {
   const root = el('div', { class: 'stack' });
 
   root.appendChild(el('div', { style: 'padding:2px 2px 0' }, [
-    el('div', { style: 'font-size:11px;letter-spacing:.16em;color:#94a3b8;font-weight:700;text-transform:uppercase', text: 'Collection' }),
+    el('div', { style: 'font-size:11px;letter-spacing:.16em;color:#a3928a;font-weight:700;text-transform:uppercase', text: 'Collection' }),
     el('div', { style: 'font-size:19px;font-weight:800;letter-spacing:-.01em;margin-top:2px', text: '理科名人集卡册' }),
-    el('div', { style: 'font-size:12px;color:#94a3b8;margin-top:3px', text: `已收集 ${data.owned_total} / ${data.total} · 碎片 ${data.shards}` }),
+    el('div', { style: 'font-size:12px;color:#a3928a;margin-top:3px', text: `已收集 ${data.owned_total} / ${data.total} · 碎片 ${data.shards}` }),
   ]));
 
   /* ---- 主打卡 ---- */
@@ -37,8 +37,8 @@ export async function renderAlbum(view) {
             text: featured.rarity,
           }) : null,
         ]),
-        el('div', { style: 'font-size:11px;color:#94a3b8;margin-top:3px', text: featured ? featured.en : '' }),
-        el('div', { style: 'font-size:11.5px;color:#475569;line-height:1.6;margin-top:7px', text: featured ? featured.quote : '完成任务攒卡包，开出你的第一张卡' }),
+        el('div', { style: 'font-size:11px;color:#a3928a;margin-top:3px', text: featured ? featured.en : '' }),
+        el('div', { style: 'font-size:11.5px;color:#6b5b52;line-height:1.6;margin-top:7px', text: featured ? featured.quote : '完成任务攒卡包，开出你的第一张卡' }),
       ]),
     ]),
     el('div', { class: 'row', style: 'margin-top:14px;gap:8px' }, [
@@ -57,8 +57,8 @@ export async function renderAlbum(view) {
   root.appendChild(el('section', { class: 'panel', style: 'padding:13px' }, [
     el('div', { class: 'row-between' }, [
       el('div', {}, [
-        el('div', { style: 'font-size:12px;color:#475569', text: `距保底 SR 还需 ${data.pity.sr_left} 抽` }),
-        el('div', { style: 'font-size:12px;color:#475569;margin-top:3px', text: `距保底 SSR 还需 ${data.pity.ssr_left} 抽` }),
+        el('div', { style: 'font-size:12px;color:#6b5b52', text: `距保底 SR 还需 ${data.pity.sr_left} 抽` }),
+        el('div', { style: 'font-size:12px;color:#6b5b52;margin-top:3px', text: `距保底 SSR 还需 ${data.pity.ssr_left} 抽` }),
       ]),
       el('div', { class: 'row', style: 'gap:6px' }, [
         el('span', { class: 'chip', text: `碎片 ${data.shards}` }),
@@ -103,7 +103,7 @@ export async function renderAlbum(view) {
     root.appendChild(el('div', { class: `set-row ${s.done ? 'done' : ''}`, style: 'margin-bottom:8px' }, [
       el('div', { class: 'row-between' }, [
         el('div', { class: 't', text: s.name }),
-        el('div', { style: 'font-size:10.5px;font-weight:800;color:#94a3b8', text: `${s.count}/${s.total}${s.done ? ' ✓' : ''}` }),
+        el('div', { style: 'font-size:10.5px;font-weight:800;color:#a3928a', text: `${s.count}/${s.total}${s.done ? ' ✓' : ''}` }),
       ]),
       el('div', { class: 'bar' }, [
         el('i', { style: `width:${Math.round(s.count / s.total * 100)}%` }),
@@ -123,17 +123,17 @@ export async function renderAlbum(view) {
 
 function showRates(data) {
   const rows = Object.entries(data.rates).map(([r, p]) =>
-    el('div', { class: 'row-between', style: 'padding:9px 0;border-bottom:1px solid #f1f5f9' }, [
+    el('div', { class: 'row-between', style: 'padding:9px 0;border-bottom:1px solid #faf4ea' }, [
       el('span', { class: `chip ${rarityClass(r)}`, style: 'color:#fff;border:0;font-size:10.5px', text: r }),
       el('span', { style: 'font-size:13px;font-weight:700', text: `${p}%` }),
-      el('span', { style: 'font-size:11.5px;color:#94a3b8', text: `重复转 ${data.craft_cost[r] === 10 ? 1 : data.craft_cost[r] === 25 ? 2 : data.craft_cost[r] === 60 ? 4 : 8} 碎片` }),
+      el('span', { style: 'font-size:11.5px;color:#a3928a', text: `重复转 ${data.craft_cost[r] === 10 ? 1 : data.craft_cost[r] === 25 ? 2 : data.craft_cost[r] === 60 ? 4 : 8} 碎片` }),
     ])
   );
 
   openSheet(el('div', {}, [
     ...rows,
     el('div', {
-      style: 'margin-top:14px;font-size:12px;color:#475569;line-height:1.8;background:#f8fafc;border-radius:10px;padding:12px',
+      style: 'margin-top:14px;font-size:12px;color:#6b5b52;line-height:1.8;background:#fdf8f0;border-radius:10px;padding:12px',
     }, [
       el('div', { text: `· 单抽消耗 1 张卡包，十连消耗 9 张（9 折）` }),
       el('div', { text: `· 累计 ${data.pity.pity_sr} 抽未出 SR，下一抽必出 SR 及以上` }),
@@ -151,7 +151,7 @@ function showCardDetail(c, data) {
       el('div', { style: 'text-align:center;padding:10px 0 4px' }, [
         el('div', { style: 'font-size:40px;opacity:.3', text: '🔒' }),
         el('div', { style: 'font-size:14px;font-weight:800;margin-top:8px', text: '尚未解锁' }),
-        el('div', { style: 'font-size:12px;color:#94a3b8;margin-top:5px', text: `稀有度 ${c.rarity} · 可通过开卡包或碎片兑换获得` }),
+        el('div', { style: 'font-size:12px;color:#a3928a;margin-top:5px', text: `稀有度 ${c.rarity} · 可通过开卡包或碎片兑换获得` }),
       ]),
       el('button', {
         class: 'btn full', style: 'margin-top:16px',
@@ -186,9 +186,9 @@ function showCardDetail(c, data) {
           el('span', { style: 'font-size:17px;font-weight:800', text: c.name }),
           el('span', { class: `rar ${rarityClass(c.rarity)}`, style: 'position:static;font-size:9px', text: c.rarity }),
         ]),
-        el('div', { style: 'font-size:10.5px;color:#94a3b8;letter-spacing:.08em;text-transform:uppercase;margin-top:3px', text: c.en }),
-        el('div', { style: 'font-size:11px;color:#94a3b8;margin-top:3px', text: c.life }),
-        el('div', { style: 'font-size:12px;color:#475569;line-height:1.65;margin-top:8px;border-left:2px solid #f59e0b;padding-left:9px', text: c.quote }),
+        el('div', { style: 'font-size:10.5px;color:#a3928a;letter-spacing:.08em;text-transform:uppercase;margin-top:3px', text: c.en }),
+        el('div', { style: 'font-size:11px;color:#a3928a;margin-top:3px', text: c.life }),
+        el('div', { style: 'font-size:12px;color:#6b5b52;line-height:1.65;margin-top:8px;border-left:2px solid #f59e0b;padding-left:9px', text: c.quote }),
       ]),
     ]),
     detailRow('关键贡献', c.contribution),
@@ -205,9 +205,9 @@ function showCardDetail(c, data) {
 }
 
 function detailRow(k, v) {
-  return el('div', { style: 'display:flex;gap:10px;padding:10px 0;border-top:1px solid #f1f5f9;font-size:12.5px;line-height:1.65' }, [
-    el('div', { style: 'flex:0 0 58px;color:#94a3b8;font-size:11.5px', text: k }),
-    el('div', { style: 'color:#334155;flex:1', text: v }),
+  return el('div', { style: 'display:flex;gap:10px;padding:10px 0;border-top:1px solid #faf4ea;font-size:12.5px;line-height:1.65' }, [
+    el('div', { style: 'flex:0 0 58px;color:#a3928a;font-size:11.5px', text: k }),
+    el('div', { style: 'color:#5c4b42;flex:1', text: v }),
   ]);
 }
 
@@ -219,7 +219,7 @@ function openDrawModal(tickets, onDone) {
       el('div', { style: 'text-align:center;padding:16px 0' }, [
         el('div', { style: 'font-size:36px', text: '🎟' }),
         el('div', { style: 'font-size:14px;font-weight:800;margin-top:8px', text: '卡包不够了' }),
-        el('div', { style: 'font-size:12px;color:#94a3b8;margin-top:6px;line-height:1.7', text: '完成主题可获 2 张卡包，通关 Boss 再得 1 张' }),
+        el('div', { style: 'font-size:12px;color:#a3928a;margin-top:6px;line-height:1.7', text: '完成主题可获 2 张卡包，通关 Boss 再得 1 张' }),
       ]),
       el('button', {
         class: 'btn full', style: 'margin-top:10px', text: '去学习',
@@ -254,7 +254,7 @@ function openDrawModal(tickets, onDone) {
       }),
     ]));
     holder.appendChild(el('div', {
-      style: 'margin-top:14px;font-size:11.5px;color:#94a3b8;line-height:1.7;text-align:center',
+      style: 'margin-top:14px;font-size:11.5px;color:#a3928a;line-height:1.7;text-align:center',
       text: 'SR 12% · SSR 3% · 10 抽保底 SR · 40 抽保底 SSR',
     }));
   }
@@ -263,7 +263,7 @@ function openDrawModal(tickets, onDone) {
     holder.innerHTML = '';
     holder.appendChild(el('div', { style: 'text-align:center;padding:30px 0' }, [
       el('div', { style: 'font-size:34px', text: '🎁' }),
-      el('div', { style: 'font-size:13px;color:#94a3b8;margin-top:10px', text: '开启中…' }),
+      el('div', { style: 'font-size:13px;color:#a3928a;margin-top:10px', text: '开启中…' }),
     ]));
 
     try {
@@ -303,10 +303,10 @@ function showDrawResult(holder, res, close, onDone, count) {
   holder.appendChild(grid);
 
   const summary = el('div', {
-    style: 'margin-top:14px;font-size:12px;color:#475569;text-align:center;line-height:1.8',
+    style: 'margin-top:14px;font-size:12px;color:#6b5b52;text-align:center;line-height:1.8',
   }, [
     el('div', { text: `新卡 ${res.new_cards.length} 张${res.shards_gained ? ` · 碎片 +${res.shards_gained}` : ''}` }),
-    el('div', { style: 'color:#94a3b8;font-size:11px', text: `剩余卡包 ${res.tickets_left} · 碎片 ${res.shards_total}` }),
+    el('div', { style: 'color:#a3928a;font-size:11px', text: `剩余卡包 ${res.tickets_left} · 碎片 ${res.shards_total}` }),
   ]);
   holder.appendChild(summary);
 

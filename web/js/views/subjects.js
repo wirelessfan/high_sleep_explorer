@@ -4,19 +4,50 @@ import * as api from '../api.js';
 import { el, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR } from '../ui.js';
 import { navigate } from '../router.js';
 
+const SUBJECT_ART = {
+  physics: '/assets/art/topic-physics.svg',
+  chemistry: '/assets/art/topic-chemistry.svg',
+  math: '/assets/art/topic-math.svg',
+};
+
+const SUBJECT_TAGLINE = {
+  physics: '力、电、光——把世界拆成能算的方程',
+  chemistry: '反应、平衡、结构——看见看不见的变化',
+  math: '函数、图形、极限——给规律一个符号',
+};
+
 export async function renderSubjects(view) {
   const catalog = await api.getCatalog();
   const root = el('div', { class: 'stack' });
 
   root.appendChild(el('div', { style: 'padding:2px 2px 0' }, [
-    el('div', { style: 'font-size:11px;letter-spacing:.16em;color:#94a3b8;font-weight:700;text-transform:uppercase', text: 'Subjects' }),
-    el('div', { style: 'font-size:19px;font-weight:800;letter-spacing:-.01em;margin-top:2px', text: '全部主题' }),
+    el('div', { style: 'font-size:11px;letter-spacing:.16em;color:#a3928a;font-weight:700;text-transform:uppercase', text: 'Subjects' }),
+    el('div', { style: 'font-size:19px;font-weight:800;letter-spacing:-.01em;margin-top:2px', text: '三条探险路线' }),
+    el('div', { style: 'font-size:12px;color:#a3928a;margin-top:3px', text: '每科一条线，挑你想走的那条' }),
   ]));
 
   for (const subj of catalog.subjects) {
-    root.appendChild(el('div', { class: 'section-head' }, [
-      el('h3', { text: subj.name }),
-      el('span', { class: 'hint', text: `${subj.items.length} 个主题` }),
+    const art = SUBJECT_ART[subj.id];
+    const doneCount = subj.items.filter((t) => t.complete).length;
+
+    /* ---- 科目横幅 ---- */
+    root.appendChild(el('section', {
+      class: 'panel subject-banner',
+      style: `--sc:${SUBJECT_COLOR[subj.id]}`,
+    }, [
+      el('div', { class: 'sb-art' }, [
+        art ? el('img', { src: art, alt: '', loading: 'lazy' }) : null,
+      ]),
+      el('div', { class: 'sb-body' }, [
+        el('div', { class: 'row', style: 'gap:7px' }, [
+          el('span', { class: `chip ${SUBJECT_CLASS[subj.id]}`, text: subj.name }),
+          el('span', { style: 'font-size:11px;color:#a3928a', text: `${doneCount}/${subj.items.length} 主题完成` }),
+        ]),
+        el('div', {
+          style: 'font-size:13px;color:#6b5b52;line-height:1.6;margin-top:7px',
+          text: SUBJECT_TAGLINE[subj.id] || '',
+        }),
+      ]),
     ]));
 
     for (const t of subj.items) {
@@ -41,7 +72,7 @@ export async function renderSubjects(view) {
             el('span', { class: 'chip', style: 'font-size:10px;padding:2px 8px', text: `${t.done}/${t.total}` }),
           ]),
         ]),
-        el('div', { style: 'font-size:18px;color:#cbd5e1;flex:0 0 auto', text: '›' }),
+        el('div', { style: 'font-size:18px;color:#d9c8b4;flex:0 0 auto', text: '›' }),
       ]));
     }
   }

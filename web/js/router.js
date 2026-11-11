@@ -49,7 +49,7 @@ export async function render() {
       view.innerHTML = '';
       view.appendChild(el('div', { class: 'panel' }, [
         el('div', { style: 'font-size:15px;font-weight:800;margin-bottom:6px', text: '页面加载失败' }),
-        el('div', { style: 'font-size:13px;color:#64748b', text: err?.message || '未知错误' }),
+        el('div', { style: 'font-size:13px;color:#8a7a70', text: err?.message || '未知错误' }),
         el('button', {
           class: 'btn ghost sm', style: 'margin-top:14px',
           text: '重新加载', onclick: () => render(),

@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 210" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fff7e6"/>
+      <stop offset="55%" stop-color="#ffefd6"/>
+      <stop offset="100%" stop-color="#e8f6ff"/>
+    </linearGradient>
+    <linearGradient id="sunG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd166"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="hillA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a7e8c8"/>
+      <stop offset="100%" stop-color="#6fd7a8"/>
+    </linearGradient>
+    <linearGradient id="hillB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7fd8b4"/>
+      <stop offset="100%" stop-color="#3fbf92"/>
+    </linearGradient>
+    <linearGradient id="hillC" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5cc99a"/>
+      <stop offset="100%" stop-color="#2fa87a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="340" height="210" rx="18" fill="url(#sky)"/>
+
+  <!-- 太阳 -->
+  <g transform="translate(268 52)">
+    <g stroke="#fbbf24" stroke-width="3.2" stroke-linecap="round" opacity=".85">
+      <path d="M0-30V-38"/><path d="M0 30V38"/><path d="M-30 0H-38"/><path d="M30 0H38"/>
+      <path d="M-21-21l-6-6"/><path d="M21-21l6-6"/><path d="M-21 21l-6 6"/><path d="M21 21l6 6"/>
+    </g>
+    <circle r="22" fill="url(#sunG)"/>
+    <g fill="#8a4b08">
+      <circle cx="-7.5" cy="-3" r="2.4"/>
+      <circle cx="7.5" cy="-3" r="2.4"/>
+    </g>
+    <path d="M-7 5q7 6.5 14 0" stroke="#8a4b08" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="-12" cy="3.5" r="3.2" fill="#fb923c" opacity=".45"/>
+    <circle cx="12" cy="3.5" r="3.2" fill="#fb923c" opacity=".45"/>
+  </g>
+
+  <!-- 云 -->
+  <g fill="#ffffff" opacity=".86">
+    <ellipse cx="66" cy="40" rx="24" ry="13"/>
+    <ellipse cx="88" cy="36" rx="17" ry="11"/>
+    <ellipse cx="46" cy="36" rx="14" ry="9"/>
+    <ellipse cx="196" cy="26" rx="19" ry="10"/>
+    <ellipse cx="214" cy="23" rx="13" ry="8"/>
+  </g>
+
+  <!-- 远山 -->
+  <path d="M-10 128q46-40 92-6 34 25 62 2 40-33 78 4 30 26 128 6v76H-10z" fill="url(#hillA)" opacity=".55"/>
+  <path d="M-10 146q54-34 104 0 40 27 74-2 42-35 90-4 32 23 92 12v58H-10z" fill="url(#hillB)" opacity=".8"/>
+
+  <!-- 小路 -->
+  <path d="M24 210c26-18 30-40 54-48 26-9 30-26 58-24 28 1 40-16 62-26 20-9 38-8 56-4"
+        stroke="#fffaf0" stroke-width="13" stroke-linecap="round" opacity=".9"/>
+  <path d="M24 210c26-18 30-40 54-48 26-9 30-26 58-24 28 1 40-16 62-26 20-9 38-8 56-4"
+        stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-dasharray="7 9" opacity=".55"/>
+
+  <!-- 里程碑旗 -->
+  <g transform="translate(250 96)">
+    <path d="M0 0v34" stroke="#7c4a12" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M0 2h24l-6 7 6 7H0z" fill="#ef4444"/>
+  </g>
+
+  <!-- 小树 -->
+  <g transform="translate(56 138)">
+    <rect x="-2.4" y="10" width="4.8" height="17" rx="2.4" fill="#8a5a33"/>
+    <circle cy="0" r="14" fill="#3fbf92"/>
+    <circle cx="-9.5" cy="8" r="9.5" fill="#4ecfa0"/>
+    <circle cx="9.5" cy="7" r="10.5" fill="#35b389"/>
+  </g>
+  <g transform="translate(302 148) scale(.78)">
+    <rect x="-2.4" y="10" width="4.8" height="17" rx="2.4" fill="#8a5a33"/>
+    <circle cy="0" r="14" fill="#3fbf92"/>
+    <circle cx="10" cy="8" r="10" fill="#35b389"/>
+  </g>
+
+  <!-- 前景 -->
+  <path d="M-10 180q62-22 120-2 56 18 110-7 44-20 134 3v46H-10z" fill="url(#hillC)"/>
+
+  <!-- 旅人 -->
+  <g transform="translate(150 160)">
+    <ellipse cx="1" cy="30" rx="15" ry="3.6" fill="#1f7a58" opacity=".25"/>
+    <!-- 腿 -->
+    <rect x="-7.5" y="15" width="6" height="13" rx="3" fill="#25476b"/>
+    <rect x="1.5" y="15" width="6" height="13" rx="3" fill="#2f5680"/>
+    <!-- 背包 -->
+    <rect x="7.5" y="-9" width="12" height="17" rx="4.5" fill="#f59e0b"/>
+    <rect x="9.5" y="-3" width="8" height="3" rx="1.5" fill="#d97706"/>
+    <!-- 身体 -->
+    <path d="M-7 0h18a5.5 5.5 0 0 1 5.5 5.5V12a5 5 0 0 1-5 5H-7a5 5 0 0 1-5-5V5.5A5.5 5.5 0 0 1-7 0z" fill="#38bdf8"/>
+    <rect x="-3" y="4" width="9" height="3" rx="1.5" fill="#0ea5e9" opacity=".55"/>
+    <!-- 手臂 -->
+    <path d="M13 3.5l8 4" stroke="#38bdf8" stroke-width="4.4" stroke-linecap="round"/>
+    <!-- 脖子 -->
+    <rect x="-2.4" y="-4" width="7" height="5" rx="2.4" fill="#eab894"/>
+    <!-- 头 -->
+    <circle cy="-13" r="9.2" fill="#fcd9b6"/>
+    <!-- 头发 -->
+    <path d="M-9.4-16.4a9.4 9.4 0 0 1 18.8 0c-2.6-3.6-5.4-1.4-9.4-3.4-3.4 3.8-6.6 1-9.4 3.4z" fill="#4b3621"/>
+    <circle cx="-3.2" cy="-13.4" r="1.45" fill="#3f2d18"/>
+    <circle cx="3.2" cy="-13.4" r="1.45" fill="#3f2d18"/>
+    <path d="M-2.6-10q2.8 2.4 5.6 0" stroke="#a16207" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+    <circle cx="-6.4" cy="-10.6" r="2" fill="#fb923c" opacity=".4"/>
+    <circle cx="6.4" cy="-10.6" r="2" fill="#fb923c" opacity=".4"/>
+    <!-- 手持小旗 -->
+    <path d="M21 8V-11" stroke="#7c4a12" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M21-11h10l-2.8 3.8L31-3.4h-10z" fill="#ef4444"/>
+  </g>
+
+  <!-- 飞鸟 -->
+  <g stroke="#94a3b8" stroke-width="2" stroke-linecap="round" fill="none" opacity=".7">
+    <path d="M118 62q5-5 10 0"/><path d="M132 55q5-5 10 0"/>
+    <path d="M168 74q4-4 8 0"/>
+  </g>
+</svg>

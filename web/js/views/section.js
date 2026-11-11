@@ -51,7 +51,7 @@ function optionsBlock(questions, getSelection, onChange, { disabled = false, sho
     const block = el('div', { class: 'q-block' });
     block.appendChild(el('div', {
       class: 'q-stem',
-      html: `<span style="color:#94a3b8;font-weight:800;margin-right:6px">${qi + 1}.</span>${q.stem}`,
+      html: `<span style="color:#a3928a;font-weight:800;margin-right:6px">${qi + 1}.</span>${q.stem}`,
     }));
 
     const opts = el('div', { class: 'q-options' });
@@ -137,7 +137,7 @@ function afterSubmit(root, res, topicId, sectionId) {
   if (res.weak_skills?.length) {
     root.appendChild(el('section', { class: 'panel', style: 'padding:14px' }, [
       el('div', { style: 'font-size:12.5px;font-weight:800;margin-bottom:6px;color:#92400e', text: '⚠ 需要加强' }),
-      el('div', { style: 'font-size:12.5px;color:#475569;line-height:1.7', text: res.weak_skills.join(' · ') }),
+      el('div', { style: 'font-size:12.5px;color:#6b5b52;line-height:1.7', text: res.weak_skills.join(' · ') }),
     ]));
   }
 
@@ -216,7 +216,7 @@ async function renderLevels(body, topicId, sectionId, sec) {
   const header = el('section', { class: 'panel', style: 'padding:13px' }, [
     el('div', { class: 'row-between' }, [
       el('div', { style: 'font-size:13px;font-weight:800', text: '三个关卡' }),
-      el('div', { style: 'font-size:11.5px;color:#94a3b8', text: '每关 80% 解锁下一关' }),
+      el('div', { style: 'font-size:11.5px;color:#a3928a', text: '每关 80% 解锁下一关' }),
     ]),
     el('div', { class: 'row', style: 'gap:6px;margin-top:10px' }, levels.map((lv, i) =>
       el('div', {
@@ -237,9 +237,9 @@ async function renderLevels(body, topicId, sectionId, sec) {
     holder.innerHTML = '';
 
     header.querySelectorAll('.chip').forEach((c, i) => {
-      c.style.background = i === idx ? '#0f172a' : '';
+      c.style.background = i === idx ? '#3b2f2a' : '';
       c.style.color = i === idx ? '#fff' : '';
-      c.style.borderColor = i === idx ? '#0f172a' : '';
+      c.style.borderColor = i === idx ? '#3b2f2a' : '';
     });
 
     const optWrap = optionsBlock(lv.questions, () => answers, () => {
@@ -398,7 +398,7 @@ async function renderMyths(body, topicId, sectionId, sec) {
   myths.forEach((m, mi) => {
     const block = el('section', { class: 'panel stack', style: 'gap:12px' });
 
-    block.appendChild(el('div', { style: 'font-size:14.5px;font-weight:800;color:#0f172a', text: m.title }));
+    block.appendChild(el('div', { style: 'font-size:14.5px;font-weight:800;color:#3b2f2a', text: m.title }));
 
     block.appendChild(el('div', {
       style: 'background:#fef2f2;border:1px solid #fecaca;border-radius:11px;padding:12px',
@@ -408,10 +408,10 @@ async function renderMyths(body, topicId, sectionId, sec) {
     ]));
 
     block.appendChild(el('div', {
-      style: 'background:#f8fafc;border:1px solid #e2e8f0;border-radius:11px;padding:12px',
+      style: 'background:#fdf8f0;border:1px solid #efe2ce;border-radius:11px;padding:12px',
     }, [
-      el('div', { style: 'font-size:10.5px;font-weight:800;color:#475569;letter-spacing:.05em;margin-bottom:5px', text: '为什么错' }),
-      el('div', { style: 'font-size:13px;color:#334155;line-height:1.7', text: m.why }),
+      el('div', { style: 'font-size:10.5px;font-weight:800;color:#6b5b52;letter-spacing:.05em;margin-bottom:5px', text: '为什么错' }),
+      el('div', { style: 'font-size:13px;color:#5c4b42;line-height:1.7', text: m.why }),
     ]));
 
     block.appendChild(el('div', {
@@ -494,8 +494,8 @@ async function renderSteps(body, topicId, sectionId, sec) {
 
   problems.forEach((p, pi) => {
     body.appendChild(el('section', { class: 'panel' }, [
-      el('div', { style: 'font-size:11px;font-weight:800;color:#94a3b8;letter-spacing:.06em;margin-bottom:7px', text: `第 ${pi + 1} 题` }),
-      el('div', { style: 'font-size:14px;line-height:1.75;color:#1e293b', text: p.stem }),
+      el('div', { style: 'font-size:11px;font-weight:800;color:#a3928a;letter-spacing:.06em;margin-bottom:7px', text: `第 ${pi + 1} 题` }),
+      el('div', { style: 'font-size:14px;line-height:1.75;color:#4a3b33', text: p.stem }),
     ]));
 
     p.steps.forEach((step, si) => {
@@ -524,7 +524,7 @@ async function renderSteps(body, topicId, sectionId, sec) {
 
     if (p.note) {
       body.appendChild(el('div', {
-        style: 'font-size:12px;color:#64748b;line-height:1.7;padding:0 4px 4px',
+        style: 'font-size:12px;color:#8a7a70;line-height:1.7;padding:0 4px 4px',
         text: `💡 ${p.note}`,
       }));
     }
@@ -590,10 +590,10 @@ async function renderBoss(body, topicId, sectionId, sec) {
   const answers = {};
   const questions = sec.questions;
 
-  body.appendChild(el('section', { class: 'panel', style: 'background:linear-gradient(150deg,#1e293b,#0f172a);border-color:#1e293b' }, [
-    el('div', { style: 'font-size:11px;letter-spacing:.18em;color:#94a3b8;font-weight:700;text-transform:uppercase', text: 'Boss' }),
+  body.appendChild(el('section', { class: 'panel', style: 'background:linear-gradient(150deg,#4a3b33,#3b2f2a);border-color:#4a3b33' }, [
+    el('div', { style: 'font-size:11px;letter-spacing:.18em;color:#a3928a;font-weight:700;text-transform:uppercase', text: 'Boss' }),
     el('div', { style: 'font-size:17px;font-weight:800;color:#fff;margin-top:6px', text: '最后一关' }),
-    el('div', { style: 'font-size:12.5px;color:#cbd5e1;margin-top:6px', text: '答对可得 50 积分 + 1 张卡包' }),
+    el('div', { style: 'font-size:12.5px;color:#d9c8b4;margin-top:6px', text: '答对可得 50 积分 + 1 张卡包' }),
   ]));
 
   const optWrap = optionsBlock(questions, () => answers, () => {

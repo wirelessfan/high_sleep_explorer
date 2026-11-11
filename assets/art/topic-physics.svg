@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <linearGradient id="pBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0f2fe"/><stop offset="100%" stop-color="#bae6fd"/>
+    </linearGradient>
+    <linearGradient id="pMag" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#b91c1c"/>
+    </linearGradient>
+    <linearGradient id="pMag2" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="120" height="120" rx="26" fill="url(#pBg)"/>
+
+  <!-- 磁感线 -->
+  <g stroke="#7dd3fc" stroke-width="2" stroke-linecap="round" opacity=".9">
+    <path d="M64 40q20-6 34 2"/>
+    <path d="M64 52q22-4 36 4"/>
+    <path d="M64 64q22-2 36 6"/>
+    <path d="M64 76q20 0 34 8"/>
+  </g>
+
+  <!-- 线圈 -->
+  <g stroke="#f59e0b" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M46 32q-11 4-11 13t11 13"/>
+    <path d="M46 44q-11 4-11 13t11 13"/>
+    <path d="M46 56q-11 4-11 13t11 13"/>
+  </g>
+
+  <!-- 磁铁：N 红 / S 蓝 -->
+  <g transform="translate(72 66) rotate(-12)">
+    <rect x="-11" y="-26" width="22" height="26" rx="4" fill="url(#pMag)"/>
+    <rect x="-11" y="0" width="22" height="26" rx="4" fill="url(#pMag2)"/>
+    <rect x="-11" y="-3" width="22" height="6" fill="#0f172a" opacity=".18"/>
+    <text x="0" y="-11" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#fff">N</text>
+    <text x="0" y="17" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#fff">S</text>
+  </g>
+
+  <!-- 电火花 -->
+  <g transform="translate(38 46)">
+    <path d="M0-9l3 6h-4l5 8-1-6h4z" fill="#fbbf24"/>
+  </g>
+
+  <!-- 速度箭头 -->
+  <g stroke="#10b981" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M88 96h16"/><path d="M99 91l5 5-5 5"/>
+  </g>
+</svg>

@@ -25,6 +25,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from string import Template
 
@@ -681,7 +682,7 @@ h2 .dot{width:11px;height:11px;border-radius:50%;background:$dot}
 .card.big{border:2px solid #fbbf24;background:linear-gradient(180deg,#fffbeb,#fff)}
 .pic{height:190px;display:flex;align-items:center;justify-content:center;
  background:radial-gradient(circle at 50% 55%,$halo,transparent 68%);border-radius:12px}
-.pic img{width:100%;height:100%;object-fit:contain}
+.pic svg{width:100%;height:100%;display:block}
 .nm{font-size:15px;font-weight:800;margin-top:10px;display:flex;align-items:center;gap:6px}
 .en{font-size:11px;color:#94a3b8;font-weight:600}
 .meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
@@ -708,8 +709,20 @@ $groups
 角色表位于 <code>content/bosses.json</code><br>重跑脚本即可同步更新图鉴与角色表。</footer>
 </div></body></html>""")
 
+def inline_svg(path: Path, prefix: str) -> str:
+    """预览页内联立绘：给 defs 的 id 加前缀，避免 18 份同名渐变互相覆盖。
+
+    内联后图鉴是单文件，用 file:// 直接打开也能显示全部角色。
+    """
+    s = path.read_text(encoding="utf-8")
+    for ident in set(re.findall(r'id="([^"]+)"', s)):
+        s = s.replace(f'id="{ident}"', f'id="{prefix}-{ident}"')
+        s = s.replace(f'url(#{ident})', f'url(#{prefix}-{ident})')
+    return s.replace('width="240" height="280" ', '').strip()
+
+
 CARD_TPL = Template("""<div class="card $cls">
- <div class="pic"><img src="../../assets/bosses/$svg" alt="$name"></div>
+ <div class="pic">$art</div>
  <div class="nm">$name <span class="en">$en</span></div>
  <div class="meta"><span class="pill">$section</span>
  <span class="pill $bosscls">$tier</span><span class="pill hp">HP $hp</span></div>
@@ -783,7 +796,9 @@ def build() -> None:
                 continue
             cards.append(CARD_TPL.substitute(
                 cls="big" if b["tier"] == "big" else "",
-                svg=Path(b["svg"]).name, name=b["name"], en=b["en"],
+                art=inline_svg(SVG_DIR / Path(b["svg"]).name,
+                               "s-" + re.sub(r"[^a-zA-Z0-9_-]", "", b["id"])),
+                name=b["name"], en=b["en"],
                 section=SECTION_NAME[b["section_id"]],
                 bosscls="boss" if b["tier"] == "big" else "",
                 tier="大 BOSS" if b["tier"] == "big" else "小 BOSS",

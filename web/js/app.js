@@ -20,7 +20,7 @@ async function boot() {
     document.getElementById('view').innerHTML = '';
     document.getElementById('view').appendChild(el('div', { class: 'panel', style: 'margin-top:40px' }, [
       el('div', { style: 'font-size:15px;font-weight:800;margin-bottom:6px', text: '连接失败' }),
-      el('div', { style: 'font-size:13px;color:#64748b;line-height:1.7', text: err?.message || '无法连接到服务器，请稍后重试' }),
+      el('div', { style: 'font-size:13px;color:#8a7a70;line-height:1.7', text: err?.message || '无法连接到服务器，请稍后重试' }),
       el('button', {
         class: 'btn', style: 'margin-top:16px', text: '重试',
         onclick: () => location.reload(),
