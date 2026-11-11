@@ -8,15 +8,42 @@
 
 ## 当前状态
 
-**规划阶段**。已完成环境核查、素材调研、集卡系统视觉样稿；应用代码尚未开始。
+**已上线可用**：https://123-56-217-104.sslip.io:8090/
 
 | 阶段 | 内容 | 状态 |
 |---|---|---|
-| P0 | 骨架上线（FastAPI + Caddy 8090 + systemd） | 未开始 |
-| P1 | 内容框架 + 三主题内容 | 未开始 |
-| P2 | 六版块学习流程 | 未开始 |
-| P3 | 积分 · 签到 · 集卡 | 未开始 |
-| P4 | 移动端打磨与验收 | 未开始 |
+| P0 | 骨架上线（FastAPI + Caddy 8090 + systemd） | 完成 |
+| P1 | 内容框架 + 三主题内容（3×6×27 = 81 题） | 完成 |
+| P2 | 六版块学习流程 + 即时判分 + 薄弱点 | 完成 |
+| P3 | 积分 · 签到 · 集卡（12 张卡 / 5 套装） | 完成 |
+| P4 | 移动端打磨与验收 | 进行中 |
+
+## 本地运行
+
+```bash
+python -m venv .venv
+.venv/bin/pip install -r requirements.txt      # Windows: .venv\Scripts\pip
+.venv/bin/python -m uvicorn app.main:app --reload --port 8011
+# 打开 http://127.0.0.1:8011
+```
+
+自检与测试：
+
+```bash
+python tools/check_content.py       # 内容完整性（选项重复/答案越界/解析为空）
+python tools/balance_answers.py     # 正确答案位置均衡（默认写回，--dry-run 只统计）
+node tools/check_frontend.mjs .     # 前端 import 路径（静态 + 动态）
+python -m pytest tests -q           # 40 个后端用例
+```
+
+## 部署
+
+```bash
+bash deploy/deploy.sh
+```
+
+脚本会建用户、装 venv、写 systemd 与 Caddy `:8090` 配置、健康检查、装备份 cron。
+不会改动同机 `:80` 的 Hugo 博客。
 
 ## 目录
 
