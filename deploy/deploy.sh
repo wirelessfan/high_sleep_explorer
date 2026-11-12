@@ -12,7 +12,7 @@ DATA_DIR=/var/lib/learning-highschool
 LOG_DIR=/var/log/learning-highschool
 BACKUP_DIR=/var/backups/learning-highschool
 SERVICE=learning-highschool
-DOMAIN="${DOMAIN:-123-56-217-104.sslip.io}"
+DOMAIN="${DOMAIN:-123-56-217-104.sslip.io, 123.56.217.104.sslip.io}"
 PORT="${PORT:-8090}"
 
 say() { printf '\n\033[1;36m== %s\033[0m\n' "$*"; }
@@ -93,8 +93,8 @@ block = """$DOMAIN:$PORT {
 }
 """
 # 移除同名旧块（含端口变体）
-s = re.sub(r"^[^\n#]*:$PORT\s*\{.*?^\}\n?", "", s, flags=re.S | re.M)
-if "$DOMAIN:$PORT" not in s:
+s = re.sub(r"(?:^# [^\n]*\n)?^[^\n#]*:8090\s*\{.*?^\}\n?", "", s, flags=re.S | re.M)
+if "sslip.io:$PORT" not in s:
     s = s.rstrip() + "\n\n# 高中理科学习助手\n" + block
 p.write_text(s)
 print("Caddyfile 已更新")
