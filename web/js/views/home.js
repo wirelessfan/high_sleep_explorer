@@ -285,7 +285,7 @@ function renderHistory(h) {
 
   /* 年代 / 领域 / 人物 */
   const chips = [];
-  if (e.year) chips.push(el('span', { class: 'chip history-year', text: `${e.year} 年` }));
+  if (e.year) chips.push(el('span', { class: 'chip history-year', text: e.year < 1000 ? `公元 ${e.year} 年` : `${e.year} 年` }));
   if (e.field) chips.push(el('span', { class: 'chip', text: e.field }));
   if (e.person) chips.push(el('span', { class: 'chip', text: `👤 ${e.person}` }));
   if (chips.length) {

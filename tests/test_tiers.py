@@ -39,12 +39,34 @@ def _all_tiered(data) -> bool:
     )
 
 
-def _none_tiered(data) -> bool:
-    return all(not sec.get("tiers") for sec in data["sections"])
+TIERED_TOPIC = _pick_topic(_all_tiered, "三档齐全")
+
+# 内容已全部补齐三档，仓库里不再有「只有基础档」的真实主题。
+# 这里合成一个最小主题专测「未开放档位」的降级路径，避免测试依赖内容进度。
+PLAIN_TOPIC_ID = "fixture-plain"
 
 
-TIERED_TOPIC = _pick_topic(_all_tiered, "三档齐全")   # 例如 physics-electric
-PLAIN_TOPIC = _pick_topic(_none_tiered, "仅有基础档")  # 例如 physics-energy
+def _plain_topic() -> dict:
+    return {
+        "id": PLAIN_TOPIC_ID,
+        "subject": "physics",
+        "title": "仅基础档（测试夹具）",
+        "subtitle": "",
+        "grade": "高一",
+        "minutes": 10,
+        "description": "",
+        "sections": [
+            {
+                "id": "quick",
+                "name": "快速测试",
+                "type": "quiz",
+                "questions": [
+                    {"id": "q1", "skill": "夹具", "stem": "1 + 1 = ?",
+                     "options": ["2", "3"], "answer": 0, "explain": "略"},
+                ],
+            }
+        ],
+    }
 
 
 class TierLoaderTests(unittest.TestCase):
@@ -58,13 +80,15 @@ class TierLoaderTests(unittest.TestCase):
         self.assertGreater(tiers[1]["multiplier"], tiers[0]["multiplier"])
         self.assertGreater(tiers[2]["multiplier"], tiers[1]["multiplier"])
 
-    def test_plain_topic_only_has_basic(self):
-        data = content_loader.topic(PLAIN_TOPIC)
+    def test_section_without_tiers_reports_basic_only(self):
+        """顶层内容即基础档：没有 tiers 字段时只暴露基础档。"""
+        data = content_loader.topic(TIERED_TOPIC)
         for sec in data["sections"]:
-            tiers = content_loader.section_tiers(sec)
-            self.assertEqual(list(tiers), ["basic"], sec["id"])
-            listed = content_loader.section_tier_list(sec)
-            self.assertEqual([t["available"] for t in listed], [True, False, False])
+            plain = {k: v for k, v in sec.items() if k != "tiers"}
+            with self.subTest(section=sec["id"]):
+                self.assertEqual(list(content_loader.section_tiers(plain)), ["basic"])
+                listed = content_loader.section_tier_list(plain)
+                self.assertEqual([t["available"] for t in listed], [True, False, False])
 
     def test_tiered_topic_has_all_tiers_on_every_section(self):
         data = content_loader.topic(TIERED_TOPIC)
@@ -127,14 +151,6 @@ class TierApiTests(unittest.TestCase):
         content = content_loader.tier_content(sec, tier)
         return {q["id"]: q["answer"] for q in content["questions"]}
 
-    @staticmethod
-    def _answers(tier):
-        """答案不在接口里下发，从内容文件直接取。"""
-        data = content_loader.topic(TIERED_TOPIC)
-        sec = next(x for x in data["sections"] if x["id"] == "quick")
-        content = content_loader.tier_content(sec, tier)
-        return {q["id"]: q["answer"] for q in content["questions"]}
-
     def _section(self, tier):
         r = self.ctx.get(f"/api/v1/topics/{TIERED_TOPIC}/sections/quick?tier={tier}",
                          headers=self.headers)
@@ -157,8 +173,14 @@ class TierApiTests(unittest.TestCase):
         self.assertNotEqual(stems["advanced"], stems["expert"])
 
     def test_unavailable_tier_reports_available_false(self):
-        r = self.ctx.get(f"/api/v1/topics/{PLAIN_TOPIC}/sections/quick?tier=expert",
-                         headers=self.headers)
+        fake = _plain_topic()
+        orig = content_loader.topic
+        content_loader.topic = lambda tid: fake if tid == PLAIN_TOPIC_ID else orig(tid)
+        try:
+            r = self.ctx.get(f"/api/v1/topics/{PLAIN_TOPIC_ID}/sections/quick?tier=expert",
+                             headers=self.headers)
+        finally:
+            content_loader.topic = orig
         self.assertEqual(r.status_code, 200)
         self.assertFalse(r.json()["available"])
         self.assertIsNone(r.json()["section"])
@@ -189,10 +211,9 @@ class TierApiTests(unittest.TestCase):
         quick = {(i["section_id"], i["tier"]) for i in items if i["section_id"] == "quick"}
         self.assertEqual(quick, {("quick", "basic"), ("quick", "advanced")})
 
-    def test_topics_without_upper_tiers_keep_old_total(self):
+    def test_catalog_reports_all_tier_units(self):
         d = self.ctx.get("/api/v1/catalog", headers=self.headers).json()
         items = {t["id"]: t for s in d["subjects"] for t in s["items"]}
-        self.assertEqual(items[PLAIN_TOPIC]["total"], 6)
         self.assertEqual(items[TIERED_TOPIC]["total"], 18)
         self.assertEqual(set(items[TIERED_TOPIC]["tiers"]), {"basic", "advanced", "expert"})
 

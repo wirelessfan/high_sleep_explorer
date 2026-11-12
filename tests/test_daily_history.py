@@ -122,7 +122,8 @@ class TestHistoryContent:
         for e in entries:
             assert 1 <= e["month"] <= 12
             assert 1 <= e["day"] <= 31
-            assert isinstance(e["year"], int) and 1000 <= e["year"] <= 2100
+            # 允许古代事件（如公元 79 年维苏威火山），上限留到 2100
+            assert isinstance(e["year"], int) and 1 <= e["year"] <= 2100
             assert e["title"].strip()
             assert len(e["story"]) >= 40, "故事太短，撑不起一张卡片"
             assert e["learn"].strip()
