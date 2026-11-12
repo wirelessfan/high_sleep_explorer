@@ -1,185 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">氧化还原：同元素对应的双线桥（动态）</title>
+  <desc id="description">先标化合价，再对应元素、标得失电子，最后核对电子总数。。此反应 Fe 是还原剂，Cl₂ 是氧化剂；强弱比较须在相同反应条件下进行。</desc>
   <defs>
-    <pattern id="gridRedoxAnim" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e8f3ee" stroke-width="0.8"/>
-    </pattern>
-    <filter id="shadowRedoxAnim" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
-    </filter>
-
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
     <style>
-      /* 7 秒分步推导循环 */
-      /* Step 1: 标化合价 (0s 出现) */
-      @keyframes valStep1 {
-        0%, 5% { opacity: 0; transform: translateY(-5px); }
-        15%, 95% { opacity: 1; transform: translateY(0); }
-        100% { opacity: 0; }
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
       }
-      /* Step 2: 铁的升桥 (25% 出现，拉出红桥) */
-      @keyframes bridgeFeStep2 {
-        0%, 22% { opacity: 0; stroke-dashoffset: 200; }
-        35%, 95% { opacity: 1; stroke-dashoffset: 0; }
-        100% { opacity: 0; }
-      }
-      /* Step 3: 氯的降桥 (50% 出现，拉出蓝桥) */
-      @keyframes bridgeClStep3 {
-        0%, 48% { opacity: 0; stroke-dashoffset: 200; }
-        60%, 95% { opacity: 1; stroke-dashoffset: 0; }
-        100% { opacity: 0; }
-      }
-      /* Step 4: 电子守恒匹配核验 (75% 闪烁) */
-      @keyframes matchStep4 {
-        0%, 72% { opacity: 0; }
-        80%, 95% { opacity: 1; filter: drop-shadow(0 0 5px #10b981); }
-        100% { opacity: 0; }
-      }
-
-      /* 联动步骤卡高亮 */
-      @keyframes cardR1 {
-        0%, 24% { background-color: #fee2e2; border-color: #ef4444; }
-        25%, 100% { background-color: #ffffff; border-color: #e2e8f0; }
-      }
-      @keyframes cardR2 {
-        0%, 24% { background-color: #ffffff; border-color: #e2e8f0; }
-        25%, 49% { background-color: #fef2f2; border-color: #dc2626; }
-        50%, 100% { background-color: #ffffff; border-color: #e2e8f0; }
-      }
-      @keyframes cardR3 {
-        0%, 49% { background-color: #ffffff; border-color: #e2e8f0; }
-        50%, 74% { background-color: #eff6ff; border-color: #2563eb; }
-        75%, 100% { background-color: #ffffff; border-color: #e2e8f0; }
-      }
-      @keyframes cardR4 {
-        0%, 74% { background-color: #ffffff; border-color: #e2e8f0; }
-        75%, 97% { background-color: #dcfce7; border-color: #16a34a; }
-        98%, 100% { background-color: #ffffff; border-color: #e2e8f0; }
-      }
-
-      .anim-val { animation: valStep1 7s infinite; }
-      .anim-bridge-fe {
-        stroke-dasharray: 200;
-        animation: bridgeFeStep2 7s ease-out infinite;
-      }
-      .anim-bridge-cl {
-        stroke-dasharray: 200;
-        animation: bridgeClStep3 7s ease-out infinite;
-      }
-      .anim-match { animation: matchStep4 7s infinite; }
-
-      .card-r1 { animation: cardR1 7s infinite; }
-      .card-r2 { animation: cardR2 7s infinite; }
-      .card-r3 { animation: cardR3 7s infinite; }
-      .card-r4 { animation: cardR4 7s infinite; }
     </style>
   </defs>
-
-  <rect width="640" height="380" rx="14" fill="#fafdfb" filter="url(#shadowRedoxAnim)"/>
-  <rect width="640" height="380" rx="14" fill="url(#gridRedoxAnim)"/>
-
-  <!-- 顶部胶带 -->
-  <rect x="180" y="8" width="280" height="26" fill="rgba(16, 185, 129, 0.28)" rx="3" transform="rotate(-0.5 320 21)"/>
-  <text x="320" y="26" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="900" fill="#065f46" text-anchor="middle" letter-spacing="1">
-    ⚡ 动态拆解 · 氧化还原双线桥法四步演练
-  </text>
-
-  <!-- 左侧：动态方程式与双线桥逐步连接区 -->
-  <g transform="translate(30, 50)">
-    <rect width="280" height="300" rx="10" fill="#ffffff" stroke="#cde4d9" stroke-width="1.5"/>
-
-    <text x="16" y="24" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#047857">
-      【双线桥生成实况】由浅入深逐步标引
-    </text>
-
-    <!-- 化学方程式与价态标记区 -->
-    <g transform="translate(20, 115)">
-      <!-- 反应物与生成物文字 -->
-      <text x="0" y="20" font-family="'Courier New',monospace,sans-serif" font-size="16" font-weight="bold" fill="#0f172a">
-        2Fe  +  3Cl₂   =   2FeCl₃
-      </text>
-
-      <!-- Step 1: 标变价元素化合价 -->
-      <g class="anim-val">
-        <text x="16" y="-6" font-family="'Courier New',sans-serif" font-size="12" font-weight="900" fill="#dc2626">0</text>
-        <text x="96" y="-6" font-family="'Courier New',sans-serif" font-size="12" font-weight="900" fill="#2563eb">0</text>
-        <text x="188" y="-6" font-family="'Courier New',sans-serif" font-size="12" font-weight="900" fill="#dc2626">+3</text>
-        <text x="226" y="-6" font-family="'Courier New',sans-serif" font-size="12" font-weight="900" fill="#2563eb">−1</text>
-      </g>
-
-      <!-- Step 2: 铁的升桥 (红色上方弧线) -->
-      <g>
-        <path class="anim-bridge-fe" d="M 20 -15 C 20 -60, 195 -60, 195 -15" fill="none" stroke="#dc2626" stroke-width="2.5"/>
-        <g class="anim-val">
-          <text x="108" y="-55" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#dc2626" text-anchor="middle">
-            升 0→+3 · 失 2×3e⁻ · 被氧化
-          </text>
-        </g>
-      </g>
-
-      <!-- Step 3: 氯的降桥 (蓝色下方弧线) -->
-      <g>
-        <path class="anim-bridge-cl" d="M 100 35 C 100 80, 235 80, 235 35" fill="none" stroke="#2563eb" stroke-width="2.5"/>
-        <g class="anim-val">
-          <text x="168" y="72" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#2563eb" text-anchor="middle">
-            降 0→−1 · 得 6×1e⁻ · 被还原
-          </text>
-        </g>
-      </g>
-    </g>
-
-    <!-- Step 4: 电子守恒核验成功指示 -->
-    <g class="anim-match" transform="translate(18, 220)">
-      <rect x="0" y="0" width="244" height="30" rx="5" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
-      <text x="122" y="20" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="900" fill="#15803d" text-anchor="middle">
-        ✔ 得失电子总数守恒：均为 6e⁻！
-      </text>
-    </g>
-
-    <!-- 底部口诀 -->
-    <rect x="15" y="260" width="250" height="25" rx="4" fill="#fff7ed"/>
-    <text x="140" y="277" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="900" fill="#c2410c" text-anchor="middle">
-      口诀：升失氧、降得还；箭头同元素自指！
-    </text>
-  </g>
-
-  <!-- 右侧：分步指示联动卡片 -->
-  <g transform="translate(325, 50)">
-    <rect width="285" height="300" rx="10" fill="#ffffff" stroke="#cde4d9" stroke-width="1.5"/>
-
-    <text x="18" y="26" font-family="'PingFang SC',sans-serif" font-size="13.5" font-weight="900" fill="#065f46">
-      【双线桥四步标准化解法】
-    </text>
-
-    <!-- 步骤 1 -->
-    <g transform="translate(16, 38)">
-      <rect x="0" y="0" width="253" height="48" rx="6" stroke="#e2e8f0" stroke-width="1.5" class="card-r1"/>
-      <text x="12" y="20" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#dc2626">① 标变价（抓关键）</text>
-      <text x="12" y="38" font-family="'PingFang SC',sans-serif" font-size="11" fill="#475569">先标出反应前后化合价改变的元素</text>
-    </g>
-
-    <!-- 步骤 2 -->
-    <g transform="translate(16, 96)">
-      <rect x="0" y="0" width="253" height="48" rx="6" stroke="#e2e8f0" stroke-width="1.5" class="card-r2"/>
-      <text x="12" y="20" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#b91c1c">② 引升桥（找还原剂）</text>
-      <text x="12" y="38" font-family="'PingFang SC',sans-serif" font-size="11" fill="#475569">箭头由反应物升价元素指向生成物</text>
-    </g>
-
-    <!-- 步骤 3 -->
-    <g transform="translate(16, 154)">
-      <rect x="0" y="0" width="253" height="48" rx="6" stroke="#e2e8f0" stroke-width="1.5" class="card-r3"/>
-      <text x="12" y="20" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#2563eb">③ 引降桥（找氧化剂）</text>
-      <text x="12" y="38" font-family="'PingFang SC',sans-serif" font-size="11" fill="#475569">标明“化合价降低，得 ne⁻，被还原”</text>
-    </g>
-
-    <!-- 步骤 4 -->
-    <g transform="translate(16, 212)">
-      <rect x="0" y="0" width="253" height="52" rx="6" stroke="#e2e8f0" stroke-width="1.5" class="card-r4"/>
-      <text x="12" y="20" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#15803d">④ 查守恒（配平检验）</text>
-      <text x="12" y="36" font-family="'PingFang SC',sans-serif" font-size="11" fill="#475569">氧化剂得电子总数 ≡ 还原剂失电子总数！</text>
-    </g>
-
-    <!-- 底部状元总结 -->
-    <text x="142" y="286" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#047857" text-anchor="middle">
-      ★ 遵循四步法，高考无论多复杂配平永不混乱！
-    </text>
-  </g>
+  <rect width="800" height="460" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">氧化还原：同元素对应的双线桥（动态）</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">先标化合价，再对应元素、标得失电子，最后核对电子总数。</text>
+  <rect x="24" y="82" width="752" height="307" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="100" y="207" font-size="29" fill="#172b42" text-anchor="middle" font-weight="700">2Fe</text>
+<text x="220" y="207" font-size="29" fill="#172b42" text-anchor="middle" font-weight="700">+</text>
+<text x="310" y="207" font-size="29" fill="#172b42" text-anchor="middle" font-weight="700">3Cl₂</text>
+<text x="425" y="207" font-size="29" fill="#172b42" text-anchor="middle" font-weight="700">→</text>
+<text x="575" y="207" font-size="29" fill="#172b42" text-anchor="middle" font-weight="700">2FeCl₃</text>
+<text x="425" y="180" font-size="15" fill="#50647a" text-anchor="middle" font-weight="500">点燃</text>
+<text x="100" y="166" font-size="17" fill="#dc2626" text-anchor="middle" font-weight="700">0</text>
+<text x="310" y="166" font-size="17" fill="#2563eb" text-anchor="middle" font-weight="700">0</text>
+<text x="550" y="166" font-size="17" fill="#dc2626" text-anchor="middle" font-weight="700">+3</text>
+<text x="604" y="166" font-size="17" fill="#2563eb" text-anchor="middle" font-weight="700">−1</text>
+<text x="550" y="233" font-size="15" fill="#dc2626" text-anchor="middle" font-weight="500">Fe</text>
+<text x="604" y="233" font-size="15" fill="#2563eb" text-anchor="middle" font-weight="500">Cl</text>
+<g class="motion">
+<g opacity="0">
+<animate attributeName="opacity" values="0;1;1;1;0" keyTimes="0;0.25;0.5;0.95;1" dur="10s" calcMode="discrete" repeatCount="indefinite"/>
+<path d="M 100 143 L100 112 L550 112 L550 143" fill="none" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="325" y="102" font-size="16" fill="#dc2626" text-anchor="middle" font-weight="500">Fe：升 0→+3，失 2×3e⁻，被氧化</text>
+</g>
+<g opacity="0">
+<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.25;0.5;0.95;1" dur="10s" calcMode="discrete" repeatCount="indefinite"/>
+<path d="M 310 246 L310 279 L604 279 L604 246" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="458" y="307" font-size="16" fill="#2563eb" text-anchor="middle" font-weight="500">Cl：降 0→−1，得 6×1e⁻，被还原</text>
+</g>
+</g>
+<g class="still">
+<path d="M 100 143 L100 112 L550 112 L550 143" fill="none" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="325" y="102" font-size="16" fill="#dc2626" text-anchor="middle" font-weight="500">Fe：升 0→+3，失 2×3e⁻，被氧化</text>
+<path d="M 310 246 L310 279 L604 279 L604 246" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow)"/>
+<text x="458" y="307" font-size="16" fill="#2563eb" text-anchor="middle" font-weight="500">Cl：降 0→−1，得 6×1e⁻，被还原</text>
+</g>
+<text x="400" y="350" font-size="20" fill="#047857" text-anchor="middle" font-weight="700">失电子总数 = 得电子总数 = 6e⁻</text>
+<text x="400" y="377" font-size="16" fill="#50647a" text-anchor="middle" font-weight="500">双线桥：反应物中的元素 → 生成物中的同种元素</text>
+  <rect x="24" y="398" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="418" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">此反应 Fe 是还原剂，Cl₂ 是氧化剂；强弱比较须在相同反应条件下进行。</text>
 </svg>

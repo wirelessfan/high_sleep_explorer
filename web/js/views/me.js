@@ -29,7 +29,7 @@ export async function renderMe(view) {
     }, [
       el('div', { style: 'font-size:13px;font-weight:800;color:#854d0e;margin-bottom:4px', text: '💡 当前处于演示访客体验模式' }),
       el('div', { style: 'font-size:12px;color:#713f12;line-height:1.6',
-        text: '本模式用于展示全站数理化核心功能、板书图解与 60fps 动态模拟实验。无需密码，管理权限受限（不支持修改密码、真实礼品核销）。' }),
+        text: '本模式用于展示全站数理化核心功能、板书图解与分步动画演示。无需密码，管理权限受限（不支持修改密码、真实礼品核销）。' }),
     ]));
   }
 

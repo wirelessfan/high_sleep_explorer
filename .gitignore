@@ -41,3 +41,9 @@ design/mockup/_*.png
 # 一次性脚本
 _tmp_*.py
 tools/_tmp_*.py
+
+# 插图校验的临时关键帧与预览
+design/physics-frames/
+design/review/
+.zcode/science-diagram-frames/
+.zcode/science-diagram-previews/

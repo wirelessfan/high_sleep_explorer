@@ -1,116 +1,131 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
-  <defs>
-    <pattern id="gridPointCharge" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1e5d4" stroke-width="0.8"/>
-    </pattern>
-    <filter id="shadowPC" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
-    </filter>
-  </defs>
-
-  <!-- 背景信纸 -->
-  <rect width="640" height="380" rx="14" fill="#fdfbf7" filter="url(#shadowPC)"/>
-  <rect width="640" height="380" rx="14" fill="url(#gridPointCharge)"/>
-
-  <!-- 顶部标签 -->
-  <rect x="180" y="8" width="280" height="26" fill="rgba(14, 165, 233, 0.28)" rx="3" transform="rotate(-0.4 320 21)"/>
-  <text x="320" y="26" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="900" fill="#0369a1" text-anchor="middle" letter-spacing="1">
-    ★ 静电场基石图 · 正负孤立点电荷场线与等势面
-  </text>
-
-  <g transform="translate(30, 50)">
-    <rect width="580" height="300" rx="10" fill="#ffffff" stroke="#ebd9c3" stroke-width="1.5"/>
-
-    <!-- 左半区：正点电荷 (+Q) 辐射发散场 -->
-    <g transform="translate(145, 130)">
-      <!-- 同心圆等势线 (φ1 > φ2 > φ3) -->
-      <circle cx="0" cy="0" r="32" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
-      <circle cx="0" cy="0" r="54" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
-      <circle cx="0" cy="0" r="78" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,3"/>
-      <text x="58" y="-58" font-family="'Courier New',sans-serif" font-size="10.5" font-weight="800" fill="#059669">φ₁ &gt; φ₂ &gt; φ₃ &gt; 0</text>
-
-      <!-- 8 方向辐射向外的电场线 (橙色带箭头) -->
-      <!-- 0° (向右) -->
-      <line x1="16" y1="0" x2="95" y2="0" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M 68 -3.5 L 76 0 L 68 3.5 Z" fill="#f59e0b"/>
-      <!-- 45° -->
-      <line x1="11" y1="-11" x2="68" y2="-68" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M 48 -55 L 56 -56 L 55 -48 Z" fill="#f59e0b"/>
-      <!-- 90° (向上) -->
-      <line x1="0" y1="-16" x2="0" y2="-95" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -3.5 -68 L 0 -76 L 3.5 -68 Z" fill="#f59e0b"/>
-      <!-- 135° -->
-      <line x1="-11" y1="-11" x2="-68" y2="-68" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -48 -55 L -56 -56 L -55 -48 Z" fill="#f59e0b"/>
-      <!-- 180° (向左) -->
-      <line x1="-16" y1="0" x2="-95" y2="0" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -68 -3.5 L -76 0 L -68 3.5 Z" fill="#f59e0b"/>
-      <!-- 225° -->
-      <line x1="-11" y1="11" x2="-68" y2="68" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -48 55 L -56 56 L -55 48 Z" fill="#f59e0b"/>
-      <!-- 270° (向下) -->
-      <line x1="0" y1="16" x2="0" y2="95" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -3.5 68 L 0 76 L 3.5 68 Z" fill="#f59e0b"/>
-      <!-- 315° -->
-      <line x1="11" y1="11" x2="68" y2="68" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M 48 55 L 56 56 L 55 48 Z" fill="#f59e0b"/>
-
-      <!-- 正电荷球体 -->
-      <circle cx="0" cy="0" r="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2.5"/>
-      <text x="0" y="6" font-family="sans-serif" font-size="18" font-weight="900" fill="#dc2626" text-anchor="middle">+</text>
-      <text x="0" y="112" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#b91c1c" text-anchor="middle">正点电荷 (+Q)：辐射发散</text>
-    </g>
-
-    <!-- 中间分割虚线 -->
-    <line x1="290" y1="20" x2="290" y2="250" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4,4"/>
-
-    <!-- 右半区：负点电荷 (-Q) 汇聚收敛场 -->
-    <g transform="translate(435, 130)">
-      <!-- 同心圆等势线 (φ1 < φ2 < φ3 < 0) -->
-      <circle cx="0" cy="0" r="32" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
-      <circle cx="0" cy="0" r="54" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
-      <circle cx="0" cy="0" r="78" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,3"/>
-      <text x="58" y="-58" font-family="'Courier New',sans-serif" font-size="10.5" font-weight="800" fill="#059669">φ₁ &lt; φ₂ &lt; φ₃ &lt; 0</text>
-
-      <!-- 8 方向向内汇聚的电场线 (箭头指向圆心) -->
-      <!-- 0° -->
-      <line x1="95" y1="0" x2="16" y2="0" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M 45 -3.5 L 37 0 L 45 3.5 Z" fill="#f59e0b"/>
-      <!-- 45° -->
-      <line x1="68" y1="-68" x2="11" y2="-11" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M 38 -29 L 30 -30 L 31 -38 Z" fill="#f59e0b"/>
-      <!-- 90° -->
-      <line x1="0" y1="-95" x2="0" y2="-16" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -3.5 -45 L 0 -37 L 3.5 -45 Z" fill="#f59e0b"/>
-      <!-- 135° -->
-      <line x1="-68" y1="-68" x2="-11" y2="-11" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -38 -29 L -30 -30 L -31 -38 Z" fill="#f59e0b"/>
-      <!-- 180° -->
-      <line x1="-95" y1="0" x2="-16" y2="0" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -45 -3.5 L -37 0 L -45 3.5 Z" fill="#f59e0b"/>
-      <!-- 225° -->
-      <line x1="-68" y1="68" x2="-11" y2="11" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -38 29 L -30 30 L -31 38 Z" fill="#f59e0b"/>
-      <!-- 270° -->
-      <line x1="0" y1="95" x2="0" y2="16" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M -3.5 45 L 0 37 L 3.5 45 Z" fill="#f59e0b"/>
-      <!-- 315° -->
-      <line x1="68" y1="68" x2="11" y2="11" stroke="#f59e0b" stroke-width="2"/>
-      <path d="M 38 29 L 30 30 L 31 38 Z" fill="#f59e0b"/>
-
-      <!-- 负电荷球体 -->
-      <circle cx="0" cy="0" r="16" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
-      <text x="0" y="6" font-family="sans-serif" font-size="18" font-weight="900" fill="#2563eb" text-anchor="middle">−</text>
-      <text x="0" y="112" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#1d4ed8" text-anchor="middle">负点电荷 (−Q)：汇聚收敛</text>
-    </g>
-
-    <!-- 底部核心公式与结论卡 -->
-    <rect x="15" y="255" width="550" height="34" rx="6" fill="#f0fdf4" stroke="#86efac"/>
-    <text x="290" y="271" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#166534" text-anchor="middle">
-      点电荷场强：E = kQ / r²（与距离平方成反比）｜ 正电荷电场线向外辐射，负电荷电场线向内汇聚
-    </text>
-    <text x="290" y="284" font-family="'PingFang SC',sans-serif" font-size="10.5" fill="#15803d" text-anchor="middle">
-      无论正负电荷：顺着电场线方向电势一定降低；等势面皆为以电荷为中心的同心圆球（面面垂直）
-    </text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 574" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">孤立点电荷 · 场线与等势线</title>
+<desc id="desc">两侧为独立情景。E = k|Q|/r²；φ = kQ/r；径向电场线与同心等势圆（球面）正交。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="410" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">孤立点电荷 · 场线与等势线</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<circle cx="170" cy="180" r="35" fill="none" stroke="#059669" stroke-width="1.2" stroke-dasharray="4 3">
+</circle>
+<circle cx="170" cy="180" r="60" fill="none" stroke="#059669" stroke-width="1.2" stroke-dasharray="4 3">
+</circle>
+<circle cx="170" cy="180" r="90" fill="none" stroke="#059669" stroke-width="1.2" stroke-dasharray="4 3">
+</circle>
+<line x1="184" y1="180" x2="278" y2="180" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 231 180 L 239 180 M 236.6 181.2 L 239 180 L 236.6 178.8" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="182.1244" y1="187" x2="263.5307" y2="234" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 222.8275 210.5 L 229.7558 214.5 M 227.0773 214.3392 L 229.7558 214.5 L 228.2773 212.2608" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="177" y1="192.1244" x2="224" y2="273.5307" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 200.5 232.8275 L 204.5 239.7558 M 202.2608 238.2773 L 204.5 239.7558 L 204.3392 237.0773" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="170" y1="194" x2="170" y2="288" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 170 241 L 170 249 M 168.8 246.6 L 170 249 L 171.2 246.6" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="163" y1="192.1244" x2="116" y2="273.5307" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 139.5 232.8275 L 135.5 239.7558 M 135.6608 237.0773 L 135.5 239.7558 L 137.7392 238.2773" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="157.8756" y1="187" x2="76.4693" y2="234" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 117.1725 210.5 L 110.2442 214.5 M 111.7227 212.2608 L 110.2442 214.5 L 112.9227 214.3392" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="156" y1="180" x2="62" y2="180" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 109 180 L 101 180 M 103.4 178.8 L 101 180 L 103.4 181.2" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="157.8756" y1="173" x2="76.4693" y2="126" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 117.1725 149.5 L 110.2442 145.5 M 112.9227 145.6608 L 110.2442 145.5 L 111.7227 147.7392" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="163" y1="167.8756" x2="116" y2="86.4693" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 139.5 127.1725 L 135.5 120.2442 M 137.7392 121.7227 L 135.5 120.2442 L 135.6608 122.9227" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="170" y1="166" x2="170" y2="72" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 170 119 L 170 111 M 171.2 113.4 L 170 111 L 168.8 113.4" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="177" y1="167.8756" x2="224" y2="86.4693" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 200.5 127.1725 L 204.5 120.2442 M 204.3392 122.9227 L 204.5 120.2442 L 202.2608 121.7227" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="182.1244" y1="173" x2="263.5307" y2="126" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 222.8275 149.5 L 229.7558 145.5 M 228.2773 147.7392 L 229.7558 145.5 L 227.0773 145.6608" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<circle cx="170" cy="180" r="13" fill="#fee2e2">
+</circle>
+<text x="170" y="185" fill="#dc2626" font-size="18" font-weight="800" text-anchor="middle">+</text>
+<text x="170" y="315" fill="#475569" font-size="13" font-weight="700" text-anchor="middle">+Q：向外发散</text>
+<circle cx="470" cy="180" r="35" fill="none" stroke="#059669" stroke-width="1.2" stroke-dasharray="4 3">
+</circle>
+<circle cx="470" cy="180" r="60" fill="none" stroke="#059669" stroke-width="1.2" stroke-dasharray="4 3">
+</circle>
+<circle cx="470" cy="180" r="90" fill="none" stroke="#059669" stroke-width="1.2" stroke-dasharray="4 3">
+</circle>
+<line x1="484" y1="180" x2="578" y2="180" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 539 180 L 531 180 M 533.4 178.8 L 531 180 L 533.4 181.2" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="482.1244" y1="187" x2="563.5307" y2="234" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 529.7558 214.5 L 522.8275 210.5 M 525.506 210.6608 L 522.8275 210.5 L 524.306 212.7392" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="477" y1="192.1244" x2="524" y2="273.5307" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 504.5 239.7558 L 500.5 232.8275 M 502.7392 234.306 L 500.5 232.8275 L 500.6608 235.506" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="470" y1="194" x2="470" y2="288" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 470 249 L 470 241 M 471.2 243.4 L 470 241 L 468.8 243.4" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="463" y1="192.1244" x2="416" y2="273.5307" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 435.5 239.7558 L 439.5 232.8275 M 439.3392 235.506 L 439.5 232.8275 L 437.2608 234.306" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="457.8756" y1="187" x2="376.4693" y2="234" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 410.2442 214.5 L 417.1725 210.5 M 415.694 212.7392 L 417.1725 210.5 L 414.494 210.6608" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="456" y1="180" x2="362" y2="180" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 401 180 L 409 180 M 406.6 181.2 L 409 180 L 406.6 178.8" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="457.8756" y1="173" x2="376.4693" y2="126" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 410.2442 145.5 L 417.1725 149.5 M 414.494 149.3392 L 417.1725 149.5 L 415.694 147.2608" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="463" y1="167.8756" x2="416" y2="86.4693" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 435.5 120.2442 L 439.5 127.1725 M 437.2608 125.694 L 439.5 127.1725 L 439.3392 124.494" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="470" y1="166" x2="470" y2="72" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 470 111 L 470 119 M 468.8 116.6 L 470 119 L 471.2 116.6" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="477" y1="167.8756" x2="524" y2="86.4693" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 504.5 120.2442 L 500.5 127.1725 M 500.6608 124.494 L 500.5 127.1725 L 502.7392 125.694" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<line x1="482.1244" y1="173" x2="563.5307" y2="126" stroke="#d97706" stroke-width="1.5">
+</line>
+<path d="M 529.7558 145.5 L 522.8275 149.5 M 524.306 147.2608 L 522.8275 149.5 L 525.506 149.3392" stroke="#d97706" stroke-width="1.5" fill="none">
+</path>
+<circle cx="470" cy="180" r="13" fill="#dbeafe">
+</circle>
+<text x="470" y="185" fill="#2563eb" font-size="18" font-weight="800" text-anchor="middle">−</text>
+<text x="470" y="315" fill="#475569" font-size="13" font-weight="700" text-anchor="middle">−Q：向内汇聚</text>
+<rect x="20" y="370" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="383" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">两侧为独立情景。E = k|Q|/r²；φ = kQ/r；径向电场线与同心等势圆（球面）正交。</text>
+</g>
 </svg>

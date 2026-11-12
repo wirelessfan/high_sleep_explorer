@@ -1,85 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">氧化还原：得失电子与化合价</title>
+  <desc id="description">以钠与氯气反应为例；图中 Cl 表示氯气中的一个氯原子。。氧化还原的本质是电子转移，也可表现为共用电子对偏移；图中不表示电子经典轨道。</desc>
   <defs>
-    <pattern id="gridIntroRedox" width="16" height="16" patternUnits="userSpaceOnUse">
-      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#e8f3ee" stroke-width="0.8"/>
-    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
     <style>
-      /* 电子从还原剂跃迁跳跃到氧化剂的抛物弧线动画 */
-      @keyframes electronJump {
-        0% { transform: translate(110px, 95px); opacity: 0; }
-        15% { opacity: 1; }
-        50% { transform: translate(185px, 50px); }
-        85% { opacity: 1; }
-        100% { transform: translate(260px, 95px); opacity: 0; }
-      }
-      .anim-electron-jump {
-        animation: electronJump 2.4s ease-in-out infinite;
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
       }
     </style>
   </defs>
-
-  <rect width="640" height="240" rx="12" fill="#fafdfb"/>
-  <rect width="640" height="240" rx="12" fill="url(#gridIntroRedox)"/>
-
-  <!-- 顶部轻便签 -->
-  <rect x="20" y="10" width="220" height="22" rx="4" fill="rgba(16, 185, 129, 0.28)"/>
-  <text x="130" y="25" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#065f46" text-anchor="middle">
-    ⚡ 氧化还原动态引导 · 电子跃迁转移微观模型
-  </text>
-
-  <!-- 左侧：微观原子模型电子跃迁转移区 -->
-  <g transform="translate(10, 20)">
-    <!-- 还原剂原子 (失去电子) -->
-    <g transform="translate(100, 95)">
-      <circle cx="0" cy="0" r="32" fill="none" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="3,2"/>
-      <circle cx="0" cy="0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-      <text x="0" y="5" font-family="sans-serif" font-size="12" font-weight="900" fill="#1e40af" text-anchor="middle">还原剂</text>
-      <text x="0" y="44" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#2563eb" text-anchor="middle">失 e⁻ · 价升高 · 被氧化</text>
-    </g>
-
-    <!-- 电子转移跳跃弧线路径 (虚线) -->
-    <path d="M 110 95 C 145 40, 225 40, 260 95" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3"/>
-
-    <!-- 动态跳跃的电子粒 (e-) -->
-    <g class="anim-electron-jump">
-      <circle cx="0" cy="0" r="6" fill="#f59e0b" stroke="#ffffff" stroke-width="1.5"/>
-      <text x="0" y="3" font-family="sans-serif" font-size="8" font-weight="900" fill="#ffffff" text-anchor="middle">e⁻</text>
-    </g>
-
-    <!-- 氧化剂原子 (得到电子) -->
-    <g transform="translate(270, 95)">
-      <circle cx="0" cy="0" r="32" fill="none" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="3,2"/>
-      <circle cx="0" cy="0" r="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
-      <text x="0" y="5" font-family="sans-serif" font-size="12" font-weight="900" fill="#b91c1c" text-anchor="middle">氧化剂</text>
-      <text x="0" y="44" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#dc2626" text-anchor="middle">得 e⁻ · 价降低 · 被还原</text>
-    </g>
-  </g>
-
-  <!-- 右侧：氧化还原核心要点卡 -->
-  <g transform="translate(340, 42)">
-    <rect width="270" height="135" rx="8" fill="#ffffff" stroke="#cde4d9" stroke-width="1.5"/>
-
-    <text x="14" y="24" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#065f46">
-      【六字真言与得失守恒】
-    </text>
-
-    <text x="14" y="50" font-family="'PingFang SC',sans-serif" font-size="13" font-weight="900" fill="#dc2626">
-      升失氧（还原剂） ｜ 降得还（氧化剂）
-    </text>
-    <text x="14" y="74" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">
-      • 本质是电子的转移（得失或共用电子对偏移）
-    </text>
-    <text x="14" y="94" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">
-      • 强弱规律：氧化性 氧化剂 &gt; 氧化产物
-    </text>
-    <text x="14" y="118" font-family="'Courier New',sans-serif" font-size="11.5" font-weight="900" fill="#059669">
-      第一守恒律：得电子总数 ≡ 失电子总数
-    </text>
-  </g>
-
-  <!-- 底部核心结论条 -->
-  <rect x="20" y="198" width="600" height="26" rx="5" fill="#f0fdf4" stroke="#86efac"/>
-  <text x="320" y="215" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#15803d" text-anchor="middle">
-    做题心法：只看化合价改变的元素，抓初态末态，用电子守恒列式秒解计算题！
-  </text>
+  <rect width="800" height="460" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">氧化还原：得失电子与化合价</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">以钠与氯气反应为例；图中 Cl 表示氯气中的一个氯原子。</text>
+  <rect x="24" y="82" width="752" height="307" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<rect x="55" y="154" width="150" height="96" rx="10" fill="#edf4ff" stroke="#aac6ef"/>
+<text x="130" y="190" font-size="21" fill="#2563eb" text-anchor="middle" font-weight="700">Na → Na⁺</text>
+<text x="130" y="224" font-size="16" fill="#2563eb" text-anchor="middle" font-weight="500">失电子，被氧化</text>
+<rect x="350" y="154" width="150" height="96" rx="10" fill="#fff0ed" stroke="#efb6ad"/>
+<text x="425" y="190" font-size="21" fill="#dc2626" text-anchor="middle" font-weight="700">Cl → Cl⁻</text>
+<text x="425" y="224" font-size="16" fill="#dc2626" text-anchor="middle" font-weight="500">得电子，被还原</text>
+<path d="M 180 148 Q 275 67 370 148" fill="none" stroke="#b45309" stroke-width="2" marker-end="url(#arrow)"/>
+<g class="motion">
+<circle cx="180" cy="148" r="13" fill="#fff0b5" stroke="#b45309">
+<animate attributeName="cx" values="180;181.58333;183.16667;184.75;186.33333;187.91667;189.5;191.08333;192.66667;194.25;195.83333;197.41667;199;200.58333;202.16667;203.75;205.33333;206.91667;208.5;210.08333;211.66667;213.25;214.83333;216.41667;218;219.58333;221.16667;222.75;224.33333;225.91667;227.5;229.08333;230.66667;232.25;233.83333;235.41667;237;238.58333;240.16667;241.75;243.33333;244.91667;246.5;248.08333;249.66667;251.25;252.83333;254.41667;256;257.58333;259.16667;260.75;262.33333;263.91667;265.5;267.08333;268.66667;270.25;271.83333;273.41667;275;276.58333;278.16667;279.75;281.33333;282.91667;284.5;286.08333;287.66667;289.25;290.83333;292.41667;294;295.58333;297.16667;298.75;300.33333;301.91667;303.5;305.08333;306.66667;308.25;309.83333;311.41667;313;314.58333;316.16667;317.75;319.33333;320.91667;322.5;324.08333;325.66667;327.25;328.83333;330.41667;332;333.58333;335.16667;336.75;338.33333;339.91667;341.5;343.08333;344.66667;346.25;347.83333;349.41667;351;352.58333;354.16667;355.75;357.33333;358.91667;360.5;362.08333;363.66667;365.25;366.83333;368.41667;370" keyTimes="0;0.00833;0.01667;0.025;0.03333;0.04167;0.05;0.05833;0.06667;0.075;0.08333;0.09167;0.1;0.10833;0.11667;0.125;0.13333;0.14167;0.15;0.15833;0.16667;0.175;0.18333;0.19167;0.2;0.20833;0.21667;0.225;0.23333;0.24167;0.25;0.25833;0.26667;0.275;0.28333;0.29167;0.3;0.30833;0.31667;0.325;0.33333;0.34167;0.35;0.35833;0.36667;0.375;0.38333;0.39167;0.4;0.40833;0.41667;0.425;0.43333;0.44167;0.45;0.45833;0.46667;0.475;0.48333;0.49167;0.5;0.50833;0.51667;0.525;0.53333;0.54167;0.55;0.55833;0.56667;0.575;0.58333;0.59167;0.6;0.60833;0.61667;0.625;0.63333;0.64167;0.65;0.65833;0.66667;0.675;0.68333;0.69167;0.7;0.70833;0.71667;0.725;0.73333;0.74167;0.75;0.75833;0.76667;0.775;0.78333;0.79167;0.8;0.80833;0.81667;0.825;0.83333;0.84167;0.85;0.85833;0.86667;0.875;0.88333;0.89167;0.9;0.90833;0.91667;0.925;0.93333;0.94167;0.95;0.95833;0.96667;0.975;0.98333;0.99167;1" dur="4s" calcMode="linear" repeatCount="indefinite"/>
+<animate attributeName="cy" values="148;146.66125;145.345;144.05125;142.78;141.53125;140.305;139.10125;137.92;136.76125;135.625;134.51125;133.42;132.35125;131.305;130.28125;129.28;128.30125;127.345;126.41125;125.5;124.61125;123.745;122.90125;122.08;121.28125;120.505;119.75125;119.02;118.31125;117.625;116.96125;116.32;115.70125;115.105;114.53125;113.98;113.45125;112.945;112.46125;112;111.56125;111.145;110.75125;110.38;110.03125;109.705;109.40125;109.12;108.86125;108.625;108.41125;108.22;108.05125;107.905;107.78125;107.68;107.60125;107.545;107.51125;107.5;107.51125;107.545;107.60125;107.68;107.78125;107.905;108.05125;108.22;108.41125;108.625;108.86125;109.12;109.40125;109.705;110.03125;110.38;110.75125;111.145;111.56125;112;112.46125;112.945;113.45125;113.98;114.53125;115.105;115.70125;116.32;116.96125;117.625;118.31125;119.02;119.75125;120.505;121.28125;122.08;122.90125;123.745;124.61125;125.5;126.41125;127.345;128.30125;129.28;130.28125;131.305;132.35125;133.42;134.51125;135.625;136.76125;137.92;139.10125;140.305;141.53125;142.78;144.05125;145.345;146.66125;148" keyTimes="0;0.00833;0.01667;0.025;0.03333;0.04167;0.05;0.05833;0.06667;0.075;0.08333;0.09167;0.1;0.10833;0.11667;0.125;0.13333;0.14167;0.15;0.15833;0.16667;0.175;0.18333;0.19167;0.2;0.20833;0.21667;0.225;0.23333;0.24167;0.25;0.25833;0.26667;0.275;0.28333;0.29167;0.3;0.30833;0.31667;0.325;0.33333;0.34167;0.35;0.35833;0.36667;0.375;0.38333;0.39167;0.4;0.40833;0.41667;0.425;0.43333;0.44167;0.45;0.45833;0.46667;0.475;0.48333;0.49167;0.5;0.50833;0.51667;0.525;0.53333;0.54167;0.55;0.55833;0.56667;0.575;0.58333;0.59167;0.6;0.60833;0.61667;0.625;0.63333;0.64167;0.65;0.65833;0.66667;0.675;0.68333;0.69167;0.7;0.70833;0.71667;0.725;0.73333;0.74167;0.75;0.75833;0.76667;0.775;0.78333;0.79167;0.8;0.80833;0.81667;0.825;0.83333;0.84167;0.85;0.85833;0.86667;0.875;0.88333;0.89167;0.9;0.90833;0.91667;0.925;0.93333;0.94167;0.95;0.95833;0.96667;0.975;0.98333;0.99167;1" dur="4s" calcMode="linear" repeatCount="indefinite"/>
+</circle>
+</g>
+<text x="276" y="93" font-size="15" fill="#b45309" text-anchor="middle" font-weight="500">e⁻ 转移方向</text>
+<text x="276" y="286" font-size="22" fill="#172b42" text-anchor="middle" font-weight="700">2Na + Cl₂ = 2NaCl</text>
+<text x="276" y="321" font-size="16" fill="#50647a" text-anchor="middle" font-weight="500">每个 Na 失 1e⁻，每个 Cl 得 1e⁻</text>
+<text x="276" y="355" font-size="14" fill="#50647a" text-anchor="middle" font-weight="500">箭头示意电子转移，不表示实际飞行轨迹</text>
+<line x1="535" y1="110" x2="535" y2="366" stroke="#cbdcd5" stroke-width="1"/>
+<text x="558" y="137" font-size="18" fill="#2563eb" text-anchor="start" font-weight="500">还原剂：Na</text>
+<text x="558" y="177" font-size="18" fill="#2563eb" text-anchor="start" font-weight="500">升价、失电子</text>
+<text x="558" y="217" font-size="18" fill="#dc2626" text-anchor="start" font-weight="500">氧化剂：Cl₂</text>
+<text x="558" y="257" font-size="18" fill="#dc2626" text-anchor="start" font-weight="500">降价、得电子</text>
+<text x="558" y="307" font-size="18" fill="#047857" text-anchor="start" font-weight="500">得失电子总数</text>
+<text x="558" y="340" font-size="18" fill="#047857" text-anchor="start" font-weight="500">均为 2e⁻</text>
+  <rect x="24" y="398" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="418" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">氧化还原的本质是电子转移，也可表现为共用电子对偏移；图中不表示电子经典轨道。</text>
 </svg>

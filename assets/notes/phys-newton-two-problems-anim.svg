@@ -1,116 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" width="100%" height="100%">
-  <defs>
-    <pattern id="gridTPAnim" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1e5d4" stroke-width="0.8"/>
-    </pattern>
-    <filter id="shadowTPAnim" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
-    </filter>
-
-    <style>
-      /* 正向推导流动光流 (6s 循环) */
-      @keyframes forwardFlow {
-        0%, 15% { stroke-dashoffset: 80; opacity: 0.2; }
-        25%, 45% { stroke-dashoffset: 0; opacity: 1; }
-        55%, 100% { stroke-dashoffset: -80; opacity: 0.2; }
-      }
-      /* 反向推导流动光流 (后半周期 50% ~ 95% 触发) */
-      @keyframes backwardFlow {
-        0%, 50% { stroke-dashoffset: -80; opacity: 0.2; }
-        60%, 85% { stroke-dashoffset: 0; opacity: 1; }
-        95%, 100% { stroke-dashoffset: 80; opacity: 0.2; }
-      }
-      /* 中枢 a 呼吸脉冲 */
-      @keyframes hubPulse {
-        0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px #f59e0b); }
-        50% { transform: scale(1.04); filter: drop-shadow(0 0 8px #f59e0b); }
-      }
-
-      .flow-forward {
-        stroke-dasharray: 10,6;
-        animation: forwardFlow 6s linear infinite;
-      }
-      .flow-backward {
-        stroke-dasharray: 10,6;
-        animation: backwardFlow 6s linear infinite;
-      }
-      .hub-a {
-        transform-origin: 280px 122px;
-        animation: hubPulse 3s ease-in-out infinite;
-      }
-    </style>
-  </defs>
-
-  <rect width="640" height="320" rx="14" fill="#fdfbf7" filter="url(#shadowTPAnim)"/>
-  <rect width="640" height="320" rx="14" fill="url(#gridTPAnim)"/>
-
-  <!-- 顶部标签 -->
-  <rect x="180" y="8" width="280" height="26" fill="rgba(59, 130, 246, 0.25)" rx="3" transform="rotate(0.5 320 21)"/>
-  <text x="320" y="26" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="1">
-    ⚡ 动态拆解 · 两类问题中枢流动演练
-  </text>
-
-  <g transform="translate(40, 50)">
-    <rect width="560" height="245" rx="10" fill="#ffffff" stroke="#ebd9c3" stroke-width="1.5"/>
-
-    <!-- 中间核心枢纽：加速度 a (黄金换乘站) -->
-    <g class="hub-a" transform="translate(225, 75)">
-      <rect x="0" y="0" width="110" height="95" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
-      <text x="55" y="32" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#92400e" text-anchor="middle">核心枢纽</text>
-      <text x="55" y="66" font-family="'Courier New',sans-serif" font-size="34" font-weight="900" fill="#b45309" text-anchor="middle">a</text>
-      <text x="55" y="86" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="700" fill="#78350f" text-anchor="middle">加速度(换乘站)</text>
-    </g>
-
-    <!-- 上半部分：第Ⅰ类问题 (已知受力求运动，动态光流从左流向右) -->
-    <g transform="translate(20, 25)">
-      <!-- 左侧：受力分析 -->
-      <rect x="10" y="0" width="150" height="52" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
-      <text x="85" y="22" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#1e40af" text-anchor="middle">① 受力分析</text>
-      <text x="85" y="42" font-family="'PingFang SC',sans-serif" font-size="11.5" fill="#3b82f6" text-anchor="middle">求合外力 ΣF合</text>
-
-      <!-- 动态流动光流线：从受力分析指向 a -->
-      <path class="flow-forward" d="M 160 26 L 225 75" stroke="#2563eb" stroke-width="3" fill="none"/>
-      <path d="M 221 68 L 227 76 L 217 74 Z" fill="#2563eb"/>
-      <text x="185" y="42" font-family="sans-serif" font-size="10" font-weight="900" fill="#2563eb">F=ma</text>
-
-      <!-- 动态流动光流线：从 a 指向运动学公式 -->
-      <path class="flow-forward" d="M 335 75 L 400 26" stroke="#2563eb" stroke-width="3" fill="none"/>
-      <path d="M 393 25 L 401 25 L 398 33 Z" fill="#2563eb"/>
-      <text x="360" y="42" font-family="'PingFang SC',sans-serif" font-size="10" font-weight="900" fill="#2563eb">代入公式</text>
-
-      <!-- 右侧：运动学量 -->
-      <rect x="400" y="0" width="140" height="52" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.8"/>
-      <text x="470" y="22" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#1e40af" text-anchor="middle">求解运动状态</text>
-      <text x="470" y="42" font-family="'Courier New',sans-serif" font-size="12" font-weight="700" fill="#1d4ed8" text-anchor="middle">v(t), x(位移), t</text>
-    </g>
-
-    <!-- 下半部分：第Ⅱ类问题 (已知运动求受力，动态光流从右反向流向左) -->
-    <g transform="translate(20, 165)">
-      <!-- 右侧：已知运动 -->
-      <rect x="400" y="0" width="140" height="52" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.8"/>
-      <text x="470" y="22" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#166534" text-anchor="middle">已知运动学信息</text>
-      <text x="470" y="42" font-family="'Courier New',sans-serif" font-size="12" font-weight="700" fill="#15803d" text-anchor="middle">初末速 v, 位移 x, t</text>
-
-      <!-- 动态反向光流线：从运动学指向 a -->
-      <path class="flow-backward" d="M 400 26 L 335 5" stroke="#16a34a" stroke-width="3" fill="none"/>
-      <path d="M 342 3 L 333 5 L 340 10 Z" fill="#16a34a"/>
-      <text x="360" y="26" font-family="'PingFang SC',sans-serif" font-size="10" font-weight="900" fill="#16a34a">反推 a</text>
-
-      <!-- 动态反向光流线：从 a 指向未知力 -->
-      <path class="flow-backward" d="M 225 5 L 160 26" stroke="#16a34a" stroke-width="3" fill="none"/>
-      <path d="M 166 21 L 158 27 L 168 28 Z" fill="#16a34a"/>
-      <text x="180" y="26" font-family="sans-serif" font-size="10" font-weight="900" fill="#16a34a">F合=ma</text>
-
-      <!-- 左侧：求未知力 -->
-      <rect x="10" y="0" width="150" height="52" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.8"/>
-      <text x="85" y="22" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#166534" text-anchor="middle">② 求解未知力</text>
-      <text x="85" y="42" font-family="'PingFang SC',sans-serif" font-size="11.5" fill="#15803d" text-anchor="middle">摩擦力 f / 弹力 N / 拉力</text>
-    </g>
-
-    <!-- 底部口诀便签 -->
-    <rect x="30" y="222" width="500" height="20" rx="4" fill="#fff7ed"/>
-    <text x="280" y="236" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#c2410c" text-anchor="middle">
-      口诀：不管大题正着问还是反着问，先把「加速度 a」作为中转站抓在手里！
-    </text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 574" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">牛顿力学 · 两类问题的共同枢纽</title>
+<desc id="desc">受力 → a → 运动；运动 → a → 受力。使用匀加速公式前先核对 a 是否恒定。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="410" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">牛顿力学 · 两类问题的共同枢纽</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<rect x="245" y="130" width="140" height="90" rx="5" fill="#fef3c7" stroke="#d97706">
+</rect>
+<text x="315" y="165" fill="#d97706" font-size="14" font-weight="700" text-anchor="middle">共同枢纽</text>
+<text x="315" y="201" fill="#d97706" font-size="22" font-weight="800" text-anchor="middle">加速度 a</text>
+<rect x="35" y="75" width="170" height="60" rx="5" fill="#eff6ff" stroke="#93c5fd">
+</rect>
+<text x="120" y="100" fill="#2563eb" font-size="14" font-weight="700" text-anchor="middle">已知受力</text>
+<text x="120" y="121" fill="#2563eb" font-size="12" font-weight="500" text-anchor="middle">求合外力 F合</text>
+<rect x="435" y="75" width="170" height="60" rx="5" fill="#f0fdf4" stroke="#86efac">
+</rect>
+<text x="520" y="100" fill="#059669" font-size="14" font-weight="700" text-anchor="middle">已知运动</text>
+<text x="520" y="121" fill="#059669" font-size="12" font-weight="500" text-anchor="middle">由运动关系求 a</text>
+<path d="M 205 110 L 247 152 M 240.636 149.8787 L 247 152 L 244.8787 145.636" stroke="#2563eb" stroke-width="2" fill="none">
+</path>
+<path d="M 435 110 L 387 152 M 389.5399 145.7912 L 387 152 L 393.491 150.3067" stroke="#059669" stroke-width="2" fill="none">
+</path>
+<rect x="35" y="255" width="170" height="55" rx="5" fill="#f0fdf4" stroke="#86efac">
+</rect>
+<text x="120" y="279" fill="#059669" font-size="14" font-weight="700" text-anchor="middle">求未知力</text>
+<text x="120" y="300" fill="#059669" font-size="12" font-weight="500" text-anchor="middle">隔离对象，F合 = ma</text>
+<rect x="435" y="255" width="170" height="55" rx="5" fill="#eff6ff" stroke="#93c5fd">
+</rect>
+<text x="520" y="279" fill="#2563eb" font-size="14" font-weight="700" text-anchor="middle">求运动状态</text>
+<text x="520" y="300" fill="#2563eb" font-size="12" font-weight="500" text-anchor="middle">结合初始条件求 v、x</text>
+<path d="M 385 205 L 435 260 M 428.7441 257.5784 L 435 260 L 433.1838 253.5423" stroke="#2563eb" stroke-width="2" fill="none">
+</path>
+<path d="M 245 205 L 205 260 M 206.1028 253.3831 L 205 260 L 210.9552 256.9121" stroke="#059669" stroke-width="2" fill="none">
+</path>
+<g class="motion">
+<g >
+<animate attributeName="opacity" values="0.2;1;0.2" dur="3s" repeatCount="indefinite" calcMode="linear">
+</animate>
+<rect x="244" y="129" width="142" height="92" rx="6" fill="none" stroke="#d97706">
+</rect>
+</g>
+</g>
+<rect x="20" y="370" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="383" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">受力 → a → 运动；运动 → a → 受力。使用匀加速公式前先核对 a 是否恒定。</text>
+</g>
 </svg>

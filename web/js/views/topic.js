@@ -1,7 +1,7 @@
 /* 主题详情：六版块 × 三档难度 */
 
 import * as api from '../api.js';
-import { el, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR, previewImage } from '../ui.js';
+import { el, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR, previewImage, previewGallery } from '../ui.js';
 import { navigate } from '../router.js';
 import { bossBanner, bossThumb, bossInline } from '../boss.js';
 
@@ -38,7 +38,7 @@ export async function renderTopic(view, { id }) {
       ]),
     ]),
     el('p', { style: 'margin-top:12px', text: topic.description }),
-    // 每个主题专属的核心过程 60fps 动态引导图
+    // 每个主题的核心过程引导图
     el('div', { class: 'topic-intro-anim', style: 'margin-top:14px;text-align:center' }, [
       el('img', {
         src: `/assets/notes/intro-${id}.svg`,
@@ -49,7 +49,7 @@ export async function renderTopic(view, { id }) {
       el('div', {
         class: 'sketch-caption',
         style: 'font-size:11.5px;color:#8c735d;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:4px',
-        html: `⚡ <span>${topic.title} · 核心过程 60fps 动态引导（点击放大）</span>`,
+        text: `⚡ ${topic.title} · 过程演示（点击放大查看）`,
       }),
     ]),
     el('div', { class: 'tier-legend', style: 'margin-top:14px' }, (topic.tiers || []).map((t) => el('div', { class: 'tier-legend-item' }, [
@@ -58,6 +58,41 @@ export async function renderTopic(view, { id }) {
       el('i', { text: t.desc || '' }),
     ]))),
   ]));
+
+  // 图解补充：独立面板，左右翻页
+  const diagrams = topic.diagrams || [];
+  if (diagrams.length) {
+    const cur = el('div', { style: 'font-size:12px;color:#6b5b52;margin-top:8px;line-height:1.6' });
+    const idx = el('div', { style: 'font-size:11px;color:#a3928a' });
+    const pic = el('img', {
+      alt: '',
+      style: 'width:100%;border-radius:12px;display:block;cursor:zoom-in;background:#fff;box-shadow:0 3px 12px rgba(0,0,0,.06)',
+    });
+    let pos = 0;
+    const render = () => {
+      const d = diagrams[pos];
+      pic.src = d.src;
+      pic.alt = d.title || '';
+      cur.textContent = d.caption || '';
+      idx.textContent = `${pos + 1} / ${diagrams.length}`;
+    };
+    const move = (step) => { pos = (pos + step + diagrams.length) % diagrams.length; render(); };
+    pic.addEventListener('click', () => previewGallery(diagrams, pos, topic.title));
+    root.appendChild(el('section', { class: 'panel', style: 'padding:13px' }, [
+      el('div', { class: 'row-between' }, [
+        el('div', { style: 'font-size:13.5px;font-weight:800;text-align:left', text: '图解补充' }),
+        idx,
+      ]),
+      pic,
+      cur,
+      el('div', { class: 'row', style: 'justify-content:space-between;gap:8px;margin-top:10px' }, [
+        el('button', { class: 'btn ghost sm', style: 'flex:1', text: '‹ 上一张', onclick: () => move(-1) }),
+        el('button', { class: 'btn ghost sm', style: 'flex:1', text: '下一张 ›', onclick: () => move(1) }),
+      ]),
+      el('div', { style: 'font-size:11px;color:#a3928a;text-align:center;margin-top:6px', text: '点击图片可全屏查看，支持 ← → 键翻页' }),
+    ]));
+    render();
+  }
 
   // 关底守关者预告：科学家是唯一的大 BOSS，五个小怪人只是实验体
   const bigBoss = (sections.find((s) => s.boss && s.boss.tier === 'big') || {}).boss;
