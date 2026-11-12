@@ -38,7 +38,8 @@ SYSTEM_PROMPT = (
 
 
 def enabled() -> bool:
-    return bool(API_KEY)
+    """配置了 Key（真实服务）或显式开启演示模式（LEARN_AI_STUB=1）时可用。"""
+    return bool(API_KEY) or os.environ.get("LEARN_AI_STUB") == "1"
 
 
 def config_public() -> dict:
