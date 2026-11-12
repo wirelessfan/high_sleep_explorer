@@ -5,6 +5,30 @@ import { el, toast, openSheet, SUBJECT_LABEL, SUBJECT_CLASS } from '../ui.js';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
+function paintAi(holder, value) {
+  holder.innerHTML = '';
+  if (value.misconception) {
+    holder.appendChild(el('div', {
+      style: 'font-size:12px;font-weight:800;color:#b45309;background:#fffbeb;border-radius:9px;padding:8px 10px;margin-top:8px',
+      text: `🎯 ${value.misconception}`,
+    }));
+  }
+  if (value.analysis) {
+    holder.appendChild(el('div', {
+      style: 'font-size:12px;color:#5c4b42;line-height:1.7;background:#fdf8f0;border-radius:9px;padding:9px 11px;margin-top:7px',
+      text: value.analysis,
+    }));
+  }
+  (value.suggestions || []).forEach((sg) => {
+    holder.appendChild(el('div', {
+      style: 'font-size:11.5px;color:#0f766e;display:flex;gap:6px;margin-top:5px',
+    }, [
+      el('span', { style: 'color:#14b8a6', text: '▸' }),
+      el('span', { text: sg }),
+    ]));
+  });
+}
+
 export async function renderWrongbook(view) {
   const data = await api.getWrongbook();
   const root = el('div', { class: 'stack' });
@@ -81,29 +105,7 @@ export async function renderWrongbook(view) {
     const btn = holder.querySelector('button');
   }
 
-  function paintAi(holder, value) {
-    holder.innerHTML = '';
-    if (value.misconception) {
-      holder.appendChild(el('div', {
-        style: 'font-size:12px;font-weight:800;color:#b45309;background:#fffbeb;border-radius:9px;padding:8px 10px;margin-top:8px',
-        text: `🎯 ${value.misconception}`,
-      }));
-    }
-    if (value.analysis) {
-      holder.appendChild(el('div', {
-        style: 'font-size:12px;color:#5c4b42;line-height:1.7;background:#fdf8f0;border-radius:9px;padding:9px 11px;margin-top:7px',
-        text: value.analysis,
-      }));
-    }
-    (value.suggestions || []).forEach((sg) => {
-      holder.appendChild(el('div', {
-        style: 'font-size:11.5px;color:#0f766e;display:flex;gap:6px;margin-top:5px',
-      }, [
-        el('span', { style: 'color:#14b8a6', text: '▸' }),
-        el('span', { text: sg }),
-      ]));
-    });
-  }
+  // paintAi 已提升到模块级（showTopicSheet 也用它）
 
   const summary = data.summary;
   root.appendChild(el('div', { class: 'section-head' }, [
