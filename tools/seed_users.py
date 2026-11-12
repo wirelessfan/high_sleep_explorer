@@ -25,6 +25,7 @@ ACCOUNTS = [
     ("sunny", "sunny", "sunny"),
     ("dad", "dad", "爸爸"),
     ("mom", "mom", "妈妈"),
+    ("guest", "guest", "演示访客"),
 ]
 
 
@@ -34,17 +35,22 @@ def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname
         "SELECT * FROM users WHERE username = ?", (username,)
     ).fetchone()
 
+    is_guest = username.lower() == "guest"
+    pwd_hash = "" if is_guest else auth.hash_password(password)
+
     if existing:
         conn.execute(
             "UPDATE users SET password_hash = ?, nickname = ? WHERE id = ?",
-            (auth.hash_password(password), nickname, existing["id"]),
+            (pwd_hash, nickname, existing["id"]),
         )
-        return existing["id"], "已存在，重置密码"
+        return existing["id"], "已存在，更新演示信息" if is_guest else "已存在，重置密码"
 
-    uid = auth.new_id()
+    uid = "u_guest_demo" if is_guest else auth.new_id()
     token = auth.new_token()
-    code = auth.normalize_sync_code(auth.new_sync_code())
+    code = "GUEST-DEMO-01" if is_guest else auth.normalize_sync_code(auth.new_sync_code())
     now = datetime.now().isoformat(timespec="seconds")
+    points = 300 if is_guest else 0
+    tickets = 8 if is_guest else 0
 
     for _ in range(5):
         clash = conn.execute("SELECT 1 FROM users WHERE sync_code = ?", (code,)).fetchone()
@@ -54,11 +60,11 @@ def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname
 
     conn.execute(
         "INSERT INTO users(id, token_hash, sync_code, nickname, username, password_hash, "
-        "created_at, last_seen) VALUES (?,?,?,?,?,?,?,?)",
+        "points, tickets, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?,?,?)",
         (uid, auth.hash_token(token), code, nickname, username,
-         auth.hash_password(password), now, now),
+         pwd_hash, points, tickets, now, now),
     )
-    return uid, "已创建"
+    return uid, "已创建演示账号" if is_guest else "已创建"
 
 
 def main() -> int:

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="100%">
+  <defs>
+    <pattern id="gridIntroKin" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#f1e5d4" stroke-width="0.8"/>
+    </pattern>
+    <style>
+      /* 小车加速运动动画 */
+      @keyframes cartAcc {
+        0% { transform: translateX(30px); }
+        100% { transform: translateX(340px); }
+      }
+      /* v-t 直线与梯形位移生长动画 */
+      @keyframes vtGrow {
+        0% { stroke-dashoffset: 160; }
+        100% { stroke-dashoffset: 0; }
+      }
+      .anim-cart {
+        animation: cartAcc 2.6s cubic-bezier(0.4, 0, 1, 1) infinite;
+      }
+      .anim-vt-line {
+        stroke-dasharray: 160;
+        animation: vtGrow 2.6s cubic-bezier(0.4, 0, 1, 1) infinite;
+      }
+    </style>
+  </defs>
+
+  <rect width="640" height="240" rx="12" fill="#fffdf9"/>
+  <rect width="640" height="240" rx="12" fill="url(#gridIntroKin)"/>
+
+  <!-- 顶部轻便签 -->
+  <rect x="20" y="10" width="200" height="22" rx="4" fill="rgba(59, 130, 246, 0.2)"/>
+  <text x="120" y="25" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#1e40af" text-anchor="middle">
+    ⚡ 运动学动态引导 · v-t 图像与打点纸带
+  </text>
+
+  <!-- 左侧：小车打点加速轨道 -->
+  <g transform="translate(15, 30)">
+    <!-- 导轨地面 -->
+    <line x1="20" y1="120" x2="380" y2="120" stroke="#78716c" stroke-width="2.5"/>
+    <text x="35" y="136" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#64748b">打点纸带实验台</text>
+
+    <!-- 纸带打点标记 (间距平方递增 aT²) -->
+    <circle cx="50" cy="120" r="2.5" fill="#dc2626"/>
+    <circle cx="65" cy="120" r="2.5" fill="#dc2626"/>
+    <circle cx="90" cy="120" r="2.5" fill="#dc2626"/>
+    <circle cx="125" cy="120" r="2.5" fill="#dc2626"/>
+    <circle cx="170" cy="120" r="2.5" fill="#dc2626"/>
+    <circle cx="225" cy="120" r="2.5" fill="#dc2626"/>
+    <circle cx="290" cy="120" r="2.5" fill="#dc2626"/>
+    <text x="170" y="145" font-family="'Courier New',sans-serif" font-size="11" font-weight="900" fill="#b91c1c" text-anchor="middle">Δx = a·T² (点距均匀拉长)</text>
+
+    <!-- 匀加速运动小车组件 -->
+    <g class="anim-cart">
+      <rect x="0" y="80" width="46" height="26" rx="4" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.8"/>
+      <!-- 轮子 -->
+      <circle cx="10" cy="112" r="6" fill="#1e293b"/>
+      <circle cx="36" cy="112" r="6" fill="#1e293b"/>
+      <!-- 速度矢量箭头 (随加速伸长) -->
+      <line x1="46" y1="93" x2="68" y2="93" stroke="#ef4444" stroke-width="2.5"/>
+      <path d="M 64 90 L 71 93 L 64 96 Z" fill="#ef4444"/>
+      <text x="56" y="86" font-family="sans-serif" font-size="10" font-weight="900" fill="#dc2626">v</text>
+    </g>
+  </g>
+
+  <!-- 右侧：v-t 图像坐标系与动态面积 -->
+  <g transform="translate(420, 45)">
+    <!-- 坐标轴 -->
+    <line x1="30" y1="130" x2="30" y2="20" stroke="#475569" stroke-width="2"/>
+    <path d="M 27 25 L 30 16 L 33 25 Z" fill="#475569"/>
+    <text x="20" y="22" font-family="sans-serif" font-size="11" font-weight="900" fill="#1e293b">v</text>
+
+    <line x1="30" y1="130" x2="190" y2="130" stroke="#475569" stroke-width="2"/>
+    <path d="M 184 127 L 193 130 L 184 133 Z" fill="#475569"/>
+    <text x="190" y="134" font-family="sans-serif" font-size="11" font-weight="900" fill="#1e293b">t</text>
+
+    <!-- 面积阴影 (梯形位移 x) -->
+    <polygon points="30,105 160,35 160,130 30,130" fill="rgba(251, 191, 36, 0.25)"/>
+    <text x="95" y="100" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="900" fill="#b45309">面积 = 位移 x</text>
+
+    <!-- 动态生长的 v-t 斜直线 -->
+    <line class="anim-vt-line" x1="30" y1="105" x2="160" y2="35" stroke="#dc2626" stroke-width="3"/>
+    <text x="35" y="100" font-family="sans-serif" font-size="10" font-weight="800" fill="#64748b">v₀</text>
+    <text x="165" y="38" font-family="sans-serif" font-size="10" font-weight="800" fill="#dc2626">v</text>
+
+    <!-- 斜率标注 -->
+    <text x="110" y="48" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#dc2626">斜率 = 加速度 a</text>
+  </g>
+
+  <!-- 底部核心公式条 -->
+  <rect x="20" y="200" width="600" height="26" rx="5" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="320" y="217" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#1e40af" text-anchor="middle">
+    三大支柱：v = v₀ + at ｜ x = v₀t + ½at² ｜ v² − v₀² = 2ax
+  </text>
+</svg>

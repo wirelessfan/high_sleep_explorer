@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+  <defs>
+    <pattern id="gridLenzAnim" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1e5d4" stroke-width="0.8"/>
+    </pattern>
+    <filter id="shadowLenzAnim" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+
+    <style>
+      /* 磁铁上下移动动画 */
+      @keyframes magnetBobbing {
+        0% { transform: translateY(-35px); }
+        50% { transform: translateY(15px); }
+        100% { transform: translateY(-35px); }
+      }
+      /* 电流计指针摆动动画 (正偏 -> 零 -> 负偏) */
+      @keyframes pointerSwing {
+        0% { transform: rotate(-25deg); }
+        50% { transform: rotate(25deg); }
+        100% { transform: rotate(-25deg); }
+      }
+      /* 线圈电流箭头流动光晕 */
+      @keyframes currentPulse {
+        0% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: 24; }
+      }
+      /* 呼吸光斑 */
+      @keyframes pulseLenz {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.35; transform: scale(0.85); }
+      }
+
+      .anim-magnet {
+        animation: magnetBobbing 3.4s ease-in-out infinite;
+      }
+      .anim-needle {
+        transform-origin: 140px 245px;
+        animation: pointerSwing 3.4s ease-in-out infinite;
+      }
+      .anim-current {
+        stroke-dasharray: 6,6;
+        animation: currentPulse 1.2s linear infinite;
+      }
+      .pulse-tag-lenz {
+        animation: pulseLenz 1.8s infinite ease-in-out;
+      }
+    </style>
+  </defs>
+
+  <!-- 背景信纸 -->
+  <rect width="640" height="380" rx="14" fill="#fdfcf7" filter="url(#shadowLenzAnim)"/>
+  <rect width="640" height="380" rx="14" fill="url(#gridLenzAnim)"/>
+
+  <!-- 顶部标签胶带 -->
+  <rect x="180" y="8" width="280" height="26" fill="rgba(245, 158, 11, 0.3)" rx="3" transform="rotate(-0.5 320 21)"/>
+  <text x="320" y="26" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="900" fill="#92400e" text-anchor="middle" letter-spacing="1">
+    ⚡ 动态模拟 · 楞次定律磁铁插拔与电流响应
+  </text>
+
+  <!-- 左侧：实验动态模拟区 -->
+  <g transform="translate(30, 50)">
+    <rect width="280" height="300" rx="10" fill="#ffffff" stroke="#e6d5be" stroke-width="1.5"/>
+
+    <circle cx="25" cy="22" r="5" fill="#f59e0b" class="pulse-tag-lenz"/>
+    <text x="36" y="26" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#b45309">
+      磁铁动态进出与检流计响应
+    </text>
+
+    <!-- 动态条形磁铁 (上下运动) -->
+    <g class="anim-magnet" transform="translate(140, 75)">
+      <!-- N 极 (红色向下) -->
+      <rect x="-14" y="0" width="28" height="28" fill="#ef4444" stroke="#dc2626" stroke-width="1.5" rx="3"/>
+      <text x="0" y="19" font-family="sans-serif" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle">N</text>
+
+      <!-- S 极 (蓝色向上) -->
+      <rect x="-14" y="-28" width="28" height="28" fill="#3b82f6" stroke="#2563eb" stroke-width="1.5" rx="3"/>
+      <text x="0" y="-9" font-family="sans-serif" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle">S</text>
+
+      <!-- 磁感线箭头向下 -->
+      <path d="M -8 32 L -8 44 M -11 40 L -8 45 L -5 40" stroke="#f59e0b" stroke-width="1.8" fill="none"/>
+      <path d="M 8 32 L 8 44 M 5 40 L 8 45 L 11 40" stroke="#f59e0b" stroke-width="1.8" fill="none"/>
+    </g>
+
+    <!-- 固定螺线管线圈 -->
+    <g transform="translate(140, 150)">
+      <!-- 线圈骨架 (椭圆圈) -->
+      <ellipse cx="0" cy="0" rx="42" ry="12" fill="none" stroke="#d97706" stroke-width="3.5" class="anim-current"/>
+      <ellipse cx="0" cy="12" rx="42" ry="12" fill="none" stroke="#d97706" stroke-width="3.5" class="anim-current"/>
+      <ellipse cx="0" cy="24" rx="42" ry="12" fill="none" stroke="#d97706" stroke-width="3.5" class="anim-current"/>
+      <text x="50" y="15" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#b45309">闭合回路</text>
+    </g>
+
+    <!-- 灵敏电流计 G (指针动态偏转) -->
+    <g transform="translate(0, 0)">
+      <circle cx="140" cy="245" r="32" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+      <text x="140" y="230" font-family="sans-serif" font-size="14" font-weight="900" fill="#334155" text-anchor="middle">G</text>
+      <!-- 零刻度线 -->
+      <line x1="140" y1="216" x2="140" y2="222" stroke="#64748b" stroke-width="1.5"/>
+      <text x="140" y="215" font-family="sans-serif" font-size="9" font-weight="700" fill="#64748b" text-anchor="middle">0</text>
+
+      <!-- 动态摆动指针 -->
+      <line class="anim-needle" x1="140" y1="245" x2="140" y2="222" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="140" cy="245" r="3.5" fill="#1e293b"/>
+
+      <!-- 连接导线 -->
+      <path d="M 98 162 C 60 170, 70 245, 108 245" fill="none" stroke="#2563eb" stroke-width="2"/>
+      <path d="M 182 162 C 220 170, 210 245, 172 245" fill="none" stroke="#2563eb" stroke-width="2"/>
+    </g>
+
+    <!-- 底部口诀说明卡 -->
+    <rect x="15" y="282" width="250" height="15" rx="3" fill="#fff7ed"/>
+    <text x="140" y="293" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#c2410c" text-anchor="middle">
+      ★ 阻碍变化：磁铁靠近排斥，远离吸引（来拒去留）
+    </text>
+  </g>
+
+  <!-- 右侧：楞次定律解题流水线与秒杀卡 -->
+  <g transform="translate(325, 50)">
+    <rect width="285" height="300" rx="10" fill="#ffffff" stroke="#e6d5be" stroke-width="1.5"/>
+
+    <text x="18" y="26" font-family="'PingFang SC',sans-serif" font-size="13.5" font-weight="900" fill="#0f172a">
+      【楞次定律判断流水线】
+    </text>
+
+    <!-- 4 步流 -->
+    <g transform="translate(18, 42)">
+      <circle cx="8" cy="8" r="8" fill="#eff6ff"/>
+      <text x="8" y="12" font-family="sans-serif" font-size="10" font-weight="900" fill="#2563eb" text-anchor="middle">1</text>
+      <text x="24" y="12" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="700" fill="#1e293b">明确原磁场方向 B原（向里/向外）</text>
+    </g>
+
+    <g transform="translate(18, 72)">
+      <circle cx="8" cy="8" r="8" fill="#fef3c7"/>
+      <text x="8" y="12" font-family="sans-serif" font-size="10" font-weight="900" fill="#d97706" text-anchor="middle">2</text>
+      <text x="24" y="12" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="700" fill="#1e293b">判断磁通量变化 ΔΦ（增加/减少）</text>
+    </g>
+
+    <g transform="translate(18, 102)">
+      <circle cx="8" cy="8" r="8" fill="#fee2e2"/>
+      <text x="8" y="12" font-family="sans-serif" font-size="10" font-weight="900" fill="#dc2626" text-anchor="middle">3</text>
+      <text x="24" y="12" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#b91c1c">楞次定律定 B感：「增反减同」</text>
+    </g>
+
+    <g transform="translate(18, 132)">
+      <circle cx="8" cy="8" r="8" fill="#dcfce7"/>
+      <text x="8" y="12" font-family="sans-serif" font-size="10" font-weight="900" fill="#16a34a" text-anchor="middle">4</text>
+      <text x="24" y="12" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="700" fill="#1e293b">右手安培螺旋定则确定 I感 流向</text>
+    </g>
+
+    <line x1="18" y1="165" x2="266" y2="165" stroke="#f1e5d4" stroke-width="1"/>
+
+    <!-- 快速秒杀神器 -->
+    <g transform="translate(18, 178)">
+      <rect x="0" y="0" width="248" height="106" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.2"/>
+      <text x="124" y="22" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#166534" text-anchor="middle">
+        ★ 选择题直接秒杀二级结论：
+      </text>
+      <text x="16" y="44" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#047857">
+        ① 来拒去留：靠近受斥力，远离受引力
+      </text>
+      <text x="16" y="66" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#047857">
+        ② 增缩减扩：Φ增回路面积收缩，反之扩张
+      </text>
+      <text x="16" y="88" font-family="'PingFang SC',sans-serif" font-size="11" fill="#15803d">
+        （不必推导四步，直接选出受力与机械效果！）
+      </text>
+    </g>
+  </g>
+</svg>

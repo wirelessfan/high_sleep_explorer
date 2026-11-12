@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+  <defs>
+    <pattern id="gridEFNew" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1e5d4" stroke-width="0.8"/>
+    </pattern>
+    <filter id="shadowEFNew" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- 背景信纸 -->
+  <rect width="640" height="380" rx="14" fill="#fdfbf7" filter="url(#shadowEFNew)"/>
+  <rect width="640" height="380" rx="14" fill="url(#gridEFNew)"/>
+
+  <!-- 顶部标签 -->
+  <rect x="180" y="8" width="280" height="26" fill="rgba(14, 165, 233, 0.28)" rx="3" transform="rotate(-0.3 320 21)"/>
+  <text x="320" y="26" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="900" fill="#0369a1" text-anchor="middle" letter-spacing="1">
+    ★ 静电场教科书级图解 · 等量异种电荷全景场图
+  </text>
+
+  <g transform="translate(30, 50)">
+    <rect width="580" height="300" rx="10" fill="#ffffff" stroke="#ebd9c3" stroke-width="1.5"/>
+
+    <!-- 左侧绘图区 -->
+    <g transform="translate(10, 10)">
+      <!-- 1. 等势面群 (绿色虚线，围绕两电荷各成封闭闭合曲面，中垂面垂直) -->
+      <!-- 正电荷周围高电势闭合等势线 (φ > 0) -->
+      <ellipse cx="95" cy="130" rx="28" ry="26" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
+      <ellipse cx="90" cy="130" rx="46" ry="42" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
+      <ellipse cx="80" cy="130" rx="66" ry="62" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="50" y="80" font-family="'Courier New',sans-serif" font-size="10" font-weight="800" fill="#059669">φ &gt; 0</text>
+
+      <!-- 负电荷周围低电势闭合等势线 (φ < 0) -->
+      <ellipse cx="245" cy="130" rx="28" ry="26" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
+      <ellipse cx="250" cy="130" rx="46" ry="42" fill="none" stroke="#10b981" stroke-width="1.6" stroke-dasharray="4,3"/>
+      <ellipse cx="260" cy="130" rx="66" ry="62" fill="none" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="280" y="80" font-family="'Courier New',sans-serif" font-size="10" font-weight="800" fill="#059669">φ &lt; 0</text>
+
+      <!-- 中垂面 (零势面，直线垂直相交于两电荷连线中点 x=170) -->
+      <line x1="170" y1="15" x2="170" y2="245" stroke="#059669" stroke-width="2.2" stroke-dasharray="5,3"/>
+      <text x="170" y="10" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="900" fill="#047857" text-anchor="middle">中垂面 (φ = 0 等势线)</text>
+
+      <!-- 2. 电场线群 (饱满的流线簇，实线带箭头，由正出发指向负) -->
+      <!-- 中心水平连线 -->
+      <line x1="108" y1="130" x2="232" y2="130" stroke="#f59e0b" stroke-width="2.4"/>
+      <path d="M 172 126 L 180 130 L 172 134 Z" fill="#f59e0b"/>
+
+      <!-- 上半区电场线 (多层饱满曲线) -->
+      <!-- 弧 1 (近层) -->
+      <path d="M 103 118 C 120 70, 220 70, 237 118" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+      <path d="M 166 82 L 174 84 L 168 89 Z" fill="#f59e0b"/>
+
+      <!-- 弧 2 (中层) -->
+      <path d="M 96 112 C 110 32, 230 32, 244 112" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+      <path d="M 166 49 L 174 51 L 168 56 Z" fill="#f59e0b"/>
+
+      <!-- 弧 3 (外层大弧) -->
+      <path d="M 88 112 C 90 2, 250 2, 252 112" fill="none" stroke="#f59e0b" stroke-width="1.6"/>
+      <path d="M 166 22 L 174 24 L 168 29 Z" fill="#f59e0b"/>
+
+      <!-- 下半区对称电场线 -->
+      <!-- 弧 1' (近层) -->
+      <path d="M 103 142 C 120 190, 220 190, 237 142" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+      <path d="M 166 178 L 174 176 L 168 171 Z" fill="#f59e0b"/>
+
+      <!-- 弧 2' (中层) -->
+      <path d="M 96 148 C 110 228, 230 228, 244 148" fill="none" stroke="#f59e0b" stroke-width="1.8"/>
+      <path d="M 166 211 L 174 209 L 168 204 Z" fill="#f59e0b"/>
+
+      <!-- 弧 3' (外层大弧) -->
+      <path d="M 88 148 C 90 258, 250 258, 252 148" fill="none" stroke="#f59e0b" stroke-width="1.6"/>
+      <path d="M 166 238 L 174 236 L 168 231 Z" fill="#f59e0b"/>
+
+      <!-- 向外发散射线 (左侧正电荷向左辐射) -->
+      <path d="M 80 130 L 25 130" stroke="#f59e0b" stroke-width="1.8"/>
+      <path d="M 45 127 L 37 130 L 45 133 Z" fill="#f59e0b"/>
+      <path d="M 84 116 L 38 90" stroke="#f59e0b" stroke-width="1.6"/>
+      <path d="M 55 95 L 47 95 L 52 101 Z" fill="#f59e0b"/>
+      <path d="M 84 144 L 38 170" stroke="#f59e0b" stroke-width="1.6"/>
+      <path d="M 52 159 L 47 165 L 55 165 Z" fill="#f59e0b"/>
+
+      <!-- 向内收敛射线 (右侧负电荷从右汇聚) -->
+      <path d="M 315 130 L 260 130" stroke="#f59e0b" stroke-width="1.8"/>
+      <path d="M 295 127 L 287 130 L 295 133 Z" fill="#f59e0b"/>
+      <path d="M 302 90 L 256 116" stroke="#f59e0b" stroke-width="1.6"/>
+      <path d="M 288 101 L 293 95 L 285 95 Z" fill="#f59e0b"/>
+      <path d="M 302 170 L 256 144" stroke="#f59e0b" stroke-width="1.6"/>
+      <path d="M 285 165 L 293 165 L 288 159 Z" fill="#f59e0b"/>
+
+      <!-- 3. 点电荷实体 (压在场线上方) -->
+      <!-- 正电荷 +Q -->
+      <circle cx="95" cy="130" r="15" fill="#fee2e2" stroke="#dc2626" stroke-width="2.5"/>
+      <text x="95" y="136" font-family="sans-serif" font-size="18" font-weight="900" fill="#dc2626" text-anchor="middle">+</text>
+      <text x="95" y="160" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#b91c1c" text-anchor="middle">+Q</text>
+
+      <!-- 负电荷 -Q -->
+      <circle cx="245" cy="130" r="15" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+      <text x="245" y="136" font-family="sans-serif" font-size="18" font-weight="900" fill="#2563eb" text-anchor="middle">−</text>
+      <text x="245" y="160" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#1d4ed8" text-anchor="middle">−Q</text>
+    </g>
+
+    <!-- 右侧：考点秒杀与判别卡片 -->
+    <g transform="translate(365, 12)">
+      <rect width="200" height="240" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+      <text x="100" y="24" font-family="'PingFang SC',sans-serif" font-size="12.5" font-weight="900" fill="#166534" text-anchor="middle">★ 高考核心考法剖析</text>
+
+      <!-- 条目 1 -->
+      <g transform="translate(12, 38)">
+        <text x="0" y="12" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#065f46">① 连线上中点处：</text>
+        <text x="0" y="28" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">场强 E <tspan fill="#dc2626" font-weight="800">最小</tspan>但 E ≠ 0，方向由 + 指向 -</text>
+      </g>
+
+      <line x1="12" y1="78" x2="188" y2="78" stroke="#dcfce7" stroke-width="1"/>
+
+      <!-- 条目 2 -->
+      <g transform="translate(12, 88)">
+        <text x="0" y="12" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#065f46">② 中垂线上各点：</text>
+        <text x="0" y="28" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">处处电势 <tspan fill="#059669" font-weight="800">φ = 0</tspan>（零势面）！</text>
+        <text x="0" y="44" font-family="'PingFang SC',sans-serif" font-size="10.5" fill="#64748b">场强 E 方向处处水平向右垂直中垂线</text>
+      </g>
+
+      <line x1="12" y1="142" x2="188" y2="142" stroke="#dcfce7" stroke-width="1"/>
+
+      <!-- 条目 3 -->
+      <g transform="translate(12, 152)">
+        <text x="0" y="12" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#065f46">③ 沿电场线方向：</text>
+        <text x="0" y="28" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">电势逐步降低：φ+ &gt; 0 &gt; φ−</text>
+        <text x="0" y="44" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#dc2626">场线密处 E 大，疏处 E 小！</text>
+      </g>
+
+      <!-- 垂直相交提示 -->
+      <g transform="translate(12, 204)">
+        <rect x="0" y="0" width="176" height="26" rx="4" fill="#fef3c7"/>
+        <text x="88" y="17" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#92400e" text-anchor="middle">
+          铁律：电场线与等势面处处正交！
+        </text>
+      </g>
+    </g>
+
+    <!-- 底部结论便签 -->
+    <rect x="15" y="260" width="550" height="26" rx="5" fill="#eff6ff" stroke="#bfdbfe"/>
+    <text x="290" y="278" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#1e40af" text-anchor="middle">
+      口诀：两点电荷异种电，中垂线上电势零；场线源于正指向负，密处场强电势顺线降！
+    </text>
+  </g>
+</svg>

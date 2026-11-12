@@ -81,6 +81,17 @@ export async function login(username, password) {
   return data;
 }
 
+/** 访客免密一键体验登录（用于公开演示）。 */
+export async function guestLogin() {
+  const data = await request('/session/guest', {
+    method: 'POST',
+    auth: false,
+  });
+  setToken(data.token);
+  setMeCache(data);
+  return data;
+}
+
 /** 已登记账号（登录页展示，仅用户名与昵称）。 */
 export const listUsers = () => request('/session/users', { auth: false });
 

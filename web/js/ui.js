@@ -56,6 +56,18 @@ export function openSheet(content, { title, sub } = {}) {
   return { close, sheet };
 }
 
+export function previewImage(src, title = '状元手写笔记图解') {
+  const img = el('img', {
+    src,
+    style: 'max-width:100%;height:auto;border-radius:12px;display:block;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,0.15)',
+  });
+  const wrap = el('div', { class: 'stack', style: 'padding:8px 0;text-align:center' }, [
+    img,
+    el('div', { style: 'font-size:12px;color:#8a7a70;margin-top:10px', text: '💡 点击遮罩或按 ESC 可关闭大图' }),
+  ]);
+  openSheet(wrap, { title });
+}
+
 export function spinner() {
   return el('div', { class: 'stack' }, [
     el('div', { class: 'skeleton sk-card' }),

@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="100%" height="100%">
+  <defs>
+    <pattern id="gridSpringAnim" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1e5d4" stroke-width="0.8"/>
+    </pattern>
+    <filter id="shadowAnim" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+
+    <style>
+      /* 弹簧伸缩动画：固定在左端 (35px, 175px) */
+      @keyframes springScale {
+        0% { transform: scaleX(0.65); }
+        50% { transform: scaleX(1.0); }
+        100% { transform: scaleX(1.35); }
+      }
+      /* 滑块简谐振动平移动画 */
+      @keyframes blockMove {
+        0% { transform: translateX(-38px); }
+        50% { transform: translateX(0px); }
+        100% { transform: translateX(38px); }
+      }
+      /* 动能 Ek 动画：两极点为 0，平衡位置最大 (频率是振动的 2 倍) */
+      @keyframes ekEnergy {
+        0% { width: 4px; }
+        50% { width: 140px; }
+        100% { width: 4px; }
+      }
+      /* 势能 Ep 动画：两极点最大，平衡位置为 0 */
+      @keyframes epEnergy {
+        0% { width: 140px; }
+        50% { width: 4px; }
+        100% { width: 140px; }
+      }
+      /* 呼吸光斑提示 */
+      @keyframes pulseDot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.85); }
+      }
+
+      .spring-coils {
+        transform-origin: 35px 175px;
+        animation: springScale 2.8s ease-in-out infinite alternate;
+      }
+      .vibrating-block {
+        animation: blockMove 2.8s ease-in-out infinite alternate;
+      }
+      .bar-ek {
+        animation: ekEnergy 1.4s ease-in-out infinite;
+      }
+      .bar-ep {
+        animation: epEnergy 1.4s ease-in-out infinite;
+      }
+      .pulse-indicator {
+        animation: pulseDot 1.8s infinite ease-in-out;
+      }
+    </style>
+  </defs>
+
+  <!-- 背景信纸 -->
+  <rect width="640" height="380" rx="14" fill="#fdfcf7" filter="url(#shadowAnim)"/>
+  <rect width="640" height="380" rx="14" fill="url(#gridSpringAnim)"/>
+
+  <!-- 顶部标签胶带 -->
+  <rect x="180" y="8" width="280" height="26" fill="rgba(245, 158, 11, 0.3)" rx="3" transform="rotate(-0.5 320 21)"/>
+  <text x="320" y="26" font-family="'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" font-weight="900" fill="#92400e" text-anchor="middle" letter-spacing="1">
+    ⚡ 动态模拟 · 弹簧振子与能量实时转化
+  </text>
+
+  <!-- 左侧：动态振动展示区 -->
+  <g transform="translate(30, 50)">
+    <rect width="280" height="300" rx="10" fill="#ffffff" stroke="#e6d5be" stroke-width="1.5"/>
+
+    <!-- 顶部状态栏 -->
+    <circle cx="25" cy="22" r="5" fill="#10b981" class="pulse-indicator"/>
+    <text x="36" y="26" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#047857">
+      动态运行中 · 简谐振动实时解算
+    </text>
+
+    <!-- 挡板与地面 -->
+    <line x1="20" y1="210" x2="260" y2="210" stroke="#78716c" stroke-width="3" stroke-linecap="round"/>
+    <line x1="35" y1="120" x2="35" y2="210" stroke="#78716c" stroke-width="4" stroke-linecap="round"/>
+    <!-- 平衡位置标记线 -->
+    <line x1="150" y1="130" x2="150" y2="210" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3"/>
+    <text x="150" y="122" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#64748b" text-anchor="middle">平衡位置 O</text>
+
+    <!-- 弹性弹簧 (动画伸缩) -->
+    <path class="spring-coils" d="M 35 175 Q 46 160, 56 175 T 76 175 T 96 175 T 116 175 T 136 175" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round"/>
+
+    <!-- 振动滑块 (动画左右往复平移) -->
+    <g class="vibrating-block">
+      <!-- 滑块矩形：底边严格在 y=210 地面上 -->
+      <rect x="136" y="150" width="52" height="60" rx="5" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+      <text x="162" y="185" font-family="sans-serif" font-size="16" font-weight="900" fill="#92400e" text-anchor="middle">m</text>
+
+      <!-- 质心受力点 -->
+      <circle cx="162" cy="180" r="3" fill="#b45309"/>
+      <!-- 支持力与重力 -->
+      <line x1="162" y1="180" x2="162" y2="155" stroke="#059669" stroke-width="1.8"/>
+      <line x1="162" y1="180" x2="162" y2="205" stroke="#475569" stroke-width="1.8"/>
+    </g>
+
+    <!-- 振幅极限提示 (x = ±A) -->
+    <text x="112" y="232" font-family="sans-serif" font-size="11" font-weight="800" fill="#dc2626">−A (最大压缩)</text>
+    <text x="188" y="232" font-family="sans-serif" font-size="11" font-weight="800" fill="#2563eb">+A (最大拉伸)</text>
+
+    <!-- 底部解析说明卡 -->
+    <rect x="15" y="250" width="250" height="38" rx="6" fill="#fef2f2" stroke="#fecaca"/>
+    <text x="140" y="266" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#b91c1c" text-anchor="middle">
+      端点：v = 0，动能为零，势能最大
+    </text>
+    <text x="140" y="281" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#047857" text-anchor="middle">
+      中点：形变零，势能为零，动能最大
+    </text>
+  </g>
+
+  <!-- 右侧：动态能量仪表板 (实时此消彼长) -->
+  <g transform="translate(325, 50)">
+    <rect width="285" height="300" rx="10" fill="#ffffff" stroke="#e6d5be" stroke-width="1.5"/>
+
+    <text x="18" y="28" font-family="'PingFang SC',sans-serif" font-size="13.5" font-weight="900" fill="#0f172a">
+      【系统机械能 · 动态能量仪表】
+    </text>
+
+    <!-- 动能 Ek 动态条 -->
+    <g transform="translate(18, 48)">
+      <text x="0" y="16" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#dc2626">动能 Ek (½mv²)</text>
+      <rect x="0" y="24" width="248" height="18" rx="5" fill="#f1f5f9" stroke="#cbd5e1"/>
+      <rect x="1" y="25" width="4" height="16" rx="4" fill="#ef4444" class="bar-ek"/>
+    </g>
+
+    <!-- 弹性势能 Ep 动态条 -->
+    <g transform="translate(18, 110)">
+      <text x="0" y="16" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#2563eb">弹性势能 Ep (½kx²)</text>
+      <rect x="0" y="24" width="248" height="18" rx="5" fill="#f1f5f9" stroke="#cbd5e1"/>
+      <rect x="1" y="25" width="140" height="16" rx="4" fill="#3b82f6" class="bar-ep"/>
+    </g>
+
+    <!-- 总机械能 E总 恒定条 -->
+    <g transform="translate(18, 172)">
+      <text x="0" y="16" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="800" fill="#15803d">总机械能 E总 = Ek + Ep (守恒恒定)</text>
+      <rect x="0" y="24" width="248" height="18" rx="5" fill="#f1f5f9" stroke="#cbd5e1"/>
+      <rect x="1" y="25" width="246" height="16" rx="4" fill="#10b981"/>
+      <text x="124" y="37" font-family="'Courier New',sans-serif" font-size="11" font-weight="900" fill="#ffffff" text-anchor="middle">CONST 100%</text>
+    </g>
+
+    <line x1="18" y1="230" x2="266" y2="230" stroke="#f1e5d4" stroke-width="1"/>
+
+    <!-- 底部状元笔记 -->
+    <g transform="translate(18, 240)">
+      <text x="0" y="16" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#b45309">
+        ★ 状元观察心得：
+      </text>
+      <text x="0" y="34" font-family="'PingFang SC',sans-serif" font-size="11" fill="#475569">
+        看红蓝两柱交替涨落：动能少了多少，势能就涨多少，两柱相加始终等于绿色满格！
+      </text>
+    </g>
+  </g>
+</svg>

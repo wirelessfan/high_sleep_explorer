@@ -54,10 +54,13 @@ def current_user(authorization: str | None = Header(default=None)) -> sqlite3.Ro
 
 def _user_payload(row: sqlite3.Row, token: str | None = None) -> dict:
     keys = row.keys()
+    username = row["username"] if "username" in keys else None
+    is_guest = bool(username and username.lower() == "guest")
     data = {
         "id": row["id"],
         "nickname": row["nickname"],
-        "username": row["username"] if "username" in keys else None,
+        "username": username,
+        "is_guest": is_guest,
         "has_password": bool(row["password_hash"]) if "password_hash" in keys else False,
         "points": row["points"],
         "streak": row["streak"],
@@ -122,19 +125,55 @@ def login(body: LoginIn, request: Request):
     return _user_payload(row, token=token)
 
 
+@router.post("/session/guest")
+def guest_session(request: Request):
+    """访客免密一键体验通道（用于演示，权限受限）。"""
+    if not ratelimit.allow(f"guest:{ratelimit.client_ip(request)}", limit=30, window_seconds=60):
+        raise HTTPException(status_code=429, detail="请求过于频繁，请稍后再试")
+
+    now = _now()
+    token = auth.new_token()
+    token_hash = auth.hash_token(token)
+
+    with db.tx() as conn:
+        row = conn.execute("SELECT * FROM users WHERE username = 'guest'").fetchone()
+        if not row:
+            uid = "u_guest_demo"
+            code = "GUEST-DEMO-01"
+            conn.execute(
+                "INSERT INTO users(id, token_hash, sync_code, nickname, username, "
+                "points, tickets, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?,?)",
+                (uid, token_hash, code, "演示访客", "guest", 260, 6, now, now),
+            )
+            row = conn.execute("SELECT * FROM users WHERE id = ?", (uid,)).fetchone()
+        else:
+            conn.execute(
+                "UPDATE users SET token_hash = ?, last_seen = ? WHERE id = ?",
+                (token_hash, now, row["id"]),
+            )
+            row = conn.execute("SELECT * FROM users WHERE id = ?", (row["id"],)).fetchone()
+
+    return _user_payload(row, token=token)
+
+
 @router.get("/session/users")
 def list_public_users():
-    """登录页展示已有账号名（不含任何敏感信息）。"""
+    """登录页展示已有账号名（不含任何敏感信息，排除访客演示号）。"""
     with db.ro() as conn:
         rows = conn.execute(
-            "SELECT nickname, username FROM users WHERE username IS NOT NULL ORDER BY username"
+            "SELECT nickname, username FROM users "
+            "WHERE username IS NOT NULL AND LOWER(username) != 'guest' "
+            "ORDER BY username"
         ).fetchall()
     return {"users": [{"username": r["username"], "nickname": r["nickname"]} for r in rows]}
 
 
 @router.post("/session/password")
 def change_password(body: PasswordIn, user: sqlite3.Row = Depends(current_user)):
-    """修改自己的密码，需验证旧密码。"""
+    """修改自己的密码，需验证旧密码（访客账号禁止修改）。"""
+    if "username" in user.keys() and user["username"] and user["username"].lower() == "guest":
+        raise HTTPException(status_code=403, detail="演示访客账号不支持修改密码")
+
     with db.tx() as conn:
         row = conn.execute("SELECT * FROM users WHERE id = ?", (user["id"],)).fetchone()
         if row["password_hash"] and not auth.verify_password(body.old_password, row["password_hash"]):
@@ -177,7 +216,10 @@ def adopt_session(body: AdoptIn, request: Request):
 
 @router.post("/session/rotate-code")
 def rotate_code(user: sqlite3.Row = Depends(current_user)):
-    """重置同步码，旧码立即失效。"""
+    """重置同步码，旧码立即失效（访客账号禁止操作）。"""
+    if "username" in user.keys() and user["username"] and user["username"].lower() == "guest":
+        raise HTTPException(status_code=403, detail="演示访客账号不支持重置同步码")
+
     with db.tx() as conn:
         for _ in range(5):
             code = auth.normalize_sync_code(auth.new_sync_code())
