@@ -1,7 +1,7 @@
 /* 主题详情：六版块 × 三档难度 */
 
 import * as api from '../api.js';
-import { el, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR } from '../ui.js';
+import { el, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR, previewImage } from '../ui.js';
 import { navigate } from '../router.js';
 import { bossBanner, bossThumb, bossInline } from '../boss.js';
 
@@ -38,7 +38,21 @@ export async function renderTopic(view, { id }) {
       ]),
     ]),
     el('p', { style: 'margin-top:12px', text: topic.description }),
-    el('div', { class: 'tier-legend' }, (topic.tiers || []).map((t) => el('div', { class: 'tier-legend-item' }, [
+    // 每个主题专属的核心过程 60fps 动态引导图
+    el('div', { class: 'topic-intro-anim', style: 'margin-top:14px;text-align:center' }, [
+      el('img', {
+        src: `/assets/notes/intro-${id}.svg`,
+        alt: `${topic.title} 核心过程动态引导`,
+        class: 'scholar-sketch',
+        style: 'width:100%;border-radius:12px;display:block;cursor:zoom-in;box-shadow:0 3px 12px rgba(0,0,0,0.06);background:#fff',
+      }),
+      el('div', {
+        class: 'sketch-caption',
+        style: 'font-size:11.5px;color:#8c735d;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:4px',
+        html: `⚡ <span>${topic.title} · 核心过程 60fps 动态引导（点击放大）</span>`,
+      }),
+    ]),
+    el('div', { class: 'tier-legend', style: 'margin-top:14px' }, (topic.tiers || []).map((t) => el('div', { class: 'tier-legend-item' }, [
       el('b', { text: t.name }),
       el('span', { text: t.score }),
       el('i', { text: t.desc || '' }),
@@ -92,4 +106,12 @@ export async function renderTopic(view, { id }) {
 
   view.innerHTML = '';
   view.appendChild(root);
+
+  // 绑定引导图点击全屏放大预览
+  root.addEventListener('click', (e) => {
+    const target = e.target.closest('.scholar-sketch, img.zoomable');
+    if (target && target.src) {
+      previewImage(target.src, target.alt || `${topic.title} 动态引导`);
+    }
+  });
 }

@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="100%">
+  <defs>
+    <pattern id="gridIntroPer" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#e8f3ee" stroke-width="0.8"/>
+    </pattern>
+    <style>
+      /* 电子轨道旋转动画 */
+      @keyframes orbitSpin1 {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes orbitSpin2 {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(-360deg); }
+      }
+      .anim-orbit1 {
+        transform-origin: 140px 105px;
+        animation: orbitSpin1 4s linear infinite;
+      }
+      .anim-orbit2 {
+        transform-origin: 140px 105px;
+        animation: orbitSpin2 6s linear infinite;
+      }
+    </style>
+  </defs>
+
+  <rect width="640" height="240" rx="12" fill="#fafdfb"/>
+  <rect width="640" height="240" rx="12" fill="url(#gridIntroPer)"/>
+
+  <!-- 顶部轻便签 -->
+  <rect x="20" y="10" width="220" height="22" rx="4" fill="rgba(16, 185, 129, 0.28)"/>
+  <text x="130" y="25" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#065f46" text-anchor="middle">
+    ⚡ 元素周期律动态引导 · 核外电子排布与递变
+  </text>
+
+  <!-- 左侧：微观原子核外电子层同心旋转模型 -->
+  <g transform="translate(0, 0)">
+    <!-- 原子核 (中心) -->
+    <circle cx="140" cy="105" r="14" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+    <text x="140" y="110" font-family="sans-serif" font-size="10.5" font-weight="900" fill="#dc2626" text-anchor="middle">+Z</text>
+
+    <!-- 第 1 电子层 (内层轨道，半径 28) -->
+    <circle cx="140" cy="105" r="28" fill="none" stroke="#93c5fd" stroke-width="1.2" stroke-dasharray="3,2"/>
+    <g class="anim-orbit1">
+      <circle cx="140" cy="77" r="4" fill="#2563eb"/>
+      <circle cx="140" cy="133" r="4" fill="#2563eb"/>
+    </g>
+
+    <!-- 第 2 电子层 (外层轨道，半径 52) -->
+    <circle cx="140" cy="105" r="52" fill="none" stroke="#6ee7b7" stroke-width="1.4" stroke-dasharray="4,2"/>
+    <g class="anim-orbit2">
+      <circle cx="140" cy="53" r="4" fill="#059669"/>
+      <circle cx="140" cy="157" r="4" fill="#059669"/>
+      <circle cx="88" cy="105" r="4" fill="#059669"/>
+      <circle cx="192" cy="105" r="4" fill="#059669"/>
+    </g>
+    <text x="140" y="175" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#64748b" text-anchor="middle">电子层数 = 周期数 ｜ 最外层 = 主族序</text>
+  </g>
+
+  <!-- 右侧：位构性三角递变定律卡 -->
+  <g transform="translate(320, 42)">
+    <rect width="290" height="135" rx="8" fill="#ffffff" stroke="#cde4d9" stroke-width="1.5"/>
+
+    <text x="14" y="24" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#065f46">
+      【元素周期律递变铁律】
+    </text>
+
+    <text x="14" y="48" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#1e293b">
+      • 同周期从左往右：金属性↓ 非金属性↑ 半径↓
+    </text>
+    <text x="14" y="72" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#1e293b">
+      • 同主族从上往下：金属性↑ 非金属性↓ 半径↑
+    </text>
+    <text x="14" y="96" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#dc2626">
+      • 半径比较三法则：先看电子层数，再看核电荷数！
+    </text>
+    <text x="14" y="118" font-family="'PingFang SC',sans-serif" font-size="10.5" fill="#64748b">
+      位—构—性三位一体：结构定位置，位置推性质
+    </text>
+  </g>
+
+  <!-- 底部核心结论条 -->
+  <rect x="20" y="198" width="600" height="26" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="320" y="215" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#15803d" text-anchor="middle">
+    门捷列夫地图：越靠左下金属性越强（强碱强还原），越靠右上非金属性越强（强酸强氧化）！
+  </text>
+</svg>

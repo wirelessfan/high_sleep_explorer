@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="100%">
+  <defs>
+    <pattern id="gridIntroRedox" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#e8f3ee" stroke-width="0.8"/>
+    </pattern>
+    <style>
+      /* 电子从还原剂跃迁跳跃到氧化剂的抛物弧线动画 */
+      @keyframes electronJump {
+        0% { transform: translate(110px, 95px); opacity: 0; }
+        15% { opacity: 1; }
+        50% { transform: translate(185px, 50px); }
+        85% { opacity: 1; }
+        100% { transform: translate(260px, 95px); opacity: 0; }
+      }
+      .anim-electron-jump {
+        animation: electronJump 2.4s ease-in-out infinite;
+      }
+    </style>
+  </defs>
+
+  <rect width="640" height="240" rx="12" fill="#fafdfb"/>
+  <rect width="640" height="240" rx="12" fill="url(#gridIntroRedox)"/>
+
+  <!-- 顶部轻便签 -->
+  <rect x="20" y="10" width="220" height="22" rx="4" fill="rgba(16, 185, 129, 0.28)"/>
+  <text x="130" y="25" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#065f46" text-anchor="middle">
+    ⚡ 氧化还原动态引导 · 电子跃迁转移微观模型
+  </text>
+
+  <!-- 左侧：微观原子模型电子跃迁转移区 -->
+  <g transform="translate(10, 20)">
+    <!-- 还原剂原子 (失去电子) -->
+    <g transform="translate(100, 95)">
+      <circle cx="0" cy="0" r="32" fill="none" stroke="#93c5fd" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <circle cx="0" cy="0" r="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+      <text x="0" y="5" font-family="sans-serif" font-size="12" font-weight="900" fill="#1e40af" text-anchor="middle">还原剂</text>
+      <text x="0" y="44" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#2563eb" text-anchor="middle">失 e⁻ · 价升高 · 被氧化</text>
+    </g>
+
+    <!-- 电子转移跳跃弧线路径 (虚线) -->
+    <path d="M 110 95 C 145 40, 225 40, 260 95" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3"/>
+
+    <!-- 动态跳跃的电子粒 (e-) -->
+    <g class="anim-electron-jump">
+      <circle cx="0" cy="0" r="6" fill="#f59e0b" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="0" y="3" font-family="sans-serif" font-size="8" font-weight="900" fill="#ffffff" text-anchor="middle">e⁻</text>
+    </g>
+
+    <!-- 氧化剂原子 (得到电子) -->
+    <g transform="translate(270, 95)">
+      <circle cx="0" cy="0" r="32" fill="none" stroke="#fca5a5" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <circle cx="0" cy="0" r="16" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+      <text x="0" y="5" font-family="sans-serif" font-size="12" font-weight="900" fill="#b91c1c" text-anchor="middle">氧化剂</text>
+      <text x="0" y="44" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#dc2626" text-anchor="middle">得 e⁻ · 价降低 · 被还原</text>
+    </g>
+  </g>
+
+  <!-- 右侧：氧化还原核心要点卡 -->
+  <g transform="translate(340, 42)">
+    <rect width="270" height="135" rx="8" fill="#ffffff" stroke="#cde4d9" stroke-width="1.5"/>
+
+    <text x="14" y="24" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#065f46">
+      【六字真言与得失守恒】
+    </text>
+
+    <text x="14" y="50" font-family="'PingFang SC',sans-serif" font-size="13" font-weight="900" fill="#dc2626">
+      升失氧（还原剂） ｜ 降得还（氧化剂）
+    </text>
+    <text x="14" y="74" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">
+      • 本质是电子的转移（得失或共用电子对偏移）
+    </text>
+    <text x="14" y="94" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">
+      • 强弱规律：氧化性 氧化剂 &gt; 氧化产物
+    </text>
+    <text x="14" y="118" font-family="'Courier New',sans-serif" font-size="11.5" font-weight="900" fill="#059669">
+      第一守恒律：得电子总数 ≡ 失电子总数
+    </text>
+  </g>
+
+  <!-- 底部核心结论条 -->
+  <rect x="20" y="198" width="600" height="26" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="320" y="215" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#15803d" text-anchor="middle">
+    做题心法：只看化合价改变的元素，抓初态末态，用电子守恒列式秒解计算题！
+  </text>
+</svg>

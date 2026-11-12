@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="100%">
+  <defs>
+    <pattern id="gridIntroInd" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#f1e5d4" stroke-width="0.8"/>
+    </pattern>
+    <style>
+      @keyframes magnetBob {
+        0%, 100% { transform: translateY(-20px); }
+        50% { transform: translateY(12px); }
+      }
+      @keyframes currentFlow {
+        0% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: 32; }
+      }
+      .anim-mag-bob {
+        animation: magnetBob 2.6s ease-in-out infinite;
+      }
+      .anim-current-flow {
+        stroke-dasharray: 8,8;
+        animation: currentFlow 1.2s linear infinite;
+      }
+    </style>
+  </defs>
+
+  <rect width="640" height="240" rx="12" fill="#fffdf9"/>
+  <rect width="640" height="240" rx="12" fill="url(#gridIntroInd)"/>
+
+  <!-- 顶部轻便签 -->
+  <rect x="20" y="10" width="220" height="22" rx="4" fill="rgba(245, 158, 11, 0.28)"/>
+  <text x="130" y="25" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#92400e" text-anchor="middle">
+    ⚡ 电磁感应动态引导 · 楞次定律与感应电流
+  </text>
+
+  <!-- 左侧：磁铁穿插线圈实验模型 -->
+  <g transform="translate(140, 20)">
+    <!-- 动态条形磁铁 (上下运动) -->
+    <g class="anim-mag-bob" transform="translate(0, 35)">
+      <rect x="-14" y="0" width="28" height="26" fill="#ef4444" stroke="#dc2626" stroke-width="1.5" rx="3"/>
+      <text x="0" y="18" font-family="sans-serif" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle">N</text>
+
+      <rect x="-14" y="-26" width="28" height="26" fill="#3b82f6" stroke="#2563eb" stroke-width="1.5" rx="3"/>
+      <text x="0" y="-8" font-family="sans-serif" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle">S</text>
+    </g>
+
+    <!-- 闭合线圈环 (电流发光粒子流) -->
+    <g transform="translate(0, 105)">
+      <ellipse cx="0" cy="0" rx="55" ry="16" fill="none" stroke="#d97706" stroke-width="4.5" class="anim-current-flow"/>
+      <ellipse cx="0" cy="14" rx="55" ry="16" fill="none" stroke="#d97706" stroke-width="4.5" class="anim-current-flow"/>
+      <text x="70" y="10" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="800" fill="#b45309">感应电流 I感</text>
+    </g>
+  </g>
+
+  <!-- 右侧：核心法则展示卡 -->
+  <g transform="translate(340, 42)">
+    <rect width="270" height="135" rx="8" fill="#ffffff" stroke="#ebd9c3" stroke-width="1.5"/>
+
+    <text x="14" y="24" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#1e293b">
+      【楞次定律核心思想】
+    </text>
+
+    <text x="14" y="48" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#dc2626">
+      • 阻碍磁通量变化：「增反减同」
+    </text>
+    <text x="14" y="72" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#2563eb">
+      • 阻碍相对运动：「来拒去留」
+    </text>
+    <text x="14" y="96" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#059669">
+      • 阻碍面积改变：「增缩减扩」
+    </text>
+    <text x="14" y="118" font-family="'PingFang SC',sans-serif" font-size="10.5" fill="#64748b">
+      法拉第电磁感应定律：E = n·ΔΦ / Δt
+    </text>
+  </g>
+
+  <!-- 底部核心结论条 -->
+  <rect x="20" y="198" width="600" height="26" rx="5" fill="#f0fdf4" stroke="#86efac"/>
+  <text x="320" y="215" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#15803d" text-anchor="middle">
+    真言：一切感应电流的效果，都在于对抗引起它的磁通量变化！
+  </text>
+</svg>

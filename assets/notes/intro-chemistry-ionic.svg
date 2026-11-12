@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="100%">
+  <defs>
+    <pattern id="gridIntroIon" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#e8f3ee" stroke-width="0.8"/>
+    </pattern>
+    <style>
+      /* 离子游动并碰撞沉降 */
+      @keyframes ionCollide {
+        0% { transform: translate(0, 0); }
+        40% { transform: translate(32px, 20px); }
+        60% { transform: translate(32px, 45px); }
+        90%, 100% { transform: translate(32px, 50px); opacity: 0.8; }
+      }
+      @keyframes ionCollide2 {
+        0% { transform: translate(0, 0); }
+        40% { transform: translate(-32px, 20px); }
+        60% { transform: translate(-32px, 45px); }
+        90%, 100% { transform: translate(-32px, 50px); opacity: 0.8; }
+      }
+      .anim-ion-ba {
+        animation: ionCollide 3.2s ease-in-out infinite;
+      }
+      .anim-ion-so4 {
+        animation: ionCollide2 3.2s ease-in-out infinite;
+      }
+    </style>
+  </defs>
+
+  <rect width="640" height="240" rx="12" fill="#fafdfb"/>
+  <rect width="640" height="240" rx="12" fill="url(#gridIntroIon)"/>
+
+  <!-- 顶部轻便签 -->
+  <rect x="20" y="10" width="220" height="22" rx="4" fill="rgba(14, 165, 233, 0.28)"/>
+  <text x="130" y="25" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#0369a1" text-anchor="middle">
+    ⚡ 离子反应动态引导 · 离子碰撞与沉淀生成
+  </text>
+
+  <!-- 左侧：烧杯中离子碰撞反应微观模型 -->
+  <g transform="translate(40, 20)">
+    <!-- 烧杯轮廓 -->
+    <path d="M 80 50 L 80 160 Q 80 170, 95 170 L 185 170 Q 200 170, 200 160 L 200 50" fill="#f0f9ff" stroke="#64748b" stroke-width="2.5"/>
+    <!-- 水溶液液面 -->
+    <line x1="82" y1="75" x2="198" y2="75" stroke="#93c5fd" stroke-width="1.8" stroke-dasharray="4,2"/>
+    <text x="140" y="70" font-family="'PingFang SC',sans-serif" font-size="9.5" fill="#60a5fa" text-anchor="middle">水溶液电离态</text>
+
+    <!-- Ba2+ 离子动态游动 -->
+    <g class="anim-ion-ba" transform="translate(108, 90)">
+      <circle cx="0" cy="0" r="11" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+      <text x="0" y="4" font-family="sans-serif" font-size="9" font-weight="900" fill="#dc2626" text-anchor="middle">Ba²⁺</text>
+    </g>
+
+    <!-- SO4 2- 离子动态游动相遇 -->
+    <g class="anim-ion-so4" transform="translate(172, 90)">
+      <circle cx="0" cy="0" r="11" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+      <text x="0" y="4" font-family="sans-serif" font-size="8.5" font-weight="900" fill="#2563eb" text-anchor="middle">SO₄²⁻</text>
+    </g>
+
+    <!-- 沉降在杯底的沉淀物提示 -->
+    <text x="140" y="162" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="900" fill="#15803d" text-anchor="middle">↓ BaSO₄ 白色难溶沉淀</text>
+  </g>
+
+  <!-- 右侧：拆分四步法原则卡 -->
+  <g transform="translate(290, 42)">
+    <rect width="320" height="135" rx="8" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5"/>
+
+    <text x="14" y="24" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#0284c7">
+      【离子反应书写拆分黄金法则】
+    </text>
+
+    <text x="14" y="48" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#1e293b">
+      • 能拆：强酸、强碱、绝大多数可溶性盐
+    </text>
+    <text x="14" y="70" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#dc2626">
+      • 坚决不拆：难溶物、弱电解质（水、弱酸、弱碱）、气体
+    </text>
+    <text x="14" y="92" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">
+      • 四类不共存冲突：生成沉淀、气体、水、氧化还原
+    </text>
+    <text x="14" y="116" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#047857">
+      高频特例：澄清石灰水溶质少拆！浑浊石灰乳不拆！
+    </text>
+  </g>
+
+  <!-- 底部核心结论条 -->
+  <rect x="20" y="198" width="600" height="26" rx="5" fill="#eff6ff" stroke="#bae6fd"/>
+  <text x="320" y="215" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#0369a1" text-anchor="middle">
+    本质：离子反应只涉及溶液中真正结合的有效离子，写完必做电荷守恒与原子守恒双重核验！
+  </text>
+</svg>
