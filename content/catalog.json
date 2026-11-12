@@ -37,7 +37,8 @@
         "math-derivative",
         "math-probability",
         "math-ellipse",
-        "math-substitution"
+        "math-substitution",
+        "math-trig"
       ]
     }
   ],
@@ -299,6 +300,25 @@
       "cover": "substitution",
       "reward_card": "ramanujan",
       "description": "同一个式子，换个变量看，次数就降下来了。",
+      "sections": [
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
+      ]
+    },
+    {
+      "id": "math-trig",
+      "subject": "math",
+      "title": "三角函数这样记",
+      "subtitle": "单位圆、符号口诀与诱导公式",
+      "grade": "高一",
+      "minutes": 25,
+      "cover": "trig",
+      "reward_card": "archimedes",
+      "description": "三角函数公式多，但都能从单位圆里读出来。记住坐标与符号，公式忘了也能自己推。",
       "sections": [
         "quick",
         "basic",

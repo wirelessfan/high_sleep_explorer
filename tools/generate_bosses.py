@@ -121,6 +121,37 @@ CAST = [
          element="放射性研究", staff="flask", skill="恒心审判",
          taunt="没有什么可怕的，只有值得理解的东西。",
          purified="她把发光的烧瓶放在你手里：别怕，慢慢来。"),
+    # ===== 数学 · 三角函数这样记 =====
+    dict(topic="math-trig", subject="math", section="quick",
+         name="弧度豆", en="Radian", element="角度弧度混用", shape="round",
+         head="bulb", prop="segment", overlay="grid", skill="单位错乱",
+         taunt="30 和 30°，你觉得是一回事吗？",
+         purified="它把单位写清楚：分析性质一律用弧度。"),
+    dict(topic="math-trig", subject="math", section="basic",
+         name="符号怪", en="Signy", element="象限错觉", shape="round",
+         head="balance", prop="arrows", overlay="reverse", skill="正负翻转",
+         taunt="第二象限，sin 到底正还是负？",
+         purified="它指向单位圆：看纵坐标，别凭感觉。"),
+    dict(topic="math-trig", subject="math", section="summary",
+         name="单位圆灵", en="Unito", element="坐标模糊", shape="ghost",
+         head="field", prop="none", overlay="waves", skill="投影迷雾",
+         taunt="sin 是横坐标还是纵坐标？再想想。",
+         purified="迷雾散开：横看 cos，竖看 sin。"),
+    dict(topic="math-trig", subject="math", section="hard",
+         name="口诀妖", en="Proverb", element="口诀误用", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="符号看错",
+         taunt="奇变偶不变——那你告诉我，符号看谁的象限？",
+         purified="两半合上：α 当锐角，看整体角所在象限。"),
+    dict(topic="math-trig", subject="math", section="practice",
+         name="诱导匠", en="Inductor", element="化错名字", shape="tank",
+         head="triangle", prop="slash", overlay="diagonal", skill="函数名错位",
+         taunt="cos 变 sin 还是不变？先看 k 的奇偶！",
+         purified="它把四步流程刻在墙上：名、号、象限、符号。"),
+    dict(topic="math-trig", subject="math", section="boss",
+         tier="big", name="托勒密", en="Ptolemy", card_id="archimedes",
+         element="弦表与天文", staff="orb", skill="弦长审判",
+         taunt="在没有计算器的年代，我把每个角的正弦都算了出来。",
+         purified="他把弦表递给你：从单位圆出发，角就有了数值。"),
     # ===== 数学 · 有趣的概率论 =====
     dict(topic="math-probability", subject="math", section="quick",
          name="骰子精", en="Dicey", element="等可能错觉", shape="round",
@@ -1187,6 +1218,20 @@ def render_big(role: dict, c: dict) -> str:
                   '<ellipse cx="144" cy="126" rx="5.5" ry="3" fill="#fb7185" opacity=".28"/>'),
             mouth=('<path d="M110 132 q10 7 20 0" fill="none" stroke="#1e293b" '
                    'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+        # 托勒密：短卷发 + 头带，短须
+        "archimedes": dict(
+            badge="A",
+            hair=('<path d="M84 92 q0 -40 36 -40 q36 0 36 40 q-16 -16 -36 -16 q-20 0 -36 16z" '
+                  'fill="#57534e" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M82 78 q38 -18 76 0" fill="none" stroke="#a8a29e" '
+                  'stroke-width="6" stroke-linecap="round"/>'),
+            face=('<path d="M100 120 q20 26 40 0 q-4 22 -20 24 q-16 -2 -20 -24z" '
+                  'fill="#57534e" stroke="#1e293b" stroke-width="2"/>'
+                  '<path d="M104 106 q8 -4 14 0 M132 106 q8 -4 14 0" fill="none" '
+                  'stroke="#1f2937" stroke-width="2.6" stroke-linecap="round"/>'),
+            mouth=('<path d="M112 132 h16" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.2" stroke-linecap="round"/>'),
         ),
     }
     look = LOOK[role["card_id"]]

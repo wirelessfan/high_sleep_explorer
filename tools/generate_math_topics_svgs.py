@@ -20,6 +20,21 @@ box, text, line, circle, path, animate, num = (
     sci.box, sci.text, sci.line, sci.circle, sci.path, sci.animate, sci.num)
 
 
+def wrap_plain(value, width):
+    """按字符宽度折行，返回纯文本行（中文按 1、英文按 0.56 计）。"""
+    lines, row, used = [], '', 0.0
+    for ch in value:
+        step = 1.0 if ord(ch) > 255 else 0.56
+        if row and used + step > width:
+            lines.append(row)
+            row, used = '', 0.0
+        row += ch
+        used += step
+    if row:
+        lines.append(row)
+    return lines
+
+
 def probability_intro():
     content = box(24, 82, 470, 440)
     content += text(44, 112, '两枚硬币：4 个等可能结果', 16, GREEN, weight=700)
@@ -269,6 +284,173 @@ def substitution_flow():
                         height=540)
 
 
+def trig_intro():
+    """单位圆上的动点：横坐标是 cosθ，纵坐标是 sinθ。"""
+    content = box(24, 82, 470, 430)
+    content += text(44, 112, '单位圆：一个点读出两个函数', 16, GREEN, weight=700)
+    cx, cy, r = 250, 300, 150
+    content += line(70, cy, 440, cy, MUTED, 1.8)
+    content += line(cx, 130, cx, 470, MUTED, 1.8)
+    content += ('<circle cx="%s" cy="%s" r="%s" fill="none" stroke="%s" stroke-width="2.4"/>'
+                % (cx, cy, r, BLUE))
+    content += text(446, cy + 20, 'x', 14, INK)
+    content += text(cx + 10, 126, 'y', 14, INK)
+
+    angles = [math.pi / 4 + 2 * math.pi * i / 160 for i in range(161)]
+    xs = [cx + r * math.cos(a) for a in angles]
+    ys = [cy - r * math.sin(a) for a in angles]
+    content += '<g class="motion">'
+    content += ('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="2">'
+                % (cx, cy, num(xs[0]), num(ys[0]), AMBER))
+    content += animate('x2', xs) + animate('y2', ys) + '</line>'
+    # sin：点到 x 轴的竖线
+    content += ('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="3">'
+                % (num(xs[0]), cy, num(xs[0]), num(ys[0]), RED))
+    content += animate('x1', xs) + animate('x2', xs) + animate('y2', ys) + '</line>'
+    # cos：点到 y 轴的横线
+    content += ('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="3">'
+                % (cx, num(ys[0]), num(xs[0]), num(ys[0]), GREEN))
+    content += animate('y1', ys) + animate('y2', ys) + animate('x2', xs) + '</line>'
+    content += '<circle cx="%s" cy="%s" r="7" fill="%s">' % (num(xs[0]), num(ys[0]), RED)
+    content += animate('cx', xs) + animate('cy', ys) + '</circle></g>'
+    sx_, sy_ = cx + r * math.cos(math.pi / 4), cy - r * math.sin(math.pi / 4)
+    content += ('<g class="still"><circle cx="%s" cy="%s" r="7" fill="%s"/>'
+                '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="3"/>'
+                '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="3"/>'
+                '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="2"/></g>'
+                % (num(sx_), num(sy_), RED,
+                   num(sx_), cy, num(sx_), num(sy_), RED,
+                   cx, num(sy_), num(sx_), num(sy_), GREEN,
+                   cx, cy, num(sx_), num(sy_), AMBER))
+    content += text(cx - 22, cy + 18, 'O', 13, MUTED)
+    content += text(44, 478, '红竖线 = sinθ（纵坐标）　绿横线 = cosθ（横坐标）', 13, INK)
+
+    content += box(514, 82, 262, 430)
+    content += text(534, 112, '定义与符号', 16, GREEN, weight=700)
+    content += text(534, 148, 'sinθ = y', 17, RED, weight=800)
+    content += text(534, 178, 'cosθ = x', 17, GREEN, weight=800)
+    content += text(534, 208, 'tanθ = y/x', 17, AMBER, weight=800)
+    content += text(534, 244, '周期：sin/cos 为 2π，tan 为 π', 12, MUTED)
+    content += text(534, 286, '四象限符号口诀', 15, GREEN, weight=700)
+    for i, tip in enumerate(['Ⅰ：全部为正', 'Ⅱ：只有 sin 正',
+                             'Ⅲ：只有 tan 正', 'Ⅳ：只有 cos 正']):
+        content += text(534, 314 + i * 26, tip, 13, INK)
+    content += text(534, 442, '口诀：一全正、二正弦、三正切、四余弦', 12, RED)
+    return sci.document('三角函数这样记：单位圆先看坐标',
+                        '点绕圆转一圈，横坐标画出余弦，纵坐标画出正弦。',
+                        content,
+                        '先记单位圆上的坐标，再记符号口诀；公式忘了还能现推。',
+                        height=580)
+
+
+def trig_special():
+    """特殊角在单位圆上的坐标，以及 0—90° 的取值表。"""
+    content = box(24, 82, 430, 420)
+    content += text(44, 112, '特殊角在单位圆上的坐标', 16, GREEN, weight=700)
+    cx, cy, r = 239, 310, 150
+    content += line(64, cy, 414, cy, MUTED, 1.6)
+    content += line(cx, 140, cx, 460, MUTED, 1.6)
+    content += ('<circle cx="%s" cy="%s" r="%s" fill="none" stroke="%s" stroke-width="2.2"/>'
+                % (cx, cy, r, BLUE))
+    specials = [(0, '0°', '(1, 0)'), (30, '30°', '(√3/2, 1/2)'),
+                (45, '45°', '(√2/2, √2/2)'), (60, '60°', '(1/2, √3/2)'),
+                (90, '90°', '(0, 1)')]
+    for deg, label, coord in specials:
+        a = math.radians(deg)
+        px, py = cx + r * math.cos(a), cy - r * math.sin(a)
+        content += line(cx, cy, px, py, '#cbd5e1', 1.4)
+        content += circle(px, py, 4.5, RED, 'white')
+        ca = math.cos(a)
+        anchor = 'start' if ca > 0.3 else 'end' if ca < -0.3 else 'middle'
+        lx = cx + (r + 16) * ca
+        ly = cy - (r + 16) * math.sin(a)
+        content += text(lx, ly + 5, label, 12, INK, anchor, 700)
+    content += text(cx, cy + 26, 'O', 12, MUTED)
+    content += text(44, 496, '圆上点的坐标就是 (cosθ, sinθ)，与右侧表格一一对应。', 12, MUTED)
+
+    content += box(474, 82, 302, 420)
+    content += text(494, 112, '0°—90° 取值表', 16, GREEN, weight=700)
+    cols = ['角', 'sin', 'cos', 'tan']
+    xs = [500, 570, 650, 725]
+    for x, name in zip(xs, cols):
+        content += text(x, 148, name, 13, MUTED, weight=700)
+    rows = [('0°', '0', '1', '0'), ('30°', '1/2', '√3/2', '√3/3'),
+            ('45°', '√2/2', '√2/2', '1'), ('60°', '√3/2', '1/2', '√3'),
+            ('90°', '1', '0', '不存在')]
+    for i, row in enumerate(rows):
+        y = 184 + i * 46
+        content += line(494, y + 14, 756, y + 14, '#eef2f7', 1)
+        for x, value in zip(xs, row):
+            content += text(x, y, value, 13, INK if i % 2 == 0 else INK)
+    content += text(494, 448, '记法：sin 0,1,2,3,4 开根除 2；cos 倒过来', 12, RED)
+    content += text(494, 472, '30°、45°、60° 是最高频的三个角', 12, MUTED)
+    return sci.document('特殊角：一张表 + 一个圆',
+                        '单位圆上记坐标，表格里记数值；两组信息互相验证。',
+                        content,
+                        'tan90° 不存在，因为 cos90°=0，分母为零。',
+                        height=580)
+
+
+def trig_astc():
+    """四象限符号：一全正、二正弦、三正切、四余弦。"""
+    content = box(24, 82, 752, 430)
+    content += text(44, 112, '四个象限，谁为正？', 16, GREEN, weight=700)
+    cx, cy, r = 400, 300, 150
+    content += line(120, cy, 680, cy, MUTED, 2)
+    content += line(cx, 140, cx, 460, MUTED, 2)
+    content += ('<circle cx="%s" cy="%s" r="%s" fill="none" stroke="%s" stroke-width="2.2"/>'
+                % (cx, cy, r, BLUE))
+    quads = [('Ⅰ', 'sin +  cos +  tan +', 45), ('Ⅱ', 'sin +  cos −  tan −', 135),
+             ('Ⅲ', 'sin −  cos −  tan +', 225), ('Ⅳ', 'sin −  cos +  tan −', 315)]
+    for name, detail, deg in quads:
+        a = math.radians(deg)
+        px, py = cx + r * 0.62 * math.cos(a), cy - r * 0.62 * math.sin(a)
+        content += text(px, py, name, 22, GREEN, 'middle', 800)
+        content += text(px, py + 26, detail, 12, INK, 'middle')
+    content += text(cx, cy + 26, 'O', 12, MUTED)
+    content += text(44, 486, '口诀：一全正、二正弦、三正切、四余弦', 17, RED, weight=800)
+    content += text(44, 520, '记忆法：把「全、正弦、正切、余弦」按 Ⅰ→Ⅳ 顺序念三遍，再对照单位圆坐标。', 13, MUTED)
+    return sci.document('四象限符号：一句话记住',
+                        '符号由坐标正负决定：x 看余弦，y 看正弦，商看正切。',
+                        content,
+                        '判断符号时先确定终边所在象限，再看坐标或比值的正负。',
+                        height=600)
+
+
+def trig_induction():
+    """诱导公式：奇变偶不变，符号看象限。"""
+    content = box(24, 82, 470, 430)
+    content += text(44, 112, '四步走，公式不用背', 16, GREEN, weight=700)
+    steps = [('①', '写成 k·π/2 ± α', '例如 π+α 中 k=2'),
+             ('②', '看 k 的奇偶', 'k 奇：sin↔cos；k 偶：不变'),
+             ('③', '把 α 看成锐角', '判断原角在第几象限'),
+             ('④', '按原角定符号', '该象限的 sin/cos/tan 正负')]
+    for i, (num_, title, detail) in enumerate(steps):
+        y = 150 + i * 84
+        content += circle(62, y, 16, '#eaf5ef', '#86efac')
+        content += text(62, y + 5, num_, 13, GREEN, 'middle', 800)
+        content += text(90, y - 2, title, 14, INK, weight=700)
+        content += text(90, y + 22, detail, 12, MUTED)
+
+    content += box(514, 82, 262, 430)
+    content += text(534, 112, '三个例子', 16, GREEN, weight=700)
+    examples = [('sin(π+α)', 'k=2 偶 → 函数名不变', '第三象限，sin 取负', '−sinα'),
+                ('cos(π/2+α)', 'k=1 奇 → cos 变 sin', '第二象限，cos 取负', '−sinα'),
+                ('tan(π−α)', 'k=2 偶 → 函数名不变', '第二象限，tan 取负', '−tanα')]
+    for i, (expr, step1, step2, result) in enumerate(examples):
+        y = 152 + i * 118
+        content += text(534, y, expr, 15, INK, weight=700)
+        content += text(534, y + 22, step1, 11, MUTED)
+        content += text(534, y + 40, step2, 11, MUTED)
+        content += text(534, y + 72, '= ' + result, 15, RED, weight=800)
+        content += line(534, y + 90, 756, y + 90, '#eef2f7', 1)
+    return sci.document('诱导公式：奇变偶不变，符号看象限',
+                        '公式不是背出来的：先看 k 的奇偶决定函数名，再看原角象限决定符号。',
+                        content,
+                        'α 一律当作锐角来判断象限，这是口诀里最容易被忽略的前提。',
+                        height=580)
+
+
 DOCS = {
     'intro-math-probability.svg': probability_intro,
     'intro-math-ellipse.svg': ellipse_intro,
@@ -276,6 +458,10 @@ DOCS = {
     'math-probability-tree.svg': probability_tree,
     'math-ellipse-definition.svg': ellipse_definition,
     'math-substitution-flow.svg': substitution_flow,
+    'intro-math-trig.svg': trig_intro,
+    'math-trig-special.svg': trig_special,
+    'math-trig-astc.svg': trig_astc,
+    'math-trig-induction.svg': trig_induction,
 }
 
 
