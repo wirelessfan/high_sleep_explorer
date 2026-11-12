@@ -1,86 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">化学平衡：浓度扰动后的速率变化</title>
+  <desc id="description">以恒温恒容、正逆反应均为一级的 A ⇌ B 为例。。升温通常使正逆速率同时突变；催化剂不会使平衡移动，压强效应需结合气体反应条件。</desc>
   <defs>
-    <pattern id="gridIntroChemEq" width="16" height="16" patternUnits="userSpaceOnUse">
-      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#e8f3ee" stroke-width="0.8"/>
-    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
     <style>
-      /* 平衡天平倾斜与回摆动画 */
-      @keyframes balanceRock {
-        0%, 100% { transform: rotate(0deg); }
-        25% { transform: rotate(-6deg); }
-        50% { transform: rotate(4deg); }
-        75% { transform: rotate(-2deg); }
-      }
-      .anim-balance-beam {
-        transform-origin: 150px 105px;
-        animation: balanceRock 4s ease-in-out infinite;
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
       }
     </style>
   </defs>
-
-  <rect width="640" height="240" rx="12" fill="#fafdfb"/>
-  <rect width="640" height="240" rx="12" fill="url(#gridIntroChemEq)"/>
-
-  <!-- 顶部轻便签 -->
-  <rect x="20" y="10" width="220" height="22" rx="4" fill="rgba(16, 185, 129, 0.25)"/>
-  <text x="130" y="25" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#065f46" text-anchor="middle">
-    ⚡ 化学平衡动态引导 · 勒夏特列动态天平
-  </text>
-
-  <!-- 左侧：动态平衡天平模型 -->
-  <g transform="translate(10, 10)">
-    <!-- 天平立柱底座 -->
-    <line x1="150" y1="105" x2="150" y2="175" stroke="#475569" stroke-width="3.5"/>
-    <polygon points="135,175 165,175 150,160" fill="#64748b"/>
-    <circle cx="150" cy="105" r="4.5" fill="#1e293b"/>
-
-    <!-- 动态晃动天平横梁组件 -->
-    <g class="anim-balance-beam">
-      <line x1="60" y1="105" x2="240" y2="105" stroke="#334155" stroke-width="3" stroke-linecap="round"/>
-
-      <!-- 左盘：反应物分子 (A + B) -->
-      <line x1="60" y1="105" x2="60" y2="135" stroke="#94a3b8" stroke-width="1.5"/>
-      <ellipse cx="60" cy="135" rx="28" ry="8" fill="#d1fae5" stroke="#059669" stroke-width="1.8"/>
-      <!-- 分子球 -->
-      <circle cx="52" cy="128" r="6" fill="#3b82f6"/>
-      <circle cx="68" cy="128" r="6" fill="#10b981"/>
-      <text x="60" y="152" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="900" fill="#065f46" text-anchor="middle">反应物 (正向)</text>
-
-      <!-- 右盘：生成物分子 (C + D) -->
-      <line x1="240" y1="105" x2="240" y2="135" stroke="#94a3b8" stroke-width="1.5"/>
-      <ellipse cx="240" cy="135" rx="28" ry="8" fill="#fee2e2" stroke="#dc2626" stroke-width="1.8"/>
-      <!-- 分子球 -->
-      <circle cx="232" cy="128" r="6" fill="#ef4444"/>
-      <circle cx="248" cy="128" r="6" fill="#f59e0b"/>
-      <text x="240" y="152" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="900" fill="#991b1b" text-anchor="middle">生成物 (逆向)</text>
-    </g>
-  </g>
-
-  <!-- 右侧：勒夏特列法则卡 -->
-  <g transform="translate(320, 42)">
-    <rect width="290" height="135" rx="8" fill="#ffffff" stroke="#cde4d9" stroke-width="1.5"/>
-
-    <text x="14" y="24" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#065f46">
-      【勒夏特列原理核心要义】
-    </text>
-
-    <text x="14" y="48" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#1e293b">
-      • 改变一个条件，平衡向「减弱改变」方向移动
-    </text>
-    <text x="14" y="70" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">
-      增反应物 → 平衡正移 ｜ 升温 → 向吸热移动
-    </text>
-    <text x="14" y="92" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">
-      增压强 → 向气体分子数减小的方向移动
-    </text>
-    <text x="14" y="116" font-family="'PingFang SC',sans-serif" font-size="11" font-weight="900" fill="#dc2626">
-      铁律：只能「减弱改变」，永远不能「抵消改变」！
-    </text>
-  </g>
-
-  <!-- 底部核心结论条 -->
-  <rect x="20" y="198" width="600" height="26" rx="5" fill="#f0fdf4" stroke="#86efac"/>
-  <text x="320" y="215" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#15803d" text-anchor="middle">
-    动态平衡特征：逆、等、动、定、变（v正 = v逆 ≠ 0，各组分浓度保持不变）
-  </text>
+  <rect width="800" height="460" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">化学平衡：浓度扰动后的速率变化</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">以恒温恒容、正逆反应均为一级的 A ⇌ B 为例。</text>
+  <rect x="24" y="82" width="752" height="307" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<line x1="60" y1="302" x2="445" y2="302" stroke="#50647a" stroke-width="2"/>
+<line x1="60" y1="302" x2="60" y2="112" stroke="#50647a" stroke-width="2"/>
+<text x="39" y="121" font-size="17" fill="#172b42" text-anchor="start" font-weight="500">v</text>
+<text x="440" y="325" font-size="17" fill="#172b42" text-anchor="start" font-weight="500">t</text>
+<line x1="60" y1="189" x2="190" y2="189" stroke="#047857" stroke-width="3"/>
+<line x1="190" y1="113" x2="190" y2="302" stroke="#9aafbd" stroke-width="1" stroke-dasharray="4 4"/>
+<path d="M 190 123 L 191.75 124.99937 L 193.5 126.8776 L 195.25 128.64204 L 197 130.29957 L 198.75 131.85668 L 200.5 133.31945 L 202.25 134.6936 L 204 135.98449 L 205.75 137.19717 L 207.5 138.33637 L 209.25 139.40656 L 211 140.4119 L 212.75 141.35634 L 214.5 142.24355 L 216.25 143.07701 L 218 143.85998 L 219.75 144.59551 L 221.5 145.28647 L 223.25 145.93557 L 225 146.54534 L 226.75 147.11817 L 228.5 147.65629 L 230.25 148.16181 L 232 148.6367 L 233.75 149.08282 L 235.5 149.50191 L 237.25 149.89561 L 239 150.26546 L 240.75 150.6129 L 242.5 150.93929 L 244.25 151.2459 L 246 151.53394 L 247.75 151.80452 L 249.5 152.05871 L 251.25 152.2975 L 253 152.52183 L 254.75 152.73256 L 256.5 152.93052 L 258.25 153.11649 L 260 153.2912 L 261.75 153.45531 L 263.5 153.60949 L 265.25 153.75432 L 267 153.89038 L 268.75 154.0182 L 270.5 154.13827 L 272.25 154.25106 L 274 154.35703 L 275.75 154.45657 L 277.5 154.55008 L 279.25 154.63793 L 281 154.72045 L 282.75 154.79798 L 284.5 154.8708 L 286.25 154.93922 L 288 155.00349 L 289.75 155.06386 L 291.5 155.12058 L 293.25 155.17386 L 295 155.22391 L 296.75 155.27094 L 298.5 155.31511 L 300.25 155.3566 L 302 155.39558 L 303.75 155.4322 L 305.5 155.4666 L 307.25 155.49892 L 309 155.52928 L 310.75 155.5578 L 312.5 155.58459 L 314.25 155.60976 L 316 155.6334 L 317.75 155.65561 L 319.5 155.67648 L 321.25 155.69608 L 323 155.71449 L 324.75 155.73179 L 326.5 155.74804 L 328.25 155.76331 L 330 155.77765 L 331.75 155.79112 L 333.5 155.80377 L 335.25 155.81566 L 337 155.82683 L 338.75 155.83732 L 340.5 155.84718 L 342.25 155.85644 L 344 155.86514 L 345.75 155.87331 L 347.5 155.88098 L 349.25 155.88819 L 351 155.89497 L 352.75 155.90133 L 354.5 155.90731 L 356.25 155.91293 L 358 155.9182 L 359.75 155.92316 L 361.5 155.92781 L 363.25 155.93219 L 365 155.9363 L 366.75 155.94015 L 368.5 155.94378 L 370.25 155.94719 L 372 155.95039 L 373.75 155.95339 L 375.5 155.95622 L 377.25 155.95887 L 379 155.96136 L 380.75 155.9637 L 382.5 155.9659 L 384.25 155.96797 L 386 155.96991 L 387.75 155.97173 L 389.5 155.97344 L 391.25 155.97505 L 393 155.97656 L 394.75 155.97798 L 396.5 155.97932 L 398.25 155.98057 L 400 155.98175 L 401.75 155.98285 L 403.5 155.98389 L 405.25 155.98487 L 407 155.98579 L 408.75 155.98665 L 410.5 155.98746 L 412.25 155.98822 L 414 155.98893" fill="none" stroke="#dc2626" stroke-width="3" />
+<path d="M 190 189 L 191.75 187.00063 L 193.5 185.1224 L 195.25 183.35796 L 197 181.70043 L 198.75 180.14332 L 200.5 178.68055 L 202.25 177.3064 L 204 176.01551 L 205.75 174.80283 L 207.5 173.66363 L 209.25 172.59344 L 211 171.5881 L 212.75 170.64366 L 214.5 169.75645 L 216.25 168.92299 L 218 168.14002 L 219.75 167.40449 L 221.5 166.71353 L 223.25 166.06443 L 225 165.45466 L 226.75 164.88183 L 228.5 164.34371 L 230.25 163.83819 L 232 163.3633 L 233.75 162.91718 L 235.5 162.49809 L 237.25 162.10439 L 239 161.73454 L 240.75 161.3871 L 242.5 161.06071 L 244.25 160.7541 L 246 160.46606 L 247.75 160.19548 L 249.5 159.94129 L 251.25 159.7025 L 253 159.47817 L 254.75 159.26744 L 256.5 159.06948 L 258.25 158.88351 L 260 158.7088 L 261.75 158.54469 L 263.5 158.39051 L 265.25 158.24568 L 267 158.10962 L 268.75 157.9818 L 270.5 157.86173 L 272.25 157.74894 L 274 157.64297 L 275.75 157.54343 L 277.5 157.44992 L 279.25 157.36207 L 281 157.27955 L 282.75 157.20202 L 284.5 157.1292 L 286.25 157.06078 L 288 156.99651 L 289.75 156.93614 L 291.5 156.87942 L 293.25 156.82614 L 295 156.77609 L 296.75 156.72906 L 298.5 156.68489 L 300.25 156.6434 L 302 156.60442 L 303.75 156.5678 L 305.5 156.5334 L 307.25 156.50108 L 309 156.47072 L 310.75 156.4422 L 312.5 156.41541 L 314.25 156.39024 L 316 156.3666 L 317.75 156.34439 L 319.5 156.32352 L 321.25 156.30392 L 323 156.28551 L 324.75 156.26821 L 326.5 156.25196 L 328.25 156.23669 L 330 156.22235 L 331.75 156.20888 L 333.5 156.19623 L 335.25 156.18434 L 337 156.17317 L 338.75 156.16268 L 340.5 156.15282 L 342.25 156.14356 L 344 156.13486 L 345.75 156.12669 L 347.5 156.11902 L 349.25 156.11181 L 351 156.10503 L 352.75 156.09867 L 354.5 156.09269 L 356.25 156.08707 L 358 156.0818 L 359.75 156.07684 L 361.5 156.07219 L 363.25 156.06781 L 365 156.0637 L 366.75 156.05985 L 368.5 156.05622 L 370.25 156.05281 L 372 156.04961 L 373.75 156.04661 L 375.5 156.04378 L 377.25 156.04113 L 379 156.03864 L 380.75 156.0363 L 382.5 156.0341 L 384.25 156.03203 L 386 156.03009 L 387.75 156.02827 L 389.5 156.02656 L 391.25 156.02495 L 393 156.02344 L 394.75 156.02202 L 396.5 156.02068 L 398.25 156.01943 L 400 156.01825 L 401.75 156.01715 L 403.5 156.01611 L 405.25 156.01513 L 407 156.01421 L 408.75 156.01335 L 410.5 156.01254 L 412.25 156.01178 L 414 156.01107" fill="none" stroke="#2563eb" stroke-width="3" />
+<text x="198" y="113" font-size="16" fill="#dc2626" text-anchor="start" font-weight="500">v正</text>
+<text x="205" y="220" font-size="16" fill="#2563eb" text-anchor="start" font-weight="500">v逆</text>
+<text x="118" y="176" font-size="15" fill="#047857" text-anchor="middle" font-weight="500">旧平衡</text>
+<text x="190" y="326" font-size="16" fill="#50647a" text-anchor="middle" font-weight="500">t₁</text>
+<text x="345" y="146" font-size="15" fill="#047857" text-anchor="start" font-weight="500">接近新平衡</text>
+<text x="252" y="355" font-size="17" fill="#172b42" text-anchor="middle" font-weight="500">A ⇌ B（恒温、恒容）</text>
+<rect x="470" y="104" width="288" height="264" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="485" y="133" font-size="16" fill="#047857" text-anchor="start" font-weight="500">t₁：只增大 A 的浓度</text>
+<text x="485" y="170" font-size="16" fill="#dc2626" text-anchor="start" font-weight="500">正反应速率瞬时增大</text>
+<text x="485" y="206" font-size="16" fill="#2563eb" text-anchor="start" font-weight="500">逆反应速率瞬时不变</text>
+<text x="485" y="242" font-size="16" fill="#172b42" text-anchor="start" font-weight="500">随后 A 减少，B 增加</text>
+<text x="485" y="278" font-size="16" fill="#172b42" text-anchor="start" font-weight="500">正逆速率逐渐接近</text>
+<text x="485" y="314" font-size="16" fill="#047857" text-anchor="start" font-weight="500">新平衡：v正 = v逆 ≠ 0</text>
+<text x="485" y="347" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">并非反应停止或浓度相等</text>
+  <rect x="24" y="398" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="418" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">升温通常使正逆速率同时突变；催化剂不会使平衡移动，压强效应需结合气体反应条件。</text>
 </svg>

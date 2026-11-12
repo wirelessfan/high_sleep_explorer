@@ -1,89 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 460" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">离子反应：从溶液离子到沉淀</title>
+  <desc id="description">粒子图只示意结合与沉降；不代表真实晶格或离子大小。。离子反应也包括难溶物与酸反应、氧化还原等；反应式须核对原子和电荷守恒。</desc>
   <defs>
-    <pattern id="gridIntroIon" width="16" height="16" patternUnits="userSpaceOnUse">
-      <path d="M 16 0 L 0 0 0 16" fill="none" stroke="#e8f3ee" stroke-width="0.8"/>
-    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
     <style>
-      /* 离子游动并碰撞沉降 */
-      @keyframes ionCollide {
-        0% { transform: translate(0, 0); }
-        40% { transform: translate(32px, 20px); }
-        60% { transform: translate(32px, 45px); }
-        90%, 100% { transform: translate(32px, 50px); opacity: 0.8; }
-      }
-      @keyframes ionCollide2 {
-        0% { transform: translate(0, 0); }
-        40% { transform: translate(-32px, 20px); }
-        60% { transform: translate(-32px, 45px); }
-        90%, 100% { transform: translate(-32px, 50px); opacity: 0.8; }
-      }
-      .anim-ion-ba {
-        animation: ionCollide 3.2s ease-in-out infinite;
-      }
-      .anim-ion-so4 {
-        animation: ionCollide2 3.2s ease-in-out infinite;
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
       }
     </style>
   </defs>
-
-  <rect width="640" height="240" rx="12" fill="#fafdfb"/>
-  <rect width="640" height="240" rx="12" fill="url(#gridIntroIon)"/>
-
-  <!-- 顶部轻便签 -->
-  <rect x="20" y="10" width="220" height="22" rx="4" fill="rgba(14, 165, 233, 0.28)"/>
-  <text x="130" y="25" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="900" fill="#0369a1" text-anchor="middle">
-    ⚡ 离子反应动态引导 · 离子碰撞与沉淀生成
-  </text>
-
-  <!-- 左侧：烧杯中离子碰撞反应微观模型 -->
-  <g transform="translate(40, 20)">
-    <!-- 烧杯轮廓 -->
-    <path d="M 80 50 L 80 160 Q 80 170, 95 170 L 185 170 Q 200 170, 200 160 L 200 50" fill="#f0f9ff" stroke="#64748b" stroke-width="2.5"/>
-    <!-- 水溶液液面 -->
-    <line x1="82" y1="75" x2="198" y2="75" stroke="#93c5fd" stroke-width="1.8" stroke-dasharray="4,2"/>
-    <text x="140" y="70" font-family="'PingFang SC',sans-serif" font-size="9.5" fill="#60a5fa" text-anchor="middle">水溶液电离态</text>
-
-    <!-- Ba2+ 离子动态游动 -->
-    <g class="anim-ion-ba" transform="translate(108, 90)">
-      <circle cx="0" cy="0" r="11" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
-      <text x="0" y="4" font-family="sans-serif" font-size="9" font-weight="900" fill="#dc2626" text-anchor="middle">Ba²⁺</text>
-    </g>
-
-    <!-- SO4 2- 离子动态游动相遇 -->
-    <g class="anim-ion-so4" transform="translate(172, 90)">
-      <circle cx="0" cy="0" r="11" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
-      <text x="0" y="4" font-family="sans-serif" font-size="8.5" font-weight="900" fill="#2563eb" text-anchor="middle">SO₄²⁻</text>
-    </g>
-
-    <!-- 沉降在杯底的沉淀物提示 -->
-    <text x="140" y="162" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="900" fill="#15803d" text-anchor="middle">↓ BaSO₄ 白色难溶沉淀</text>
-  </g>
-
-  <!-- 右侧：拆分四步法原则卡 -->
-  <g transform="translate(290, 42)">
-    <rect width="320" height="135" rx="8" fill="#ffffff" stroke="#bae6fd" stroke-width="1.5"/>
-
-    <text x="14" y="24" font-family="'PingFang SC',sans-serif" font-size="12" font-weight="900" fill="#0284c7">
-      【离子反应书写拆分黄金法则】
-    </text>
-
-    <text x="14" y="48" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#1e293b">
-      • 能拆：强酸、强碱、绝大多数可溶性盐
-    </text>
-    <text x="14" y="70" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#dc2626">
-      • 坚决不拆：难溶物、弱电解质（水、弱酸、弱碱）、气体
-    </text>
-    <text x="14" y="92" font-family="'PingFang SC',sans-serif" font-size="11" fill="#334155">
-      • 四类不共存冲突：生成沉淀、气体、水、氧化还原
-    </text>
-    <text x="14" y="116" font-family="'PingFang SC',sans-serif" font-size="10.5" font-weight="800" fill="#047857">
-      高频特例：澄清石灰水溶质少拆！浑浊石灰乳不拆！
-    </text>
-  </g>
-
-  <!-- 底部核心结论条 -->
-  <rect x="20" y="198" width="600" height="26" rx="5" fill="#eff6ff" stroke="#bae6fd"/>
-  <text x="320" y="215" font-family="'PingFang SC',sans-serif" font-size="11.5" font-weight="800" fill="#0369a1" text-anchor="middle">
-    本质：离子反应只涉及溶液中真正结合的有效离子，写完必做电荷守恒与原子守恒双重核验！
-  </text>
+  <rect width="800" height="460" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">离子反应：从溶液离子到沉淀</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">粒子图只示意结合与沉降；不代表真实晶格或离子大小。</text>
+  <rect x="24" y="82" width="352" height="307" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<rect x="396" y="82" width="380" height="307" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<path d="M 72 113 L 72 333 Q72 347 87 347 L 313 347 Q328 347 328 333 L328 113" fill="none" stroke="#50647a" stroke-width="2" />
+<line x1="75" y1="145" x2="325" y2="145" stroke="#90b6dd" stroke-width="1" stroke-dasharray="5 4"/>
+<g class="motion">
+<g transform="translate(125 200)">
+<g transform="translate(0 0)">
+<animateTransform attributeName="transform" type="translate" values="0 0;62 13;62 40;62 111;0 0" keyTimes="0;0.35;0.55;0.8;1" dur="7s" calcMode="linear" repeatCount="indefinite"/>
+<circle cx="0" cy="0" r="22" fill="#f1f6fa" stroke="#dc2626" stroke-width="1.5"/>
+<text x="0" y="5" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="700">Ba²⁺</text>
+<animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.35;0.55;0.8;1" dur="7s" calcMode="linear" repeatCount="indefinite"/>
+</g>
+</g>
+<g transform="translate(275 200)">
+<g transform="translate(0 0)">
+<animateTransform attributeName="transform" type="translate" values="0 0;-62 13;-62 40;-62 111;0 0" keyTimes="0;0.35;0.55;0.8;1" dur="7s" calcMode="linear" repeatCount="indefinite"/>
+<circle cx="0" cy="0" r="22" fill="#f1f6fa" stroke="#2563eb" stroke-width="1.5"/>
+<text x="0" y="5" font-size="13" fill="#2563eb" text-anchor="middle" font-weight="700">SO₄²⁻</text>
+<animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.35;0.55;0.8;1" dur="7s" calcMode="linear" repeatCount="indefinite"/>
+</g>
+</g>
+<g transform="translate(200 213)" opacity="0">
+<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.35;0.55;0.8;1" dur="7s" calcMode="linear" repeatCount="indefinite"/>
+<g transform="translate(0 0)">
+<animateTransform attributeName="transform" type="translate" values="0 0;0 0;0 27;0 107;0 0" keyTimes="0;0.35;0.55;0.8;1" dur="7s" repeatCount="indefinite"/>
+<rect x="-55" y="-16" width="110" height="32" rx="10" fill="#fff" stroke="#aebdc5"/>
+<text x="0" y="6" font-size="16" fill="#047857" text-anchor="middle" font-weight="700">BaSO₄(s)</text>
+</g>
+</g>
+</g>
+<g class="still">
+<circle cx="125" cy="200" r="22" fill="#f1f6fa" stroke="#dc2626" stroke-width="1.5"/>
+<text x="125" y="205" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="500">Ba²⁺</text>
+<circle cx="275" cy="200" r="22" fill="#f1f6fa" stroke="#2563eb" stroke-width="1.5"/>
+<text x="275" y="205" font-size="13" fill="#2563eb" text-anchor="middle" font-weight="500">SO₄²⁻</text>
+<rect x="147" y="310" width="106" height="30" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="200" y="331" font-size="16" fill="#047857" text-anchor="middle" font-weight="500">BaSO₄(s)</text>
+</g>
+<text x="200" y="375" font-size="15" fill="#50647a" text-anchor="middle" font-weight="500">离子结合后以难溶固体表示</text>
+<text x="410" y="117" font-size="16" fill="#047857" text-anchor="start" font-weight="500">Ba²⁺ + SO₄²⁻ = BaSO₄↓</text>
+<text x="410" y="163" font-size="16" fill="#172b42" text-anchor="start" font-weight="500">反应前：离子在水溶液中</text>
+<text x="410" y="203" font-size="16" fill="#172b42" text-anchor="start" font-weight="500">反应后：形成白色难溶固体</text>
+<text x="410" y="247" font-size="16" fill="#2563eb" text-anchor="start" font-weight="500">能拆：溶液中的易溶强电解质</text>
+<text x="410" y="281" font-size="16" fill="#dc2626" text-anchor="start" font-weight="500">不拆：难溶物、弱电解质、气体</text>
+<text x="410" y="328" font-size="16" fill="#047857" text-anchor="start" font-weight="500">澄清石灰水：Ca²⁺ + 2OH⁻</text>
+<text x="410" y="366" font-size="16" fill="#172b42" text-anchor="start" font-weight="500">石灰乳参与反应：保留 Ca(OH)₂</text>
+  <rect x="24" y="398" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="418" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">离子反应也包括难溶物与酸反应、氧化还原等；反应式须核对原子和电荷守恒。</text>
 </svg>

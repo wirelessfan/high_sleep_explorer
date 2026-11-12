@@ -111,6 +111,7 @@ def get_topic(topic_id: str, user: sqlite3.Row = Depends(current_user)):
         "minutes": content_loader.topic_minutes(topic_id),
         "description": data["description"],
         "reward_card": data.get("reward_card"),
+        "diagrams": data.get("diagrams") or [],
         "sections": sections_out,
         "tiers": content_loader.tier_meta(),
     }

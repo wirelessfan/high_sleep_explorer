@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 690" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">换元法的妙用：把陌生化成熟悉</title>
+  <desc id="description">同一个表达式换个变量，次数降低、结构变简单，问题往往一步就开了。。换元三件事：换得干净、写清新范围、最后换回原变量。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="690" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">换元法的妙用：把陌生化成熟悉</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">同一个表达式换个变量，次数降低、结构变简单，问题往往一步就开了。</text>
+  <rect x="24" y="82" width="752" height="360" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<rect x="40" y="120" width="200" height="150" rx="10" fill="#ffffff" stroke="#2563eb"/>
+<text x="140" y="150" font-size="14" fill="#50647a" text-anchor="middle" font-weight="500">原式</text>
+<text x="140" y="196" font-size="16" fill="#2563eb" text-anchor="middle" font-weight="700">x⁴ − 2x² + 1</text>
+<rect x="290" y="120" width="200" height="150" rx="10" fill="#ffffff" stroke="#b45309"/>
+<text x="390" y="150" font-size="14" fill="#50647a" text-anchor="middle" font-weight="500">换元</text>
+<text x="390" y="196" font-size="16" fill="#b45309" text-anchor="middle" font-weight="700">令 t = x²（t ≥ 0）</text>
+<rect x="540" y="120" width="200" height="150" rx="10" fill="#ffffff" stroke="#047857"/>
+<text x="640" y="150" font-size="14" fill="#50647a" text-anchor="middle" font-weight="500">新式</text>
+<text x="640" y="196" font-size="16" fill="#047857" text-anchor="middle" font-weight="700">t² − 2t + 1 = (t − 1)²</text>
+<text x="250" y="196" font-size="22" fill="#50647a" text-anchor="middle" font-weight="800">→</text>
+<text x="500" y="196" font-size="22" fill="#50647a" text-anchor="middle" font-weight="800">→</text>
+<text x="40" y="320" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">要点一：换元后必须写出新变量的取值范围</text>
+<text x="40" y="350" font-size="14" fill="#50647a" text-anchor="start" font-weight="500">这里 t = x² ≥ 0，最终 (t − 1)² 的最小值在 t = 1 处取得，可以取到。</text>
+<text x="40" y="382" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">要点二：换元是把「多项式的次数」降下来，不是把问题变复杂</text>
+<text x="40" y="412" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">要点三：三角换元要限制角范围，防止增根或丢解</text>
+<circle cx="240" cy="170" r="6" fill="#dc2626">
+<animate attributeName="cx" values="240;290;240;290;290" keyTimes="0;0.25;0.5;0.75;1" dur="6s" calcMode="linear" repeatCount="indefinite"/>
+</circle>
+<g class="still">
+<circle cx="240" cy="170" r="6" fill="#dc2626"/>
+</g>
+<rect x="24" y="462" width="752" height="150" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="40" y="492" font-size="16" fill="#047857" text-anchor="start" font-weight="700">三种常见换元</text>
+<text x="40" y="522" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">整体换元：t = x²、t = √(x−1)，把重复出现的一块整体替换</text>
+<text x="40" y="550" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">三角换元：x = sinθ 处理 √(1−x²)，x = a sinθ 处理椭圆</text>
+<text x="40" y="578" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">主元变换：把参数 a 看成变量，关于 a 的一次式更容易处理</text>
+  <rect x="24" y="628" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="648" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">换元三件事：换得干净、写清新范围、最后换回原变量。</text>
+</svg>

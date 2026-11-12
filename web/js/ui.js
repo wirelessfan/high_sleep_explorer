@@ -59,13 +59,74 @@ export function openSheet(content, { title, sub } = {}) {
 export function previewImage(src, title = '状元手写笔记图解') {
   const img = el('img', {
     src,
-    style: 'max-width:100%;height:auto;border-radius:12px;display:block;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,0.15)',
+    alt: title,
+    style: 'width:100%;height:auto;border-radius:12px;display:block;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,0.15)',
   });
   const wrap = el('div', { class: 'stack', style: 'padding:8px 0;text-align:center' }, [
     img,
     el('div', { style: 'font-size:12px;color:#8a7a70;margin-top:10px', text: '💡 点击遮罩或按 ESC 可关闭大图' }),
   ]);
   openSheet(wrap, { title });
+}
+
+/** 多图左右翻页查看；支持键盘方向键与触屏滑动。 */
+export function previewGallery(items, start = 0, title = '图解补充') {
+  let index = Math.min(Math.max(start, 0), items.length - 1);
+  const img = el('img', {
+    alt: '',
+    style: 'width:100%;height:auto;border-radius:12px;display:block;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.15)',
+  });
+  const caption = el('div', { style: 'font-size:12.5px;color:#6b5b52;margin-top:10px;line-height:1.6' });
+  const counter = el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:6px' });
+  const prev = el('button', {
+    class: 'btn ghost sm', style: 'flex:0 0 auto', text: '‹ 上一张',
+    onclick: () => show(index - 1),
+  });
+  const next = el('button', {
+    class: 'btn ghost sm', style: 'flex:0 0 auto', text: '下一张 ›',
+    onclick: () => show(index + 1),
+  });
+
+  function show(i) {
+    index = (i + items.length) % items.length;
+    const item = items[index];
+    img.src = item.src;
+    img.alt = item.title || '';
+    caption.textContent = item.caption || '';
+    counter.textContent = `${index + 1} / ${items.length}`;
+  }
+
+  const wrap = el('div', { class: 'stack', style: 'padding:6px 0' }, [
+    img,
+    caption,
+    counter,
+    el('div', { class: 'row', style: 'justify-content:space-between;margin-top:4px' }, [prev, next]),
+    el('div', { style: 'font-size:11.5px;color:#a3928a;text-align:center', text: '← → 方向键或轻扫切换 · 点击遮罩关闭' }),
+  ]);
+
+  const sheet = openSheet(wrap, { title });
+  const onKey = (e) => {
+    if (e.key === 'ArrowLeft') { show(index - 1); e.preventDefault(); }
+    if (e.key === 'ArrowRight') { show(index + 1); e.preventDefault(); }
+  };
+  document.addEventListener('keydown', onKey);
+  const overlay = document.getElementById('overlay');
+  const observer = new MutationObserver(() => {
+    if (overlay.hidden) { document.removeEventListener('keydown', onKey); observer.disconnect(); }
+  });
+  observer.observe(overlay, { attributes: true, attributeFilter: ['hidden'] });
+
+  let startX = null;
+  sheet.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+  sheet.addEventListener('touchend', (e) => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 45) show(index + (dx < 0 ? 1 : -1));
+    startX = null;
+  }, { passive: true });
+
+  show(index);
+  return { show };
 }
 
 export function spinner() {

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">诱导公式：奇变偶不变，符号看象限</title>
+  <desc id="description">公式不是背出来的：先看 k 的奇偶决定函数名，再看原角象限决定符号。。α 一律当作锐角来判断象限，这是口诀里最容易被忽略的前提。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="580" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">诱导公式：奇变偶不变，符号看象限</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">公式不是背出来的：先看 k 的奇偶决定函数名，再看原角象限决定符号。</text>
+  <rect x="24" y="82" width="470" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">四步走，公式不用背</text>
+<circle cx="62" cy="150" r="16" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="62" y="155" font-size="13" fill="#047857" text-anchor="middle" font-weight="800">①</text>
+<text x="90" y="148" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">写成 k·π/2 ± α</text>
+<text x="90" y="172" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">例如 π+α 中 k=2</text>
+<circle cx="62" cy="234" r="16" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="62" y="239" font-size="13" fill="#047857" text-anchor="middle" font-weight="800">②</text>
+<text x="90" y="232" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">看 k 的奇偶</text>
+<text x="90" y="256" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">k 奇：sin↔cos；k 偶：不变</text>
+<circle cx="62" cy="318" r="16" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="62" y="323" font-size="13" fill="#047857" text-anchor="middle" font-weight="800">③</text>
+<text x="90" y="316" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">把 α 看成锐角</text>
+<text x="90" y="340" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">判断原角在第几象限</text>
+<circle cx="62" cy="402" r="16" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="62" y="407" font-size="13" fill="#047857" text-anchor="middle" font-weight="800">④</text>
+<text x="90" y="400" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">按原角定符号</text>
+<text x="90" y="424" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">该象限的 sin/cos/tan 正负</text>
+<rect x="514" y="82" width="262" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="534" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">三个例子</text>
+<text x="534" y="152" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">sin(π+α)</text>
+<text x="534" y="174" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">k=2 偶 → 函数名不变</text>
+<text x="534" y="192" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">第三象限，sin 取负</text>
+<text x="534" y="224" font-size="15" fill="#dc2626" text-anchor="start" font-weight="800">= −sinα</text>
+<line x1="534" y1="242" x2="756" y2="242" stroke="#eef2f7" stroke-width="1"/>
+<text x="534" y="270" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">cos(π/2+α)</text>
+<text x="534" y="292" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">k=1 奇 → cos 变 sin</text>
+<text x="534" y="310" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">第二象限，cos 取负</text>
+<text x="534" y="342" font-size="15" fill="#dc2626" text-anchor="start" font-weight="800">= −sinα</text>
+<line x1="534" y1="360" x2="756" y2="360" stroke="#eef2f7" stroke-width="1"/>
+<text x="534" y="388" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">tan(π−α)</text>
+<text x="534" y="410" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">k=2 偶 → 函数名不变</text>
+<text x="534" y="428" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">第二象限，tan 取负</text>
+<text x="534" y="460" font-size="15" fill="#dc2626" text-anchor="start" font-weight="800">= −tanα</text>
+<line x1="534" y1="478" x2="756" y2="478" stroke="#eef2f7" stroke-width="1"/>
+  <rect x="24" y="518" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="538" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">α 一律当作锐角来判断象限，这是口诀里最容易被忽略的前提。</text>
+</svg>

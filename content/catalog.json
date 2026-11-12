@@ -34,11 +34,35 @@
       "color": "#F59E0B",
       "icon": "∑",
       "topics": [
-        "math-derivative"
+        "math-euler",
+        "math-derivative",
+        "math-probability",
+        "math-ellipse",
+        "math-substitution",
+        "math-trig"
       ]
     }
   ],
   "topics": [
+    {
+      "id": "math-euler",
+      "subject": "math",
+      "title": "欧拉公式之美",
+      "subtitle": "数学之美 · 番外篇：单位圆与最美恒等式",
+      "grade": "高二",
+      "minutes": 25,
+      "cover": "euler",
+      "reward_card": "euler",
+      "description": "数学之美番外篇：一个指数函数，为什么会在复平面上画出一个圆？",
+      "sections": [
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
+      ]
+    },
     {
       "id": "physics-kinematics",
       "subject": "physics",
@@ -239,6 +263,82 @@
       "cover": "derivative",
       "reward_card": "gauss",
       "description": "导数不是公式，是「瞬时变化率」。先看图，再算数。",
+      "sections": [
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
+      ]
+    },
+    {
+      "id": "math-probability",
+      "subject": "math",
+      "title": "有趣的概率论",
+      "subtitle": "古典概型、互斥与独立",
+      "grade": "高二",
+      "minutes": 25,
+      "cover": "probability",
+      "reward_card": "euler",
+      "description": "概率不是玄学，是把「有多少种可能」数清楚。先列样本空间，再谈可能性。",
+      "sections": [
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
+      ]
+    },
+    {
+      "id": "math-ellipse",
+      "subject": "math",
+      "title": "神奇的椭圆",
+      "subtitle": "定义、标准方程与离心率",
+      "grade": "高二",
+      "minutes": 25,
+      "cover": "ellipse",
+      "reward_card": "descartes",
+      "description": "把一根绳子的两端固定，用笔绷紧画一圈，得到的就是椭圆。",
+      "sections": [
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
+      ]
+    },
+    {
+      "id": "math-substitution",
+      "subject": "math",
+      "title": "换元法的妙用",
+      "subtitle": "整体、三角与主元变换",
+      "grade": "高一",
+      "minutes": 25,
+      "cover": "substitution",
+      "reward_card": "ramanujan",
+      "description": "同一个式子，换个变量看，次数就降下来了。",
+      "sections": [
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
+      ]
+    },
+    {
+      "id": "math-trig",
+      "subject": "math",
+      "title": "三角函数这样记",
+      "subtitle": "单位圆、符号口诀与诱导公式",
+      "grade": "高一",
+      "minutes": 25,
+      "cover": "trig",
+      "reward_card": "archimedes",
+      "description": "三角函数公式多，但都能从单位圆里读出来。记住坐标与符号，公式忘了也能自己推。",
       "sections": [
         "quick",
         "basic",

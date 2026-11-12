@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 574" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">运动学 · v-t 图像与打点纸带</title>
+<desc id="desc">纸带求加速度优先用逐差法：把多段位移分成两组相减，减小读数误差。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="410" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">运动学 · v-t 图像与打点纸带</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<rect x="370" y="55" width="246" height="307" rx="5" fill="#fff" stroke="#e2e8f0">
+</rect>
+<text x="384" y="77" fill="#475569" font-size="12" font-weight="600">v-t 斜率 = 加速度 a</text>
+<text x="384" y="103" fill="#475569" font-size="12" font-weight="600">v-t 与时间轴围成的面积 = 位移 x</text>
+<text x="384" y="129" fill="#475569" font-size="12" font-weight="600">纸带相邻点时间间隔 T 相等</text>
+<text x="384" y="155" fill="#475569" font-size="12" font-weight="600">位移差 Δx = aT² 恒定</text>
+<text x="384" y="181" fill="#475569" font-size="12" font-weight="600">中间时刻速度 = 全程平均速度</text>
+<line x1="70" y1="205" x2="360" y2="205" stroke="#475569" stroke-width="2">
+</line>
+<line x1="70" y1="205" x2="70" y2="70" stroke="#475569" stroke-width="2">
+</line>
+<text x="366" y="221" fill="#1e293b" font-size="12" font-weight="700">t</text>
+<text x="56" y="66" fill="#1e293b" font-size="12" font-weight="700">v</text>
+<path d="M 100 154.8 L 350 46.8" stroke="#dc2626" stroke-width="2.4" fill="none">
+</path>
+<path d="M 100 154.8 L 350 46.8 L 350 205 L 100 205 Z" stroke="#f59e0b" stroke-width="1" fill="#fde68a" fill-opacity=".55">
+</path>
+<text x="225" y="188.8" fill="#b45309" font-size="12" font-weight="700" text-anchor="middle">面积 = 位移 x</text>
+<text x="212.5" y="80.2" fill="#dc2626" font-size="12" font-weight="700">斜率 = 加速度 a</text>
+<text x="90" y="170.8" fill="#475569" font-size="12" font-weight="700">v₀</text>
+<text x="354" y="50.8" fill="#dc2626" font-size="12" font-weight="700">v</text>
+<line x1="50" y1="305" x2="610" y2="305" stroke="#475569" stroke-width="2.5">
+</line>
+<circle cx="60" cy="305" r="3.5" fill="#dc2626">
+</circle>
+<text x="60" y="297" fill="#475569" font-size="12" font-weight="600" text-anchor="middle">t0</text>
+<circle cx="85" cy="305" r="3.5" fill="#dc2626">
+</circle>
+<text x="85" y="297" fill="#475569" font-size="12" font-weight="600" text-anchor="middle">t1</text>
+<circle cx="128" cy="305" r="3.5" fill="#dc2626">
+</circle>
+<text x="128" y="297" fill="#475569" font-size="12" font-weight="600" text-anchor="middle">t2</text>
+<circle cx="189" cy="305" r="3.5" fill="#dc2626">
+</circle>
+<text x="189" y="297" fill="#475569" font-size="12" font-weight="600" text-anchor="middle">t3</text>
+<circle cx="268" cy="305" r="3.5" fill="#dc2626">
+</circle>
+<text x="268" y="297" fill="#475569" font-size="12" font-weight="600" text-anchor="middle">t4</text>
+<text x="72.5" y="325" fill="#475569" font-size="12" font-weight="600" text-anchor="middle">x1</text>
+<text x="106.5" y="325" fill="#475569" font-size="12" font-weight="600" text-anchor="middle">x2</text>
+<text x="158.5" y="325" fill="#475569" font-size="12" font-weight="600" text-anchor="middle">x3</text>
+<text x="228.5" y="325" fill="#475569" font-size="12" font-weight="600" text-anchor="middle">x4</text>
+<text x="50" y="357" fill="#1e293b" font-size="12" font-weight="700">相邻相等时间 T 内的位移差恒定：Δx = x₂ − x₁ = aT²</text>
+<rect x="20" y="370" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="383" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">纸带求加速度优先用逐差法：把多段位移分成两组相减，减小读数误差。</text>
+</g>
+</svg>

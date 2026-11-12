@@ -121,6 +121,161 @@ CAST = [
          element="放射性研究", staff="flask", skill="恒心审判",
          taunt="没有什么可怕的，只有值得理解的东西。",
          purified="她把发光的烧瓶放在你手里：别怕，慢慢来。"),
+    # ===== 数学之美 · 欧拉公式 =====
+    dict(topic="math-euler", subject="math", section="quick",
+         name="虚数豆", en="Imagy", element="i 的误解", shape="round",
+         head="bulb", prop="epsilon", overlay="spark", skill="平方错觉",
+         taunt="i 的平方是 1 还是 −1？想清楚再动。",
+         purified="它把自己转 90°：两次之后正好朝反方向。"),
+    dict(topic="math-euler", subject="math", section="basic",
+         name="复平面兽", en="Planey", element="坐标混乱", shape="round",
+         head="grid", prop="segment", overlay="grid", skill="实虚不分",
+         taunt="实部虚部混在一起，你还看得懂吗？",
+         purified="坐标分开：横实纵虚，一目了然。"),
+    dict(topic="math-euler", subject="math", section="summary",
+         name="圆周灵", en="Circly", element="指数迷航", shape="ghost",
+         head="field", prop="none", overlay="waves", skill="旋转迷雾",
+         taunt="指数函数怎么会画出一个圆？",
+         purified="雾气成环：e^(iθ) 的轨迹就是单位圆。"),
+    dict(topic="math-euler", subject="math", section="hard",
+         name="恒等式妖", en="Ident", element="符号误读", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="符号反转",
+         taunt="e^(iπ)+1=0，可 e 明明是正数啊？",
+         purified="镜面合一：指数取复值，结果可以是负数。"),
+    dict(topic="math-euler", subject="math", section="practice",
+         name="旋转匠", en="Spinner", element="乘法误解", shape="tank",
+         head="gear", prop="crank", overlay="cogs", skill="角度叠加",
+         taunt="复数相乘，凭什么就变成旋转了？",
+         purified="齿轮咬合：模长相乘、角度相加。"),
+    dict(topic="math-euler", subject="math", section="boss",
+         tier="big", name="欧拉", en="Leonhard Euler", card_id="euler", look="euler_face",
+         element="数学之美", staff="orb", skill="恒等式审判",
+         taunt="盲眼之后，我还能口述公式。你，能看懂它吗？",
+         purified="他把笔递给你：美不需要解释，但值得证明。"),
+    # ===== 数学 · 三角函数这样记 =====
+    dict(topic="math-trig", subject="math", section="quick",
+         name="弧度豆", en="Radian", element="角度弧度混用", shape="round",
+         head="bulb", prop="segment", overlay="grid", skill="单位错乱",
+         taunt="30 和 30°，你觉得是一回事吗？",
+         purified="它把单位写清楚：分析性质一律用弧度。"),
+    dict(topic="math-trig", subject="math", section="basic",
+         name="符号怪", en="Signy", element="象限错觉", shape="round",
+         head="balance", prop="arrows", overlay="reverse", skill="正负翻转",
+         taunt="第二象限，sin 到底正还是负？",
+         purified="它指向单位圆：看纵坐标，别凭感觉。"),
+    dict(topic="math-trig", subject="math", section="summary",
+         name="单位圆灵", en="Unito", element="坐标模糊", shape="ghost",
+         head="field", prop="none", overlay="waves", skill="投影迷雾",
+         taunt="sin 是横坐标还是纵坐标？再想想。",
+         purified="迷雾散开：横看 cos，竖看 sin。"),
+    dict(topic="math-trig", subject="math", section="hard",
+         name="口诀妖", en="Proverb", element="口诀误用", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="符号看错",
+         taunt="奇变偶不变——那你告诉我，符号看谁的象限？",
+         purified="两半合上：α 当锐角，看整体角所在象限。"),
+    dict(topic="math-trig", subject="math", section="practice",
+         name="诱导匠", en="Inductor", element="化错名字", shape="tank",
+         head="triangle", prop="slash", overlay="diagonal", skill="函数名错位",
+         taunt="cos 变 sin 还是不变？先看 k 的奇偶！",
+         purified="它把四步流程刻在墙上：名、号、象限、符号。"),
+    dict(topic="math-trig", subject="math", section="boss",
+         tier="big", name="托勒密", en="Ptolemy", card_id="archimedes",
+         element="弦表与天文", staff="orb", skill="弦长审判",
+         taunt="在没有计算器的年代，我把每个角的正弦都算了出来。",
+         purified="他把弦表递给你：从单位圆出发，角就有了数值。"),
+    # ===== 数学 · 有趣的概率论 =====
+    dict(topic="math-probability", subject="math", section="quick",
+         name="骰子精", en="Dicey", element="等可能错觉", shape="round",
+         head="zigzag", prop="segment", overlay="grid", skill="点数迷阵",
+         taunt="六个面看起来一样，可你真的数对了吗？",
+         purified="骰子停下：样本点有限且等可能，才叫古典概型。"),
+    dict(topic="math-probability", subject="math", section="basic",
+         name="等可能怪", en="Fairly", element="伪公平", shape="round",
+         head="balance", prop="weight", overlay="scale", skill="倾斜天平",
+         taunt="我说每个结果概率一样，你有意见？",
+         purified="天平放平：等可能是条件，不是口号。"),
+    dict(topic="math-probability", subject="math", section="summary",
+         name="概率云", en="Cloudy", element="模糊直觉", shape="ghost",
+         head="field", prop="none", overlay="waves", skill="直觉迷雾",
+         taunt="感觉像一半？感觉可不算数。",
+         purified="云雾散开，样本空间一条条列了出来。"),
+    dict(topic="math-probability", subject="math", section="hard",
+         name="互斥双生", en="Exclu", element="概念混淆", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="互斥独立之争",
+         taunt="不能同时发生，就等于互不影响吗？",
+         purified="两张脸分开：互斥与独立是两回事。"),
+    dict(topic="math-probability", subject="math", section="practice",
+         name="树状妖", en="Treey", element="分支混乱", shape="tank",
+         head="triangle", prop="slash", overlay="diagonal", skill="路径缠绕",
+         taunt="先乘还是先加？你分得清分步和分类吗？",
+         purified="枝干理顺：分步相乘、分类相加。"),
+    dict(topic="math-probability", subject="math", section="boss",
+         tier="big", name="帕斯卡", en="Blaise Pascal", card_id="euler", look="pascal_face",
+         element="概率论奠基", staff="orb", skill="赌金审判",
+         taunt="赌局中断了，赌金该怎么分？想清楚再回答。",
+         purified="他收起算筹：你已学会用等可能来衡量未知。"),
+    # ===== 数学 · 神奇的椭圆 =====
+    dict(topic="math-ellipse", subject="math", section="quick",
+         name="绳结怪", en="Knotty", element="距离失衡", shape="round",
+         head="bulb", prop="segment", overlay="curve", skill="绳长束缚",
+         taunt="绳长固定，可我到底能不能画出圆？",
+         purified="绳子绷紧：到两焦点距离之和恒为 2a。"),
+    dict(topic="math-ellipse", subject="math", section="basic",
+         name="焦距精", en="Focusy", element="参数错位", shape="round",
+         head="gauge", prop="weight", overlay="scale", skill="a、b 混淆",
+         taunt="a 和 b 谁大？焦点又在哪条轴上？",
+         purified="量具归零：a²=b²+c²，焦点看分母。"),
+    dict(topic="math-ellipse", subject="math", section="summary",
+         name="扁平雾", en="Flato", element="形状错觉", shape="ghost",
+         head="field", prop="none", overlay="waves", skill="离心迷雾",
+         taunt="e 越大越圆，对吧？",
+         purified="雾散形现：e 越大，椭圆越扁。"),
+    dict(topic="math-ellipse", subject="math", section="hard",
+         name="双焦点", en="Twin", element="焦点遗漏", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="焦点分心",
+         taunt="只盯着一个焦点，另一个就不存在了？",
+         purified="两点对齐：定义要求两个焦点同时参与。"),
+    dict(topic="math-ellipse", subject="math", section="practice",
+         name="切线将", en="Tangent", element="弦长错算", shape="tank",
+         head="triangle", prop="slash", overlay="diagonal", skill="焦点弦",
+         taunt="弦过焦点，周长就一定是 4a 吗？",
+         purified="图形归位：焦点三角形周长 2a+2c。"),
+    dict(topic="math-ellipse", subject="math", section="boss",
+         tier="big", name="开普勒", en="Johannes Kepler", card_id="descartes", look="kepler_face",
+         element="行星轨道", staff="orb", skill="椭圆审判",
+         taunt="行星的轨道不是圆，而是椭圆。你敢改写教科书吗？",
+         purified="他把星图递给你：从此椭圆有了天空。"),
+    # ===== 数学 · 换元法的妙用 =====
+    dict(topic="math-substitution", subject="math", section="quick",
+         name="换元豆", en="Swapy", element="变量僵化", shape="round",
+         head="bulb", prop="epsilon", overlay="spark", skill="形式束缚",
+         taunt="式子那么长，你就不会换个角度看？",
+         purified="它把自己缩写成一个字母：世界清爽了。"),
+    dict(topic="math-substitution", subject="math", section="basic",
+         name="根号兽", en="Rooty", element="根式缠绕", shape="round",
+         head="zigzag", prop="segment", overlay="grid", skill="开方纠缠",
+         taunt="根号套根号，你敢直接平方吗？",
+         purified="根号退去：整体换元，一次拆开。"),
+    dict(topic="math-substitution", subject="math", section="summary",
+         name="变量雾", en="Vary", element="范围丢失", shape="ghost",
+         head="field", prop="none", overlay="waves", skill="范围迷雾",
+         taunt="t 是实数就行？你问过原变量吗？",
+         purified="雾气收束：t=x² 只能取非负值。"),
+    dict(topic="math-substitution", subject="math", section="hard",
+         name="范围鬼", en="Rangey", element="定义域越界", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="增根陷阱",
+         taunt="换元不写范围，答案就多出来了哦。",
+         purified="范围补齐：换得干净，也要收得回来。"),
+    dict(topic="math-substitution", subject="math", section="practice",
+         name="三角匠", en="Trigon", element="角度失控", shape="tank",
+         head="triangle", prop="slash", overlay="curve", skill="开方错号",
+         taunt="cosθ 一定是正的吗？先说说 θ 的范围。",
+         purified="角域锁定：开方不再加绝对值。"),
+    dict(topic="math-substitution", subject="math", section="boss",
+         tier="big", name="拉马努金", en="Srinivasa Ramanujan", card_id="ramanujan",
+         element="恒等式艺术", staff="orb", skill="无穷级数审判",
+         taunt="这些公式是女神告诉我的。你能证明几个？",
+         purified="他笑着递过笔记本：换元做到极致，就是美。"),
     # ===== 数学 · 导数的几何意义 =====
     dict(topic="math-derivative", subject="math", section="quick",
          name="切线豆", en="Tangy", element="斜线乱切", shape="round",
@@ -1051,8 +1206,82 @@ def render_big(role: dict, c: dict) -> str:
             mouth=('<path d="M112 136 q8 5 16 0" fill="none" stroke="#1e293b" '
                    'stroke-width="2.4" stroke-linecap="round"/>'),
         ),
+        # 帕斯卡：短发 + 小胡子，神情克制
+        "pascal_face": dict(
+            badge="P",
+            hair=('<path d="M86 88 q4 -36 34 -36 q30 0 34 36 q-14 -16 -34 -16 q-20 0 -34 16z" '
+                  'fill="#334155" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M86 94 q-8 16 -3 26 M154 94 q8 16 3 26" fill="none" '
+                  'stroke="#334155" stroke-width="6" stroke-linecap="round"/>'),
+            face=('<path d="M104 126 q16 -6 32 0" fill="none" stroke="#334155" '
+                  'stroke-width="3.6" stroke-linecap="round"/>'
+                  '<path d="M104 110 q8 -4 14 0 M132 110 q8 -4 14 0" fill="none" '
+                  'stroke="#334155" stroke-width="2.6" stroke-linecap="round"/>'
+                  '<path d="M108 140 q12 5 24 0" fill="none" stroke="#cbd5e1" '
+                  'stroke-width="4" stroke-linecap="round"/>'),
+            mouth=('<path d="M112 133 q8 5 16 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.3" stroke-linecap="round"/>'),
+        ),
+        # 开普勒：灰白长发 + 大胡子
+        "kepler_face": dict(
+            badge="K",
+            hair=('<path d="M82 96 q-6 -48 38 -48 q44 0 38 48 q-12 -22 -38 -22 q-26 0 -38 22z" '
+                  'fill="#e2e8f0" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M82 98 q-10 30 -4 50 M158 98 q10 30 4 50" fill="none" '
+                  'stroke="#e2e8f0" stroke-width="9" stroke-linecap="round"/>'),
+            face=('<path d="M94 118 q26 42 52 0 q-6 30 -26 32 q-20 -2 -26 -32z" '
+                  'fill="#e2e8f0" stroke="#1e293b" stroke-width="2.2"/>'
+                  '<path d="M106 108 q8 -4 14 0 M132 108 q8 -4 14 0" fill="none" '
+                  'stroke="#64748b" stroke-width="2.6" stroke-linecap="round"/>'),
+            mouth=('<path d="M113 137 q7 4 14 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.2" stroke-linecap="round"/>'),
+        ),
+        # 拉马努金：黑发侧分，圆脸，安静的笑
+        "ramanujan": dict(
+            badge="R",
+            hair=('<path d="M84 92 q0 -40 36 -40 q36 0 36 40 q-18 -14 -36 -14 q-18 0 -36 14z" '
+                  'fill="#1f2937" stroke="#0f172a" stroke-width="2.4"/>'
+                  '<path d="M120 54 q14 -8 26 2" fill="none" stroke="#0f172a" '
+                  'stroke-width="2.2" stroke-linecap="round"/>'),
+            face=('<path d="M104 110 q8 -4 14 0 M132 110 q8 -4 14 0" fill="none" '
+                  'stroke="#1f2937" stroke-width="2.8" stroke-linecap="round"/>'
+                  '<ellipse cx="96" cy="126" rx="5.5" ry="3" fill="#fb7185" opacity=".28"/>'
+                  '<ellipse cx="144" cy="126" rx="5.5" ry="3" fill="#fb7185" opacity=".28"/>'),
+            mouth=('<path d="M110 132 q10 7 20 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.4" stroke-linecap="round"/>'),
+        ),
+        # 托勒密：短卷发 + 头带，短须
+        "archimedes": dict(
+            badge="A",
+            hair=('<path d="M84 92 q0 -40 36 -40 q36 0 36 40 q-16 -16 -36 -16 q-20 0 -36 16z" '
+                  'fill="#57534e" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M82 78 q38 -18 76 0" fill="none" stroke="#a8a29e" '
+                  'stroke-width="6" stroke-linecap="round"/>'),
+            face=('<path d="M100 120 q20 26 40 0 q-4 22 -20 24 q-16 -2 -20 -24z" '
+                  'fill="#57534e" stroke="#1e293b" stroke-width="2"/>'
+                  '<path d="M104 106 q8 -4 14 0 M132 106 q8 -4 14 0" fill="none" '
+                  'stroke="#1f2937" stroke-width="2.6" stroke-linecap="round"/>'),
+            mouth=('<path d="M112 132 h16" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.2" stroke-linecap="round"/>'),
+        ),
+        # 欧拉：假发 + 圆帽，badge E
+        "euler_face": dict(
+            badge="E",
+            hair=('<path d="M78 98 q-8 -54 42 -54 q50 0 42 54 q-14 -26 -42 -26 q-28 0 -42 26z" '
+                  'fill="#e2e8f0" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M78 100 q-8 28 -2 44 M162 100 q8 28 2 44" fill="none" '
+                  'stroke="#e2e8f0" stroke-width="9" stroke-linecap="round"/>'
+                  '<path d="M92 66 q28 -10 56 0" fill="none" stroke="#94a3b8" '
+                  'stroke-width="6" stroke-linecap="round"/>'),
+            face=('<path d="M104 106 q8 -4 14 0 M132 106 q8 -4 14 0" fill="none" '
+                  'stroke="#334155" stroke-width="2.6" stroke-linecap="round"/>'
+                  '<path d="M102 140 q18 10 36 0" fill="none" stroke="#cbd5e1" '
+                  'stroke-width="5" stroke-linecap="round"/>'),
+            mouth=('<path d="M112 132 q8 5 16 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.3" stroke-linecap="round"/>'),
+        ),
     }
-    look = LOOK[role["card_id"]]
+    look = LOOK[role.get("look") or role["card_id"]]
     parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" width="240" height="280" '
         'role="img" aria-label="' + role["name"] + ' 大 Boss">',

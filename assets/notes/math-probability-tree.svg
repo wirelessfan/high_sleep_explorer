@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">概率的加法与乘法</title>
+  <desc id="description">树状图把「分步」画出来，路径相乘；同一层的不同路径相加。。先判断是分类还是分步，再决定用加法还是乘法；互斥与独立是两个不同的概念。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="580" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">概率的加法与乘法</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">树状图把「分步」画出来，路径相乘；同一层的不同路径相加。</text>
+  <rect x="24" y="82" width="470" height="420" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">袋中 3 红 2 蓝，有放回摸两次</text>
+<circle cx="92" cy="290" r="7" fill="#1e293b" stroke="none" stroke-width="1.5"/>
+<text x="92" y="274" font-size="12" fill="#50647a" text-anchor="middle" font-weight="500">开始</text>
+<line x1="92" y1="290" x2="230" y2="195" stroke="#50647a" stroke-width="2"/>
+<text x="135" y="234.5" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="700">3/5</text>
+<line x1="92" y1="290" x2="230" y2="385" stroke="#50647a" stroke-width="2"/>
+<text x="135" y="357.5" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="700">2/5</text>
+<line x1="230" y1="195" x2="380" y2="145" stroke="#50647a" stroke-width="2"/>
+<text x="311" y="160" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="600">3/5</text>
+<line x1="230" y1="195" x2="380" y2="245" stroke="#50647a" stroke-width="2"/>
+<text x="311" y="240" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="600">2/5</text>
+<line x1="230" y1="385" x2="380" y2="335" stroke="#50647a" stroke-width="2"/>
+<text x="311" y="350" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="600">3/5</text>
+<line x1="230" y1="385" x2="380" y2="435" stroke="#50647a" stroke-width="2"/>
+<text x="311" y="430" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="600">2/5</text>
+<circle cx="380" cy="145" r="22" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="380" y="150" font-size="14" fill="#047857" text-anchor="middle" font-weight="700">红红</text>
+<text x="410" y="150" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">9/25</text>
+<circle cx="380" cy="245" r="22" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="380" y="250" font-size="14" fill="#047857" text-anchor="middle" font-weight="700">红蓝</text>
+<text x="410" y="250" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">6/25</text>
+<circle cx="380" cy="335" r="22" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="380" y="340" font-size="14" fill="#047857" text-anchor="middle" font-weight="700">蓝红</text>
+<text x="410" y="340" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">6/25</text>
+<circle cx="380" cy="435" r="22" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="380" y="440" font-size="14" fill="#047857" text-anchor="middle" font-weight="700">蓝蓝</text>
+<text x="410" y="440" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">4/25</text>
+<text x="44" y="466" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">分步相乘：P(红红) = 3/5 × 3/5 = 9/25</text>
+<rect x="514" y="82" width="262" height="420" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="534" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">两个动词：分类与分步</text>
+<text x="534" y="146" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">分类（互斥）用加法</text>
+<text x="534" y="170" font-size="15" fill="#2563eb" text-anchor="start" font-weight="700">P(A∪B)=P(A)+P(B)</text>
+<text x="534" y="194" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">A、B 不能同时发生</text>
+<text x="534" y="232" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">分步（独立）用乘法</text>
+<text x="534" y="256" font-size="15" fill="#dc2626" text-anchor="start" font-weight="700">P(AB)=P(A)P(B)</text>
+<text x="534" y="280" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">一次结果不影响另一次</text>
+<text x="534" y="318" font-size="14" fill="#047857" text-anchor="start" font-weight="700">例：同色球</text>
+<text x="534" y="342" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">P = 9/25 + 4/25 = 13/25</text>
+<text x="534" y="366" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">红红与蓝蓝互斥，相加</text>
+<text x="534" y="404" font-size="14" fill="#dc2626" text-anchor="start" font-weight="700">注意</text>
+<text x="534" y="428" font-size="12" fill="#172b42" text-anchor="start" font-weight="500">互斥 ≠ 独立：互斥事件</text>
+<text x="534" y="448" font-size="12" fill="#172b42" text-anchor="start" font-weight="500">同时发生概率为 0，不是 P(A)P(B)</text>
+  <rect x="24" y="518" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="538" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">先判断是分类还是分步，再决定用加法还是乘法；互斥与独立是两个不同的概念。</text>
+</svg>
