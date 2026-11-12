@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">椭圆：定义、a/b/c 与离心率</title>
+  <desc id="description">定义给出距离和，a²=b²+c² 串起三个量，离心率刻画扁平程度。。焦点位置看分母大小：x² 下分母大焦点在 x 轴，y² 下分母大焦点在 y 轴。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="560" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">椭圆：定义、a/b/c 与离心率</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">定义给出距离和，a²=b²+c² 串起三个量，离心率刻画扁平程度。</text>
+  <rect x="24" y="82" width="392" height="400" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">定义与几何量</text>
+<ellipse cx="218" cy="290" rx="150" ry="95" fill="#eef6ff" stroke="#2563eb" stroke-width="2.4"/>
+<circle cx="101.91813" cy="290" r="5" fill="#dc2626" stroke="white" stroke-width="1.5"/>
+<circle cx="334.08187" cy="290" r="5" fill="#dc2626" stroke="white" stroke-width="1.5"/>
+<text x="101.91813" y="314" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="500">F₁(−c,0)</text>
+<text x="334.08187" y="314" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="500">F₂(c,0)</text>
+<line x1="218" y1="290" x2="368" y2="290" stroke="#b45309" stroke-width="2"/>
+<text x="293" y="278" font-size="13" fill="#b45309" text-anchor="middle" font-weight="500">a</text>
+<line x1="218" y1="290" x2="218" y2="195" stroke="#047857" stroke-width="2"/>
+<text x="228" y="242.5" font-size="13" fill="#047857" text-anchor="start" font-weight="500">b</text>
+<line x1="218" y1="290" x2="334.08187" y2="290" stroke="#dc2626" stroke-width="2.5"/>
+<text x="276.04093" y="308" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="500">c</text>
+<text x="218" y="364" font-size="15" fill="#172b42" text-anchor="middle" font-weight="700">a² = b² + c²</text>
+<line x1="101.91813" y1="290" x2="218" y2="195" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
+<line x1="334.08187" y1="290" x2="218" y2="195" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="218" y="398" font-size="14" fill="#50647a" text-anchor="middle" font-weight="500">|PF₁| + |PF₂| = 2a</text>
+<text x="44" y="448" font-size="13" fill="#dc2626" text-anchor="start" font-weight="500">2a &gt; 2c 才是椭圆</text>
+<rect x="434" y="82" width="342" height="400" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="454" y="112" font-size="15" fill="#047857" text-anchor="start" font-weight="700">离心率 e = c/a 决定扁平程度</text>
+<ellipse cx="652" cy="200" rx="52" ry="49.60484" fill="none" stroke="#2563eb" stroke-width="2"/>
+<text x="454" y="198" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">e = 0.3</text>
+<text x="454" y="218" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">较圆</text>
+<ellipse cx="652" cy="292" rx="52" ry="41.6" fill="none" stroke="#b45309" stroke-width="2"/>
+<text x="454" y="290" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">e = 0.6</text>
+<text x="454" y="310" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">变扁</text>
+<ellipse cx="652" cy="384" rx="52" ry="22.66627" fill="none" stroke="#dc2626" stroke-width="2"/>
+<text x="454" y="382" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">e = 0.9</text>
+<text x="454" y="402" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">很扁</text>
+<text x="454" y="470" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">e 越接近 1，c 越接近 a，b 越小</text>
+  <rect x="24" y="498" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="518" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">焦点位置看分母大小：x² 下分母大焦点在 x 轴，y² 下分母大焦点在 y 轴。</text>
+</svg>

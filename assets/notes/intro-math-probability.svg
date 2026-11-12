@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 620" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">有趣的概率：树状图与古典概型</title>
+  <desc id="description">把一次试验拆成几步，路径相乘、同类相加，概率自然出现。。先确认「有限、等可能」两个条件，再套 P(A)=m/n；不等可能时不能直接数个数。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="620" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">有趣的概率：树状图与古典概型</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">把一次试验拆成几步，路径相乘、同类相加，概率自然出现。</text>
+  <rect x="24" y="82" width="470" height="440" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">两枚硬币：4 个等可能结果</text>
+<circle cx="95" cy="300" r="7" fill="#1e293b" stroke="none" stroke-width="1.5"/>
+<text x="95" y="284" font-size="12" fill="#50647a" text-anchor="middle" font-weight="500">开始</text>
+<line x1="95" y1="300" x2="235" y2="205" stroke="#50647a" stroke-width="2"/>
+<text x="139" y="244.5" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="700">1/2</text>
+<line x1="235" y1="205" x2="390" y2="155" stroke="#50647a" stroke-width="2"/>
+<text x="318.5" y="170" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="600">1/2</text>
+<line x1="235" y1="205" x2="390" y2="255" stroke="#50647a" stroke-width="2"/>
+<text x="318.5" y="250" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="600">1/2</text>
+<line x1="95" y1="300" x2="235" y2="395" stroke="#50647a" stroke-width="2"/>
+<text x="139" y="367.5" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="700">1/2</text>
+<line x1="235" y1="395" x2="390" y2="345" stroke="#50647a" stroke-width="2"/>
+<text x="318.5" y="360" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="600">1/2</text>
+<line x1="235" y1="395" x2="390" y2="445" stroke="#50647a" stroke-width="2"/>
+<text x="318.5" y="440" font-size="12" fill="#dc2626" text-anchor="middle" font-weight="600">1/2</text>
+<circle cx="390" cy="155" r="24" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="390" y="160" font-size="15" fill="#047857" text-anchor="middle" font-weight="700">正正</text>
+<text x="422" y="160" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">1/4</text>
+<circle cx="390" cy="255" r="24" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="390" y="260" font-size="15" fill="#047857" text-anchor="middle" font-weight="700">正反</text>
+<text x="422" y="260" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">1/4</text>
+<circle cx="390" cy="345" r="24" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="390" y="350" font-size="15" fill="#047857" text-anchor="middle" font-weight="700">反正</text>
+<text x="422" y="350" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">1/4</text>
+<circle cx="390" cy="445" r="24" fill="#eaf5ef" stroke="#86efac" stroke-width="1.5"/>
+<text x="390" y="450" font-size="15" fill="#047857" text-anchor="middle" font-weight="700">反反</text>
+<text x="422" y="450" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">1/4</text>
+<path d="M 95 300 L 235 205 L 390 255" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="6 4"/>
+<circle cx="95" cy="300" r="6" fill="#dc2626">
+<animate attributeName="cx" values="95;235;390" keyTimes="0;0.5;1" dur="4s" calcMode="linear" repeatCount="indefinite"/>
+<animate attributeName="cy" values="300;205;255" keyTimes="0;0.5;1" dur="4s" calcMode="linear" repeatCount="indefinite"/>
+</circle>
+<g class="still">
+<circle cx="95" cy="300" r="6" fill="#dc2626"/>
+</g>
+<text x="44" y="470" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">每条路径的概率相乘：1/2 × 1/2 = 1/4</text>
+<text x="44" y="500" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">互斥结果相加：P(一正一反) = 1/4 + 1/4 = 1/2</text>
+<rect x="514" y="82" width="262" height="440" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="534" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">古典概型的两个条件</text>
+<text x="534" y="150" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">① 结果有限</text>
+<text x="534" y="172" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">样本点个数是有限的</text>
+<text x="534" y="212" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">② 等可能</text>
+<text x="534" y="234" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">每个样本点出现的可能性相同</text>
+<text x="534" y="262" font-size="20" fill="#dc2626" text-anchor="start" font-weight="800">P(A) = m / n</text>
+<text x="534" y="290" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">m：A 包含的样本点数</text>
+<text x="534" y="312" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">n：全部样本点数</text>
+<text x="534" y="352" font-size="15" fill="#047857" text-anchor="start" font-weight="700">常用技巧</text>
+<text x="534" y="376" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">• 对立事件：P(A) = 1 − P(非A)</text>
+<text x="534" y="400" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">• 分步用乘法，分类用加法</text>
+<text x="534" y="424" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">• 先列样本空间，再数个数</text>
+<text x="534" y="462" font-size="12" fill="#dc2626" text-anchor="start" font-weight="500">概率相同 ≠ 结果个数相同</text>
+  <rect x="24" y="558" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="578" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">先确认「有限、等可能」两个条件，再套 P(A)=m/n；不等可能时不能直接数个数。</text>
+</svg>

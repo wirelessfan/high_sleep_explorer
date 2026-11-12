@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">三类换元法的适用场景</title>
+  <desc id="description">整体、三角、主元，各有一条最适合的路；共同点是先定范围。。范围写错是换元法失分最多的地方：t=x² 不能写成 t∈R。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="540" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">三类换元法的适用场景</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">整体、三角、主元，各有一条最适合的路；共同点是先定范围。</text>
+  <rect x="24" y="82" width="238" height="360" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="40" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="800">整体换元</text>
+<text x="40" y="146" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">t = x² − 1</text>
+<text x="40" y="182" font-size="15" fill="#172b42" text-anchor="start" font-weight="500">y = t² + 3</text>
+<text x="40" y="232" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">• t = x² − 1 ≥ −1</text>
+<text x="40" y="260" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">• y 的最小值在 t = −1 处</text>
+<text x="40" y="288" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">• 此时 x = 0，可以取到</text>
+<rect x="282" y="82" width="238" height="360" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="298" y="112" font-size="16" fill="#2563eb" text-anchor="start" font-weight="800">三角换元</text>
+<text x="298" y="146" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">x = sin θ</text>
+<text x="298" y="182" font-size="15" fill="#172b42" text-anchor="start" font-weight="500">√(1 − x²) = cos θ</text>
+<text x="298" y="232" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">• θ ∈ [−π/2, π/2]</text>
+<text x="298" y="260" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">• 保证 cos θ ≥ 0</text>
+<text x="298" y="288" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">• 开方不用加绝对值</text>
+<rect x="540" y="82" width="238" height="360" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="556" y="112" font-size="16" fill="#b45309" text-anchor="start" font-weight="800">主元变换</text>
+<text x="556" y="146" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">把 a 看作变量</text>
+<text x="556" y="182" font-size="15" fill="#172b42" text-anchor="start" font-weight="500">f = (x² − 1)a + x</text>
+<text x="556" y="232" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">• 关于 a 是一次函数</text>
+<text x="556" y="260" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">• 最值只可能在端点</text>
+<text x="556" y="288" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">• 避免讨论 x 的高次</text>
+<text x="24" y="486" font-size="15" fill="#dc2626" text-anchor="start" font-weight="700">换元前先问：新变量的范围是什么？最后要把结果换回原变量。</text>
+  <rect x="24" y="478" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="498" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">范围写错是换元法失分最多的地方：t=x² 不能写成 t∈R。</text>
+</svg>
