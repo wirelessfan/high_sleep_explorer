@@ -79,6 +79,15 @@ python -m pytest tests -q         # 后端用例
 
 **改内容必跑 `check_content.py`**，它能抓出缺图、答案越界这类问题。
 
+补完档位或加过版块之后，再跑一次：
+
+```bash
+python tools/sync_minutes.py       # 把主题时长重算为「已开放单元累加」的真实值
+python tools/balance_answers.py    # 把正确答案轮换到 A/B/C/D，并同步修正解析里的「第 X 项」
+```
+
+`balance_answers.py` 会在换位时重编号解析中的位置引用，所以**解析里不要写「选 A」这类字母引用**——字母会随换位改变，脚本无法自动修正。
+
 ### 6. 提交并推回 Gitee
 
 ```bash
