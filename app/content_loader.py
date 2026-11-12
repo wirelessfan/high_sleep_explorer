@@ -240,6 +240,22 @@ def topic_pairs(topic_id: str) -> list[tuple[str, str]]:
     return pairs
 
 
+@lru_cache(maxsize=None)
+def topic_minutes(topic_id: str) -> int:
+    """主题全程预计分钟数：逐「已开放单元」累加，与主题页展示口径一致。
+
+    catalog.json / 主题文件顶层的 `minutes` 是历史遗留的单档估值，扩到三档后
+    会严重偏低。这里直接以 section_tier_list 为准，新增档位自动计入，无需手工维护。
+    """
+    data = topic(topic_id)
+    return sum(
+        item["minutes"]
+        for sec in data["sections"]
+        for item in section_tier_list(sec)
+        if item["available"]
+    )
+
+
 def strip_answers(obj: Any) -> Any:
     """递归移除答案类字段，返回可安全下发给前端的副本。"""
     if isinstance(obj, dict):
@@ -252,6 +268,7 @@ def strip_answers(obj: Any) -> Any:
 def clear_cache() -> None:
     catalog.cache_clear()
     topic.cache_clear()
+    topic_minutes.cache_clear()
     cards.cache_clear()
     rewards.cache_clear()
     media.cache_clear()

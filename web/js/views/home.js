@@ -19,6 +19,10 @@ export async function renderHome(view) {
   );
   const next = topics.find((t) => !t.complete) || topics[0];
   const doneToday = checkin.checked_today;
+  /* 三档扩容后主题时长差异很大（36–181 分钟），文案一律按目录实时值算 */
+  const allMinutes = topics.map((t) => t.minutes || 0);
+  const minMinutes = allMinutes.length ? Math.min(...allMinutes) : 0;
+  const maxMinutes = allMinutes.length ? Math.max(...allMinutes) : 0;
 
   const root = el('div', { class: 'stack' });
 
@@ -50,13 +54,13 @@ export async function renderHome(view) {
         el('img', { src: '/assets/art/hero-journey.svg', alt: '', loading: 'eager' }),
         el('span', { class: 'badge', text: '☀️ 今天的探险' }),
       ]),
-      el('div', { class: 'eyebrow', text: '今日 25 分钟' }),
+      el('div', { class: 'eyebrow', text: `今日约 ${mins} 分钟` }),
       el('h2', { text: next.title }),
       el('p', { text: next.description || next.subtitle }),
       el('div', { class: 'meta' }, [
         el('span', { class: `chip ${SUBJECT_CLASS[next.subjectId]}`, text: SUBJECT_LABEL[next.subjectId] }),
         el('span', { class: 'chip', text: `⏱ 约 ${mins} 分钟` }),
-        el('span', { class: 'chip', text: `✓ ${next.done}/${next.total} 版块` }),
+        el('span', { class: 'chip', text: `✓ ${next.done}/${next.total} 单元` }),
       ]),
       el('div', { class: 'row', style: 'margin-top:16px;gap:9px' }, [
         el('button', {
@@ -123,7 +127,7 @@ export async function renderHome(view) {
       ]),
       el('div', { style: 'flex:1' }, [
         el('div', { style: 'font-size:14px;font-weight:800', text: '总体进度' }),
-        el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: `${doneSections}/${totalSections} 个版块 · ${doneTopics}/${totalTopics} 个主题全通` }),
+        el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: `${doneSections}/${totalSections} 个单元 · ${doneTopics}/${totalTopics} 个主题全通` }),
       ]),
     ]),
   ]));
@@ -131,7 +135,7 @@ export async function renderHome(view) {
   /* ---- 各科入口 ---- */
   const sec = el('div', { class: 'section-head' }, [
     el('h3', { text: '按科目' }),
-    el('span', { class: 'hint', text: '每个主题 25 分钟' }),
+    el('span', { class: 'hint', text: `每个主题 ${minMinutes}–${maxMinutes} 分钟` }),
   ]);
   root.appendChild(sec);
 
@@ -172,7 +176,7 @@ export async function renderHome(view) {
   /* ---- 底部小提示 ---- */
   root.appendChild(el('div', {
     style: 'text-align:center;font-size:11px;color:#b6c2d2;padding:10px 0 4px',
-    text: '每天 20–30 分钟，一个主题刚好',
+    text: '每天 20–30 分钟，一个主题慢慢学上一两周',
   }));
 
   view.innerHTML = '';
@@ -244,8 +248,8 @@ function renderDaily(daily) {
   wrap.appendChild(el('div', { class: 'daily-foot' }, [
     el('div', { class: 'row', style: 'gap:6px;flex-wrap:wrap' }, [
       el('span', { class: `chip ${SUBJECT_CLASS[t.subject]}`, text: t.subject_name }),
-      el('span', { class: 'chip', text: `⏱ ${t.minutes} 分钟` }),
-      el('span', { class: 'chip', text: t.complete ? '✓ 已全通' : `${t.done}/${t.total} 版块` }),
+      el('span', { class: 'chip', text: `⏱ 全程 ${t.minutes} 分钟` }),
+      el('span', { class: 'chip', text: t.complete ? '✓ 已全通' : `${t.done}/${t.total} 单元` }),
     ]),
     el('button', {
       class: 'btn sm',
