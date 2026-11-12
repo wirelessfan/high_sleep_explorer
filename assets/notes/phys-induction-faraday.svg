@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 630" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">磁通量与法拉第电磁感应定律</title>
+<desc id="desc">磁通量很大但不变，感应电动势为零；关键是“变化率”。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="450" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">磁通量与法拉第电磁感应定律</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<rect x="30" y="60" width="300" height="300" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<text x="180" y="88" fill="#1e293b" font-size="12.5" font-weight="700" text-anchor="middle">磁通量 Φ = B·S</text>
+<rect x="80" y="110" width="200" height="130" rx="6" fill="#eff6ff" stroke="#93c5fd">
+</rect>
+<path d="M 110 125 L 110 225 M 107 219 L 110 225 L 113 219" stroke="#f59e0b" stroke-width="1.4" fill="none">
+</path>
+<path d="M 150 125 L 150 225 M 147 219 L 150 225 L 153 219" stroke="#f59e0b" stroke-width="1.4" fill="none">
+</path>
+<path d="M 190 125 L 190 225 M 187 219 L 190 225 L 193 219" stroke="#f59e0b" stroke-width="1.4" fill="none">
+</path>
+<path d="M 230 125 L 230 225 M 227 219 L 230 225 L 233 219" stroke="#f59e0b" stroke-width="1.4" fill="none">
+</path>
+<text x="180" y="255" fill="#475569" font-size="12" font-weight="500" text-anchor="middle">线圈面积 S，磁感应强度 B</text>
+<text x="180" y="282" fill="#1e293b" font-size="12" font-weight="700" text-anchor="middle">三种改变 Φ 的方式：</text>
+<text x="180" y="306" fill="#475569" font-size="12" font-weight="500">B 变化 / S 变化 / 夹角变化</text>
+<rect x="350" y="60" width="260" height="300" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<text x="480" y="88" fill="#1e293b" font-size="12.5" font-weight="700" text-anchor="middle">法拉第电磁感应定律</text>
+<text x="480" y="122" fill="#dc2626" font-size="13" font-weight="700" text-anchor="middle">E = n·ΔΦ/Δt</text>
+<text x="480" y="152" fill="#334155" font-size="12" font-weight="500">Φ 不变 → E = 0</text>
+<text x="480" y="176" fill="#334155" font-size="12" font-weight="500">Φ 变化越快 → E 越大</text>
+<text x="480" y="204" fill="#64748b" font-size="12" font-weight="500">n 为线圈匝数</text>
+<text x="480" y="232" fill="#334155" font-size="12" font-weight="500">导线切割：E = BLv</text>
+<text x="480" y="260" fill="#64748b" font-size="12" font-weight="500">（B、L、v 两两垂直）</text>
+<text x="320" y="386" fill="#1e293b" font-size="12" font-weight="700" text-anchor="middle">变化的快慢决定电动势大小，不是 Φ 本身</text>
+<rect x="20" y="410" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="423" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">磁通量很大但不变，感应电动势为零；关键是“变化率”。</text>
+</g>
+</svg>

@@ -15,6 +15,7 @@ DEST = ROOT / 'assets' / 'notes'
 TAU = math.tau
 SAMPLES = 121
 RED, BLUE, GREEN, GOLD, GRAY = '#dc2626', '#2563eb', '#059669', '#d97706', '#475569'
+AMBER, PURPLE = '#d97706', '#7c3aed'
 CHECKS = []
 
 
@@ -181,6 +182,167 @@ def kinematics_plot():
                            '位移差 Δx = aT² 恒定',
                            '中间时刻速度 = 全程平均速度'],
                     footer='纸带求加速度优先用逐差法：把多段位移分成两组相减，减小读数误差。')
+
+
+def kinematics_formulas():
+    """匀变速直线运动三个公式的关系网：五量知三求二。"""
+    diagram = rect(200, 60, 240, 46, '#fef3c7', GOLD)
+    diagram += text(320, 80, '五个物理量：v₀ 、v、a、x、t', '#92400e', 13, 700, 'middle')
+    diagram += text(320, 96, '知任意三个，必能求出另外两个', '#92400e', 12, 500, 'middle')
+    boxes = [(60, 150, 'v = v₀ + at', '速度公式（含 t）', BLUE),
+             (200, 230, 'x = v₀t + ½at²', '位移公式（含 t）', GREEN),
+             (340, 150, 'v² − v₀² = 2ax', '无时间公式（不含 t）', RED)]
+    for x, y, formula, label, color in boxes:
+        diagram += rect(x, y, 240, 60, '#fff', color, 8)
+        diagram += text(x + 120, y + 26, formula, color, 14, 700, 'middle')
+        diagram += text(x + 120, y + 46, label, '#64748b', 11, 500, 'middle')
+    diagram += line(320, 106, 320, 150, GRAY, 1.6)
+    diagram += line(180, 150, 320, 210, GRAY, 1.6, '4 3')
+    diagram += line(460, 150, 320, 210, GRAY, 1.6, '4 3')
+    diagram += text(320, 320, '选题顺序：题目给时间用前两个；没给时间，优先用无时间公式', '#1e293b', 12, 700, 'middle')
+    diagram += text(320, 344, '刹车问题先算“停下时间”，超过就按静止处理', RED, 12, 600, 'middle')
+    return document('运动学 · 三个公式一张网', diagram,
+                                        footer='三个公式都由同一个运动模型推出，遇到多过程题要分段列式。')
+
+
+def newton_friction():
+    """摩擦力判定：静摩擦与滑动摩擦的方向、大小。"""
+    diagram = rect(30, 60, 280, 300, '#fff', '#e2e8f0', 8)
+    diagram += text(170, 86, '静摩擦力', '#166534', 13, 700, 'middle')
+    diagram += text(170, 112, '0 < f ≤ μN', RED, 12, 700, 'middle')
+    diagram += text(170, 136, '方向：与相对运动趋势相反', '#475569', 11.5, 500, 'middle')
+    diagram += text(170, 158, '大小：由平衡或牛二定律求出', '#475569', 11.5, 500, 'middle')
+    diagram += text(170, 180, '随外力变化，自动调节', '#64748b', 11.5, 500, 'middle')
+    diagram += rect(330, 60, 280, 300, '#fff', '#e2e8f0', 8)
+    diagram += text(470, 86, '滑动摩擦力', '#b45309', 13, 700, 'middle')
+    diagram += text(470, 112, 'f = μN', RED, 12, 700, 'middle')
+    diagram += text(470, 136, '方向：与相对运动方向相反', '#475569', 11.5, 500, 'middle')
+    diagram += text(470, 158, '大小：只看 μ 和正压力 N', '#475569', 11.5, 500, 'middle')
+    diagram += text(470, 180, '与接触面积、速度大小无关', '#64748b', 11.5, 500, 'middle')
+    diagram += rect(30, 372, 580, 26, '#fef2f2', '#fecaca', 4)
+    diagram += text(320, 390, '方向可以与运动方向相同：传送带把物体加速带走的摩擦力就是动力', '#b91c1c', 11.5, 700, 'middle')
+    return document('摩擦力 · 静摩擦与滑动摩擦', diagram,
+                                        footer='摩擦力可以做正功：方向由相对运动决定，不由物体运动方向决定。', height=450)
+
+
+def newton_parallelogram():
+    """力的合成分解：平行四边形与三角形法则。"""
+    diagram = rect(30, 60, 280, 300, '#fff', '#e2e8f0', 8)
+    ox, oy = 170, 250
+    diagram += arrow(ox, oy, 130, -60, BLUE, 2.6)
+    diagram += arrow(ox, oy, 60, -110, GREEN, 2.6)
+    diagram += line(ox + 130, oy - 60, ox + 190, oy - 170, '#94a3b8', 1.4, '3 3')
+    diagram += line(ox + 60, oy - 110, ox + 190, oy - 170, '#94a3b8', 1.4, '3 3')
+    diagram += arrow(ox, oy, 190, -170, RED, 2.8)
+    diagram += text(ox + 148, oy - 66, 'F₁', BLUE, 12, 700, 'middle')
+    diagram += text(ox + 40, oy - 124, 'F₂', GREEN, 12, 700, 'middle')
+    diagram += text(ox + 120, oy - 196, 'F合', RED, 13, 700, 'middle')
+    diagram += text(170, 296, '平行四边形定则：合成', '#1e293b', 12, 700, 'middle')
+    diagram += rect(330, 60, 280, 300, '#fff', '#e2e8f0', 8)
+    ox2, oy2 = 470, 250
+    diagram += arrow(ox2, oy2, 150, -120, RED, 2.8)
+    diagram += arrow(ox2, oy2, 150, 0, BLUE, 2.6)
+    diagram += arrow(ox2 + 150, oy2, 0, -120, GREEN, 2.6)
+    diagram += text(ox2 + 160, oy2 + 18, 'F', RED, 12, 700, 'middle')
+    diagram += text(ox2 + 155, oy2 - 8, 'Fx', BLUE, 12, 700, 'middle')
+    diagram += text(ox2 + 90, oy2 - 66, 'Fy', GREEN, 12, 700, 'middle')
+    diagram += text(470, 296, '正交分解：按效果分解', '#1e293b', 12, 700, 'middle')
+    diagram += rect(30, 372, 580, 26, '#eff6ff', '#bfdbfe', 4)
+    diagram += text(320, 390, '合成结果唯一；分解不唯一，沿相互垂直的方向分解最常用', '#1e40af', 11.5, 700, 'middle')
+    return document('力的合成与分解 · 平行四边形与正交分解', diagram, height=450,
+                                        footer='合成的合力范围：|F₁−F₂| ≤ F合 ≤ F₁+F₂，两力垂直时 F合=√(F₁²+F₂²)。')
+
+
+def energy_work_map():
+    """功能关系对应表：哪个力做功，对应哪种能量变化。"""
+    diagram = rect(30, 60, 580, 330, '#fff', '#e2e8f0', 8)
+    diagram += text(320, 88, '做功的力 → 对应变化的能量', '#1e293b', 13, 700, 'middle')
+    rows = [('合外力做功 W合', '→', '动能变化 ΔEk', RED, '动能定理'),
+            ('重力做功 W重', '→', '重力势能变化 −ΔEp', BLUE, 'W重 = −ΔEp'),
+            ('弹簧弹力做功', '→', '弹性势能变化 −ΔEp弹', '#7c3aed', 'W弹 = −ΔEp弹'),
+            ('其他力做功 W其他', '→', '机械能变化 ΔE机', GREEN, 'W其他 = ΔE机'),
+            ('一对滑动摩擦力做功', '→', '内能增加 Q', AMBER, 'Q = f·Δs相对')]
+    y = 108
+    for left, arrow, right, color, note in rows:
+        diagram += rect(46, y, 250, 40, '#f8fafc', '#e2e8f0', 6)
+        diagram += text(171, y + 25, left, '#334155', 12, 700, 'middle')
+        diagram += text(320, y + 25, arrow, '#94a3b8', 13, 700, 'middle')
+        diagram += rect(344, y, 250, 40, '#f8fafc', '#e2e8f0', 6)
+        diagram += text(469, y + 25, right, color, 12, 700, 'middle')
+        diagram += text(320, y + 58, note, '#64748b', 10.5, 500, 'middle')
+        y += 62
+    diagram += text(320, 372, '力做功的过程，就是能量转化的过程', '#1e293b', 12, 700, 'middle')
+    return document('功能关系 · 做功与能量对应表', diagram,
+                                        footer='判断机械能是否守恒：只有重力、弹力做功时守恒；其他力做功必然改变机械能。', height=450)
+
+
+def electric_potential_work():
+    """电场力做功与电势能：正负电荷、顺逆场线。"""
+    diagram = rect(30, 60, 300, 300, '#fff', '#e2e8f0', 8)
+    diagram += text(180, 88, '匀强电场中移动正电荷', '#1e293b', 12.5, 700, 'middle')
+    for x in (90, 150, 210, 270):
+        diagram += arrow(x, 110, 0, 130, '#f59e0b', 1.6)
+    diagram += text(180, 100, '电场线方向 E', '#d97706', 11, 700, 'middle')
+    diagram += arrow(120, 175, 120, 0, RED, 2.6)
+    diagram += text(126, 105, '正电荷顺场线移动', RED, 11, 700)
+    diagram += text(180, 268, '电场力做正功 W>0', '#166534', 11.5, 700, 'middle')
+    diagram += text(180, 290, '电势能减少 ΔEp<0', '#166534', 11.5, 700, 'middle')
+    diagram += rect(350, 60, 260, 300, '#fff', '#e2e8f0', 8)
+    diagram += text(480, 88, '公式与结论', '#1e293b', 12.5, 700, 'middle')
+    diagram += text(480, 118, 'W_AB = qU_AB', RED, 12.5, 700, 'middle')
+    diagram += text(480, 146, '电场力做正功 → 电势能减少', '#334155', 11.5)
+    diagram += text(480, 170, '电场力做负功 → 电势能增加', '#334155', 11.5)
+    diagram += text(480, 198, '负电荷：顺场线移动时', '#334155', 11.5)
+    diagram += text(480, 220, '负电荷则相反', '#334155', 11.5)
+    diagram += text(480, 252, '沿等势面移动电荷', '#334155', 11.5)
+    diagram += text(480, 274, '电场力不做功，电势能不变', '#166534', 11.5, 700)
+    diagram += text(320, 386, '正电荷顺着电场线走，电势能一定减少', '#1e293b', 12, 700, 'middle')
+    return document('电场力做功与电势能', diagram,
+                                        footer='判断电势能变化：先看电场力做功的正负，再看电荷的正负。', height=450)
+
+
+def electric_uniform_field():
+    """平行板电容器：匀强电场与等势面。"""
+    diagram = rect(30, 60, 580, 300, '#fff', '#e2e8f0', 8)
+    diagram += rect(120, 100, 360, 10, '#fee2e2', RED, 2)
+    diagram += text(300, 92, '+ + + + + + + + +（正极板）', RED, 11.5, 700, 'middle')
+    diagram += rect(120, 230, 360, 10, '#dbeafe', BLUE, 2)
+    diagram += text(300, 258, '− − − − − − − − −（负极板）', BLUE, 11.5, 700, 'middle')
+    for x in (150, 210, 270, 330, 390):
+        diagram += arrow(x, 112, 0, 116, '#f59e0b', 1.6)
+    for y in (150, 200, 240):
+        diagram += line(130, y, 470, y, '#10b981', 1.2, '4 3')
+    diagram += text(486, 158, '等势面', '#059669', 11, 700)
+    diagram += text(486, 245, '等势面', '#059669', 11, 700)
+    diagram += text(300, 205, 'E 处处相同（匀强）', '#d97706', 11.5, 700, 'middle')
+    diagram += text(300, 285, 'E = U/d（d 为两板间距离）', '#1d4ed8', 12.5, 700, 'middle')
+    diagram += rect(30, 372, 580, 26, '#eff6ff', '#bfdbfe', 4)
+    diagram += text(320, 390, '等势面与电场线处处垂直；沿电场线方向电势逐渐降低', '#1e40af', 11.5, 700, 'middle')
+    return document('匀强电场 · 平行板电容器', diagram,
+                                        footer='带电粒子垂直射入板间：水平匀速、竖直匀加速，出板后沿切线匀速直线。', height=450)
+
+
+def induction_faraday():
+    """磁通量与法拉第电磁感应定律的定量关系。"""
+    diagram = rect(30, 60, 300, 300, '#fff', '#e2e8f0', 8)
+    diagram += text(180, 88, '磁通量 Φ = B·S', '#1e293b', 12.5, 700, 'middle')
+    diagram += rect(80, 110, 200, 130, '#eff6ff', '#93c5fd', 6)
+    for x in (110, 150, 190, 230):
+        diagram += arrow(x, 125, 0, 100, '#f59e0b', 1.4)
+    diagram += text(180, 255, '线圈面积 S，磁感应强度 B', '#475569', 11, 500, 'middle')
+    diagram += text(180, 282, '三种改变 Φ 的方式：', '#1e293b', 11.5, 700, 'middle')
+    diagram += text(180, 306, 'B 变化 / S 变化 / 夹角变化', '#475569', 11.5)
+    diagram += rect(350, 60, 260, 300, '#fff', '#e2e8f0', 8)
+    diagram += text(480, 88, '法拉第电磁感应定律', '#1e293b', 12.5, 700, 'middle')
+    diagram += text(480, 122, 'E = n·ΔΦ/Δt', RED, 13, 700, 'middle')
+    diagram += text(480, 152, 'Φ 不变 → E = 0', '#334155', 11.5)
+    diagram += text(480, 176, 'Φ 变化越快 → E 越大', '#334155', 11.5)
+    diagram += text(480, 204, 'n 为线圈匝数', '#64748b', 11.5)
+    diagram += text(480, 232, '导线切割：E = BLv', '#334155', 11.5)
+    diagram += text(480, 260, '（B、L、v 两两垂直）', '#64748b', 11.5)
+    diagram += text(320, 386, '变化的快慢决定电动势大小，不是 Φ 本身', '#1e293b', 12, 700, 'middle')
+    return document('磁通量与法拉第电磁感应定律', diagram,
+                                        footer='磁通量很大但不变，感应电动势为零；关键是“变化率”。', height=450)
 
 
 def save(name, content):
@@ -727,7 +889,13 @@ def verify_text_bounds(root, filename):
         anchor=node.attrib.get('text-anchor','start')
         left=x-width/2 if anchor=='middle' else x-width if anchor=='end' else x
         right=left+width
-        if left<0 or right>640 or y<0 or y>410:
+        # 画布高度按 viewBox 反推（diagram 内坐标未乘 1.4 缩放）
+        try:
+            vb_parts=root.attrib.get('viewBox','0 0 640 410').split()
+            max_x=float(vb_parts[2])/1.4; max_y=float(vb_parts[3])/1.4
+        except (ValueError,IndexError):
+            max_x,max_y=640,410
+        if left<0 or right>max_x or y<0 or y>max_y:
             failures.append((value,round(left,1),round(right,1),y))
     assert not failures,(filename,failures)
 
@@ -742,7 +910,12 @@ def main():
         'phys-energy-spring.svg':lambda:spring(False),'phys-energy-spring-anim.svg':spring,
         'intro-physics-energy.svg':pendulum,
         'intro-physics-kinematics.svg':kinematics,'intro-physics-newton.svg':lambda:kinematics(True),
-        'phys-kinematics-plot.svg':kinematics_plot,
+        'phys-kinematics-plot.svg':kinematics_plot,'phys-kinematics-formulas.svg':kinematics_formulas,
+        'phys-newton-friction.svg':newton_friction,'phys-newton-parallelogram.svg':newton_parallelogram,
+        'phys-energy-work-map.svg':energy_work_map,
+        'phys-electric-potential-work.svg':electric_potential_work,
+        'phys-electric-uniform-field.svg':electric_uniform_field,
+        'phys-induction-faraday.svg':induction_faraday,
         'phys-motion-curve-anim.svg':projectile,'phys-electric-deflect-anim.svg':lambda:projectile(True),
         'phys-newton-slope.svg':slope,'phys-newton-slope-anim.svg':lambda:slope(True),
         'phys-newton-weight.svg':weight,'phys-newton-weight-anim.svg':lambda:weight(True),

@@ -10,34 +10,14 @@
   "description": "导数不是公式，是「瞬时变化率」。先看图，再算数。",
   "diagrams": [
     {
-      "src": "/assets/notes/math-cubic-extrema.svg",
-      "title": "三次函数：极大值与极小值",
-      "caption": "f(x)=x³−3x 的极大值在 x=−1、极小值在 x=1，正好对齐 f′(x) 的两个过零点。"
+      "src": "/assets/notes/math-derivative-sign-table.svg",
+      "title": "导数与单调性 · 列表法",
+      "caption": "解 f′=0 分段，列符号表：单调区间与极值同时出现。"
     },
     {
-      "src": "/assets/notes/math-cubic-extrema-anim.svg",
-      "title": "三次函数：切线随动演示",
-      "caption": "切点沿三次曲线移动，切线方向与下方 f′(x) 光点同步变化，可观察极值点处导数为零。"
-    },
-    {
-      "src": "/assets/notes/math-derivative-tangent-anim.svg",
-      "title": "割线逼近切线",
-      "caption": "动点 Q 沿曲线滑向定点 P，割线 PQ 的极限位置就是切线。"
-    },
-    {
-      "src": "/assets/notes/math-tangent-normal.svg",
-      "title": "切线与法线",
-      "caption": "同一个切点处两条直线垂直，斜率互为负倒数，法线斜率是 −1/k。"
-    },
-    {
-      "src": "/assets/notes/math-monotonic-parameter.svg",
-      "title": "含参单调性分类",
-      "caption": "f′(x)=x²−a 在 a<0、a=0、a>0 时的零点个数与单调区间。"
-    },
-    {
-      "src": "/assets/notes/math-zero-count.svg",
-      "title": "零点个数与极值符号",
-      "caption": "三次函数上下平移：极值同号 1 个零点，异号 3 个零点。"
+      "src": "/assets/notes/math-derivative-formulas.svg",
+      "title": "求导公式与法则速查表",
+      "caption": "基本初等函数公式与四则、复合法则都在一页。"
     }
   ],
   "sections": [

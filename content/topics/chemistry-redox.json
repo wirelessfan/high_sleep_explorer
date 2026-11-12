@@ -1058,9 +1058,9 @@
       "caption": "箭头连接同种元素的反应物与生成物，标明得失电子数与氧化还原。"
     },
     {
-      "src": "/assets/notes/chem-redox-bridge-anim.svg",
-      "title": "双线桥逐步标注",
-      "caption": "先标化合价，再引升桥和降桥，最后核对得失电子总数相等。"
+      "src": "/assets/notes/chem-redox-conservation.svg",
+      "title": "电子守恒的定量计算",
+      "caption": "得失电子总数相等；部分参与反应的量要单独说明。"
     }
   ]
 }

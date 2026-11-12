@@ -499,9 +499,9 @@
       "caption": "增大反应物浓度时正反应速率突增，逆反应速率逐渐上升，最后在新位置相等。"
     },
     {
-      "src": "/assets/notes/chem-equilibrium-vt-anim.svg",
-      "title": "正逆速率动态追赶",
-      "caption": "平衡移动的本质是正逆速率暂时不等，直到重新相等。"
+      "src": "/assets/notes/chem-equilibrium-kq.svg",
+      "title": "用 Q 与 K 判断反应方向",
+      "caption": "Q<K 正向进行、Q=K 平衡、Q>K 逆向进行；K 只随温度变化。"
     }
   ]
 }

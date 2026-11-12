@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">两枚骰子：36 个样本点的网格</title>
+  <desc id="description">把所有结果摆成 6×6 的表格，概率就是数格子。。古典概型等可能的前提：两枚骰子互相独立，每格概率同为 1/36。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="580" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">两枚骰子：36 个样本点的网格</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">把所有结果摆成 6×6 的表格，概率就是数格子。</text>
+  <rect x="24" y="82" width="470" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">两枚骰子：36 个等可能结果</text>
+<text x="118" y="140" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">1</text>
+<text x="76" y="183" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">1</text>
+<text x="174" y="140" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">2</text>
+<text x="76" y="239" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">2</text>
+<text x="230" y="140" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">3</text>
+<text x="76" y="295" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">3</text>
+<text x="286" y="140" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">4</text>
+<text x="76" y="351" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">4</text>
+<text x="342" y="140" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">5</text>
+<text x="76" y="407" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">5</text>
+<text x="398" y="140" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">6</text>
+<text x="76" y="463" font-size="12" fill="#50647a" text-anchor="middle" font-weight="700">6</text>
+<rect x="90" y="150" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="118" y="183" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">2</text>
+<rect x="90" y="206" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="118" y="239" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">3</text>
+<rect x="90" y="262" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="118" y="295" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">4</text>
+<rect x="90" y="318" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="118" y="351" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">5</text>
+<rect x="90" y="374" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="118" y="407" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">6</text>
+<rect x="90" y="430" width="56" height="56" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2"/>
+<text x="118" y="463" font-size="13" fill="#b45309" text-anchor="middle" font-weight="700">7</text>
+<rect x="146" y="150" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="174" y="183" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">3</text>
+<rect x="146" y="206" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="174" y="239" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">4</text>
+<rect x="146" y="262" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="174" y="295" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">5</text>
+<rect x="146" y="318" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="174" y="351" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">6</text>
+<rect x="146" y="374" width="56" height="56" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2"/>
+<text x="174" y="407" font-size="13" fill="#b45309" text-anchor="middle" font-weight="700">7</text>
+<rect x="146" y="430" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="174" y="463" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">8</text>
+<rect x="202" y="150" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="230" y="183" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">4</text>
+<rect x="202" y="206" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="230" y="239" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">5</text>
+<rect x="202" y="262" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="230" y="295" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">6</text>
+<rect x="202" y="318" width="56" height="56" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2"/>
+<text x="230" y="351" font-size="13" fill="#b45309" text-anchor="middle" font-weight="700">7</text>
+<rect x="202" y="374" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="230" y="407" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">8</text>
+<rect x="202" y="430" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="230" y="463" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">9</text>
+<rect x="258" y="150" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="286" y="183" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">5</text>
+<rect x="258" y="206" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="286" y="239" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">6</text>
+<rect x="258" y="262" width="56" height="56" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2"/>
+<text x="286" y="295" font-size="13" fill="#b45309" text-anchor="middle" font-weight="700">7</text>
+<rect x="258" y="318" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="286" y="351" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">8</text>
+<rect x="258" y="374" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="286" y="407" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">9</text>
+<rect x="258" y="430" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="286" y="463" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">10</text>
+<rect x="314" y="150" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="342" y="183" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">6</text>
+<rect x="314" y="206" width="56" height="56" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2"/>
+<text x="342" y="239" font-size="13" fill="#b45309" text-anchor="middle" font-weight="700">7</text>
+<rect x="314" y="262" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="342" y="295" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">8</text>
+<rect x="314" y="318" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="342" y="351" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">9</text>
+<rect x="314" y="374" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="342" y="407" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">10</text>
+<rect x="314" y="430" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="342" y="463" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">11</text>
+<rect x="370" y="150" width="56" height="56" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.2"/>
+<text x="398" y="183" font-size="13" fill="#b45309" text-anchor="middle" font-weight="700">7</text>
+<rect x="370" y="206" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="398" y="239" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">8</text>
+<rect x="370" y="262" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="398" y="295" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">9</text>
+<rect x="370" y="318" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="398" y="351" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">10</text>
+<rect x="370" y="374" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="398" y="407" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">11</text>
+<rect x="370" y="430" width="56" height="56" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.2"/>
+<text x="398" y="463" font-size="13" fill="#64748b" text-anchor="middle" font-weight="500">12</text>
+<text x="90" y="516" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">横：第一枚骰子　纵：第二枚骰子　格中数字 = 点数之和</text>
+<text x="90" y="542" font-size="13" fill="#dc2626" text-anchor="start" font-weight="700">黄色对角线：和为 7，共 6 格 → P = 6/36 = 1/6</text>
+<rect x="514" y="82" width="262" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="534" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">为什么画网格</text>
+<text x="534" y="146" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">① 36 个样本点一目了然，不会漏数</text>
+<text x="534" y="176" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">② 任意事件的概率 = 数格子 ÷ 36</text>
+<text x="534" y="206" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">③ 和为 7 的组合最多（6 种），所以最常见</text>
+<text x="534" y="236" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">④ 和为 2 或 12 只有 1 种，最罕见</text>
+<text x="534" y="282" font-size="15" fill="#047857" text-anchor="start" font-weight="700">其他事件的用法</text>
+<text x="534" y="312" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">• 和为偶数：对角线一半，18 格 → 1/2</text>
+<text x="534" y="340" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">• 第一枚为 6：整行 6 格 → 1/6</text>
+<text x="534" y="368" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">• 至少一个 6：36 − 25 = 11 格 → 11/36</text>
+<text x="534" y="428" font-size="12" fill="#dc2626" text-anchor="start" font-weight="500">数格子之前，先确认两枚骰子互相独立</text>
+  <rect x="24" y="518" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="538" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">古典概型等可能的前提：两枚骰子互相独立，每格概率同为 1/36。</text>
+</svg>

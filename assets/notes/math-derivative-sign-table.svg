@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">导数与单调性 · 列表法</title>
+  <desc id="description">解出 f′ 的零点，列一张符号表，单调区间与极值同时出现。。f′ 的零点不一定是极值点：必须看到 f′ 在该点两侧变号。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="500" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">导数与单调性 · 列表法</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">解出 f′ 的零点，列一张符号表，单调区间与极值同时出现。</text>
+  <rect x="24" y="82" width="752" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">例：f(x) = x³ − 3x，f′(x) = 3x² − 3 = 3(x+1)(x−1)</text>
+<rect x="80" y="140" width="530" height="130" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+<text x="145" y="168" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">x</text>
+<text x="275" y="168" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">(−∞,−1)</text>
+<text x="385" y="168" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">−1</text>
+<text x="480" y="168" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">(−1,1)</text>
+<text x="560" y="168" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">1</text>
+<line x1="80" y1="178" x2="610" y2="178" stroke="#cbd5e1" stroke-width="1"/>
+<text x="95" y="206" font-size="13" fill="#dc2626" text-anchor="start" font-weight="700">f′(x)</text>
+<text x="220" y="206" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="700">+</text>
+<text x="330" y="206" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="700">0</text>
+<text x="425" y="206" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="700">−</text>
+<text x="505" y="206" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="700">0</text>
+<text x="590" y="206" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="700">+</text>
+<text x="95" y="236" font-size="13" fill="#2563eb" text-anchor="start" font-weight="700">f(x)</text>
+<text x="220" y="236" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="500">增 ↗</text>
+<text x="330" y="236" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="500">极大值 2</text>
+<text x="425" y="236" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="500">减 ↘</text>
+<text x="505" y="236" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="500">极小值 −2</text>
+<text x="590" y="236" font-size="12.5" fill="#172b42" text-anchor="middle" font-weight="500">增 ↗</text>
+<text x="80" y="296" font-size="14" fill="#dc2626" text-anchor="start" font-weight="700">f′ 由正变负 → 极大值；由负变正 → 极小值</text>
+<text x="80" y="326" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">列完表再画草图：极大值在山峰、极小值在山谷，一目了然</text>
+<rect x="44" y="356" width="712" height="120" rx="10" fill="#f0fdf4" stroke="#cbdcd5"/>
+<text x="64" y="386" font-size="14" fill="#047857" text-anchor="start" font-weight="700">为什么用列表法</text>
+<text x="64" y="414" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">① 解 f′(x)=0，按根把定义域分成几段</text>
+<text x="64" y="438" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">② 每段判断 f′ 的符号（代一个特殊值即可）</text>
+<text x="64" y="462" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">③ 符号变化的分界点就是极值点；不变号则不是极值点</text>
+  <rect x="24" y="438" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="458" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">f′ 的零点不一定是极值点：必须看到 f′ 在该点两侧变号。</text>
+</svg>

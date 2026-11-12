@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">三角换元例题：最大值 √2 是怎么来的</title>
+  <desc id="description">换元、开方、辅助角、定范围，四步一气呵成。。每一步都写出范围，才能说明最大值“取得到”。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="540" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">三角换元例题：最大值 √2 是怎么来的</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">换元、开方、辅助角、定范围，四步一气呵成。</text>
+  <rect x="24" y="82" width="752" height="300" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">例：求 y = x + √(1−x²) 的最大值（|x| ≤ 1）</text>
+<text x="44" y="148" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="500">① 令 x = sinθ，θ ∈ [−π/2, π/2]</text>
+<text x="44" y="176" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="500">② √(1−x²) = √(1−sin²θ) = cosθ（区间内 cosθ ≥ 0）</text>
+<text x="44" y="204" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="500">③ y = sinθ + cosθ = √2·sin(θ + π/4)</text>
+<text x="44" y="232" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="500">④ θ ∈ [−π/2, π/2] 时 θ+π/4 ∈ [−π/4, 3π/4]，最大值在 θ = π/4</text>
+<text x="44" y="260" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="500">⑤ 最大值 y = √2，此时 x = sin(π/4) = √2/2</text>
+<text x="44" y="296" font-size="12.5" fill="#50647a" text-anchor="start" font-weight="500">范围链：θ 的范围决定 θ+π/4 的范围，再定 sin 的最大值——每一步都不能跳</text>
+<rect x="24" y="320" width="752" height="60" rx="10" fill="#fef9c3" stroke="#cbdcd5"/>
+<text x="400" y="348" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="700">易错：不写 θ 的范围，就说不清 sin(θ+π/4) 为什么能取到 1</text>
+<rect x="24" y="400" width="360" height="110" rx="10" fill="#f0fdf4" stroke="#cbdcd5"/>
+<text x="44" y="428" font-size="13.5" fill="#047857" text-anchor="start" font-weight="700">不用换元也行</text>
+<text x="44" y="452" font-size="12" fill="#172b42" text-anchor="start" font-weight="500">y = x + √(1−x²) 的两项平方和为 1，</text>
+<text x="44" y="474" font-size="12" fill="#172b42" text-anchor="start" font-weight="500">柯西不等式给出同样的最大值 √2</text>
+<rect x="404" y="400" width="372" height="110" rx="10" fill="#eff6ff" stroke="#cbdcd5"/>
+<text x="424" y="428" font-size="13.5" fill="#2563eb" text-anchor="start" font-weight="700">适用条件</text>
+<text x="424" y="452" font-size="12" fill="#172b42" text-anchor="start" font-weight="500">√(1−x²) 的存在要求 |x| ≤ 1，</text>
+<text x="424" y="474" font-size="12" fill="#172b42" text-anchor="start" font-weight="500">这正是三角换元能覆盖的范围</text>
+  <rect x="24" y="478" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="498" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">每一步都写出范围，才能说明最大值“取得到”。</text>
+</svg>

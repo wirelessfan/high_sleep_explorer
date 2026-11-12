@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">至少一次：用对立事件一步到位</title>
+  <desc id="description">「至少发生一次」的反面是「一次都没发生」。。前提是各次试验相互独立且概率相同；不独立时不能这样算。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="540" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">至少一次：用对立事件一步到位</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">「至少发生一次」的反面是「一次都没发生」。</text>
+  <rect x="24" y="82" width="752" height="300" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">例：命中率 0.4，射击三次，至少命中一次的概率？</text>
+<rect x="60" y="140" width="240" height="60" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.2"/>
+<text x="180" y="165" font-size="13" fill="#dc2626" text-anchor="700" font-weight="middle">正面硬算：分类相加</text>
+<text x="180" y="188" font-size="12" fill="#7f1d1d" text-anchor="middle" font-weight="500">恰 1 次 + 恰 2 次 + 恰 3 次（三项）</text>
+<rect x="360" y="140" width="240" height="60" fill="#f0fdf4" stroke="#86efac" stroke-width="1.2"/>
+<text x="480" y="165" font-size="13" fill="#047857" text-anchor="700" font-weight="middle">反面巧算：对立事件</text>
+<text x="480" y="188" font-size="12" fill="#14532d" text-anchor="middle" font-weight="500">1 − 三次全不中（一项）</text>
+<text x="180" y="240" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">每次不中 = 0.6，三次全不中 = 0.6³ = 0.216</text>
+<text x="180" y="264" font-size="14" fill="#dc2626" text-anchor="start" font-weight="700">至少命中一次 = 1 − 0.216 = 0.784</text>
+<text x="480" y="240" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">「至少」问题几乎都用这一招</text>
+<text x="480" y="264" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">n 次至少一次 = 1 − (1−p)ⁿ</text>
+<text x="44" y="310" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">为什么反面更快：正面要分「恰 1、恰 2、恰 3」三类分别用组合数计算；反面只有一项。</text>
+<text x="44" y="336" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">同理：至少两次 = 1 − 全不中 − 恰一次；至少 n−1 次 = 1 − 全中 − 恰 n−1 次</text>
+<rect x="24" y="366" width="752" height="130" rx="10" fill="#f0fdf4" stroke="#cbdcd5"/>
+<text x="44" y="396" font-size="14" fill="#047857" text-anchor="start" font-weight="700">什么时候能用：</text>
+<text x="44" y="424" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">① 各次试验相互独立（互不影响）</text>
+<text x="44" y="448" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">② 每次试验的概率相同</text>
+<text x="44" y="472" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">③ 「至少」包含的情形很多时，优先取对立面</text>
+  <rect x="24" y="478" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="498" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">前提是各次试验相互独立且概率相同；不独立时不能这样算。</text>
+</svg>

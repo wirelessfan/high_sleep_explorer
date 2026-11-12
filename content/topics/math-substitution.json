@@ -483,14 +483,14 @@
   ],
   "diagrams": [
     {
-      "src": "/assets/notes/intro-math-substitution.svg",
-      "title": "换元：化繁为简",
-      "caption": "把 x⁴−2x²+1 换成 t²−2t+1，次数立刻降下来。"
+      "src": "/assets/notes/math-substitution-trig-example.svg",
+      "title": "三角换元完整例题",
+      "caption": "x+√(1−x²) 最大值 √2：换元、开方、辅助角、定范围四步一气呵成。"
     },
     {
-      "src": "/assets/notes/math-substitution-flow.svg",
-      "title": "三类换元的适用场景",
-      "caption": "整体、三角、主元各有一条路，共同点是先写范围、最后换回。"
+      "src": "/assets/notes/math-substitution-main-variable.svg",
+      "title": "主元变换",
+      "caption": "参数次数低时把参数当主元，一次函数的端点问题替代分类讨论。"
     }
   ]
 }

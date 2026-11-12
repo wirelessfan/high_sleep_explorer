@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 630" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">力的合成与分解 · 平行四边形与正交分解</title>
+<desc id="desc">合成的合力范围：|F₁−F₂| ≤ F合 ≤ F₁+F₂，两力垂直时 F合=√(F₁²+F₂²)。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="450" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">力的合成与分解 · 平行四边形与正交分解</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<rect x="30" y="60" width="280" height="300" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<path d="M 170 250 L 300 190 M 295.8094 195.2382 L 300 190 L 293.2951 189.7905" stroke="#2563eb" stroke-width="2.6" fill="none">
+</path>
+<path d="M 170 250 L 230 140 M 229.7606 146.7039 L 230 140 L 224.4932 143.8308" stroke="#059669" stroke-width="2.6" fill="none">
+</path>
+<line x1="300" y1="190" x2="360" y2="80" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="3 3">
+</line>
+<line x1="230" y1="140" x2="360" y2="80" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="3 3">
+</line>
+<path d="M 170 250 L 360 80 M 357.5289 86.2365 L 360 80 L 353.5282 81.765" stroke="#dc2626" stroke-width="2.8" fill="none">
+</path>
+<text x="318" y="184" fill="#2563eb" font-size="12" font-weight="700" text-anchor="middle">F₁</text>
+<text x="210" y="126" fill="#059669" font-size="12" font-weight="700" text-anchor="middle">F₂</text>
+<text x="290" y="54" fill="#dc2626" font-size="13" font-weight="700" text-anchor="middle">F合</text>
+<text x="170" y="296" fill="#1e293b" font-size="12" font-weight="700" text-anchor="middle">平行四边形定则：合成</text>
+<rect x="330" y="60" width="280" height="300" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<path d="M 470 250 L 620 130 M 617.1889 136.0908 L 620 130 L 613.4407 131.4056" stroke="#dc2626" stroke-width="2.8" fill="none">
+</path>
+<path d="M 470 250 L 620 250 M 614 253 L 620 250 L 614 247" stroke="#2563eb" stroke-width="2.6" fill="none">
+</path>
+<path d="M 620 250 L 620 130 M 623 136 L 620 130 L 617 136" stroke="#059669" stroke-width="2.6" fill="none">
+</path>
+<text x="630" y="268" fill="#dc2626" font-size="12" font-weight="700" text-anchor="middle">F</text>
+<text x="625" y="242" fill="#2563eb" font-size="12" font-weight="700" text-anchor="middle">Fx</text>
+<text x="560" y="184" fill="#059669" font-size="12" font-weight="700" text-anchor="middle">Fy</text>
+<text x="470" y="296" fill="#1e293b" font-size="12" font-weight="700" text-anchor="middle">正交分解：按效果分解</text>
+<rect x="30" y="372" width="580" height="26" rx="4" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="390" fill="#1e40af" font-size="12" font-weight="700" text-anchor="middle">合成结果唯一；分解不唯一，沿相互垂直的方向分解最常用</text>
+<rect x="20" y="410" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="423" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">合成的合力范围：|F₁−F₂| ≤ F合 ≤ F₁+F₂，两力垂直时 F合=√(F₁²+F₂²)。</text>
+</g>
+</svg>

@@ -419,6 +419,87 @@ def zero_count():
                     content,'不要只画草图数交点：把极值算出来，用符号判断才可靠。',height=580)
 
 
+def equilibrium_kq():
+    """浓度商 Q 与平衡常数 K：三个比较对应三种移动方向。"""
+    content=box(24,82,752,430)
+    content+=text(44,112,'先算浓度商 Q，再与 K 比较',16,GREEN,weight=700)
+    content+=box(44,132,712,58,'#eaf5ef')
+    content+=text(400,162,'对反应 mA + nB ⇌ pC + qD：　Q = c(A)ᵐ·c(B)ⁿ / c(C)ᵖ·c(D)ᑫ',15,INK,'middle',700)
+    rows=[('Q < K','反应物相对偏多','正向进行，直到 Q 增大到 K',RED),
+          ('Q = K','恰好等于平衡常数','处于平衡状态，v正 = v逆',GREEN),
+          ('Q > K','生成物相对偏多','逆向进行，直到 Q 减小到 K',BLUE)]
+    for i,(cmp_,meaning,direction,color) in enumerate(rows):
+        y=220+i*84
+        content+=box(44,y,712,68)
+        content+=text(70,y+26,cmp_,18,color,'start',800)
+        content+=text(150,y+26,meaning,14,INK)
+        content+=text(150,y+48,direction,13,MUTED)
+    content+=text(44,500,'注意：K 只随温度变化；Q 中代入的是任意时刻的浓度。',14,MUTED)
+    return document('化学平衡：用 Q 与 K 判断反应方向','任意时刻都可以计算浓度商 Q，与 K 比较即可判断反应进行的方向。',
+                    content,'Q 中不能代入固体和纯液体的“浓度”；稀释时 Q 如何变化要具体计算。',height=560)
+
+
+def redox_conservation():
+    """电子守恒：氧化剂与还原剂的定量计算流程。"""
+    content=box(24,82,752,430)
+    content+=text(44,112,'核心等式：失电子总数 = 得电子总数',16,GREEN,weight=700)
+    content+=box(44,132,712,58,'#fef9c3')
+    content+=text(400,162,'n(还原剂) × 变价原子数 × 失电子数 = n(氧化剂) × 变价原子数 × 得电子数',14,RED,'middle',700)
+    content+=text(44,222,'例：用 MnO₂ 氧化浓盐酸制 Cl₂（Mn：+4→+2，Cl：−1→0）',14,INK,weight=700)
+    content+=text(44,246,'MnO₂ + 4HCl(浓) → MnCl₂ + Cl₂↑ + 2H₂O',14,INK)
+    content+=text(44,270,'每个 Mn 得 2e⁻，每个 Cl 失 1e⁻，生成 1 个 Cl₂ 失 2e⁻',13,MUTED)
+    content+=text(44,294,'所以 1 mol MnO₂ 恰好氧化 2 mol HCl（被氧化的部分）',13,MUTED)
+    content+=box(44,318,712,58,'#f0fdf4')
+    content+=text(400,348,'参加反应的 4 mol HCl 中，只有 2 mol 被氧化，另外 2 mol 起酸性作用',13,GREEN,'middle',700)
+    content+=text(44,408,'常见应用：',14,INK,weight=700)
+    content+=text(44,432,'① 已知一种物质的量，求另一种物质的量　② 计算转移电子总数　③ 判断过量',13,MUTED)
+    content+=text(44,456,'② 多步反应可以“电子桥”接力：A 失给 B，B 失给 C，则 A 与 C 直接按守恒列式',13,MUTED)
+    return document('氧化还原：电子守恒的定量计算','得失电子总数相等，是氧化还原计算的第一等式。',
+                    content,'先写价态变化，再按守恒列式；部分参与反应的量要单独说明。',height=520)
+
+
+def ionic_amount():
+    """与量有关的离子方程式：少量与过量。"""
+    content=box(24,82,752,430)
+    content+=text(44,112,'经典模型：CO₂ 通入 NaOH 溶液',16,GREEN,weight=700)
+    content+=box(44,132,360,120,'#eff6ff')
+    content+=text(224,158,'CO₂ 少量（NaOH 过量）',14,BLUE,700,'middle')
+    content+=text(224,186,'CO₂ + 2OH⁻ = CO₃²⁻ + H₂O',14,INK,'middle',700)
+    content+=text(224,212,'产物：CO₃²⁻（正盐）',13,MUTED,'middle')
+    content+=box(392,132,360,120,'#fef2f2')
+    content+=text(572,158,'CO₂ 过量（CO₂ 足量）',14,RED,700,'middle')
+    content+=text(572,186,'CO₂ + OH⁻ = HCO₃⁻',14,INK,'middle',700)
+    content+=text(572,212,'产物：HCO₃⁻（酸式盐）',13,MUTED,'middle')
+    content+=text(44,290,'判断方法：“少量”的那种按化学式比例完全消耗，看剩下谁、再反应谁',14,INK,weight=700)
+    content+=text(44,318,'另一模型：Ca(HCO₃)₂ 与 NaOH',14,GREEN,weight=700)
+    content+=text(44,344,'NaOH 少量：Ca²⁺ + OH⁻ + HCO₃⁻ = CaCO₃↓ + H₂O（OH⁻ 只够一半 HCO₃⁻）',13,INK)
+    content+=text(44,370,'NaOH 过量：Ca²⁺ + 2OH⁻ + 2HCO₃⁻ = CaCO₃↓ + 2H₂O + CO₃²⁻',13,INK)
+    content+=text(44,398,'Ca(HCO₃)₂ 与 NaOH 也可反过来看：把少量的写完整，过量的拆成离子',13,MUTED)
+    content+=text(44,432,'Ba(OH)₂ 与 NaHSO₄、AlCl₃ 与 NaOH 等都遵循同一逻辑',13,MUTED)
+    return document('与量有关的离子方程式','少量的物质按化学式比例完全反应，过量的物质有剩余继续反应。',
+                    content,'写完先查原子守恒和电荷守恒；多元酸碱“量”不同，产物不同。',height=500)
+
+
+def mole_na_traps():
+    """NA 判断题的六类高频陷阱。"""
+    content=box(24,82,752,430)
+    content+=text(44,112,'判断「Nₐ 题目」正误，按顺序过五关',16,GREEN,weight=700)
+    traps=[('① 物态','标况下水是液体，不能用 22.4','★ ★ ★'),
+           ('② 可逆反应','2SO₂+O₂⇌2SO₃ 不能说完全转化','★ ★ ★'),
+           ('③ 微粒数','1 mol O₂ 含 2 mol O 原子；Ne 是单原子分子','★ ★'),
+           ('④ 摩尔质量','D₂O 的 M 是 20，不是 18','★ ★'),
+           ('⑤ 反应实质','Fe 与 Cl₂ 生成 FeCl₃（不管量比）','★ ★')]
+    for i,(title,detail,stars) in enumerate(traps):
+        y=140+i*76
+        content+=box(44,y,712,60)
+        content+=text(64,y+22,title,14,BLUE,700)
+        content+=text(64,y+44,detail,13,MUTED)
+        content+=text(720,y+32,stars,12,RED,'end',700)
+    content+=text(44,506,'以上五关全部通过才能选「正确」；任何一关不过，该选项错误。',14,RED,weight=700)
+    return document('NA 判断题 · 五类高频陷阱','每类陷阱都有固定套路：标况液体、可逆、微粒数、摩尔质量、反应产物。',
+                    content,'审题四步：看条件、看物态、看反应可逆与否、看微粒种类。',height=560)
+
+
 def atomic_write(p: Path, content: str):
     p.parent.mkdir(parents=True,exist_ok=True)
     fd,tmp=tempfile.mkstemp(prefix='.'+p.name+'.',suffix='.tmp',dir=p.parent)
@@ -696,6 +777,10 @@ def generated():
         'intro-chemistry-redox.svg':redox_intro(),
         'chem-redox-bridge.svg':redox(),
         'chem-redox-bridge-anim.svg':redox(True),
+        'chem-equilibrium-kq.svg':equilibrium_kq(),
+        'chem-redox-conservation.svg':redox_conservation(),
+        'chem-ionic-amount.svg':ionic_amount(),
+        'chem-mole-na-traps.svg':mole_na_traps(),
     }.items()}
 
 

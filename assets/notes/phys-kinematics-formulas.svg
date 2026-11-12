@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 574" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">运动学 · 三个公式一张网</title>
+<desc id="desc">三个公式都由同一个运动模型推出，遇到多过程题要分段列式。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="410" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">运动学 · 三个公式一张网</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<rect x="200" y="60" width="240" height="46" rx="5" fill="#fef3c7" stroke="#d97706">
+</rect>
+<text x="320" y="80" fill="#92400e" font-size="13" font-weight="700" text-anchor="middle">五个物理量：v₀ 、v、a、x、t</text>
+<text x="320" y="96" fill="#92400e" font-size="12" font-weight="500" text-anchor="middle">知任意三个，必能求出另外两个</text>
+<rect x="60" y="150" width="240" height="60" rx="8" fill="#fff" stroke="#2563eb">
+</rect>
+<text x="180" y="176" fill="#2563eb" font-size="14" font-weight="700" text-anchor="middle">v = v₀ + at</text>
+<text x="180" y="196" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">速度公式（含 t）</text>
+<rect x="200" y="230" width="240" height="60" rx="8" fill="#fff" stroke="#059669">
+</rect>
+<text x="320" y="256" fill="#059669" font-size="14" font-weight="700" text-anchor="middle">x = v₀t + ½at²</text>
+<text x="320" y="276" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">位移公式（含 t）</text>
+<rect x="340" y="150" width="240" height="60" rx="8" fill="#fff" stroke="#dc2626">
+</rect>
+<text x="460" y="176" fill="#dc2626" font-size="14" font-weight="700" text-anchor="middle">v² − v₀² = 2ax</text>
+<text x="460" y="196" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">无时间公式（不含 t）</text>
+<line x1="320" y1="106" x2="320" y2="150" stroke="#475569" stroke-width="1.6">
+</line>
+<line x1="180" y1="150" x2="320" y2="210" stroke="#475569" stroke-width="1.6" stroke-dasharray="4 3">
+</line>
+<line x1="460" y1="150" x2="320" y2="210" stroke="#475569" stroke-width="1.6" stroke-dasharray="4 3">
+</line>
+<text x="320" y="320" fill="#1e293b" font-size="12" font-weight="700" text-anchor="middle">选题顺序：题目给时间用前两个；没给时间，优先用无时间公式</text>
+<text x="320" y="344" fill="#dc2626" font-size="12" font-weight="600" text-anchor="middle">刹车问题先算“停下时间”，超过就按静止处理</text>
+<rect x="20" y="370" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="383" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">三个公式都由同一个运动模型推出，遇到多过程题要分段列式。</text>
+</g>
+</svg>

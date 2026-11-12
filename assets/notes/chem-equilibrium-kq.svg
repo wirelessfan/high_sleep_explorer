@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">化学平衡：用 Q 与 K 判断反应方向</title>
+  <desc id="description">任意时刻都可以计算浓度商 Q，与 K 比较即可判断反应进行的方向。。Q 中不能代入固体和纯液体的“浓度”；稀释时 Q 如何变化要具体计算。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="560" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">化学平衡：用 Q 与 K 判断反应方向</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">任意时刻都可以计算浓度商 Q，与 K 比较即可判断反应进行的方向。</text>
+  <rect x="24" y="82" width="752" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">先算浓度商 Q，再与 K 比较</text>
+<rect x="44" y="132" width="712" height="58" rx="10" fill="#eaf5ef" stroke="#cbdcd5"/>
+<text x="400" y="162" font-size="15" fill="#172b42" text-anchor="middle" font-weight="700">对反应 mA + nB ⇌ pC + qD：　Q = c(A)ᵐ·c(B)ⁿ / c(C)ᵖ·c(D)ᑫ</text>
+<rect x="44" y="220" width="712" height="68" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="70" y="246" font-size="18" fill="#dc2626" text-anchor="start" font-weight="800">Q &lt; K</text>
+<text x="150" y="246" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">反应物相对偏多</text>
+<text x="150" y="268" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">正向进行，直到 Q 增大到 K</text>
+<rect x="44" y="304" width="712" height="68" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="70" y="330" font-size="18" fill="#047857" text-anchor="start" font-weight="800">Q = K</text>
+<text x="150" y="330" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">恰好等于平衡常数</text>
+<text x="150" y="352" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">处于平衡状态，v正 = v逆</text>
+<rect x="44" y="388" width="712" height="68" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="70" y="414" font-size="18" fill="#2563eb" text-anchor="start" font-weight="800">Q &gt; K</text>
+<text x="150" y="414" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">生成物相对偏多</text>
+<text x="150" y="436" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">逆向进行，直到 Q 减小到 K</text>
+<text x="44" y="500" font-size="14" fill="#50647a" text-anchor="start" font-weight="500">注意：K 只随温度变化；Q 中代入的是任意时刻的浓度。</text>
+  <rect x="24" y="498" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="518" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">Q 中不能代入固体和纯液体的“浓度”；稀释时 Q 如何变化要具体计算。</text>
+</svg>

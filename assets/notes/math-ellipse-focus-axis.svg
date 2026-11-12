@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">标准方程与焦点位置</title>
+  <desc id="description">比较两个分母的大小：分母大的方向是长轴，焦点就在那条轴上。。参数没指明焦点位置时，必须分类讨论；这是选择题的常设陷阱。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="560" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">标准方程与焦点位置</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">比较两个分母的大小：分母大的方向是长轴，焦点就在那条轴上。</text>
+  <rect x="24" y="82" width="360" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="15" fill="#2563eb" text-anchor="start" font-weight="800">焦点在 x 轴</text>
+<text x="44" y="148" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">x²/25 + y²/9 = 1</text>
+<text x="44" y="176" font-size="12.5" fill="#50647a" text-anchor="start" font-weight="500">x² 分母 25 大 → 焦点在 x 轴</text>
+<text x="44" y="200" font-size="12.5" fill="#50647a" text-anchor="start" font-weight="500">焦点 (±4, 0)</text>
+<text x="44" y="232" font-size="15" fill="#2563eb" text-anchor="start" font-weight="800">焦点在 y 轴</text>
+<text x="44" y="268" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">x²/9 + y²/16 = 1</text>
+<text x="44" y="296" font-size="12.5" fill="#50647a" text-anchor="start" font-weight="500">y² 分母 16 大 → 焦点在 y 轴</text>
+<text x="44" y="320" font-size="12.5" fill="#50647a" text-anchor="start" font-weight="500">焦点 (0, ±√7)</text>
+<text x="44" y="356" font-size="13" fill="#dc2626" text-anchor="start" font-weight="700">记忆：谁的分母大，长轴就在谁的方向</text>
+<text x="44" y="384" font-size="12.5" fill="#50647a" text-anchor="start" font-weight="500">（a² 永远是较大的分母）</text>
+<rect x="404" y="82" width="372" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="424" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">参数不完整时先讨论</text>
+<text x="424" y="148" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">例：方程 x²/m + y²/4 = 1 表示椭圆，</text>
+<text x="424" y="172" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">且焦点在 x 轴，求 m 的范围。</text>
+<text x="424" y="204" font-size="13" fill="#dc2626" text-anchor="start" font-weight="700">① 焦点在 x 轴：m &gt; 4</text>
+<text x="424" y="232" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">② 表示椭圆（焦点在 y 轴）：0 &lt; m &lt; 4</text>
+<text x="424" y="264" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">③ 若题目说「表示椭圆」不指明焦点：</text>
+<text x="424" y="288" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">m &gt; 0 且 m ≠ 4（两种情形都要算）</text>
+<text x="424" y="324" font-size="15" fill="#047857" text-anchor="start" font-weight="700">高频陷阱</text>
+<text x="424" y="352" font-size="12.5" fill="#dc2626" text-anchor="start" font-weight="500">• 把 m&gt;4 与 0&lt;m&lt;4 混为一谈</text>
+<text x="424" y="378" font-size="12.5" fill="#dc2626" text-anchor="start" font-weight="500">• 忘记 m&gt;0（分母不能为 0 或负）</text>
+<text x="424" y="404" font-size="12.5" fill="#dc2626" text-anchor="start" font-weight="500">• 忽略「焦点位置未指明」需要分类讨论</text>
+  <rect x="24" y="498" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="518" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">参数没指明焦点位置时，必须分类讨论；这是选择题的常设陷阱。</text>
+</svg>

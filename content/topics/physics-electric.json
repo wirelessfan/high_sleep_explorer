@@ -1072,24 +1072,14 @@
   ],
   "diagrams": [
     {
-      "src": "/assets/notes/phys-electric-point-charges.svg",
-      "title": "孤立点电荷的场线与等势面",
-      "caption": "正电荷场线向外、负电荷向内；等势面是以电荷为中心的同心球面。"
+      "src": "/assets/notes/phys-electric-potential-work.svg",
+      "title": "电场力做功与电势能",
+      "caption": "W=qU；电场力做正功电势能减少，负电荷则相反；沿等势面移动 W=0。"
     },
     {
-      "src": "/assets/notes/phys-electric-field.svg",
-      "title": "等量异种电荷的全景场图",
-      "caption": "场线从正电荷出发指向负电荷，与等势线处处正交，中垂面电势为零。"
-    },
-    {
-      "src": "/assets/notes/phys-electric-dipole-pair.svg",
-      "title": "异种与同种电荷的对照",
-      "caption": "异种电荷中垂面电势为零；同种电荷连线中点场强为零，但电势不为零。"
-    },
-    {
-      "src": "/assets/notes/phys-electric-deflect-anim.svg",
-      "title": "带电粒子在偏转电场中",
-      "caption": "板间类平抛：水平匀速、竖直匀加速；出板后沿切线做匀速直线运动。"
+      "src": "/assets/notes/phys-electric-uniform-field.svg",
+      "title": "匀强电场与平行板电容器",
+      "caption": "E=U/d；等势面与电场线垂直；电荷在板间做类平抛运动。"
     }
   ]
 }
