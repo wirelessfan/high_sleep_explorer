@@ -173,3 +173,13 @@ export const getReceivedCards = () => request('/achievements/received');
 /* ---------- 核销权限 ---------- */
 
 export const getVerifyPermission = () => request('/achievements/verify-permission');
+
+
+/* ---------- 错题本 ---------- */
+
+export const getWrongbook = () => request('/wrongbook');
+export const getWrongTopic = (tid) => request(`/wrongbook/${tid}`);
+export const redoWrongbook = (tid, answers) =>
+  request(`/wrongbook/${tid}/redo`, { method: 'POST', body: { answers } });
+export const analyzeWrong = (ids) =>
+  request('/wrongbook/ai', { method: 'POST', body: { ids } });

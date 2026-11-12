@@ -112,6 +112,27 @@ export async function renderMe(view) {
     cal,
   ]));
 
+  /* ---- 错题本入口 ---- */
+  root.appendChild(el('section', {
+    class: 'panel',
+    style: 'cursor:pointer;background:linear-gradient(135deg,#fef5f5,#fff);border-color:#f5cfcf',
+    onclick: () => { location.hash = '#/wrongbook'; },
+  }, [
+    el('div', { class: 'row-between' }, [
+      el('div', { class: 'row', style: 'gap:11px' }, [
+        el('div', {
+          style: 'width:40px;height:40px;border-radius:12px;background:#fee2e2;display:grid;place-items:center;font-size:17px',
+          text: '📕',
+        }),
+        el('div', {}, [
+          el('div', { style: 'font-size:13.5px;font-weight:800', text: '错题本' }),
+          el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: '按主题重做清零 · AI 错误分析与改进建议' }),
+        ]),
+      ]),
+      el('div', { style: 'font-size:18px;color:#d9c8b4', text: '›' }),
+    ]),
+  ]));
+
   /* ---- 每日抽卡入口 ---- */
   root.appendChild(el('section', {
     class: 'panel',

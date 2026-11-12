@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from app import content_loader, db
 from app.routers.session import current_user
-from app.services import grading, gacha, scoring
+from app.services import grading, gacha, scoring, wrongbook
 
 router = APIRouter(tags=["progress"])
 
@@ -98,6 +98,15 @@ def submit(topic_id: str, section_id: str, body: SubmitIn, tier: str = "basic",
                 topic_reward = {**topic_reward, "tickets": topic_reward["tickets"] + boss_tickets}
 
         unlocked = _next_unit(data, topic_id, section_id, tier)
+
+        # 答错的题写入错题本（重复答错累加次数；正常重做版块不清错，
+        # 清零只能走错题本的重做流程，保证清零奖励不被刷）
+        try:
+            wrongbook.record_wrong(conn, user["id"], topic_id, section_id, tier,
+                                   result.get("details", []),
+                                   wrongbook.questions_of(content))
+        except Exception:  # noqa: BLE001 —— 错题记录失败不影响判分主流程
+            pass
 
     details = result.get("details", [])
     skills = grading.weak_skills(details)

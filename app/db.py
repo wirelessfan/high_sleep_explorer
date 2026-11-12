@@ -13,8 +13,9 @@ DB_PATH = Path(os.environ.get("LEARN_DB", Path(__file__).resolve().parent.parent
 # v3 = users 增加 username / password_hash（账号登录）；
 # v4 = progress 增加 tier（基础/进阶/高级三档难度），主键改为四元组；
 #     achievements 增加 source / gifted_from / gifted_at（每日抽卡与赠予）；
-# v5 = achievements 增加 redeemed_by（只有家长可核销）。
-SCHEMA_VERSION = 5
+# v5 = achievements 增加 redeemed_by（只有家长可核销）；
+# v6 = 新增 wrong_questions 错题本。
+SCHEMA_VERSION = 6
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS schema_version (
@@ -109,6 +110,32 @@ CREATE TABLE IF NOT EXISTS achievements (
 );
 
 CREATE INDEX IF NOT EXISTS idx_achv_user ON achievements(user_id, ymd);
+-- 错题本：按 (user, 主题, 版块, 档位, 题目) 唯一，重复答错累加次数
+CREATE TABLE IF NOT EXISTS wrong_questions (
+    id TEXT PRIMARY KEY,           -- wq_<sha1(复合键)[:12]>
+    user_id TEXT NOT NULL,
+    topic_id TEXT NOT NULL,
+    section_id TEXT NOT NULL,
+    tier TEXT NOT NULL DEFAULT 'basic',
+    question_id TEXT NOT NULL,
+    skill TEXT,
+    stem TEXT NOT NULL,            -- 答错时快照
+    options_json TEXT NOT NULL,
+    answer INTEGER NOT NULL,
+    explain TEXT,
+    picked INTEGER NOT NULL,       -- 最近一次的错误选项
+    wrong_count INTEGER NOT NULL DEFAULT 1,
+    status TEXT NOT NULL DEFAULT 'open',   -- open / cleared
+    ai_analysis TEXT,              -- AI 生成 JSON：{misconception, analysis, suggestions}
+    ai_model TEXT,
+    ai_at TEXT,
+    created_at TEXT NOT NULL,
+    last_wrong_at TEXT NOT NULL,
+    cleared_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_wq_user ON wrong_questions(user_id, topic_id, status);
+
 CREATE INDEX IF NOT EXISTS idx_achv_code ON achievements(code);
 
 -- progress / checkins 的复合主键已覆盖 (user_id, ...) 前缀，不需要重复索引。

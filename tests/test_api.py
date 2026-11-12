@@ -877,3 +877,166 @@ def test_cannot_verify_twice(client):
                      json={"code": card["code"]}, headers=dad_h)
     assert r2.status_code == 400
     assert "已经兑现" in r2.json()["detail"]
+
+
+# ---------- 错题本与 AI ----------
+
+def _fail_one_section(client, headers, topic_id="physics-induction", section="quick"):
+    """故意答错一题，制造一条错题记录。返回 (wrong details 数量, 详情)。"""
+    data = content_loader.topic(topic_id)
+    sec = next(s for s in data["sections"] if s["id"] == section)
+    qs = sec["questions"]
+    # 第一题故意选错
+    answers = {q["id"]: q["answer"] for q in qs}
+    first = qs[0]["id"]
+    answers[first] = (qs[0]["answer"] + 1) % len(qs[0]["options"])
+    r = client.post(f"/api/v1/topics/{topic_id}/sections/{section}/submit",
+                    json={"answers": answers}, headers=headers)
+    assert r.status_code == 200
+    return r.json()
+
+
+def test_wrong_question_recorded(client, auth_headers):
+    res = _fail_one_section(client, auth_headers)
+    wrongs = [d for d in res["details"] if not d["correct"]]
+    assert len(wrongs) == 1
+
+    wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    assert wb["summary"]["open_total"] == 1
+    assert wb["items"][0]["topic_id"] == "physics-induction"
+    assert wb["items"][0]["stem"], "错题应带题干快照"
+    assert wb["items"][0]["options"], "错题应带选项快照"
+    # 快照里不能有答案字段泄露给前端选择区（answer 字段是核分用的，前端只在已提交后展示）
+    assert "picked" in wb["items"][0]
+
+
+def test_wrong_question_accumulates(client, auth_headers):
+    """同一题再答错：wrong_count 累加，不新增行。"""
+    _fail_one_section(client, auth_headers)
+    res = _fail_one_section(client, auth_headers)  # 复习重做，又错同一题
+    wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    assert wb["summary"]["open_total"] == 1
+    assert wb["items"][0]["wrong_count"] == 2
+
+
+def test_redo_clears_and_rewards(client, auth_headers):
+    """错题重做全对 → 清零 + 奖励；重复清零当天不再发奖。"""
+    _fail_one_section(client, auth_headers)
+    wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    tid = wb["summary"]["topics"][0]["topic_id"]
+    item = wb["items"][0]
+
+    me0 = client.get("/api/v1/me", headers=auth_headers).json()
+    r = client.post(f"/api/v1/wrongbook/{tid}/redo",
+                    json={"answers": {item["id"]: item["answer"]}}, headers=auth_headers)
+    assert r.status_code == 200, r.text
+    d = r.json()
+    assert d["cleared"] == 1
+    assert d["remaining"] == 0
+    assert d["bonus"] == 20
+
+    me1 = client.get("/api/v1/me", headers=auth_headers).json()
+    assert me1["points"] == me0["points"] + 20
+
+    # 同一主题当天再清零不发奖（此时无错题，应直接 400）
+    r2 = client.post(f"/api/v1/wrongbook/{tid}/redo",
+                     json={"answers": {item["id"]: item["answer"]}}, headers=auth_headers)
+    assert r2.status_code == 400
+    assert "没有待清零" in r2.json()["detail"]
+
+
+def test_redo_wrong_again_accumulates(client, auth_headers):
+    """重做时又错：不清零、wrong_count 继续 +1。"""
+    _fail_one_section(client, auth_headers)
+    wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    tid = wb["summary"]["topics"][0]["topic_id"]
+    item = wb["items"][0]
+
+    wrong_pick = (item["answer"] + 1) % len(item["options"])
+    r = client.post(f"/api/v1/wrongbook/{tid}/redo",
+                    json={"answers": {item["id"]: wrong_pick}}, headers=auth_headers)
+    assert r.status_code == 200
+    d = r.json()
+    assert d["cleared"] == 0
+    assert d["re_wrong"] == 1
+    assert d["bonus"] == 0
+
+    wb2 = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    assert wb2["items"][0]["wrong_count"] == 2
+    assert wb2["items"][0]["picked"] == wrong_pick
+
+
+def test_redo_requires_answers(client, auth_headers):
+    """跳题（未答）不会清零。"""
+    _fail_one_section(client, auth_headers)
+    wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    tid = wb["summary"]["topics"][0]["topic_id"]
+    item = wb["items"][0]
+
+    r = client.post(f"/api/v1/wrongbook/{tid}/redo",
+                    json={"answers": {}}, headers=auth_headers)
+    assert r.status_code == 200
+    d = r.json()
+    assert d["results"][0]["skipped"] is True
+    assert d["cleared"] == 0
+
+
+def test_ai_disabled_returns_503(client, auth_headers, monkeypatch):
+    from app.services import ai_client
+    monkeypatch.setattr(ai_client, "API_KEY", "")
+    _fail_one_section(client, auth_headers)
+    wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    wq_id = wb["items"][0]["id"]
+    r = client.post("/api/v1/wrongbook/ai", json={"ids": [wq_id]}, headers=auth_headers)
+    assert r.status_code == 503
+
+
+def test_ai_analyze_with_stub(client, auth_headers, monkeypatch):
+    """无 Key 时走 stub 路径，验证缓存与结构。"""
+    from app.services import ai_client
+    monkeypatch.setattr(ai_client, "API_KEY", "test-key")
+    monkeypatch.setattr(ai_client, "analyze", ai_client.analyze_stub)
+
+    _fail_one_section(client, auth_headers)
+    wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    wq_id = wb["items"][0]["id"]
+
+    r = client.post("/api/v1/wrongbook/ai", json={"ids": [wq_id]}, headers=auth_headers)
+    assert r.status_code == 200
+    d = r.json()
+    v = d["results"][0]["value"]
+    assert v["stub"] is True
+    assert "analysis" in v and "suggestions" in v
+
+    # 结果已缓存进行
+    wb2 = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    assert wb2["items"][0]["ai"]["analysis"] == v["analysis"]
+
+    # 再次请求同一题：缓存命中，不再产生新事件
+    r2 = client.post("/api/v1/wrongbook/ai", json={"ids": [wq_id]}, headers=auth_headers)
+    assert r2.json()["results"][0]["cached"] is True
+
+
+def test_ai_batch_cap_five(client, auth_headers, monkeypatch):
+    from app.services import ai_client
+    monkeypatch.setattr(ai_client, "API_KEY", "test-key")
+    monkeypatch.setattr(ai_client, "analyze", ai_client.analyze_stub)
+
+    r = client.post("/api/v1/wrongbook/ai",
+                    json={"ids": ["wq_1", "wq_2", "wq_3", "wq_4", "wq_5", "wq_6"]},
+                    headers=auth_headers)
+    assert r.status_code == 200
+    assert len(r.json()["results"]) == 5, "单次最多分析 5 题"
+
+
+def test_wrongbook_isolated_between_users(client):
+    """错题按用户隔离。"""
+    _make_account(client, "dad", "123456", "爸爸")
+    h1, _ = _login_as(client, "sunny")
+    h2, _ = _login_as(client, "dad")
+    _fail_one_section(client, h1)
+
+    wb1 = client.get("/api/v1/wrongbook", headers=h1).json()
+    wb2 = client.get("/api/v1/wrongbook", headers=h2).json()
+    assert wb1["summary"]["open_total"] == 1
+    assert wb2["summary"]["open_total"] == 0
