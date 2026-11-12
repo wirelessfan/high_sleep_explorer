@@ -280,7 +280,7 @@
       "grade": "高二",
       "minutes": 25,
       "cover": "probability",
-      "reward_card": "euler",
+      "reward_card": "pascal",
       "description": "概率不是玄学，是把「有多少种可能」数清楚。先列样本空间，再谈可能性。",
       "sections": [
         "quick",
@@ -299,7 +299,7 @@
       "grade": "高二",
       "minutes": 25,
       "cover": "ellipse",
-      "reward_card": "descartes",
+      "reward_card": "kepler",
       "description": "把一根绳子的两端固定，用笔绷紧画一圈，得到的就是椭圆。",
       "sections": [
         "quick",
@@ -337,7 +337,7 @@
       "grade": "高一",
       "minutes": 25,
       "cover": "trig",
-      "reward_card": "archimedes",
+      "reward_card": "ptolemy",
       "description": "三角函数公式多，但都能从单位圆里读出来。记住坐标与符号，公式忘了也能自己推。",
       "sections": [
         "quick",

@@ -272,6 +272,54 @@
       "trivia": "他的电离学说在博士答辩上被评为「荒谬」，分数勉强及格；十七年后，同一个理论为他赢得诺贝尔化学奖。",
       "topic": "chemistry-ionic",
       "section": "boss"
+    },
+    {
+      "id": "pascal",
+      "name": "帕斯卡",
+      "en": "Blaise Pascal",
+      "life": "1623–1662",
+      "subject": "math",
+      "rarity": "SR",
+      "image": "pascal.jpg",
+      "set": "mathmasters",
+      "quote": "人是一根会思想的芦苇。",
+      "contribution": "与费马的通信奠定概率论；提出帕斯卡定律；16 岁写出圆锥曲线论文。",
+      "textbook": "必修 · 概率与统计；拓展 · 帕斯卡定律（液体压强）",
+      "trivia": "赌徒分金币的难题，被他写成了与费马的通信——概率论就此诞生。",
+      "topic": "math-probability",
+      "section": "boss"
+    },
+    {
+      "id": "kepler",
+      "name": "开普勒",
+      "en": "Johannes Kepler",
+      "life": "1571–1630",
+      "subject": "math",
+      "rarity": "R",
+      "image": "kepler.jpg",
+      "set": "sky",
+      "quote": "我曾测量天空，如今丈量大地的阴影。",
+      "contribution": "行星运动三定律：椭圆轨道、面积定律、调和定律，为万有引力铺路。",
+      "textbook": "必修二 · 万有引力与航天；数学 · 椭圆及其标准方程",
+      "trivia": "为了火星轨道，他把几十种圆的组合都试遍了，才被迫接受椭圆。",
+      "topic": "math-ellipse",
+      "section": "boss"
+    },
+    {
+      "id": "ptolemy",
+      "name": "托勒密",
+      "en": "Claudius Ptolemy",
+      "life": "约 100–170",
+      "subject": "math",
+      "rarity": "N",
+      "image": "ptolemy.jpg",
+      "set": "sky",
+      "quote": "用最简单的圆，去拯救繁杂的天象。",
+      "contribution": "《天文学大成》确立地心体系；托勒密定理与弦表是三角函数的前身。",
+      "textbook": "拓展 · 三角函数（弦表）；拓展 · 圆内接四边形",
+      "trivia": "地心体系统治天文学约 1400 年，他那张星表记录了 1022 颗恒星。",
+      "topic": "math-trig",
+      "section": "boss"
     }
   ]
 }

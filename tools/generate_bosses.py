@@ -179,7 +179,7 @@ CAST = [
          taunt="cos 变 sin 还是不变？先看 k 的奇偶！",
          purified="它把四步流程刻在墙上：名、号、象限、符号。"),
     dict(topic="math-trig", subject="math", section="boss",
-         tier="big", name="托勒密", en="Ptolemy", card_id="archimedes",
+         tier="big", name="托勒密", en="Ptolemy", card_id="ptolemy", look="ptolemy_face",
          element="弦表与天文", staff="orb", skill="弦长审判",
          taunt="在没有计算器的年代，我把每个角的正弦都算了出来。",
          purified="他把弦表递给你：从单位圆出发，角就有了数值。"),
@@ -210,7 +210,7 @@ CAST = [
          taunt="先乘还是先加？你分得清分步和分类吗？",
          purified="枝干理顺：分步相乘、分类相加。"),
     dict(topic="math-probability", subject="math", section="boss",
-         tier="big", name="帕斯卡", en="Blaise Pascal", card_id="euler", look="pascal_face",
+         tier="big", name="帕斯卡", en="Blaise Pascal", card_id="pascal", look="pascal_face",
          element="概率论奠基", staff="orb", skill="赌金审判",
          taunt="赌局中断了，赌金该怎么分？想清楚再回答。",
          purified="他收起算筹：你已学会用等可能来衡量未知。"),
@@ -241,7 +241,7 @@ CAST = [
          taunt="弦过焦点，周长就一定是 4a 吗？",
          purified="图形归位：焦点三角形周长 2a+2c。"),
     dict(topic="math-ellipse", subject="math", section="boss",
-         tier="big", name="开普勒", en="Johannes Kepler", card_id="descartes", look="kepler_face",
+         tier="big", name="开普勒", en="Johannes Kepler", card_id="kepler", look="kepler_face",
          element="行星轨道", staff="orb", skill="椭圆审判",
          taunt="行星的轨道不是圆，而是椭圆。你敢改写教科书吗？",
          purified="他把星图递给你：从此椭圆有了天空。"),
@@ -1251,7 +1251,7 @@ def render_big(role: dict, c: dict) -> str:
                    'stroke-width="2.4" stroke-linecap="round"/>'),
         ),
         # 托勒密：短卷发 + 头带，短须
-        "archimedes": dict(
+        "ptolemy_face": dict(
             badge="A",
             hair=('<path d="M84 92 q0 -40 36 -40 q36 0 36 40 q-16 -16 -36 -16 q-20 0 -36 16z" '
                   'fill="#57534e" stroke="#1e293b" stroke-width="2.4"/>'

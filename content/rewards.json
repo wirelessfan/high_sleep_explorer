@@ -120,11 +120,12 @@
       "points": 50
     },
     "mathmasters": {
-      "name": "数学三杰",
+      "name": "数学名家",
       "cards": [
         "gauss",
         "euler",
-        "ramanujan"
+        "ramanujan",
+        "pascal"
       ],
       "points": 50
     },
@@ -142,6 +143,14 @@
         "coulomb",
         "mendeleev",
         "arrhenius"
+      ],
+      "points": 50
+    },
+    "sky": {
+      "name": "观天者",
+      "cards": [
+        "kepler",
+        "ptolemy"
       ],
       "points": 50
     }

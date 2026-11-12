@@ -495,7 +495,7 @@
         "main": "#f59e0b",
         "accent": "#fb7185"
       },
-      "card_id": "archimedes"
+      "card_id": "ptolemy"
     },
     {
       "id": "math-probability-quick",
@@ -615,7 +615,7 @@
         "main": "#f59e0b",
         "accent": "#fb7185"
       },
-      "card_id": "euler"
+      "card_id": "pascal"
     },
     {
       "id": "math-ellipse-quick",
@@ -735,7 +735,7 @@
         "main": "#f59e0b",
         "accent": "#fb7185"
       },
-      "card_id": "descartes"
+      "card_id": "kepler"
     },
     {
       "id": "math-substitution-quick",

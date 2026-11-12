@@ -225,5 +225,5 @@ LEARN_DB=/path/to/app.db python tools/seed_users.py
 
 ## 七、许可
 
-人物肖像来自 Wikimedia Commons，均为 Public Domain，来源记录见 [实施计划.md](实施计划.md) 附录 15.1。
+人物肖像来自 Wikimedia Commons：17 张为 Public Domain，托勒密 1 张为 Wellcome Collection 的 CC BY 4.0 版画（需署名，已登记于 [实施计划.md](实施计划.md) 附录 15.1）。
 卡通插画（`assets/art/`）与 Boss 立绘（`assets/bosses/`）为原创 SVG。
