@@ -92,9 +92,12 @@ def analyze(q: dict, picked: int) -> dict:
     """调用 AI 生成 {misconception, analysis, suggestions}。
 
     抛出 RuntimeError 表示调用失败（网络/HTTP 错误）。
+    LEARN_AI_STUB=1 时走占位实现（预览/演示环境用，不调用外部服务）。
     """
     if not enabled():
         raise RuntimeError("AI 服务未配置（缺少 LEARN_AI_KEY）")
+    if os.environ.get("LEARN_AI_STUB") == "1":
+        return analyze_stub(q, picked)
 
     messages = _build_messages(q, picked)
     with httpx.Client(timeout=TIMEOUT) as client:
