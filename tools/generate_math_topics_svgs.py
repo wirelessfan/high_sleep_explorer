@@ -451,6 +451,168 @@ def trig_induction():
                         height=580)
 
 
+def euler_intro():
+    """复平面上的单位圆：e^(iθ) 的轨迹，实部是 cosθ，虚部是 sinθ。"""
+    content = box(24, 82, 470, 430)
+    content += text(44, 112, '复平面：e^(iθ) 在单位圆上转圈', 16, GREEN, weight=700)
+    cx, cy, r = 250, 300, 150
+    content += line(70, cy, 440, cy, MUTED, 1.8)
+    content += line(cx, 130, cx, 470, MUTED, 1.8)
+    content += ('<circle cx="%s" cy="%s" r="%s" fill="none" stroke="%s" stroke-width="2.4"/>'
+                % (cx, cy, r, BLUE))
+    content += text(446, cy + 20, '实轴', 12, INK)
+    content += text(cx + 10, 126, '虚轴', 12, INK)
+    # 标记 −1
+    content += circle(cx - r, cy, 4, GREEN, 'white')
+    content += text(cx - r, cy + 22, '−1', 13, GREEN, 'middle', 700)
+
+    angles = [math.pi / 3 + 2 * math.pi * i / 160 for i in range(161)]
+    xs = [cx + r * math.cos(a) for a in angles]
+    ys = [cy - r * math.sin(a) for a in angles]
+    content += '<g class="motion">'
+    content += ('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="2">'
+                % (cx, cy, num(xs[0]), num(ys[0]), AMBER))
+    content += animate('x2', xs) + animate('y2', ys) + '</line>'
+    content += ('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="3">'
+                % (num(xs[0]), cy, num(xs[0]), num(ys[0]), RED))
+    content += animate('x1', xs) + animate('x2', xs) + animate('y2', ys) + '</line>'
+    content += ('<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="3">'
+                % (cx, num(ys[0]), num(xs[0]), num(ys[0]), GREEN))
+    content += animate('y1', ys) + animate('y2', ys) + animate('x2', xs) + '</line>'
+    content += '<circle cx="%s" cy="%s" r="7" fill="%s">' % (num(xs[0]), num(ys[0]), RED)
+    content += animate('cx', xs) + animate('cy', ys) + '</circle></g>'
+    sx_, sy_ = cx + r * math.cos(math.pi / 3), cy - r * math.sin(math.pi / 3)
+    content += ('<g class="still"><circle cx="%s" cy="%s" r="7" fill="%s"/>'
+                '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="3"/>'
+                '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="3"/>'
+                '<line x1="%s" y1="%s" x2="%s" y2="%s" stroke="%s" stroke-width="2"/></g>'
+                % (num(sx_), num(sy_), RED,
+                   num(sx_), cy, num(sx_), num(sy_), RED,
+                   cx, num(sy_), num(sx_), num(sy_), GREEN,
+                   cx, cy, num(sx_), num(sy_), AMBER))
+    content += text(cx - 22, cy + 20, 'O', 12, MUTED)
+    content += text(44, 478, '红竖线 = 虚部 sinθ　绿横线 = 实部 cosθ', 13, INK)
+
+    content += box(514, 82, 262, 430)
+    content += text(534, 112, '欧拉公式', 16, GREEN, weight=700)
+    content += text(534, 152, 'e^(iθ) = cosθ + i·sinθ', 17, RED, weight=800)
+    content += text(534, 186, 'θ = π 时：e^(iπ) = −1', 14, INK)
+    content += text(534, 210, '即 e^(iπ) + 1 = 0', 14, INK)
+    content += text(534, 252, '为什么重要', 15, GREEN, weight=700)
+    for i, tip in enumerate(['把指数函数搬到了圆上', '乘法变成旋转', 'sin 与 cos 是它的投影']):
+        content += text(534, 280 + i * 26, '• ' + tip, 13, INK)
+    content += text(534, 380, '|e^(iθ)| = 1', 15, AMBER, weight=700)
+    content += text(534, 402, '模长恒为 1，只会转圈', 12, MUTED)
+    content += text(534, 448, 'θ 每增加 2π，回到原点', 12, MUTED)
+    return sci.document('欧拉公式：指数函数在圆上走',
+                        'e^(iθ) 的实部是 cosθ、虚部是 sinθ，所以它的轨迹是单位圆。',
+                        content,
+                        '欧拉公式不是定义，而是由泰勒级数推导出来的恒等式。',
+                        height=580)
+
+
+def euler_identity():
+    """e^(iπ)+1=0：五个常数如何被一个式子串起来。"""
+    content = box(24, 82, 430, 400)
+    content += text(44, 112, '从 1 出发，转半圈到 −1', 16, GREEN, weight=700)
+    cx, cy, r = 239, 300, 145
+    content += line(70, cy, 408, cy, MUTED, 1.6)
+    content += line(cx, 150, cx, 450, MUTED, 1.6)
+    content += ('<circle cx="%s" cy="%s" r="%s" fill="none" stroke="%s" stroke-width="2.2"/>'
+                % (cx, cy, r, BLUE))
+    right, left = (cx + r, cy), (cx - r, cy)
+    content += circle(right[0], right[1], 5, RED, 'white')
+    content += text(right[0] + 10, right[1] - 10, '1', 14, RED, weight=700)
+    content += circle(left[0], left[1], 5, GREEN, 'white')
+    content += text(left[0] - 18, left[1] - 10, '−1', 14, GREEN, weight=700)
+    content += path('M %s %s A %s %s 0 0 0 %s %s' % (right[0], right[1], r, r, left[0], left[1]),
+                    AMBER, 2.4, 'marker-end="url(#arrow)"')
+    content += text(cx, 128, '旋转 π（半圈）', 13, AMBER, 'middle', 700)
+    content += text(cx, cy + 26, 'O', 12, MUTED)
+
+    content += box(474, 82, 302, 400)
+    content += text(494, 112, '五个常数，一个式子', 16, GREEN, weight=700)
+    content += text(494, 150, 'e^(iπ) + 1 = 0', 19, RED, weight=800)
+    rows = [('e', '自然常数 ≈2.718', '增长的底'),
+            ('i', '虚数单位，i²=−1', '旋转 90°'),
+            ('π', '圆周率 ≈3.14159', '转半圈'),
+            ('1', '乘法单位元', '起点'),
+            ('0', '加法单位元', '回到原点')]
+    for i, (sym, desc, role) in enumerate(rows):
+        y = 192 + i * 48
+        content += text(494, y, sym, 15, INK, weight=800)
+        content += text(520, y, desc, 12, MUTED)
+        content += text(700, y, role, 11, GREEN, 'end')
+    content += text(494, 458, '五个常数来自完全不同的领域，却在这一个等式里相遇。', 11, MUTED)
+    return sci.document('欧拉恒等式：五个常数的一次相遇',
+                        'e^(iπ) 表示从 1 出发转半圈，落点正好是 −1，再移项就得到恒等式。',
+                        content,
+                        '这个式子被称为「最美公式」，因为它把增长、旋转、圆、单位与零连在了一起。',
+                        height=560)
+
+
+def euler_series():
+    """泰勒级数三行相加：e^(iθ) 的实部是 cos，虚部是 sin。"""
+    content = box(24, 82, 752, 430)
+    content += text(44, 112, '把三个级数摆在一起看', 16, GREEN, weight=700)
+    rows = [('e^(iθ)', '1 + iθ − θ²/2! − iθ³/3! + θ⁴/4! + iθ⁵/5! − …', BLUE),
+            ('cosθ', '1 − θ²/2! + θ⁴/4! − …', RED),
+            ('sinθ', 'θ − θ³/3! + θ⁵/5! − …', GREEN)]
+    for i, (name, series, color) in enumerate(rows):
+        y = 160 + i * 74
+        content += text(60, y, name, 16, color, weight=800)
+        content += text(150, y, '=', 15, MUTED)
+        content += text(178, y, series, 15, INK)
+    content += text(44, 400, '上面一行按 i 的幂次分组：不含 i 的项合起来正好是 cosθ，含 i 的项合起来正好是 sinθ。', 13, MUTED)
+    content += box(44, 420, 712, 62, '#fef9c3', '#facc15')
+    content += text(400, 448, 'cosθ + i·sinθ = e^(iθ)', 18, RED, 'middle', 800)
+    content += text(400, 470, '两边实部相等、虚部相等，这就是欧拉公式', 12, MUTED, 'middle')
+    return sci.document('泰勒级数：欧拉公式是怎么来的',
+                        '把 e^(iθ) 展开，按实部和虚部重新分组，恰好得到余弦与正弦。',
+                        content,
+                        '这里的推导只在形式上操作级数；严格证明还需要说明级数收敛与可交换性。',
+                        height=600)
+
+
+def euler_rotation():
+    """乘 i 就是旋转 90°：z → iz → i²z = −z。"""
+    content = box(24, 82, 470, 430)
+    content += text(44, 112, '乘 i 两次 = 转 180°', 16, GREEN, weight=700)
+    ox, oy, scale = 250, 300, 100
+    content += line(70, oy, 440, oy, MUTED, 1.6)
+    content += line(ox, 140, ox, 460, MUTED, 1.6)
+    z = (1.0, 0.5)
+    pts = [('z', z, BLUE), ('iz', (-z[1], z[0]), AMBER), ('i²z = −z', (-z[0], -z[1]), RED)]
+    for name, (a, b), color in pts:
+        x, y = ox + a * scale, oy - b * scale
+        content += line(ox, oy, x, y, color, 2.6)
+        content += circle(x, y, 5, color, 'white')
+        if name.startswith('i²'):
+            content += text(x - 10, y + 22, name, 13, color, 'end', 700)
+        else:
+            content += text(x + 10, y - 10, name, 13, color, weight=700)
+    content += text(ox - 20, oy + 20, 'O', 12, MUTED)
+    content += text(44, 478, '每次乘 i，向量逆时针转 90°；乘 i² 等于转 180°，所以 i² = −1。', 13, INK)
+
+    content += box(514, 82, 262, 430)
+    content += text(534, 112, '乘法 = 旋转 + 伸缩', 16, GREEN, weight=700)
+    content += text(534, 148, 'z·e^(iθ)', 17, RED, weight=800)
+    content += text(534, 176, '模长乘 1，角度加 θ', 13, INK)
+    content += text(534, 204, '｜z·e^(iθ)｜ = ｜z｜', 13, MUTED)
+    content += text(534, 246, '特例', 15, GREEN, weight=700)
+    content += text(534, 274, 'θ=π/2：乘 i，转 90°', 13, INK)
+    content += text(534, 300, 'θ=π：乘 −1，转 180°', 13, INK)
+    content += text(534, 326, 'θ=2π：乘 1，转回原处', 13, INK)
+    content += text(534, 374, '这就解释了', 15, GREEN, weight=700)
+    content += text(534, 402, 'i²=i·i 转两次 90°', 13, INK)
+    content += text(534, 426, '= 转 180° = 乘 −1', 13, INK)
+    return sci.document('复数乘法：旋转的另一种写法',
+                        '乘以 e^(iθ) 就是逆时针旋转 θ；i² = −1 只是「转两个 90°」的代数版本。',
+                        content,
+                        '把乘法看成旋转，很多复数恒等式会立刻变得直观。',
+                        height=580)
+
+
 DOCS = {
     'intro-math-probability.svg': probability_intro,
     'intro-math-ellipse.svg': ellipse_intro,
@@ -462,6 +624,10 @@ DOCS = {
     'math-trig-special.svg': trig_special,
     'math-trig-astc.svg': trig_astc,
     'math-trig-induction.svg': trig_induction,
+    'intro-math-euler.svg': euler_intro,
+    'math-euler-identity.svg': euler_identity,
+    'math-euler-series.svg': euler_series,
+    'math-euler-rotation.svg': euler_rotation,
 }
 
 

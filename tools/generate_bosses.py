@@ -121,6 +121,37 @@ CAST = [
          element="放射性研究", staff="flask", skill="恒心审判",
          taunt="没有什么可怕的，只有值得理解的东西。",
          purified="她把发光的烧瓶放在你手里：别怕，慢慢来。"),
+    # ===== 数学之美 · 欧拉公式 =====
+    dict(topic="math-euler", subject="math", section="quick",
+         name="虚数豆", en="Imagy", element="i 的误解", shape="round",
+         head="bulb", prop="epsilon", overlay="spark", skill="平方错觉",
+         taunt="i 的平方是 1 还是 −1？想清楚再动。",
+         purified="它把自己转 90°：两次之后正好朝反方向。"),
+    dict(topic="math-euler", subject="math", section="basic",
+         name="复平面兽", en="Planey", element="坐标混乱", shape="round",
+         head="grid", prop="segment", overlay="grid", skill="实虚不分",
+         taunt="实部虚部混在一起，你还看得懂吗？",
+         purified="坐标分开：横实纵虚，一目了然。"),
+    dict(topic="math-euler", subject="math", section="summary",
+         name="圆周灵", en="Circly", element="指数迷航", shape="ghost",
+         head="field", prop="none", overlay="waves", skill="旋转迷雾",
+         taunt="指数函数怎么会画出一个圆？",
+         purified="雾气成环：e^(iθ) 的轨迹就是单位圆。"),
+    dict(topic="math-euler", subject="math", section="hard",
+         name="恒等式妖", en="Ident", element="符号误读", shape="round",
+         head="mirror", prop="arrows", overlay="reverse", skill="符号反转",
+         taunt="e^(iπ)+1=0，可 e 明明是正数啊？",
+         purified="镜面合一：指数取复值，结果可以是负数。"),
+    dict(topic="math-euler", subject="math", section="practice",
+         name="旋转匠", en="Spinner", element="乘法误解", shape="tank",
+         head="gear", prop="crank", overlay="cogs", skill="角度叠加",
+         taunt="复数相乘，凭什么就变成旋转了？",
+         purified="齿轮咬合：模长相乘、角度相加。"),
+    dict(topic="math-euler", subject="math", section="boss",
+         tier="big", name="欧拉", en="Leonhard Euler", card_id="euler", look="euler_face",
+         element="数学之美", staff="orb", skill="恒等式审判",
+         taunt="盲眼之后，我还能口述公式。你，能看懂它吗？",
+         purified="他把笔递给你：美不需要解释，但值得证明。"),
     # ===== 数学 · 三角函数这样记 =====
     dict(topic="math-trig", subject="math", section="quick",
          name="弧度豆", en="Radian", element="角度弧度混用", shape="round",
@@ -179,7 +210,7 @@ CAST = [
          taunt="先乘还是先加？你分得清分步和分类吗？",
          purified="枝干理顺：分步相乘、分类相加。"),
     dict(topic="math-probability", subject="math", section="boss",
-         tier="big", name="帕斯卡", en="Blaise Pascal", card_id="euler",
+         tier="big", name="帕斯卡", en="Blaise Pascal", card_id="euler", look="pascal_face",
          element="概率论奠基", staff="orb", skill="赌金审判",
          taunt="赌局中断了，赌金该怎么分？想清楚再回答。",
          purified="他收起算筹：你已学会用等可能来衡量未知。"),
@@ -210,7 +241,7 @@ CAST = [
          taunt="弦过焦点，周长就一定是 4a 吗？",
          purified="图形归位：焦点三角形周长 2a+2c。"),
     dict(topic="math-ellipse", subject="math", section="boss",
-         tier="big", name="开普勒", en="Johannes Kepler", card_id="descartes",
+         tier="big", name="开普勒", en="Johannes Kepler", card_id="descartes", look="kepler_face",
          element="行星轨道", staff="orb", skill="椭圆审判",
          taunt="行星的轨道不是圆，而是椭圆。你敢改写教科书吗？",
          purified="他把星图递给你：从此椭圆有了天空。"),
@@ -1176,7 +1207,7 @@ def render_big(role: dict, c: dict) -> str:
                    'stroke-width="2.4" stroke-linecap="round"/>'),
         ),
         # 帕斯卡：短发 + 小胡子，神情克制
-        "euler": dict(
+        "pascal_face": dict(
             badge="P",
             hair=('<path d="M86 88 q4 -36 34 -36 q30 0 34 36 q-14 -16 -34 -16 q-20 0 -34 16z" '
                   'fill="#334155" stroke="#1e293b" stroke-width="2.4"/>'
@@ -1192,7 +1223,7 @@ def render_big(role: dict, c: dict) -> str:
                    'stroke-width="2.3" stroke-linecap="round"/>'),
         ),
         # 开普勒：灰白长发 + 大胡子
-        "descartes": dict(
+        "kepler_face": dict(
             badge="K",
             hair=('<path d="M82 96 q-6 -48 38 -48 q44 0 38 48 q-12 -22 -38 -22 q-26 0 -38 22z" '
                   'fill="#e2e8f0" stroke="#1e293b" stroke-width="2.4"/>'
@@ -1233,8 +1264,24 @@ def render_big(role: dict, c: dict) -> str:
             mouth=('<path d="M112 132 h16" fill="none" stroke="#1e293b" '
                    'stroke-width="2.2" stroke-linecap="round"/>'),
         ),
+        # 欧拉：假发 + 圆帽，badge E
+        "euler_face": dict(
+            badge="E",
+            hair=('<path d="M78 98 q-8 -54 42 -54 q50 0 42 54 q-14 -26 -42 -26 q-28 0 -42 26z" '
+                  'fill="#e2e8f0" stroke="#1e293b" stroke-width="2.4"/>'
+                  '<path d="M78 100 q-8 28 -2 44 M162 100 q8 28 2 44" fill="none" '
+                  'stroke="#e2e8f0" stroke-width="9" stroke-linecap="round"/>'
+                  '<path d="M92 66 q28 -10 56 0" fill="none" stroke="#94a3b8" '
+                  'stroke-width="6" stroke-linecap="round"/>'),
+            face=('<path d="M104 106 q8 -4 14 0 M132 106 q8 -4 14 0" fill="none" '
+                  'stroke="#334155" stroke-width="2.6" stroke-linecap="round"/>'
+                  '<path d="M102 140 q18 10 36 0" fill="none" stroke="#cbd5e1" '
+                  'stroke-width="5" stroke-linecap="round"/>'),
+            mouth=('<path d="M112 132 q8 5 16 0" fill="none" stroke="#1e293b" '
+                   'stroke-width="2.3" stroke-linecap="round"/>'),
+        ),
     }
-    look = LOOK[role["card_id"]]
+    look = LOOK[role.get("look") or role["card_id"]]
     parts = [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 280" width="240" height="280" '
         'role="img" aria-label="' + role["name"] + ' 大 Boss">',

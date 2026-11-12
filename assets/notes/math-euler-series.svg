@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">泰勒级数：欧拉公式是怎么来的</title>
+  <desc id="description">把 e^(iθ) 展开，按实部和虚部重新分组，恰好得到余弦与正弦。。这里的推导只在形式上操作级数；严格证明还需要说明级数收敛与可交换性。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="600" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">泰勒级数：欧拉公式是怎么来的</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">把 e^(iθ) 展开，按实部和虚部重新分组，恰好得到余弦与正弦。</text>
+  <rect x="24" y="82" width="752" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">把三个级数摆在一起看</text>
+<text x="60" y="160" font-size="16" fill="#2563eb" text-anchor="start" font-weight="800">e^(iθ)</text>
+<text x="150" y="160" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">=</text>
+<text x="178" y="160" font-size="15" fill="#172b42" text-anchor="start" font-weight="500">1 + iθ − θ²/2! − iθ³/3! + θ⁴/4! + iθ⁵/5! − …</text>
+<text x="60" y="234" font-size="16" fill="#dc2626" text-anchor="start" font-weight="800">cosθ</text>
+<text x="150" y="234" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">=</text>
+<text x="178" y="234" font-size="15" fill="#172b42" text-anchor="start" font-weight="500">1 − θ²/2! + θ⁴/4! − …</text>
+<text x="60" y="308" font-size="16" fill="#047857" text-anchor="start" font-weight="800">sinθ</text>
+<text x="150" y="308" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">=</text>
+<text x="178" y="308" font-size="15" fill="#172b42" text-anchor="start" font-weight="500">θ − θ³/3! + θ⁵/5! − …</text>
+<text x="44" y="400" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">上面一行按 i 的幂次分组：不含 i 的项合起来正好是 cosθ，含 i 的项合起来正好是 sinθ。</text>
+<rect x="44" y="420" width="712" height="62" rx="10" fill="#fef9c3" stroke="#facc15"/>
+<text x="400" y="448" font-size="18" fill="#dc2626" text-anchor="middle" font-weight="800">cosθ + i·sinθ = e^(iθ)</text>
+<text x="400" y="470" font-size="12" fill="#50647a" text-anchor="middle" font-weight="500">两边实部相等、虚部相等，这就是欧拉公式</text>
+  <rect x="24" y="538" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="558" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">这里的推导只在形式上操作级数；严格证明还需要说明级数收敛与可交换性。</text>
+</svg>

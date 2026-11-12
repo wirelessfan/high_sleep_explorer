@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">复数乘法：旋转的另一种写法</title>
+  <desc id="description">乘以 e^(iθ) 就是逆时针旋转 θ；i² = −1 只是「转两个 90°」的代数版本。。把乘法看成旋转，很多复数恒等式会立刻变得直观。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="580" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">复数乘法：旋转的另一种写法</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">乘以 e^(iθ) 就是逆时针旋转 θ；i² = −1 只是「转两个 90°」的代数版本。</text>
+  <rect x="24" y="82" width="470" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">乘 i 两次 = 转 180°</text>
+<line x1="70" y1="300" x2="440" y2="300" stroke="#50647a" stroke-width="1.6"/>
+<line x1="250" y1="140" x2="250" y2="460" stroke="#50647a" stroke-width="1.6"/>
+<line x1="250" y1="300" x2="350" y2="250" stroke="#2563eb" stroke-width="2.6"/>
+<circle cx="350" cy="250" r="5" fill="#2563eb" stroke="white" stroke-width="1.5"/>
+<text x="360" y="240" font-size="13" fill="#2563eb" text-anchor="start" font-weight="700">z</text>
+<line x1="250" y1="300" x2="200" y2="200" stroke="#b45309" stroke-width="2.6"/>
+<circle cx="200" cy="200" r="5" fill="#b45309" stroke="white" stroke-width="1.5"/>
+<text x="210" y="190" font-size="13" fill="#b45309" text-anchor="start" font-weight="700">iz</text>
+<line x1="250" y1="300" x2="150" y2="350" stroke="#dc2626" stroke-width="2.6"/>
+<circle cx="150" cy="350" r="5" fill="#dc2626" stroke="white" stroke-width="1.5"/>
+<text x="140" y="372" font-size="13" fill="#dc2626" text-anchor="end" font-weight="700">i²z = −z</text>
+<text x="230" y="320" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">O</text>
+<text x="44" y="478" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">每次乘 i，向量逆时针转 90°；乘 i² 等于转 180°，所以 i² = −1。</text>
+<rect x="514" y="82" width="262" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="534" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">乘法 = 旋转 + 伸缩</text>
+<text x="534" y="148" font-size="17" fill="#dc2626" text-anchor="start" font-weight="800">z·e^(iθ)</text>
+<text x="534" y="176" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">模长乘 1，角度加 θ</text>
+<text x="534" y="204" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">｜z·e^(iθ)｜ = ｜z｜</text>
+<text x="534" y="246" font-size="15" fill="#047857" text-anchor="start" font-weight="700">特例</text>
+<text x="534" y="274" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">θ=π/2：乘 i，转 90°</text>
+<text x="534" y="300" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">θ=π：乘 −1，转 180°</text>
+<text x="534" y="326" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">θ=2π：乘 1，转回原处</text>
+<text x="534" y="374" font-size="15" fill="#047857" text-anchor="start" font-weight="700">这就解释了</text>
+<text x="534" y="402" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">i²=i·i 转两次 90°</text>
+<text x="534" y="426" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">= 转 180° = 乘 −1</text>
+  <rect x="24" y="518" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="538" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">把乘法看成旋转，很多复数恒等式会立刻变得直观。</text>
+</svg>

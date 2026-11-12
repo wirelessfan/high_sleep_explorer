@@ -34,6 +34,7 @@
       "color": "#F59E0B",
       "icon": "∑",
       "topics": [
+        "math-euler",
         "math-derivative",
         "math-probability",
         "math-ellipse",
@@ -43,6 +44,25 @@
     }
   ],
   "topics": [
+    {
+      "id": "math-euler",
+      "subject": "math",
+      "title": "欧拉公式之美",
+      "subtitle": "数学之美 · 番外篇：单位圆与最美恒等式",
+      "grade": "高二",
+      "minutes": 25,
+      "cover": "euler",
+      "reward_card": "euler",
+      "description": "数学之美番外篇：一个指数函数，为什么会在复平面上画出一个圆？",
+      "sections": [
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
+      ]
+    },
     {
       "id": "physics-kinematics",
       "subject": "physics",
