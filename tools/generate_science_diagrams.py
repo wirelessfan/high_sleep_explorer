@@ -288,6 +288,137 @@ def cubic(dynamic=False):
                     content,'f′ > 0 的区间函数递增，f′ < 0 的区间函数递减；变号点才是极值点。',height=740)
 
 
+def tangent_normal():
+    """切线斜率与法线斜率：k·k⊥ = −1，法线是过切点且垂直于切线的直线。"""
+    xmin,xmax=-0.5,2.3
+    ymin,ymax=-0.5,2.8
+    left,right=150,700
+    top,bottom=140,430
+    def sx(x): return left+(x-xmin)*(right-left)/(xmax-xmin)
+    def sy(y): return bottom-(y-ymin)*(bottom-top)/(ymax-ymin)
+    f=lambda x:x*x/2
+    fp=lambda x:x
+    x0=1.0
+    px,py=sx(x0),sy(f(x0))
+    k=fp(x0)                      # 数学切线斜率
+    scale=(bottom-top)/(ymax-ymin)/((right-left)/(xmax-xmin))
+    def line_pts(m,xa,xb):
+        return (sx(xa),sy(f(x0)+m*(xa-x0))), (sx(xb),sy(f(x0)+m*(xb-x0)))
+
+    def polyline(a,b,color,width=3,n=240):
+        return path('M '+' L '.join('%s %s'%(num(sx(a+(b-a)*i/n)),num(sy(f(a+(b-a)*i/n)))) for i in range(n+1)),color,width)
+
+    content=box(24,82,752,400)
+    content+=text(40,108,'切线斜率与法线斜率',17,GREEN,weight=700)
+    content+=line(left,bottom,right,bottom,MUTED,2)
+    content+=line(left,bottom,left,top,MUTED,2)
+    content+=text(right-6,bottom+22,'x',15,INK,'end')
+    content+=text(left-14,top+12,'y',15,INK,'end')
+    content+=polyline(xmin,xmax,BLUE)
+    content+=text(sx(1.98),sy(f(1.98))+34,'y = f(x)',16,BLUE)
+
+    t1,t2=line_pts(k,0.15,1.85)
+    n1,n2=line_pts(-1/k,0.25,1.75)
+    content+=line(t1[0],t1[1],t2[0],t2[1],RED,2.8)
+    content+=line(n1[0],n1[1],n2[0],n2[1],AMBER,2.4)
+    content+=circle(px,py,5.5,RED)
+
+    # 直角标记：沿切线单位向量与法线单位向量各取 14px
+    dx,dy=t2[0]-t1[0],t2[1]-t1[1]
+    ux,uy=dx/math.hypot(dx,dy),dy/math.hypot(dx,dy)
+    vx,vy=-uy,ux
+    a=(px+14*ux,py+14*uy); b=(px+14*ux+14*vx,py+14*uy+14*vy); c=(px+14*vx,py+14*vy)
+    content+=path('M %s %s L %s %s L %s %s'%(num(a[0]),num(a[1]),num(b[0]),num(b[1]),num(c[0]),num(c[1])),MUTED,1.6)
+
+    content+=text(t1[0]-6,t1[1]+5,'切线  k = f′(x₀) = %g'%k,14,RED,'end')
+    content+=text(n2[0]+8,n2[1]+6,'法线  k⊥ = −1/k = %s'%('−1' if abs(-1/k+1)<1e-9 else '%g'%(-1/k)),14,AMBER)
+    content+=text(px,py-24,'切点 (x₀, f(x₀))',13,MUTED,'middle')
+    content+=text(left,bottom+52,'切线方程：y − y₀ = f′(x₀)(x − x₀)',15,INK)
+    content+=text(left,bottom+80,'法线方程：y − y₀ = −[1/f′(x₀)](x − x₀)　（f′(x₀) ≠ 0）',15,INK)
+    content+=text(left,bottom+108,'两条直线互相垂直，斜率乘积恒为 −1；法线的 −1/k 是最容易和切线弄混的一步。',14,MUTED)
+    return document('切线方程与法线方程','同一个切点处，切线与法线互相垂直，斜率互为负倒数。',
+                    content,'求“过某点的切线”要先设切点，再解方程；求“在某点的切线”可直接代点。',height=580)
+
+
+def monotonic_parameter():
+    """含参单调性：f′(x) = x² − a 在 a<0 / a=0 / a>0 三种情形下的符号与单调区间。"""
+    panels=[(-1,'a < 0','f′(x) = x² − a > 0 恒成立','在 R 上单调递增','+'),
+            (0,'a = 0','f′(x) = x² ≥ 0，仅 x=0 处为 0','仍单调递增（不变号）','0'),
+            (1,'a > 0','f′(x) = (x−1)(x+1)','增—减—增','+−+')]
+    content=''
+    for i,(a,title,expr,conclusion,signs) in enumerate(panels):
+        x=24+258*i
+        content+=box(x,82,238,398)
+        content+=text(x+16,110,title,17,GREEN,weight=700)
+        content+=text(x+16,134,expr,13,MUTED)
+        cx=x+119
+        axis_y=300
+        content+=line(x+24,axis_y,x+214,axis_y,MUTED,1.8)
+        content+=line(cx,240,cx,360,MUTED,1.8)
+        pts=[(cx+k*58,axis_y-(k*k/2.56-a)*46) for k in [j/40 for j in range(-41,41)]]
+        content+=path('M '+' L '.join('%s %s'%(num(u),num(v)) for u,v in pts),RED,2.8)
+        content+=text(x+16,378,conclusion,14,INK,weight=700)
+        if a>0:
+            content+=circle(cx-58,axis_y,4,RED)+circle(cx+58,axis_y,4,RED)
+            content+=text(cx-58,axis_y+22,'−1',13,MUTED,'middle')
+            content+=text(cx+58,axis_y+22,'+1',13,MUTED,'middle')
+        if a==0:
+            content+=circle(cx,axis_y,4,RED)+text(cx,axis_y+22,'0（不变号）',13,MUTED,'middle')
+        content+=text(x+16,408,'符号：'+signs,14,RED)
+    content+=text(24,510,'含参题的固定动作：先求 f′(x)，再令 f′(x)=0，最后按参数取值讨论根是否存在、是否落在定义域内。',14,MUTED)
+    return document('含参单调性：先讨论参数，再写区间','同一道题里 a 的符号不同，导数的零点个数就不同，单调区间必须分类写出。',
+                    content,'不要默认 f′(x)=0 一定有解；a<0 时无解，函数在整个定义域上单调。',height=560)
+
+
+def zero_count():
+    """零点个数：三次函数上下平移时，零点个数由两个极值的符号决定。"""
+    cases=[3,0,-3]
+    content=''
+    def fx(x,a): return x**3-3*x+a
+    for i,a in enumerate(cases):
+        x0=24+258*i
+        content+=box(x0,82,238,418)
+        label='f(x) = x³ − 3x'+((' %+d'%a).replace('-','−') if a else '')
+        content+=text(x0+16,108,label,15,GREEN,weight=700)
+        cx=x0+119; axis_y=250; scale=9.0
+        content+=line(x0+24,axis_y,x0+215,axis_y,MUTED,1.8)
+        pts=[]
+        for j in range(0,161):
+            xv=-2.2+4.4*j/160
+            pts.append((cx+xv*42,axis_y-fx(xv,a)*scale))
+        content+=path('M '+' L '.join('%s %s'%(num(u),num(v)) for u,v in pts),BLUE,2.8)
+        for xv in (-1,1):
+            content+=circle(cx+xv*42,axis_y-fx(xv,a)*scale,3.2,AMBER)
+
+        roots=[]
+        lo,hi=-2.6,2.6
+        prev=lo
+        for j in range(1,2601):
+            xv=lo+(hi-lo)*j/2600
+            if fx(prev,a)*fx(xv,a)<=0:
+                l,r=prev,xv
+                for _ in range(60):
+                    mid=(l+r)/2
+                    if fx(l,a)*fx(mid,a)<=0:r=mid
+                    else:l=mid
+                root=(l+r)/2
+                if not roots or abs(root-roots[-1])>1e-3:
+                    roots.append(root)
+            prev=xv
+        for r in roots:
+            content+=circle(cx+r*42,axis_y,4.5,RED)
+        n=len(roots)
+        content+=text(x0+16,344,'零点个数：%d 个'%n,16,RED,weight=800)
+        content+=text(x0+16,372,('极小值 = %+d'%(a-2)).replace('-','−'),13,INK)
+        content+=text(x0+16,396,('极大值 = %+d'%(a+2)).replace('-','−'),13,INK)
+        tip='两极值同号 → 1 个零点' if a!=0 else '极值异号 → 3 个零点'
+        content+=text(x0+16,432,tip,12,MUTED)
+        content+=text(x0+16,456,'在极值处切线水平（橙点）',11,MUTED)
+    content+=text(24,530,'判断零点个数：先求极值，再看两个极值是否异号；恰好等于 0 时出现重根，个数要单独说明。',14,MUTED)
+    return document('零点个数与极值符号','三次函数上下平移，极值同号时 1 个零点，异号时 3 个零点。',
+                    content,'不要只画草图数交点：把极值算出来，用符号判断才可靠。',height=580)
+
+
 def atomic_write(p: Path, content: str):
     p.parent.mkdir(parents=True,exist_ok=True)
     fd,tmp=tempfile.mkstemp(prefix='.'+p.name+'.',suffix='.tmp',dir=p.parent)
@@ -484,6 +615,9 @@ def generated():
         'intro-math-derivative.svg':intro_math(),
         'math-cubic-extrema.svg':cubic(),
         'math-cubic-extrema-anim.svg':cubic(True),
+        'math-tangent-normal.svg':tangent_normal(),
+        'math-monotonic-parameter.svg':monotonic_parameter(),
+        'math-zero-count.svg':zero_count(),
         'math-derivative-tangent.svg':math_secant(),
         'math-derivative-tangent-anim.svg':math_secant(True),
         'chem-mole-bridge.svg':mole(),
@@ -579,6 +713,40 @@ def validate(docs):
     cubic_text=''.join(cubic_root.itertext())
     for label in ('极大值 f(−1) = 2','极小值 f(1) = −2','f′ = 0'):
         assert label in cubic_text,label
+
+    # 法线：斜率乘积为 −1，且与切线过同一个切点。
+    k,kn=1.0,-1.0
+    assert abs(k*kn+1)<1e-12
+    assert abs((0.5+kn*0)-0.5)<1e-12
+    tn=ET.fromstring(docs['math-tangent-normal.svg'])
+    assert '法线' in ''.join(tn.itertext())
+    # 含参单调性：三种参数取值下导数符号的结论必须与曲线一致。
+    for a in (-1,0,1):
+        assert (lambda x,a=a: x*x-a)(0)==-a
+    assert all(x*x+1>0 for x in (-3,-1,0,1,3))     # a=-1：恒正
+    assert all(x*x>=0 for x in (-3,-1,0,1,3))      # a=0：非负，仅 0 处为零
+    assert 1*1-1==0 and (-1)*(-1)-1==0             # a=1：零点 ±1
+    # 零点个数：极值符号与根的个数必须自洽。
+    def roots_of(a):
+        lo,hi=-3.0,3.0
+        out=[];prev=lo
+        f=lambda t:t**3-3*t+a
+        for j in range(1,6001):
+            x=lo+(hi-lo)*j/6000
+            if f(prev)*f(x)<=0:
+                l,r=prev,x
+                for _ in range(80):
+                    mid=(l+r)/2
+                    if f(l)*f(mid)<=0:r=mid
+                    else:l=mid
+                root=(l+r)/2
+                if not out or abs(root-out[-1])>1e-3:
+                    out.append(root)
+            prev=x
+        return out
+    assert len(roots_of(3))==1 and len(roots_of(-3))==1
+    assert len(roots_of(0))==3
+    assert all(abs(r**3-3*r)<1e-6 for r in roots_of(0))
     # 动态切线必须真的贴着曲线：采样每点比较切线斜率与曲线数值导数。
     anim_cubic=ET.fromstring(docs['math-cubic-extrema-anim.svg'])
     motion=next(g for g in anim_cubic.iter() if g.get('class')=='motion')

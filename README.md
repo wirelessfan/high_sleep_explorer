@@ -122,8 +122,28 @@ app/services/              # 业务：grading / scoring / gacha / achievements /
 
 1. 在 `content/topics/` 下新建 `<科目>-<主题>.json`（照抄现成文件改）
 2. 在 `content/catalog.json` 的 `topics` 数组里登记，并挂到对应科目的 `topics` 列表
-3. 跑 `python tools/check_content.py` 校验
-4. 需要 Boss 立绘就改 `tools/generate_bosses.py` 的配置后重新生成
+3. 补齐可视化：`assets/notes/intro-<主题id>.svg` 引导动画 + 主题 JSON 的 `diagrams`（≥2 页）
+4. 跑 `python tools/check_diagrams.py --strict` 与 `python tools/check_content.py`
+5. 需要 Boss 立绘就改 `tools/generate_bosses.py` 的配置后重新生成
+
+### 题目档位
+
+每个版块支持 `basic` / `advanced` / `expert` 三档，内容放在 `sections[].tiers` 里。
+全通判定按「版块 × 已开放档位」的单元计。
+
+### 主题页图集
+
+主题 JSON 顶层的 `diagrams` 会在主题页渲染成「图解补充」面板，支持按钮、
+← → 键与触屏滑动翻页：
+
+```json
+"diagrams": [
+  { "src": "/assets/notes/xxx.svg", "title": "一句话标题", "caption": "这张图想讲的结论" }
+]
+```
+
+插图请扩展生成器 `tools/generate_physics_svgs.py` / `tools/generate_science_diagrams.py`，
+不要手写坐标——曲线、切点、受力、能量必须由同一组数学状态推导。
 
 ### 题目档位
 
@@ -141,13 +161,29 @@ app/services/              # 业务：grading / scoring / gacha / achievements /
 
 | 项 | 数量 |
 |---|---|
-| 主题 | 10 个（物理 4 / 化学 5 / 数学 1） |
-| 题目 | 491 题（基础 / 进阶 / 高级三档） |
-| 卡片 | 17 张，7 个套装 |
+| 主题 | 11 个（物理 5 / 化学 5 / 数学 1） |
+| 题目 | 556 题（基础 / 进阶 / 高级三档） |
+| 教学插图 | 43 张 SVG + 11 张主题引导动画 |
+| 卡片 | 17 张，5 个套装 |
 | Boss 立绘 | 60 张 SVG |
 | 后端测试 | 126 个用例 |
 
-> 内容仍在持续扩充。准确数字以 `python tools/check_content.py` 的输出为准。
+> 内容仍在持续扩充。准确数字以 `python tools/check_content.py` 与
+> `python tools/check_diagrams.py` 的输出为准。
+
+## 三之二、可视化方针（新增内容必须遵守）
+
+图解与动画是本站的基本教学形态，不是装饰。三条硬要求：
+
+1. 每个主题必须有引导动画 `assets/notes/intro-<topic-id>.svg`；
+2. 每个主题必须有 **≥2 页**图解补充（主题 JSON 的 `diagrams` 字段，页面自动渲染成可翻页图集）；
+3. 「难点剖析」「实战巩固」里的高频易错点必须能指向一张图。
+
+插图一律由 `tools/generate_physics_svgs.py` / `tools/generate_science_diagrams.py`
+按数学模型生成，禁止手写坐标；动画统一用 SMIL，并提供 `prefers-reduced-motion` 静态回退。
+
+完整规范与覆盖现状见 [可视化方针.md](可视化方针.md)，
+覆盖率用 `python tools/check_diagrams.py` 查看（`--strict` 可作为新主题验收门禁）。
 
 ## 四、功能概览
 

@@ -35,6 +35,18 @@ def questions_of(sec):
     return out
 
 
+def section_payloads(data):
+    """基础档在版块顶层，进阶/高级在 tiers 里，三档都要参与均衡。
+
+    tiers 的 payload 不重复写 type，这里从父版块补上，否则 questions_of 认不出题型。
+    """
+    for sec in data["sections"]:
+        yield sec
+        for payload in (sec.get("tiers") or {}).values():
+            if isinstance(payload, dict):
+                yield {"type": sec.get("type"), **payload}
+
+
 def balance():
     files = sorted((CONTENT / "topics").glob("*.json"))
     counter = 0
@@ -43,7 +55,7 @@ def balance():
 
     for path in files:
         data = json.loads(path.read_text(encoding="utf-8"))
-        for sec in data["sections"]:
+        for sec in section_payloads(data):
             for _holder, q in questions_of(sec):
                 opts = q.get("options") or []
                 if len(opts) < 2:
@@ -77,7 +89,7 @@ def main():
         dist = {}
         for path in sorted((CONTENT / "topics").glob("*.json")):
             data = json.loads(path.read_text(encoding="utf-8"))
-            for sec in data["sections"]:
+            for sec in section_payloads(data):
                 for _h, q in questions_of(sec):
                     if len(q.get("options") or []) < 2:
                         continue
@@ -95,7 +107,7 @@ def main():
     dist = {}
     for path in sorted((CONTENT / "topics").glob("*.json")):
         data = json.loads(path.read_text(encoding="utf-8"))
-        for sec in data["sections"]:
+        for sec in section_payloads(data):
             for _h, q in questions_of(sec):
                 if len(q.get("options") or []) < 2:
                     continue
