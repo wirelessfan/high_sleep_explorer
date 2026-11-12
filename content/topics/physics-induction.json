@@ -1202,5 +1202,17 @@
         }
       }
     }
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/phys-induction-lenz.svg",
+      "title": "楞次定律判断流程",
+      "caption": "定原磁场 → 看磁通量增减 → 增反减同定感应磁场 → 安培定则定电流方向。"
+    },
+    {
+      "src": "/assets/notes/phys-induction-lenz-anim.svg",
+      "title": "磁铁插拔与感应电流",
+      "caption": "磁铁靠近与远离时电流方向相反，磁通量变化率为零时电流为零。"
+    }
   ]
 }

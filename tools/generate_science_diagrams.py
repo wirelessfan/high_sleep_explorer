@@ -511,6 +511,67 @@ def periodic(intro=False):
     return document('元素周期律：位置、结构与性质','比较趋势需在对应周期或主族内；原子半径比较需采用一致口径。',content,'非金属性强不等于氢化物酸性强：HF 是弱酸；通常比较最高价氧化物对应水化物。')
 
 
+def mole_standard():
+    """22.4 L/mol 的两个前提：标准状况 + 气体，缺一不可。"""
+    content=box(24,82,752,150)
+    content+=text(40,112,'判断能不能用 22.4 L/mol，按顺序过两道关',17,GREEN,weight=700)
+    steps=[(40,'① 条件是不是标准状况', '0 ℃、101 kPa', BLUE),
+           (300,'② 物质是不是气体','水、苯、酒精在标况下是液体', AMBER),
+           (560,'两关都过才成立','Vₘ ≈ 22.4 L/mol', GREEN)]
+    for x,title,detail,color in steps:
+        content+=box(x,128,200,86,'#ffffff',color)
+        content+=text(x+100,154,title,14,color,'middle',700)
+        content+=text(x+100,178,detail,12,MUTED,'middle')
+        if x<560:
+            content+=text(x+214,178,'→',18,MUTED,'middle',700)
+
+    cases=[('标况下 11.2 L O₂', '0 ℃、101 kPa，氧气是气体', 'n = 11.2 / 22.4 = 0.5 mol', True, GREEN),
+           ('标况下 11.2 L H₂O', '标况下水是液体，不能用气体摩尔体积', '应改用 n = m / M', False, RED),
+           ('常温常压 11.2 L O₂', '不是标况，Vₘ 不是 22.4 L/mol', 'Vₘ 约 24.5 L/mol，n ≈ 0.46 mol', False, RED)]
+    for i,(title,why,result,ok,color) in enumerate(cases):
+        y=258+i*96
+        content+=box(24,y,752,82,'#ffffff',color if not ok else '#86efac')
+        content+=text(44,y+28,('✓ ' if ok else '✗ ')+title,16,color,weight=700)
+        content+=text(44,y+52,why,14,MUTED)
+        content+=text(44,y+74,result,14,INK)
+        content+=text(736,y+32,'可用' if ok else '不可用',14,color,'end',700)
+    content+=text(24,590,'口诀：先看条件，再看物态；22.4 只属于「标况 + 气体」。',15,RED,weight=700)
+    return document('气体摩尔体积的两个前提','标准状况与气体状态缺一不可，这是 NA 判断题最常见的陷阱。',
+                    content,'液体、固体不适用；非标准状况下即使气体也不能直接代入 22.4。',height=660)
+
+
+def periodic_radius():
+    """原子半径比较的三条规则，用电子层数直观对照。"""
+    rows=[
+        ('① 电子层数越多，半径越大', [('K', 34, 4, '+19'), ('Na', 24, 3, '+11')],
+         'K 有 4 层，Na 只有 3 层'),
+        ('② 层数相同：核电荷数越大，半径越小', [('Na', 28, 3, '+11'), ('Mg', 24, 3, '+12'), ('Al', 20, 3, '+13')],
+         '同周期从左到右，核吸引增强'),
+        ('③ 电子层结构相同：核电荷数越大，半径越小',
+         [('O²⁻', 30, 2, '+8'), ('F⁻', 26, 2, '+9'), ('Na⁺', 22, 2, '+11'), ('Mg²⁺', 18, 2, '+12')],
+         '都是 10 电子结构，比较核电荷数'),
+    ]
+    content=''
+    for i,(title,atoms,note) in enumerate(rows):
+        y=96+i*172
+        content+=box(24,y,752,152)
+        content+=text(40,y+30,title,16,GREEN,weight=700)
+        content+=text(736,y+30,note,12,MUTED,'end')
+        x=96
+        cy=y+92
+        for symbol,r,shells,charge in atoms:
+            cx=x+r
+            for k in range(shells):
+                content+=circle(cx,cy,r*(1-k*0.26),'none','#9aafbd')
+            content+=circle(cx,cy,6,'#fee2e2',RED)
+            content+=text(cx,cy+4,charge,8,RED,'middle',700)
+            content+=text(cx,cy+r+18,'%s（%d 层）'%(symbol,shells),14,INK,'middle',700)
+            x+=r*2+72
+    content+=text(24,618,'比较顺序：先数电子层，层数不同按①；层数相同按②；电子层结构相同按③。',15,RED,weight=700)
+    return document('原子半径比较的三条规则','半径大小先看电子层数，再看核电荷数；顺序错了结论就会反过来。',
+                    content,'不要用「质量大就半径大」判断：同周期从左到右半径是减小的。',height=720)
+
+
 def equilibrium(intro=False,dynamic=False):
     # A reversible first-order A <=> B at constant T,V. Initially A=B=1;
     # add A so A=2,B=1, then A=1.5+.5 exp(-t), B=1.5-.5 exp(-t).
@@ -618,6 +679,8 @@ def generated():
         'math-tangent-normal.svg':tangent_normal(),
         'math-monotonic-parameter.svg':monotonic_parameter(),
         'math-zero-count.svg':zero_count(),
+        'chem-mole-standard.svg':mole_standard(),
+        'chem-periodic-radius.svg':periodic_radius(),
         'math-derivative-tangent.svg':math_secant(),
         'math-derivative-tangent-anim.svg':math_secant(True),
         'chem-mole-bridge.svg':mole(),

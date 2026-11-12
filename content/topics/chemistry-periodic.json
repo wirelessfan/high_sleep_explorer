@@ -493,5 +493,17 @@
         }
       }
     }
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/chem-periodic-triangle.svg",
+      "title": "位—构—性三角关系",
+      "caption": "位置、结构、性质三者可以互推，是元素推断题的基本框架。"
+    },
+    {
+      "src": "/assets/notes/chem-periodic-radius.svg",
+      "title": "原子半径比较的三条规则",
+      "caption": "先比电子层数，再比核电荷数；同周期从左到右半径减小，同主族向下增大。"
+    }
   ]
 }

@@ -1305,5 +1305,17 @@
         }
       }
     }
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/chem-mole-bridge.svg",
+      "title": "物质的量是三座桥的枢纽",
+      "caption": "质量、粒子数、气体体积都先换算成 n，再换算到目标量。"
+    },
+    {
+      "src": "/assets/notes/chem-mole-standard.svg",
+      "title": "22.4 L/mol 的两个前提",
+      "caption": "标准状况与气体状态缺一不可：标况下水是液体，不能用 22.4。"
+    }
   ]
 }

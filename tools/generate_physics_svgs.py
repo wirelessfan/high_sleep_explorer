@@ -139,6 +139,50 @@ def document(title, diagram, notes=(), intro=False, footer='', height=None):
             '@media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>\n<g transform="scale(1.4)">' + body + '</g>\n</svg>\n')
 
 
+def kinematics_plot():
+    """v-t 图像的斜率与面积，以及打点纸带的 Δx = aT²。"""
+    diagram = ''
+    # 上：v-t 图像
+    ox, oy = 70, 205
+    diagram += line(ox, oy, 360, oy, GRAY, 2) + line(ox, oy, ox, 70, GRAY, 2)
+    diagram += text(366, oy + 16, 't', '#1e293b', 12, 700)
+    diagram += text(ox - 14, 66, 'v', '#1e293b', 12, 700)
+    t0, t1 = 0.0, 1.0
+    v0, a = 2.0, 6.0
+    def px(t): return ox + 30 + t * 250
+    def py(v): return oy - 25 - (v - 0.6) * 18
+    diagram += path(poly([(px(t0), py(v0)), (px(t1), py(v0 + a))]), RED, 2.4)
+    diagram += path(poly([(px(t0), py(v0)), (px(t1), py(v0 + a)), (px(t1), oy), (px(t0), oy)], True),
+                    '#f59e0b', 1, fill='#fde68a', fill_opacity='.55')
+    diagram += text(px(0.5), py(v0) + 34, '面积 = 位移 x', '#b45309', 12, 700, 'middle')
+    diagram += text(px(0.45), py(v0 + a * 0.45) - 26, '斜率 = 加速度 a', RED, 12, 700)
+    diagram += text(px(t0) - 10, py(v0) + 16, 'v₀', GRAY, 12, 700)
+    diagram += text(px(t1) + 4, py(v0 + a) + 4, 'v', RED, 12, 700)
+
+    # 下：打点纸带
+    tape_y = 305
+    diagram += line(50, tape_y, 610, tape_y, GRAY, 2.5)
+    xs = [60]
+    for k in range(1, 5):
+        xs.append(xs[-1] + 25 + 18 * (k - 1))
+    gaps = [round(b - a, 6) for a, b in zip(xs, xs[1:])]
+    assert all(abs((g2 - g1) - 18) < 1e-9 for g1, g2 in zip(gaps, gaps[1:])), gaps
+    for i, x in enumerate(xs):
+        diagram += circle(x, tape_y, 3.5, RED)
+        diagram += text(x, tape_y - 8, 't%d' % i, GRAY, 11, 600, 'middle')
+    for i in range(len(xs) - 1):
+        xm = (xs[i] + xs[i + 1]) / 2
+        diagram += text(xm, tape_y + 20, 'x%d' % (i + 1), '#475569', 11, 600, 'middle')
+    diagram += text(50, tape_y + 52, '相邻相等时间 T 内的位移差恒定：Δx = x₂ − x₁ = aT²', '#1e293b', 12, 700)
+    return document('运动学 · v-t 图像与打点纸带', diagram,
+                    notes=['v-t 斜率 = 加速度 a',
+                           'v-t 与时间轴围成的面积 = 位移 x',
+                           '纸带相邻点时间间隔 T 相等',
+                           '位移差 Δx = aT² 恒定',
+                           '中间时刻速度 = 全程平均速度'],
+                    footer='纸带求加速度优先用逐差法：把多段位移分成两组相减，减小读数误差。')
+
+
 def save(name, content):
     ET.fromstring(content)
     target = DEST / name
@@ -698,6 +742,7 @@ def main():
         'phys-energy-spring.svg':lambda:spring(False),'phys-energy-spring-anim.svg':spring,
         'intro-physics-energy.svg':pendulum,
         'intro-physics-kinematics.svg':kinematics,'intro-physics-newton.svg':lambda:kinematics(True),
+        'phys-kinematics-plot.svg':kinematics_plot,
         'phys-motion-curve-anim.svg':projectile,'phys-electric-deflect-anim.svg':lambda:projectile(True),
         'phys-newton-slope.svg':slope,'phys-newton-slope-anim.svg':lambda:slope(True),
         'phys-newton-weight.svg':weight,'phys-newton-weight-anim.svg':lambda:weight(True),

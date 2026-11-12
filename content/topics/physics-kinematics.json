@@ -463,5 +463,17 @@
         "story": "伽利略研究落体运动时没有电子秒表，他把斜面倾角做得很小以「冲淡重力」，用天平称量从水壶细管流出的水滴质量来精确测量时间！这种把不可测量转化为可测量、将实验与严密数学结合的方法，正是近代物理诞生的标志。"
       }
     }
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/phys-kinematics-plot.svg",
+      "title": "v-t 图像与打点纸带",
+      "caption": "v-t 图线的斜率是加速度，围成的面积是位移；纸带相邻相等时间的位移差恒为 aT²。"
+    },
+    {
+      "src": "/assets/notes/intro-physics-kinematics.svg",
+      "title": "小车与纸带：位移随时间增长",
+      "caption": "匀加速小车的纸带点距越来越大，右图 v-t 是倾斜直线。"
+    }
   ]
 }

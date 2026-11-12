@@ -1061,5 +1061,27 @@
         }
       }
     }
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/phys-newton-slope.svg",
+      "title": "受力分析与正交分解",
+      "caption": "先画重力、支持力、外力，再沿加速度方向建立坐标轴分解，避免漏力。"
+    },
+    {
+      "src": "/assets/notes/phys-newton-weight.svg",
+      "title": "超重与失重",
+      "caption": "视重由支持力决定：加速度向上超重 N=m(g+a)，向下失重 N=m(g−a)，只看加速度方向。"
+    },
+    {
+      "src": "/assets/notes/phys-newton-two-problems.svg",
+      "title": "两类基本问题",
+      "caption": "由力求运动和由运动求力，都以加速度 a 为中转站。"
+    },
+    {
+      "src": "/assets/notes/phys-motion-curve-anim.svg",
+      "title": "平抛运动的速度方向",
+      "caption": "速度始终沿轨迹切线，水平分速度不变、竖直分速度随时间增大。"
+    }
   ]
 }

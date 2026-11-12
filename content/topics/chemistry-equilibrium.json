@@ -491,5 +491,17 @@
         }
       }
     }
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/chem-equilibrium-vt.svg",
+      "title": "浓度扰动后的 v-t 图",
+      "caption": "增大反应物浓度时正反应速率突增，逆反应速率逐渐上升，最后在新位置相等。"
+    },
+    {
+      "src": "/assets/notes/chem-equilibrium-vt-anim.svg",
+      "title": "正逆速率动态追赶",
+      "caption": "平衡移动的本质是正逆速率暂时不等，直到重新相等。"
+    }
   ]
 }

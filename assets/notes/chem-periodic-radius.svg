@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 720" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">原子半径比较的三条规则</title>
+  <desc id="description">半径大小先看电子层数，再看核电荷数；顺序错了结论就会反过来。。不要用「质量大就半径大」判断：同周期从左到右半径是减小的。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="720" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">原子半径比较的三条规则</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">半径大小先看电子层数，再看核电荷数；顺序错了结论就会反过来。</text>
+  <rect x="24" y="96" width="752" height="152" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="40" y="126" font-size="16" fill="#047857" text-anchor="start" font-weight="700">① 电子层数越多，半径越大</text>
+<text x="736" y="126" font-size="12" fill="#50647a" text-anchor="end" font-weight="500">K 有 4 层，Na 只有 3 层</text>
+<circle cx="130" cy="188" r="34.0" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="130" cy="188" r="25.16" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="130" cy="188" r="16.32" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="130" cy="188" r="7.479999999999999" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="130" cy="188" r="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="130" y="192" font-size="8" fill="#dc2626" text-anchor="middle" font-weight="700">+19</text>
+<text x="130" y="240" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">K（4 层）</text>
+<circle cx="260" cy="188" r="24.0" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="260" cy="188" r="17.759999999999998" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="260" cy="188" r="11.52" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="260" cy="188" r="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="260" y="192" font-size="8" fill="#dc2626" text-anchor="middle" font-weight="700">+11</text>
+<text x="260" y="230" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">Na（3 层）</text>
+<rect x="24" y="268" width="752" height="152" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="40" y="298" font-size="16" fill="#047857" text-anchor="start" font-weight="700">② 层数相同：核电荷数越大，半径越小</text>
+<text x="736" y="298" font-size="12" fill="#50647a" text-anchor="end" font-weight="500">同周期从左到右，核吸引增强</text>
+<circle cx="124" cy="360" r="28.0" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="124" cy="360" r="20.72" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="124" cy="360" r="13.44" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="124" cy="360" r="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="124" y="364" font-size="8" fill="#dc2626" text-anchor="middle" font-weight="700">+11</text>
+<text x="124" y="406" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">Na（3 层）</text>
+<circle cx="248" cy="360" r="24.0" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="248" cy="360" r="17.759999999999998" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="248" cy="360" r="11.52" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="248" cy="360" r="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="248" y="364" font-size="8" fill="#dc2626" text-anchor="middle" font-weight="700">+12</text>
+<text x="248" y="402" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">Mg（3 层）</text>
+<circle cx="364" cy="360" r="20.0" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="364" cy="360" r="14.8" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="364" cy="360" r="9.6" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="364" cy="360" r="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="364" y="364" font-size="8" fill="#dc2626" text-anchor="middle" font-weight="700">+13</text>
+<text x="364" y="398" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">Al（3 层）</text>
+<rect x="24" y="440" width="752" height="152" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="40" y="470" font-size="16" fill="#047857" text-anchor="start" font-weight="700">③ 电子层结构相同：核电荷数越大，半径越小</text>
+<text x="736" y="470" font-size="12" fill="#50647a" text-anchor="end" font-weight="500">都是 10 电子结构，比较核电荷数</text>
+<circle cx="126" cy="532" r="30.0" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="126" cy="532" r="22.2" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="126" cy="532" r="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="126" y="536" font-size="8" fill="#dc2626" text-anchor="middle" font-weight="700">+8</text>
+<text x="126" y="580" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">O²⁻（2 层）</text>
+<circle cx="254" cy="532" r="26.0" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="254" cy="532" r="19.24" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="254" cy="532" r="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="254" y="536" font-size="8" fill="#dc2626" text-anchor="middle" font-weight="700">+9</text>
+<text x="254" y="576" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">F⁻（2 层）</text>
+<circle cx="374" cy="532" r="22.0" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="374" cy="532" r="16.28" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="374" cy="532" r="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="374" y="536" font-size="8" fill="#dc2626" text-anchor="middle" font-weight="700">+11</text>
+<text x="374" y="572" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">Na⁺（2 层）</text>
+<circle cx="486" cy="532" r="18.0" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="486" cy="532" r="13.32" fill="none" stroke="#9aafbd" stroke-width="1.5"/>
+<circle cx="486" cy="532" r="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+<text x="486" y="536" font-size="8" fill="#dc2626" text-anchor="middle" font-weight="700">+12</text>
+<text x="486" y="568" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">Mg²⁺（2 层）</text>
+<text x="24" y="618" font-size="15" fill="#dc2626" text-anchor="start" font-weight="700">比较顺序：先数电子层，层数不同按①；层数相同按②；电子层结构相同按③。</text>
+  <rect x="24" y="658" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="678" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">不要用「质量大就半径大」判断：同周期从左到右半径是减小的。</text>
+</svg>
