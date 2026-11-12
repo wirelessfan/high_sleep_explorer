@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 630" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">摩擦力 · 静摩擦与滑动摩擦</title>
+<desc id="desc">摩擦力可以做正功：方向由相对运动决定，不由物体运动方向决定。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="450" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">摩擦力 · 静摩擦与滑动摩擦</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<rect x="30" y="60" width="280" height="300" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<text x="170" y="86" fill="#166534" font-size="13" font-weight="700" text-anchor="middle">静摩擦力</text>
+<text x="170" y="112" fill="#dc2626" font-size="12" font-weight="700" text-anchor="middle">0 &lt; f ≤ μN</text>
+<text x="170" y="136" fill="#475569" font-size="12" font-weight="500" text-anchor="middle">方向：与相对运动趋势相反</text>
+<text x="170" y="158" fill="#475569" font-size="12" font-weight="500" text-anchor="middle">大小：由平衡或牛二定律求出</text>
+<text x="170" y="180" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">随外力变化，自动调节</text>
+<rect x="330" y="60" width="280" height="300" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<text x="470" y="86" fill="#b45309" font-size="13" font-weight="700" text-anchor="middle">滑动摩擦力</text>
+<text x="470" y="112" fill="#dc2626" font-size="12" font-weight="700" text-anchor="middle">f = μN</text>
+<text x="470" y="136" fill="#475569" font-size="12" font-weight="500" text-anchor="middle">方向：与相对运动方向相反</text>
+<text x="470" y="158" fill="#475569" font-size="12" font-weight="500" text-anchor="middle">大小：只看 μ 和正压力 N</text>
+<text x="470" y="180" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">与接触面积、速度大小无关</text>
+<rect x="30" y="372" width="580" height="26" rx="4" fill="#fef2f2" stroke="#fecaca">
+</rect>
+<text x="320" y="390" fill="#b91c1c" font-size="12" font-weight="700" text-anchor="middle">方向可以与运动方向相同：传送带把物体加速带走的摩擦力就是动力</text>
+<rect x="20" y="410" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="423" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">摩擦力可以做正功：方向由相对运动决定，不由物体运动方向决定。</text>
+</g>
+</svg>

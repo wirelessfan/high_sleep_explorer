@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">极坐标：模长与辐角</title>
+  <desc id="description">模长 r 给出离原点的距离，辐角 θ 给出方向；两个数确定一个复数。。三角换元、欧拉公式、复数乘法，都是“模长与辐角”这套语言的不同说法。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="580" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">极坐标：模长与辐角</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">模长 r 给出离原点的距离，辐角 θ 给出方向；两个数确定一个复数。</text>
+  <rect x="24" y="82" width="470" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="15" fill="#172b42" text-anchor="start" font-weight="700">例：把 z = 3 + 4i 写成极坐标形式</text>
+<line x1="70" y1="300" x2="440" y2="300" stroke="#50647a" stroke-width="1.8"/>
+<line x1="250" y1="470" x2="250" y2="130" stroke="#50647a" stroke-width="1.8"/>
+<line x1="250" y1="300" x2="352" y2="164" stroke="#dc2626" stroke-width="2.6"/>
+<circle cx="352" cy="164" r="6" fill="#dc2626" stroke="white" stroke-width="1.5"/>
+<text x="364" y="158" font-size="13" fill="#dc2626" text-anchor="start" font-weight="700">z = 3+4i</text>
+<text x="301" y="320" font-size="12" fill="#2563eb" text-anchor="middle" font-weight="500">3（实部）</text>
+<line x1="352" y1="164" x2="352" y2="300" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="3 3"/>
+<text x="362" y="232" font-size="12" fill="#047857" text-anchor="start" font-weight="500">4（虚部）</text>
+<text x="184" y="208" font-size="14" fill="#dc2626" text-anchor="start" font-weight="800">|z| = 5</text>
+<text x="44" y="456" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">r = √(3²+4²) = 5　θ = arctan(4/3) ≈ 53°</text>
+<text x="44" y="484" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="700">极坐标形式：z = r(cosθ + i·sinθ) = 5e^(iθ)</text>
+<rect x="514" y="82" width="262" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="534" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">模长与辐角</text>
+<text x="534" y="148" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">r = |z| = √(a²+b²)</text>
+<text x="534" y="176" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">θ = arg z（辐角）</text>
+<text x="534" y="208" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">乘法：模长相乘、辐角相加</text>
+<text x="534" y="232" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">除法：模长相除、辐角相减</text>
+<text x="534" y="266" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">乘方：模长乘方、辐角乘 n</text>
+<text x="534" y="286" font-size="15" fill="#047857" text-anchor="start" font-weight="700">与欧拉公式的关系</text>
+<text x="534" y="312" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">e^(iθ) = cosθ + i·sinθ</text>
+<text x="534" y="336" font-size="14" fill="#dc2626" text-anchor="start" font-weight="700">所以 z = r·e^(iθ)</text>
+<text x="534" y="366" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">极坐标就是欧拉公式的直接应用：</text>
+<text x="534" y="390" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">模长和辐角把“位置”变成“距离+方向”</text>
+<text x="534" y="436" font-size="12" fill="#dc2626" text-anchor="start" font-weight="500">乘除与乘方在极坐标下极其简单</text>
+  <rect x="24" y="518" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="538" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">三角换元、欧拉公式、复数乘法，都是“模长与辐角”这套语言的不同说法。</text>
+</svg>

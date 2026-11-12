@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">主元变换：把参数当成变量</title>
+  <desc id="description">参数次数低、变量次数高时，把参数看作主元，问题变成一次函数的端点问题。。主元法不是万能的：只对“关于参数是一次”的不等式有效。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="540" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">主元变换：把参数当成变量</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">参数次数低、变量次数高时，把参数看作主元，问题变成一次函数的端点问题。</text>
+  <rect x="24" y="82" width="752" height="300" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="700">例：已知 (x²−1)a + x ≥ 0 对任意 a ∈ [−1,1] 恒成立，求 x 的范围。</text>
+<text x="44" y="148" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">常规思路：按 a = 1 和 a = −1 两种情况分别解 x 的不等式，再取交集</text>
+<text x="44" y="176" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">主元思路：把 a 看成变量，f(a) = (x²−1)·a + x 是关于 a 的一次函数</text>
+<text x="44" y="204" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">一次函数在闭区间上的最小值在端点取得 → 只需两个端点都 ≥ 0</text>
+<rect x="24" y="230" width="752" height="66" rx="10" fill="#f0fdf4" stroke="#cbdcd5"/>
+<text x="44" y="254" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">f(−1) = −(x²−1) + x ≥ 0　且　f(1) = (x²−1) + x ≥ 0</text>
+<text x="44" y="284" font-size="13" fill="#50647a" text-anchor="middle" font-weight="500">即 x² − x − 1 ≤ 0 且 x² + x − 1 ≤ 0</text>
+<text x="44" y="324" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="700">解得 (√5−1)/2 ≥ x ≥ (1−√5)/2（两集合取交集）</text>
+<text x="44" y="352" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">常规解法要按 x²−1 的正负分两类讨论；主元法把“讨论”变成“查两端”</text>
+<rect x="24" y="372" width="752" height="60" rx="10" fill="#fef9c3" stroke="#cbdcd5"/>
+<text x="400" y="400" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="700">适用条件：f(a) 关于 a 是一次的（不含 a²）</text>
+<rect x="24" y="442" width="752" height="56" rx="10" fill="#f0fdf4" stroke="#cbdcd5"/>
+<text x="44" y="470" font-size="13" fill="#047857" text-anchor="start" font-weight="700">何时想到主元：</text>
+<text x="140" y="470" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">参数 a 的次数低（一次），而 x 的次数高（二次以上）时，交换地位更简单</text>
+  <rect x="24" y="478" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="498" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">主元法不是万能的：只对“关于参数是一次”的不等式有效。</text>
+</svg>

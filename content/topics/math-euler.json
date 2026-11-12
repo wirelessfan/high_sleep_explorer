@@ -494,24 +494,14 @@
   ],
   "diagrams": [
     {
-      "src": "/assets/notes/intro-math-euler.svg",
-      "title": "e^(iθ) 在单位圆上",
-      "caption": "实部是 cos、虚部是 sin，模长恒为 1。"
+      "src": "/assets/notes/math-euler-polar.svg",
+      "title": "极坐标：模长与辐角",
+      "caption": "r=|z|、θ=arg z；乘除与乘方在极坐标下极其简单。"
     },
     {
-      "src": "/assets/notes/math-euler-identity.svg",
-      "title": "欧拉恒等式",
-      "caption": "从 1 转半圈到 −1，五个常数在同一个式子里相遇。"
-    },
-    {
-      "src": "/assets/notes/math-euler-series.svg",
-      "title": "泰勒级数推导",
-      "caption": "三个级数摆在一起，实部虚部自然对齐。"
-    },
-    {
-      "src": "/assets/notes/math-euler-rotation.svg",
-      "title": "乘法即旋转",
-      "caption": "乘 i 转 90°，乘 i² 转 180°，i²=−1 有了几何解释。"
+      "src": "/assets/notes/math-euler-demoivre.svg",
+      "title": "棣莫弗定理与幂运算",
+      "caption": "(1+i)^k 的落点螺旋：每次乘 (1+i)，转 45° 并放大 √2 倍；(1+i)⁸=16。"
     }
   ]
 }

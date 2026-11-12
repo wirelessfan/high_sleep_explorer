@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">NA 判断题 · 五类高频陷阱</title>
+  <desc id="description">每类陷阱都有固定套路：标况液体、可逆、微粒数、摩尔质量、反应产物。。审题四步：看条件、看物态、看反应可逆与否、看微粒种类。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="560" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">NA 判断题 · 五类高频陷阱</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">每类陷阱都有固定套路：标况液体、可逆、微粒数、摩尔质量、反应产物。</text>
+  <rect x="24" y="82" width="752" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">判断「Nₐ 题目」正误，按顺序过五关</text>
+<rect x="44" y="140" width="712" height="60" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="64" y="162" font-size="14" fill="#2563eb" text-anchor="700" font-weight="500">① 物态</text>
+<text x="64" y="184" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">标况下水是液体，不能用 22.4</text>
+<text x="720" y="172" font-size="12" fill="#dc2626" text-anchor="end" font-weight="700">★ ★ ★</text>
+<rect x="44" y="216" width="712" height="60" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="64" y="238" font-size="14" fill="#2563eb" text-anchor="700" font-weight="500">② 可逆反应</text>
+<text x="64" y="260" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">2SO₂+O₂⇌2SO₃ 不能说完全转化</text>
+<text x="720" y="248" font-size="12" fill="#dc2626" text-anchor="end" font-weight="700">★ ★ ★</text>
+<rect x="44" y="292" width="712" height="60" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="64" y="314" font-size="14" fill="#2563eb" text-anchor="700" font-weight="500">③ 微粒数</text>
+<text x="64" y="336" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">1 mol O₂ 含 2 mol O 原子；Ne 是单原子分子</text>
+<text x="720" y="324" font-size="12" fill="#dc2626" text-anchor="end" font-weight="700">★ ★</text>
+<rect x="44" y="368" width="712" height="60" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="64" y="390" font-size="14" fill="#2563eb" text-anchor="700" font-weight="500">④ 摩尔质量</text>
+<text x="64" y="412" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">D₂O 的 M 是 20，不是 18</text>
+<text x="720" y="400" font-size="12" fill="#dc2626" text-anchor="end" font-weight="700">★ ★</text>
+<rect x="44" y="444" width="712" height="60" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="64" y="466" font-size="14" fill="#2563eb" text-anchor="700" font-weight="500">⑤ 反应实质</text>
+<text x="64" y="488" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">Fe 与 Cl₂ 生成 FeCl₃（不管量比）</text>
+<text x="720" y="476" font-size="12" fill="#dc2626" text-anchor="end" font-weight="700">★ ★</text>
+<text x="44" y="506" font-size="14" fill="#dc2626" text-anchor="start" font-weight="700">以上五关全部通过才能选「正确」；任何一关不过，该选项错误。</text>
+  <rect x="24" y="498" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="518" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">审题四步：看条件、看物态、看反应可逆与否、看微粒种类。</text>
+</svg>

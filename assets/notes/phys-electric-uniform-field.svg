@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 630" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">匀强电场 · 平行板电容器</title>
+<desc id="desc">带电粒子垂直射入板间：水平匀速、竖直匀加速，出板后沿切线匀速直线。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="450" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">匀强电场 · 平行板电容器</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<rect x="30" y="60" width="580" height="300" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<rect x="120" y="100" width="360" height="10" rx="2" fill="#fee2e2" stroke="#dc2626">
+</rect>
+<text x="300" y="92" fill="#dc2626" font-size="12" font-weight="700" text-anchor="middle">+ + + + + + + + +（正极板）</text>
+<rect x="120" y="230" width="360" height="10" rx="2" fill="#dbeafe" stroke="#2563eb">
+</rect>
+<text x="300" y="258" fill="#2563eb" font-size="12" font-weight="700" text-anchor="middle">− − − − − − − − −（负极板）</text>
+<path d="M 150 112 L 150 228 M 147 222 L 150 228 L 153 222" stroke="#f59e0b" stroke-width="1.6" fill="none">
+</path>
+<path d="M 210 112 L 210 228 M 207 222 L 210 228 L 213 222" stroke="#f59e0b" stroke-width="1.6" fill="none">
+</path>
+<path d="M 270 112 L 270 228 M 267 222 L 270 228 L 273 222" stroke="#f59e0b" stroke-width="1.6" fill="none">
+</path>
+<path d="M 330 112 L 330 228 M 327 222 L 330 228 L 333 222" stroke="#f59e0b" stroke-width="1.6" fill="none">
+</path>
+<path d="M 390 112 L 390 228 M 387 222 L 390 228 L 393 222" stroke="#f59e0b" stroke-width="1.6" fill="none">
+</path>
+<line x1="130" y1="150" x2="470" y2="150" stroke="#10b981" stroke-width="1.2" stroke-dasharray="4 3">
+</line>
+<line x1="130" y1="200" x2="470" y2="200" stroke="#10b981" stroke-width="1.2" stroke-dasharray="4 3">
+</line>
+<line x1="130" y1="240" x2="470" y2="240" stroke="#10b981" stroke-width="1.2" stroke-dasharray="4 3">
+</line>
+<text x="486" y="158" fill="#059669" font-size="12" font-weight="700">等势面</text>
+<text x="486" y="245" fill="#059669" font-size="12" font-weight="700">等势面</text>
+<text x="300" y="205" fill="#d97706" font-size="12" font-weight="700" text-anchor="middle">E 处处相同（匀强）</text>
+<text x="300" y="285" fill="#1d4ed8" font-size="12.5" font-weight="700" text-anchor="middle">E = U/d（d 为两板间距离）</text>
+<rect x="30" y="372" width="580" height="26" rx="4" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="390" fill="#1e40af" font-size="12" font-weight="700" text-anchor="middle">等势面与电场线处处垂直；沿电场线方向电势逐渐降低</text>
+<rect x="20" y="410" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="423" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">带电粒子垂直射入板间：水平匀速、竖直匀加速，出板后沿切线匀速直线。</text>
+</g>
+</svg>

@@ -1069,5 +1069,16 @@
         }
       }
     }
-  ]
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/phys-electric-potential-work.svg",
+      "title": "电场力做功与电势能",
+      "caption": "W=qU；电场力做正功电势能减少，负电荷则相反；沿等势面移动 W=0。"
+    },
+    {
+      "src": "/assets/notes/phys-electric-uniform-field.svg",
+      "title": "匀强电场与平行板电容器",
+      "caption": "E=U/d；等势面与电场线垂直；电荷在板间做类平抛运动。"
+    }  ]
 }

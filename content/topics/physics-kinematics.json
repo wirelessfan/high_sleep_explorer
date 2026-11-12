@@ -1339,5 +1339,16 @@
         }
       }
     }
-  ]
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/phys-kinematics-plot.svg",
+      "title": "v-t 图像与打点纸带",
+      "caption": "v-t 图线的斜率是加速度，围成的面积是位移；纸带相邻相等时间的位移差恒为 aT²。"
+    },
+    {
+      "src": "/assets/notes/phys-kinematics-formulas.svg",
+      "title": "三个公式一张网",
+      "caption": "v=v₀+at、x=v₀t+½at²、v²−v₀²=2ax；知三求二，无时间公式优先用于不知 t 的题。"
+    }  ]
 }

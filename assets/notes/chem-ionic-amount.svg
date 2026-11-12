@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">与量有关的离子方程式</title>
+  <desc id="description">少量的物质按化学式比例完全反应，过量的物质有剩余继续反应。。写完先查原子守恒和电荷守恒；多元酸碱“量”不同，产物不同。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="500" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">与量有关的离子方程式</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">少量的物质按化学式比例完全反应，过量的物质有剩余继续反应。</text>
+  <rect x="24" y="82" width="752" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">经典模型：CO₂ 通入 NaOH 溶液</text>
+<rect x="44" y="132" width="360" height="120" rx="10" fill="#eff6ff" stroke="#cbdcd5"/>
+<text x="224" y="158" font-size="14" fill="#2563eb" text-anchor="700" font-weight="middle">CO₂ 少量（NaOH 过量）</text>
+<text x="224" y="186" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">CO₂ + 2OH⁻ = CO₃²⁻ + H₂O</text>
+<text x="224" y="212" font-size="13" fill="#50647a" text-anchor="middle" font-weight="500">产物：CO₃²⁻（正盐）</text>
+<rect x="392" y="132" width="360" height="120" rx="10" fill="#fef2f2" stroke="#cbdcd5"/>
+<text x="572" y="158" font-size="14" fill="#dc2626" text-anchor="700" font-weight="middle">CO₂ 过量（CO₂ 足量）</text>
+<text x="572" y="186" font-size="14" fill="#172b42" text-anchor="middle" font-weight="700">CO₂ + OH⁻ = HCO₃⁻</text>
+<text x="572" y="212" font-size="13" fill="#50647a" text-anchor="middle" font-weight="500">产物：HCO₃⁻（酸式盐）</text>
+<text x="44" y="290" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">判断方法：“少量”的那种按化学式比例完全消耗，看剩下谁、再反应谁</text>
+<text x="44" y="318" font-size="14" fill="#047857" text-anchor="start" font-weight="700">另一模型：Ca(HCO₃)₂ 与 NaOH</text>
+<text x="44" y="344" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">NaOH 少量：Ca²⁺ + OH⁻ + HCO₃⁻ = CaCO₃↓ + H₂O（OH⁻ 只够一半 HCO₃⁻）</text>
+<text x="44" y="370" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">NaOH 过量：Ca²⁺ + 2OH⁻ + 2HCO₃⁻ = CaCO₃↓ + 2H₂O + CO₃²⁻</text>
+<text x="44" y="398" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">Ca(HCO₃)₂ 与 NaOH 也可反过来看：把少量的写完整，过量的拆成离子</text>
+<text x="44" y="432" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">Ba(OH)₂ 与 NaHSO₄、AlCl₃ 与 NaOH 等都遵循同一逻辑</text>
+  <rect x="24" y="438" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="458" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">写完先查原子守恒和电荷守恒；多元酸碱“量”不同，产物不同。</text>
+</svg>

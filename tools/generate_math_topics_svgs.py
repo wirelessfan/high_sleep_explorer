@@ -20,6 +20,12 @@ box, text, line, circle, path, animate, num = (
     sci.box, sci.text, sci.line, sci.circle, sci.path, sci.animate, sci.num)
 
 
+def rect(x, y, w, h, fill='#fff', stroke='#94a3b8', radius=0):
+    """直角矩形（无圆角），用于表格与色块。"""
+    return ('<rect x="%s" y="%s" width="%s" height="%s" fill="%s" stroke="%s" stroke-width="1.2"/>'
+            % (num(x), num(y), num(w), num(h), fill, stroke))
+
+
 def wrap_plain(value, width):
     """按字符宽度折行，返回纯文本行（中文按 1、英文按 0.56 计）。"""
     lines, row, used = [], '', 0.0
@@ -451,6 +457,72 @@ def trig_induction():
                         height=580)
 
 
+def trig_graphs():
+    """sin/cos/tan 图像：周期、单调区间、奇偶性。"""
+    content = box(24, 82, 752, 300)
+    content += text(44, 112, 'y = sinx 与 y = cosx（周期 2π）', 15, INK, weight=700)
+    ox, oy, sx, sy = 90, 210, 75, 60
+    content += line(ox, oy, ox + 7 * sx, oy, MUTED, 1.6)
+    content += line(ox, oy + sy, ox, oy - sy, MUTED, 1.6)
+    tick_labels = ['-π','0','π/2','π','3π/2','2π','5π/2']
+    for k in range(-1, 6):
+        x = ox + (k + 1) * sx
+        content += line(x, oy - 4, x, oy + 4, MUTED, 1)
+        if 0 <= k + 1 < len(tick_labels):
+            content += text(x, oy + 18, tick_labels[k + 1], 10, MUTED, 'middle')
+    pts_sin = [(ox + (k / 32) * 7 * sx, oy - math.sin(-math.pi + (k / 32) * 2 * math.pi + math.pi / 2 + math.pi / 2) * sy * -1 * 0 + oy - math.sin((k/32)*2*math.pi)*sy) for k in range(33)]
+    pts_sin = [(ox + (k / 32) * 7 * sx, oy - math.sin(-math.pi/2 + (k / 32) * 2 * math.pi) * sy) for k in range(33)]
+    pts_cos = [(ox + (k / 32) * 7 * sx, oy - math.cos(-math.pi/2 + (k / 32) * 2 * math.pi) * sy) for k in range(33)]
+    content += path('M ' + ' L '.join('%s %s' % (num(x), num(y)) for x, y in pts_sin), RED, 2.2)
+    content += path('M ' + ' L '.join('%s %s' % (num(x), num(y)) for x, y in pts_cos), GREEN, 2.2)
+    content += text(ox + 7 * sx - 50, oy - sy - 10, 'sin（红）', RED, 12, 700)
+    content += text(ox + 7 * sx - 50, oy - sy - 26, 'cos（绿）', GREEN, 12, 700)
+    content += text(44, 328, 'sin 奇函数，cos 偶函数；递增区间 [−π/2+2kπ, π/2+2kπ]', 12.5, INK)
+    content += text(44, 356, 'y = tanx：周期 π，在 (−π/2+kπ, π/2+kπ) 内递增，有渐近线', 12.5, INK)
+    content += box(24, 380, 752, 60, '#fef9c3')
+    content += text(400, 406, '图像上读性质：最高点→最大值；过零点→sin 的零点与单调分界', 13, RED, 'middle', 700)
+    return sci.document('三角函数图像：把性质画出来',
+                        'sin 与 cos 的图像可以互相平移得到；tan 有渐近线。',
+                        content,
+                        '记不住性质时，先画草图再看图：最高点、零点、渐近线，一目了然。',
+                        height=470)
+
+
+def trig_hexagon():
+    """六边形记忆图：同角三角函数的倒数、商与平方关系。"""
+    content = box(24, 82, 752, 430)
+    content += text(44, 112, '六边形记忆法：对角线互倒数，相邻相乘得下一个', 15, GREEN, weight=700)
+    cx, cy = 380, 270
+    labels = [('sin', 380, 140, RED), ('cos', 500, 185, GREEN), ('tan', 560, 270, AMBER),
+              ('cot', 500, 355, BLUE), ('sec', 380, 400, '#7c3aed'), ('csc', 260, 355, '#0ea5e9')]
+    # 画六边形连线
+    pts = [(x, y) for _, x, y, _ in labels]
+    for i in range(6):
+        a = pts[i]; b = pts[(i + 1) % 6]
+        content += line(a[0], a[1], b[0], b[1], '#cbd5e1', 1.4)
+    # 对角线
+    content += line(labels[0][1], labels[0][2], labels[3][1], labels[3][2], '#fbbf24', 1.6, '4 3')
+    content += line(labels[1][1], labels[1][2], labels[4][1], labels[4][2], '#fbbf24', 1.6, '4 3')
+    content += line(labels[2][1], labels[2][2], labels[5][1], labels[5][2], '#fbbf24', 1.6, '4 3')
+    # 中心 1
+    content += circle(cx, cy, 18, '#fef9c3', AMBER)
+    content += text(cx, cy + 5, '1', 16, AMBER, 'middle', 800)
+    # 顶点标签
+    for label, x, y, color in labels:
+        content += circle(x, y, 22, '#ffffff', color)
+        content += text(x, y + 5, label, 14, color, 'middle', 800)
+    content += text(44, 470, '对角线：sin ↔ csc　cos ↔ sec　tan ↔ cot（互为倒数）', 13, INK)
+    content += text(44, 496, '相邻乘：sin·tan = cos　cos·cot = sin　（沿顺时针）', 13, INK)
+    content += text(44, 522, '阴影三角形：sin² + cos² = 1　1 + tan² = sec²　1 + cot² = csc²', 13, RED, weight=700)
+    return sci.document('同角三角函数：六边形一张图',
+                        '对角线互倒数、相邻相乘得下一个、阴影三角形是平方关系。',
+                        content,
+                        '忘了公式就看图：三条对角线是倒数关系，三个阴影三角形是勾股关系。',
+                        height=580)
+
+
+
+
 def euler_intro():
     """复平面上的单位圆：e^(iθ) 的轨迹，实部是 cosθ，虚部是 sinθ。"""
     content = box(24, 82, 470, 430)
@@ -613,6 +685,349 @@ def euler_rotation():
                         height=580)
 
 
+def derivative_sign_table():
+    """列表法：f′ 的符号、f 的单调性与极值。"""
+    content = box(24, 82, 752, 430)
+    content += text(44, 112, '例：f(x) = x³ − 3x，f′(x) = 3x² − 3 = 3(x+1)(x−1)', 15, INK, weight=700)
+    cols = ['x', '(−∞,−1)', '−1', '(−1,1)', '1', '(1,+∞)']
+    xs = [90, 220, 330, 425, 505, 590]
+    widths = [130, 110, 95, 80, 85]
+    content += rect(80, 140, 530, 130, '#ffffff', '#cbd5e1', 8)
+    for x, name in zip(xs[:-1], cols[:-1]):
+        content += text(x + widths[0] / 2 - 10, 168, name, 13, INK, weight=700)
+    content += line(80, 178, 610, 178, '#cbd5e1', 1)
+    rows = [('f′(x)', '+', '0', '−', '0', '+', RED),
+            ('f(x)', '增 ↗', '极大值 2', '减 ↘', '极小值 −2', '增 ↗', BLUE)]
+    for i, (label, *cells, color) in enumerate(rows):
+        y = 206 + i * 30
+        content += text(95, y, label, 13, color, weight=700)
+        for x, value in zip(xs[1:], cells):
+            content += text(x, y, value, 12.5, INK, 'middle', 700 if i == 0 else 500)
+    content += text(80, 296, 'f′ 由正变负 → 极大值；由负变正 → 极小值', 14, RED, weight=700)
+    content += text(80, 326, '列完表再画草图：极大值在山峰、极小值在山谷，一目了然', 13, MUTED)
+    content += box(44, 356, 712, 120, '#f0fdf4')
+    content += text(64, 386, '为什么用列表法', 14, GREEN, weight=700)
+    for i, tip in enumerate(['① 解 f′(x)=0，按根把定义域分成几段',
+                             '② 每段判断 f′ 的符号（代一个特殊值即可）',
+                             '③ 符号变化的分界点就是极值点；不变号则不是极值点']):
+        content += text(64, 414 + i * 24, tip, 12.5, INK)
+    return sci.document('导数与单调性 · 列表法',
+                        '解出 f′ 的零点，列一张符号表，单调区间与极值同时出现。',
+                        content,
+                        'f′ 的零点不一定是极值点：必须看到 f′ 在该点两侧变号。',
+                        height=500)
+
+
+def derivative_formulas():
+    """求导公式与运算法则速查表。"""
+    content = box(24, 82, 360, 430)
+    content += text(44, 112, '基本初等函数', 16, GREEN, weight=700)
+    rules = [('(xⁿ)′ = n·xⁿ⁻¹', '幂函数'),
+             ('(sin x)′ = cos x', '正弦'),
+             ('(cos x)′ = −sin x', '余弦'),
+             ('(eˣ)′ = eˣ', '指数（不变）'),
+             ('(aˣ)′ = aˣ ln a', '一般指数'),
+             ('(ln x)′ = 1/x', '对数'),
+             ('(log_a x)′ = 1/(x ln a)', '一般对数')]
+    for i, (formula, note) in enumerate(rules):
+        y = 144 + i * 50
+        content += text(64, y, formula, 14, INK, weight=700)
+        content += text(64, y + 20, note, 11.5, MUTED)
+    content += box(404, 82, 372, 430)
+    content += text(424, 112, '运算法则', 16, GREEN, weight=700)
+    rules2 = [('和差：[f ± g]′ = f′ ± g′', '逐项求导'),
+              ('乘：[f·g]′ = f′g + fg′', '不能直接相乘'),
+              ('商：[f/g]′ = (f′g − fg′)/g²', '分母 g ≠ 0'),
+              ('复合（链式）：[f(g)]′ = f′(g)·g′(x)', '先外后内，逐层相乘'),
+              ('例：y=(2x+1)⁵ 的导数是 10(2x+1)⁴', '外层 5(2x+1)⁴，内层导数 2')]
+    for i, (formula, note) in enumerate(rules2):
+        y = 144 + i * 56
+        content += text(424, y, formula, 13.5, INK, weight=700)
+        content += text(424, y + 20, note, 11.5, MUTED)
+    content += text(424, 452, '复合函数最易错：忘记乘内层导数', 12.5, RED, weight=700)
+    return sci.document('求导公式与运算法则速查表',
+                        '基本公式与四则、复合法则都在一页，考前扫一遍。',
+                        content,
+                        '链式法则：由外向内逐层求导，每层相乘；记不住时用定义推。',
+                        height=560)
+
+
+def probability_dice_grid():
+    """两枚骰子的 36 个样本空间网格，和为 7 的对角线高亮。"""
+    content = box(24, 82, 470, 430)
+    content += text(44, 112, '两枚骰子：36 个等可能结果', 16, GREEN, weight=700)
+    gx, gy, cell = 90, 150, 56
+    for i in range(6):
+        content += text(gx + i * cell + cell / 2, gy - 10, str(i + 1), 12, MUTED, 'middle', 700)
+        content += text(gx - 14, gy + i * cell + cell / 2 + 5, str(i + 1), 12, MUTED, 'middle', 700)
+    for i in range(6):
+        for j in range(6):
+            x, y = gx + i * cell, gy + j * cell
+            if i + 1 + j + 1 == 7:
+                content += rect(x, y, cell, cell, '#fef3c7', '#f59e0b', 4)
+            else:
+                content += rect(x, y, cell, cell, '#ffffff', '#e2e8f0', 4)
+            content += text(x + cell / 2, y + cell / 2 + 5, str(i + 1 + j + 1), 13,
+                            '#b45309' if i + j == 5 else '#64748b', 'middle', 700 if i + j == 5 else 500)
+    content += text(gx, gy + 6 * cell + 30, '横：第一枚骰子　纵：第二枚骰子　格中数字 = 点数之和', 12, MUTED)
+    content += text(gx, gy + 6 * cell + 56, '黄色对角线：和为 7，共 6 格 → P = 6/36 = 1/6', 13, RED, weight=700)
+
+    content += box(514, 82, 262, 430)
+    content += text(534, 112, '为什么画网格', 16, GREEN, weight=700)
+    for i, tip in enumerate(['① 36 个样本点一目了然，不会漏数',
+                             '② 任意事件的概率 = 数格子 ÷ 36',
+                             '③ 和为 7 的组合最多（6 种），所以最常见',
+                             '④ 和为 2 或 12 只有 1 种，最罕见']):
+        content += text(534, 146 + i * 30, tip, 12.5, INK)
+    content += text(534, 282, '其他事件的用法', 15, GREEN, weight=700)
+    for i, tip in enumerate(['和为偶数：对角线一半，18 格 → 1/2',
+                             '第一枚为 6：整行 6 格 → 1/6',
+                             '至少一个 6：36 − 25 = 11 格 → 11/36']):
+        content += text(534, 312 + i * 28, '• ' + tip, 12.5, INK)
+    content += text(534, 428, '数格子之前，先确认两枚骰子互相独立', 12, RED)
+    return sci.document('两枚骰子：36 个样本点的网格',
+                        '把所有结果摆成 6×6 的表格，概率就是数格子。',
+                        content,
+                        '古典概型等可能的前提：两枚骰子互相独立，每格概率同为 1/36。',
+                        height=580)
+
+
+def probability_complement():
+    """「至少一次」用对立事件：1 − 全不发生。"""
+    content = box(24, 82, 752, 300)
+    content += text(44, 112, '例：命中率 0.4，射击三次，至少命中一次的概率？', 15, INK, weight=700)
+    content += rect(60, 140, 240, 60, '#fef2f2', '#fca5a5', 8)
+    content += text(180, 165, '正面硬算：分类相加', 13, RED, 700, 'middle')
+    content += text(180, 188, '恰 1 次 + 恰 2 次 + 恰 3 次（三项）', 12, '#7f1d1d', 'middle')
+    content += rect(360, 140, 240, 60, '#f0fdf4', '#86efac', 8)
+    content += text(480, 165, '反面巧算：对立事件', 13, GREEN, 700, 'middle')
+    content += text(480, 188, '1 − 三次全不中（一项）', 12, '#14532d', 'middle')
+    content += text(180, 240, '每次不中 = 0.6，三次全不中 = 0.6³ = 0.216', 13, INK)
+    content += text(180, 264, '至少命中一次 = 1 − 0.216 = 0.784', 14, RED, weight=700)
+    content += text(480, 240, '「至少」问题几乎都用这一招', 13, INK)
+    content += text(480, 264, 'n 次至少一次 = 1 − (1−p)ⁿ', 13, MUTED)
+    content += text(44, 310, '为什么反面更快：正面要分「恰 1、恰 2、恰 3」三类分别用组合数计算；反面只有一项。', 13, MUTED)
+    content += text(44, 336, '同理：至少两次 = 1 − 全不中 − 恰一次；至少 n−1 次 = 1 − 全中 − 恰 n−1 次', 13, MUTED)
+    content += box(24, 366, 752, 130, '#f0fdf4')
+    content += text(44, 396, '什么时候能用：', 14, GREEN, weight=700)
+    for i, tip in enumerate(['① 各次试验相互独立（互不影响）',
+                             '② 每次试验的概率相同',
+                             '③ 「至少」包含的情形很多时，优先取对立面']):
+        content += text(44, 424 + i * 24, tip, 12.5, INK)
+    return sci.document('至少一次：用对立事件一步到位',
+                        '「至少发生一次」的反面是「一次都没发生」。',
+                        content,
+                        '前提是各次试验相互独立且概率相同；不独立时不能这样算。',
+                        height=540)
+
+
+def ellipse_focus_axis():
+    """标准方程与焦点位置：看分母大小。"""
+    content = box(24, 82, 360, 430)
+    content += text(44, 112, '焦点在 x 轴', 15, BLUE, weight=800)
+    content += text(44, 148, 'x²/25 + y²/9 = 1', 15, INK, weight=700)
+    content += text(44, 176, 'x² 分母 25 大 → 焦点在 x 轴', 12.5, MUTED)
+    content += text(44, 200, '焦点 (±4, 0)', 12.5, MUTED)
+    content += text(44, 232, '焦点在 y 轴', 15, BLUE, weight=800)
+    content += text(44, 268, 'x²/9 + y²/16 = 1', 15, INK, weight=700)
+    content += text(44, 296, 'y² 分母 16 大 → 焦点在 y 轴', 12.5, MUTED)
+    content += text(44, 320, '焦点 (0, ±√7)', 12.5, MUTED)
+    content += text(44, 356, '记忆：谁的分母大，长轴就在谁的方向', 13, RED, weight=700)
+    content += text(44, 384, '（a² 永远是较大的分母）', 12.5, MUTED)
+
+    content += box(404, 82, 372, 430)
+    content += text(424, 112, '参数不完整时先讨论', 16, GREEN, weight=700)
+    content += text(424, 148, '例：方程 x²/m + y²/4 = 1 表示椭圆，', 13, INK)
+    content += text(424, 172, '且焦点在 x 轴，求 m 的范围。', 13, INK)
+    content += text(424, 204, '① 焦点在 x 轴：m > 4', 13, RED, weight=700)
+    content += text(424, 232, '② 表示椭圆（焦点在 y 轴）：0 < m < 4', 13, INK, weight=700)
+    content += text(424, 264, '③ 若题目说「表示椭圆」不指明焦点：', 13, INK)
+    content += text(424, 288, 'm > 0 且 m ≠ 4（两种情形都要算）', 13, INK, weight=700)
+    content += text(424, 324, '高频陷阱', 15, GREEN, weight=700)
+    for i, tip in enumerate(['• 把 m>4 与 0<m<4 混为一谈',
+                             '• 忘记 m>0（分母不能为 0 或负）',
+                             '• 忽略「焦点位置未指明」需要分类讨论']):
+        content += text(424, 352 + i * 26, tip, 12.5, RED)
+    return sci.document('标准方程与焦点位置',
+                        '比较两个分母的大小：分母大的方向是长轴，焦点就在那条轴上。',
+                        content,
+                        '参数没指明焦点位置时，必须分类讨论；这是选择题的常设陷阱。',
+                        height=560)
+
+
+def ellipse_focus_chord():
+    """焦点弦与焦点三角形：两个恒定周长。"""
+    content = box(24, 82, 470, 430)
+    content += text(44, 112, '焦点三角形：周长恒为 2a + 2c', 15, GREEN, weight=700)
+    cx, cy, ra, rb = 250, 300, 170, 105
+    c = (ra * ra - rb * rb) ** 0.5
+    content += ('<ellipse cx="%s" cy="%s" rx="%s" ry="%s" fill="#eef6ff" stroke="%s" stroke-width="2.2"/>'
+                % (num(cx), num(cy), num(ra), num(rb), BLUE))
+    f1, f2 = (cx - c, cy), (cx + c, cy)
+    p = (cx + ra * math.cos(0.7), cy - rb * math.sin(0.7))
+    content += circle(f1[0], f1[1], 5, RED, 'white') + circle(f2[0], f2[1], 5, RED, 'white')
+    content += circle(p[0], p[1], 5, AMBER, 'white')
+    for f in (f1, f2):
+        content += line(f[0], f[1], p[0], p[1], '#94a3b8', 1.6, '4 3')
+    content += text(f1[0] - 14, f1[1] + 20, 'F₁', 13, RED, 'middle', 700)
+    content += text(f2[0] + 14, f2[1] + 20, 'F₂', 13, RED, 'middle', 700)
+    content += text(p[0] + 10, p[1] - 12, 'P', 13, AMBER, weight=700)
+    content += text(44, 452, '周长 = |PF₁| + |PF₂| + |F₁F₂| = 2a + 2c（恒定）', 13, INK, weight=700)
+    content += text(44, 480, '弦 AB 过焦点 F₁ 时，三角形 ABF₂ 的周长恒为 4a', 13, INK, weight=700)
+
+    content += box(514, 82, 262, 430)
+    content += text(534, 112, '推导只用定义', 16, GREEN, weight=700)
+    content += text(534, 148, '焦点三角形：', 14, INK, weight=700)
+    content += text(534, 172, '|PF₁| + |PF₂| = 2a', 13, INK)
+    content += text(534, 196, '加 |F₁F₂| = 2c → 周长 2a + 2c', 13, MUTED)
+    content += text(534, 238, '焦点弦 AB（过 F₁）：', 14, INK, weight=700)
+    content += text(534, 262, '|AF₁| + |AF₂| = 2a', 13, INK)
+    content += text(534, 286, '|BF₁| + |BF₂| = 2a', 13, INK)
+    content += text(534, 310, '|AB| = |AF₁| + |BF₁|', 13, INK)
+    content += text(534, 334, '周长 = 2a + 2a = 4a', 14, RED, weight=700)
+    content += text(534, 384, '两个定值都只依赖 a、c', 13, MUTED)
+    content += text(534, 428, '不必知道 P 的具体位置', 12, MUTED)
+    return sci.document('焦点弦与焦点三角形：两个定值周长',
+                        '定义给出的 2a 加上焦距 2c，直接得到两个恒定周长。',
+                        content,
+                        '焦点在 y 轴的椭圆同理；椭圆越扁 c 越大，三角形越“胖”。',
+                        height=560)
+
+
+def substitution_trig_example():
+    """三角换元完整例题：y = x + √(1−x²) 的最大值。"""
+    content = box(24, 82, 752, 300)
+    content += text(44, 112, '例：求 y = x + √(1−x²) 的最大值（|x| ≤ 1）', 15, INK, weight=700)
+    content += text(44, 148, '① 令 x = sinθ，θ ∈ [−π/2, π/2]', 13.5, INK)
+    content += text(44, 176, '② √(1−x²) = √(1−sin²θ) = cosθ（区间内 cosθ ≥ 0）', 13.5, INK)
+    content += text(44, 204, '③ y = sinθ + cosθ = √2·sin(θ + π/4)', 13.5, INK)
+    content += text(44, 232, '④ θ ∈ [−π/2, π/2] 时 θ+π/4 ∈ [−π/4, 3π/4]，最大值在 θ = π/4', 13.5, INK)
+    content += text(44, 260, '⑤ 最大值 y = √2，此时 x = sin(π/4) = √2/2', 13.5, INK)
+    content += text(44, 296, '范围链：θ 的范围决定 θ+π/4 的范围，再定 sin 的最大值——每一步都不能跳', 12.5, MUTED)
+    content += box(24, 320, 752, 60, '#fef9c3')
+    content += text(400, 348, '易错：不写 θ 的范围，就说不清 sin(θ+π/4) 为什么能取到 1', 13, RED, 'middle', 700)
+    content += box(24, 400, 360, 110, '#f0fdf4')
+    content += text(44, 428, '不用换元也行', 13.5, GREEN, weight=700)
+    content += text(44, 452, 'y = x + √(1−x²) 的两项平方和为 1，', 12, INK)
+    content += text(44, 474, '柯西不等式给出同样的最大值 √2', 12, INK)
+    content += box(404, 400, 372, 110, '#eff6ff')
+    content += text(424, 428, '适用条件', 13.5, BLUE, weight=700)
+    content += text(424, 452, '√(1−x²) 的存在要求 |x| ≤ 1，', 12, INK)
+    content += text(424, 474, '这正是三角换元能覆盖的范围', 12, INK)
+    return sci.document('三角换元例题：最大值 √2 是怎么来的',
+                        '换元、开方、辅助角、定范围，四步一气呵成。',
+                        content,
+                        '每一步都写出范围，才能说明最大值“取得到”。',
+                        height=540)
+
+
+def substitution_main_variable():
+    """主元变换：把参数 a 看成一次函数的主元。"""
+    content = box(24, 82, 752, 300)
+    content += text(44, 112, '例：已知 (x²−1)a + x ≥ 0 对任意 a ∈ [−1,1] 恒成立，求 x 的范围。', 13.5, INK, weight=700)
+    content += text(44, 148, '常规思路：按 a = 1 和 a = −1 两种情况分别解 x 的不等式，再取交集', 13, MUTED)
+    content += text(44, 176, '主元思路：把 a 看成变量，f(a) = (x²−1)·a + x 是关于 a 的一次函数', 13, INK)
+    content += text(44, 204, '一次函数在闭区间上的最小值在端点取得 → 只需两个端点都 ≥ 0', 13, INK)
+    content += box(24, 230, 752, 66, '#f0fdf4')
+    content += text(44, 254, 'f(−1) = −(x²−1) + x ≥ 0　且　f(1) = (x²−1) + x ≥ 0', 14, INK, 'middle', 700)
+    content += text(44, 284, '即 x² − x − 1 ≤ 0 且 x² + x − 1 ≤ 0', 13, MUTED, 'middle')
+    content += text(44, 324, '解得 (√5−1)/2 ≥ x ≥ (1−√5)/2（两集合取交集）', 13.5, INK, weight=700)
+    content += text(44, 352, '常规解法要按 x²−1 的正负分两类讨论；主元法把“讨论”变成“查两端”', 13, MUTED)
+    content += box(24, 372, 752, 60, '#fef9c3')
+    content += text(400, 400, '适用条件：f(a) 关于 a 是一次的（不含 a²）', 13, RED, 'middle', 700)
+    content += box(24, 442, 752, 56, '#f0fdf4')
+    content += text(44, 470, '何时想到主元：', 13, GREEN, weight=700)
+    content += text(140, 470, '参数 a 的次数低（一次），而 x 的次数高（二次以上）时，交换地位更简单', 12.5, INK)
+    return sci.document('主元变换：把参数当成变量',
+                        '参数次数低、变量次数高时，把参数看作主元，问题变成一次函数的端点问题。',
+                        content,
+                        '主元法不是万能的：只对“关于参数是一次”的不等式有效。',
+                        height=540)
+
+
+def euler_polar():
+    """极坐标：模长与辐角。"""
+    content = box(24, 82, 470, 430)
+    content += text(44, 112, '例：把 z = 3 + 4i 写成极坐标形式', 15, INK, weight=700)
+    cx, cy, scale = 250, 300, 34
+    content += line(70, cy, 440, cy, MUTED, 1.8)
+    content += line(cx, 470, cx, 130, MUTED, 1.8)
+    px, py = cx + 3 * scale, cy - 4 * scale
+    content += line(cx, cy, px, py, RED, 2.6)
+    content += circle(px, py, 6, RED, 'white')
+    content += text(px + 12, py - 6, 'z = 3+4i', 13, RED, weight=700)
+    content += text(cx + 3 * scale / 2, cy + 20, '3（实部）', 12, BLUE, 'middle')
+    content += line(px, py, px, cy, '#94a3b8', 1.4, '3 3')
+    content += text(px + 10, (py + cy) / 2, '4（虚部）', 12, GREEN)
+    r = 5.0
+    content += text(cx - 66, cy - 92, '|z| = 5', 14, RED, weight=800)
+    content += text(44, 456, 'r = √(3²+4²) = 5　θ = arctan(4/3) ≈ 53°', 13, INK)
+    content += text(44, 484, '极坐标形式：z = r(cosθ + i·sinθ) = 5e^(iθ)', 13.5, INK, weight=700)
+
+    content += box(514, 82, 262, 430)
+    content += text(534, 112, '模长与辐角', 16, GREEN, weight=700)
+    content += text(534, 148, 'r = |z| = √(a²+b²)', 14, INK, weight=700)
+    content += text(534, 176, 'θ = arg z（辐角）', 14, INK, weight=700)
+    content += text(534, 208, '乘法：模长相乘、辐角相加', 12.5, INK)
+    content += text(534, 232, '除法：模长相除、辐角相减', 12.5, INK)
+    content += text(534, 232 + 34, '乘方：模长乘方、辐角乘 n', 12.5, INK)
+    content += text(534, 286, '与欧拉公式的关系', 15, GREEN, weight=700)
+    content += text(534, 312, 'e^(iθ) = cosθ + i·sinθ', 13, INK)
+    content += text(534, 336, '所以 z = r·e^(iθ)', 14, RED, weight=700)
+    content += text(534, 366, '极坐标就是欧拉公式的直接应用：', 12, MUTED)
+    content += text(534, 390, '模长和辐角把“位置”变成“距离+方向”', 12, MUTED)
+    content += text(534, 436, '乘除与乘方在极坐标下极其简单', 12, RED)
+    return sci.document('极坐标：模长与辐角',
+                        '模长 r 给出离原点的距离，辐角 θ 给出方向；两个数确定一个复数。',
+                        content,
+                        '三角换元、欧拉公式、复数乘法，都是“模长与辐角”这套语言的不同说法。',
+                        height=580)
+
+
+def euler_demoivre():
+    """棣莫弗定理：幂的辐角乘 n。"""
+    content = box(24, 82, 470, 430)
+    content += text(44, 112, '棣莫弗定理：[r(cosθ+i·sinθ)]ⁿ = rⁿ(cos nθ + i·sin nθ)', 14, INK, weight=700)
+    cx, cy, base = 250, 300, 34
+    z = 1 + 1j if False else None
+    # (1+i)^k 的模长 (√2)^k、辐角 k·π/4
+    pts = []
+    for k in range(1, 9):
+        mod = (math.sqrt(2)) ** k
+        ang = k * math.pi / 4
+        pts.append((k, mod, ang))
+    max_mod = pts[-1][1]
+    scale = 130 / max_mod
+    for k, mod, ang in pts:
+        px = cx + mod * scale * math.cos(ang)
+        py = cy - mod * scale * math.sin(ang)
+        color = BLUE if k < 8 else RED
+        content += circle(px, py, 4.5, color, 'white')
+        content += line(cx, cy, px, py, color, 1.2)
+        content += text(px + 8, py - 4, str(k), 10.5, MUTED, weight=700)
+    content += text(cx, cy + 20, 'O', 11, MUTED)
+    content += text(44, 456, '(1+i)^k 的落点：模长 (√2)^k 递增，辐角每次 +45°，绕 2 圈', 12.5, MUTED)
+    content += text(44, 484, 'k=8 时辐角 8×45°=360°，回到正实轴，模长 (√2)⁸ = 16', 13, RED, weight=700)
+
+    content += box(514, 82, 262, 430)
+    content += text(534, 112, '定理内容', 16, GREEN, weight=700)
+    content += text(534, 148, '[r(cosθ+isinθ)]ⁿ', 14, INK, weight=700)
+    content += text(534, 172, '= rⁿ(cos nθ + i·sin nθ)', 14, INK, weight=700)
+    content += text(534, 204, '由欧拉公式一行可得：', 13, MUTED)
+    content += text(534, 228, '左边 = (r·e^(iθ))ⁿ = rⁿ·e^(inθ)', 13, INK)
+    content += text(534, 252, '右边由欧拉公式展开即原形式', 12.5, MUTED)
+    content += text(534, 288, '与本站例题的对照', 15, GREEN, weight=700)
+    content += text(534, 314, '(1+i)⁸：1+i = √2·e^(iπ/4)', 12.5, INK)
+    content += text(534, 338, '八次方：模长 (√2)⁸ = 16', 12.5, INK)
+    content += text(534, 362, '辐角 8×π/4 = 2π，回到正实轴', 12.5, INK)
+    content += text(534, 386, '所以 (1+i)⁸ = 16', 13.5, RED, weight=800)
+    return sci.document('棣莫弗定理：幂的辐角乘 n',
+                        '欧拉公式一行推出棣莫弗定理；幂运算变成“模长乘方、辐角乘 n”。',
+                        content,
+                        '图示是 (1+i)^k 的落点螺旋：每乘一次 (1+i)，转 45° 并放大 √2 倍。',
+                        height=560)
+
+
 DOCS = {
     'intro-math-probability.svg': probability_intro,
     'intro-math-ellipse.svg': ellipse_intro,
@@ -628,6 +1043,18 @@ DOCS = {
     'math-euler-identity.svg': euler_identity,
     'math-euler-series.svg': euler_series,
     'math-euler-rotation.svg': euler_rotation,
+    'math-derivative-sign-table.svg': derivative_sign_table,
+    'math-derivative-formulas.svg': derivative_formulas,
+    'math-probability-dice-grid.svg': probability_dice_grid,
+    'math-probability-complement.svg': probability_complement,
+    'math-ellipse-focus-axis.svg': ellipse_focus_axis,
+    'math-ellipse-focus-chord.svg': ellipse_focus_chord,
+    'math-substitution-trig-example.svg': substitution_trig_example,
+    'math-substitution-main-variable.svg': substitution_main_variable,
+    'math-euler-polar.svg': euler_polar,
+    'math-euler-demoivre.svg': euler_demoivre,
+    'math-trig-graphs.svg': trig_graphs,
+    'math-trig-hexagon.svg': trig_hexagon,
 }
 
 

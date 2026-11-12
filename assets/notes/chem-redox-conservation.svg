@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">氧化还原：电子守恒的定量计算</title>
+  <desc id="description">得失电子总数相等，是氧化还原计算的第一等式。。先写价态变化，再按守恒列式；部分参与反应的量要单独说明。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="520" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">氧化还原：电子守恒的定量计算</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">得失电子总数相等，是氧化还原计算的第一等式。</text>
+  <rect x="24" y="82" width="752" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">核心等式：失电子总数 = 得电子总数</text>
+<rect x="44" y="132" width="712" height="58" rx="10" fill="#fef9c3" stroke="#cbdcd5"/>
+<text x="400" y="162" font-size="14" fill="#dc2626" text-anchor="middle" font-weight="700">n(还原剂) × 变价原子数 × 失电子数 = n(氧化剂) × 变价原子数 × 得电子数</text>
+<text x="44" y="222" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">例：用 MnO₂ 氧化浓盐酸制 Cl₂（Mn：+4→+2，Cl：−1→0）</text>
+<text x="44" y="246" font-size="14" fill="#172b42" text-anchor="start" font-weight="500">MnO₂ + 4HCl(浓) → MnCl₂ + Cl₂↑ + 2H₂O</text>
+<text x="44" y="270" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">每个 Mn 得 2e⁻，每个 Cl 失 1e⁻，生成 1 个 Cl₂ 失 2e⁻</text>
+<text x="44" y="294" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">所以 1 mol MnO₂ 恰好氧化 2 mol HCl（被氧化的部分）</text>
+<rect x="44" y="318" width="712" height="58" rx="10" fill="#f0fdf4" stroke="#cbdcd5"/>
+<text x="400" y="348" font-size="13" fill="#047857" text-anchor="middle" font-weight="700">参加反应的 4 mol HCl 中，只有 2 mol 被氧化，另外 2 mol 起酸性作用</text>
+<text x="44" y="408" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">常见应用：</text>
+<text x="44" y="432" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">① 已知一种物质的量，求另一种物质的量　② 计算转移电子总数　③ 判断过量</text>
+<text x="44" y="456" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">② 多步反应可以“电子桥”接力：A 失给 B，B 失给 C，则 A 与 C 直接按守恒列式</text>
+  <rect x="24" y="458" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="478" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">先写价态变化，再按守恒列式；部分参与反应的量要单独说明。</text>
+</svg>

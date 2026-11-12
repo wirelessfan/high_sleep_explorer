@@ -1202,5 +1202,16 @@
         }
       }
     }
-  ]
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/phys-induction-lenz.svg",
+      "title": "楞次定律判断流程",
+      "caption": "定原磁场→看磁通量增减→增反减同定感应磁场→安培定则定电流方向。"
+    },
+    {
+      "src": "/assets/notes/phys-induction-faraday.svg",
+      "title": "磁通量与法拉第定律",
+      "caption": "Φ=BS；E=n·ΔΦ/Δt；变化越快 E 越大；导线切割 E=BLv。"
+    }  ]
 }

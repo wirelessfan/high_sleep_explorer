@@ -1344,9 +1344,9 @@
       "caption": "强酸、强碱、可溶盐拆；沉淀、气体、弱电解质保留，写完查电荷与原子守恒。"
     },
     {
-      "src": "/assets/notes/chem-ionic-rules-anim.svg",
-      "title": "写、拆、删、查四步",
-      "caption": "先写化学方程式，再拆强电解质、删旁观离子，最后核对守恒。"
+      "src": "/assets/notes/chem-ionic-amount.svg",
+      "title": "与量有关的离子方程式",
+      "caption": "少量按化学式比例完全反应，过量有剩余继续反应；多元酸碱量不同产物不同。"
     }
   ]
 }

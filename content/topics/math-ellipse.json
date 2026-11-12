@@ -483,14 +483,14 @@
   ],
   "diagrams": [
     {
-      "src": "/assets/notes/intro-math-ellipse.svg",
-      "title": "椭圆的定义",
-      "caption": "动点到两焦点距离之和恒为 2a，绳长固定就能画出椭圆。"
+      "src": "/assets/notes/math-ellipse-focus-axis.svg",
+      "title": "标准方程与焦点位置",
+      "caption": "比较分母大小：分母大的方向是长轴，焦点就在那条轴上；参数未指明需分类讨论。"
     },
     {
-      "src": "/assets/notes/math-ellipse-definition.svg",
-      "title": "a/b/c 与离心率",
-      "caption": "a²=b²+c² 构成直角三角形；离心率越大，椭圆越扁。"
+      "src": "/assets/notes/math-ellipse-focus-chord.svg",
+      "title": "焦点弦与焦点三角形",
+      "caption": "两个定值周长：焦点三角形 2a+2c，焦点弦三角形 4a。"
     }
   ]
 }

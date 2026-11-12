@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">求导公式与运算法则速查表</title>
+  <desc id="description">基本公式与四则、复合法则都在一页，考前扫一遍。。链式法则：由外向内逐层求导，每层相乘；记不住时用定义推。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="560" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">求导公式与运算法则速查表</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">基本公式与四则、复合法则都在一页，考前扫一遍。</text>
+  <rect x="24" y="82" width="360" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">基本初等函数</text>
+<text x="64" y="144" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">(xⁿ)′ = n·xⁿ⁻¹</text>
+<text x="64" y="164" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">幂函数</text>
+<text x="64" y="194" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">(sin x)′ = cos x</text>
+<text x="64" y="214" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">正弦</text>
+<text x="64" y="244" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">(cos x)′ = −sin x</text>
+<text x="64" y="264" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">余弦</text>
+<text x="64" y="294" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">(eˣ)′ = eˣ</text>
+<text x="64" y="314" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">指数（不变）</text>
+<text x="64" y="344" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">(aˣ)′ = aˣ ln a</text>
+<text x="64" y="364" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">一般指数</text>
+<text x="64" y="394" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">(ln x)′ = 1/x</text>
+<text x="64" y="414" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">对数</text>
+<text x="64" y="444" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">(log_a x)′ = 1/(x ln a)</text>
+<text x="64" y="464" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">一般对数</text>
+<rect x="404" y="82" width="372" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="424" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">运算法则</text>
+<text x="424" y="144" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="700">和差：[f ± g]′ = f′ ± g′</text>
+<text x="424" y="164" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">逐项求导</text>
+<text x="424" y="200" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="700">乘：[f·g]′ = f′g + fg′</text>
+<text x="424" y="220" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">不能直接相乘</text>
+<text x="424" y="256" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="700">商：[f/g]′ = (f′g − fg′)/g²</text>
+<text x="424" y="276" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">分母 g ≠ 0</text>
+<text x="424" y="312" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="700">复合（链式）：[f(g)]′ = f′(g)·g′(x)</text>
+<text x="424" y="332" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">先外后内，逐层相乘</text>
+<text x="424" y="368" font-size="13.5" fill="#172b42" text-anchor="start" font-weight="700">例：y=(2x+1)⁵ 的导数是 10(2x+1)⁴</text>
+<text x="424" y="388" font-size="11.5" fill="#50647a" text-anchor="start" font-weight="500">外层 5(2x+1)⁴，内层导数 2</text>
+<text x="424" y="452" font-size="12.5" fill="#dc2626" text-anchor="start" font-weight="700">复合函数最易错：忘记乘内层导数</text>
+  <rect x="24" y="498" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="518" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">链式法则：由外向内逐层求导，每层相乘；记不住时用定义推。</text>
+</svg>

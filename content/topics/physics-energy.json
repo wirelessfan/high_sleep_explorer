@@ -1201,5 +1201,16 @@
         }
       }
     }
-  ]
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/phys-energy-spring.svg",
+      "title": "弹簧系统的动能与势能",
+      "caption": "以滑块为对象机械能不守恒；把滑块和弹簧看成整体，机械能才守恒。"
+    },
+    {
+      "src": "/assets/notes/phys-energy-work-map.svg",
+      "title": "功能关系对应表",
+      "caption": "合外力→ΔEk、重力→−ΔEp、其他力→ΔE机、摩擦→Q：做功的过程就是能量转化的过程。"
+    }  ]
 }

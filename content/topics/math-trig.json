@@ -494,24 +494,14 @@
   ],
   "diagrams": [
     {
-      "src": "/assets/notes/intro-math-trig.svg",
-      "title": "单位圆读函数",
-      "caption": "动点绕圆一周，横坐标是 cos、纵坐标是 sin。"
+      "src": "/assets/notes/math-trig-graphs.svg",
+      "title": "sin/cos/tan 图像",
+      "caption": "周期、单调区间、奇偶性在图像上一目了然。"
     },
     {
-      "src": "/assets/notes/math-trig-special.svg",
-      "title": "特殊角表",
-      "caption": "单位圆上的位置与 0°—90° 的 sin/cos/tan 取值一一对应。"
-    },
-    {
-      "src": "/assets/notes/math-trig-astc.svg",
-      "title": "四象限符号",
-      "caption": "一全正、二正弦、三正切、四余弦。"
-    },
-    {
-      "src": "/assets/notes/math-trig-induction.svg",
-      "title": "诱导公式四步法",
-      "caption": "奇变偶不变，符号看象限：先定名称，再定符号。"
+      "src": "/assets/notes/math-trig-hexagon.svg",
+      "title": "六边形记忆图",
+      "caption": "对角线互为倒数、相邻相乘、平方和关系，一张图装下所有同角公式。"
     }
   ]
 }

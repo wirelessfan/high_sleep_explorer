@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 630" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">功能关系 · 做功与能量对应表</title>
+<desc id="desc">判断机械能是否守恒：只有重力、弹力做功时守恒；其他力做功必然改变机械能。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="450" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">功能关系 · 做功与能量对应表</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<rect x="30" y="60" width="580" height="330" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<text x="320" y="88" fill="#1e293b" font-size="13" font-weight="700" text-anchor="middle">做功的力 → 对应变化的能量</text>
+<rect x="46" y="108" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="171" y="133" fill="#334155" font-size="12" font-weight="700" text-anchor="middle">合外力做功 W合</text>
+<text x="320" y="133" fill="#94a3b8" font-size="13" font-weight="700" text-anchor="middle">→</text>
+<rect x="344" y="108" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="469" y="133" fill="#dc2626" font-size="12" font-weight="700" text-anchor="middle">动能变化 ΔEk</text>
+<text x="320" y="166" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">动能定理</text>
+<rect x="46" y="170" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="171" y="195" fill="#334155" font-size="12" font-weight="700" text-anchor="middle">重力做功 W重</text>
+<text x="320" y="195" fill="#94a3b8" font-size="13" font-weight="700" text-anchor="middle">→</text>
+<rect x="344" y="170" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="469" y="195" fill="#2563eb" font-size="12" font-weight="700" text-anchor="middle">重力势能变化 −ΔEp</text>
+<text x="320" y="228" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">W重 = −ΔEp</text>
+<rect x="46" y="232" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="171" y="257" fill="#334155" font-size="12" font-weight="700" text-anchor="middle">弹簧弹力做功</text>
+<text x="320" y="257" fill="#94a3b8" font-size="13" font-weight="700" text-anchor="middle">→</text>
+<rect x="344" y="232" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="469" y="257" fill="#7c3aed" font-size="12" font-weight="700" text-anchor="middle">弹性势能变化 −ΔEp弹</text>
+<text x="320" y="290" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">W弹 = −ΔEp弹</text>
+<rect x="46" y="294" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="171" y="319" fill="#334155" font-size="12" font-weight="700" text-anchor="middle">其他力做功 W其他</text>
+<text x="320" y="319" fill="#94a3b8" font-size="13" font-weight="700" text-anchor="middle">→</text>
+<rect x="344" y="294" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="469" y="319" fill="#059669" font-size="12" font-weight="700" text-anchor="middle">机械能变化 ΔE机</text>
+<text x="320" y="352" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">W其他 = ΔE机</text>
+<rect x="46" y="356" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="171" y="381" fill="#334155" font-size="12" font-weight="700" text-anchor="middle">一对滑动摩擦力做功</text>
+<text x="320" y="381" fill="#94a3b8" font-size="13" font-weight="700" text-anchor="middle">→</text>
+<rect x="344" y="356" width="250" height="40" rx="6" fill="#f8fafc" stroke="#e2e8f0">
+</rect>
+<text x="469" y="381" fill="#d97706" font-size="12" font-weight="700" text-anchor="middle">内能增加 Q</text>
+<text x="320" y="414" fill="#64748b" font-size="12" font-weight="500" text-anchor="middle">Q = f·Δs相对</text>
+<text x="320" y="372" fill="#1e293b" font-size="12" font-weight="700" text-anchor="middle">力做功的过程，就是能量转化的过程</text>
+<rect x="20" y="410" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="423" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">判断机械能是否守恒：只有重力、弹力做功时守恒；其他力做功必然改变机械能。</text>
+</g>
+</svg>

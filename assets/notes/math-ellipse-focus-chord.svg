@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">焦点弦与焦点三角形：两个定值周长</title>
+  <desc id="description">定义给出的 2a 加上焦距 2c，直接得到两个恒定周长。。焦点在 y 轴的椭圆同理；椭圆越扁 c 越大，三角形越“胖”。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="560" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">焦点弦与焦点三角形：两个定值周长</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">定义给出的 2a 加上焦距 2c，直接得到两个恒定周长。</text>
+  <rect x="24" y="82" width="470" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="15" fill="#047857" text-anchor="start" font-weight="700">焦点三角形：周长恒为 2a + 2c</text>
+<ellipse cx="250" cy="300" rx="170" ry="105" fill="#eef6ff" stroke="#2563eb" stroke-width="2.2"/>
+<circle cx="116.30258" cy="300" r="5" fill="#dc2626" stroke="white" stroke-width="1.5"/>
+<circle cx="383.69742" cy="300" r="5" fill="#dc2626" stroke="white" stroke-width="1.5"/>
+<circle cx="380.02317" cy="232.35714" r="5" fill="#b45309" stroke="white" stroke-width="1.5"/>
+<line x1="116.30258" y1="300" x2="380.02317" y2="232.35714" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+<line x1="383.69742" y1="300" x2="380.02317" y2="232.35714" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+<text x="102.30258" y="320" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="700">F₁</text>
+<text x="397.69742" y="320" font-size="13" fill="#dc2626" text-anchor="middle" font-weight="700">F₂</text>
+<text x="390.02317" y="220.35714" font-size="13" fill="#b45309" text-anchor="start" font-weight="700">P</text>
+<text x="44" y="452" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">周长 = |PF₁| + |PF₂| + |F₁F₂| = 2a + 2c（恒定）</text>
+<text x="44" y="480" font-size="13" fill="#172b42" text-anchor="start" font-weight="700">弦 AB 过焦点 F₁ 时，三角形 ABF₂ 的周长恒为 4a</text>
+<rect x="514" y="82" width="262" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="534" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">推导只用定义</text>
+<text x="534" y="148" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">焦点三角形：</text>
+<text x="534" y="172" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">|PF₁| + |PF₂| = 2a</text>
+<text x="534" y="196" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">加 |F₁F₂| = 2c → 周长 2a + 2c</text>
+<text x="534" y="238" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">焦点弦 AB（过 F₁）：</text>
+<text x="534" y="262" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">|AF₁| + |AF₂| = 2a</text>
+<text x="534" y="286" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">|BF₁| + |BF₂| = 2a</text>
+<text x="534" y="310" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">|AB| = |AF₁| + |BF₁|</text>
+<text x="534" y="334" font-size="14" fill="#dc2626" text-anchor="start" font-weight="700">周长 = 2a + 2a = 4a</text>
+<text x="534" y="384" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">两个定值都只依赖 a、c</text>
+<text x="534" y="428" font-size="12" fill="#50647a" text-anchor="start" font-weight="500">不必知道 P 的具体位置</text>
+  <rect x="24" y="498" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="518" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">焦点在 y 轴的椭圆同理；椭圆越扁 c 越大，三角形越“胖”。</text>
+</svg>

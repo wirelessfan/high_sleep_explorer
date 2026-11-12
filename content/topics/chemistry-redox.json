@@ -1050,5 +1050,16 @@
         }
       }
     }
-  ]
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/chem-redox-bridge.svg",
+      "title": "双线桥的规范画法",
+      "caption": "箭头连接同种元素的反应物与生成物，标明得失电子数与氧化还原。"
+    },
+    {
+      "src": "/assets/notes/chem-redox-conservation.svg",
+      "title": "电子守恒的定量计算",
+      "caption": "得失电子总数相等；部分参与反应的量要单独说明。"
+    }  ]
 }

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 630" width="100%" height="100%" role="img" aria-labelledby="title desc">
+<title id="title">电场力做功与电势能</title>
+<desc id="desc">判断电势能变化：先看电场力做功的正负，再看电荷的正负。。动画与静态图使用相同物理模型；减少动态效果时显示静态示意。</desc>
+<style>text{font-family:"Microsoft YaHei","PingFang SC",sans-serif}.still{display:none} @media(prefers-reduced-motion:reduce){.motion{display:none}.still{display:inline}}</style>
+<g transform="scale(1.4)">
+<rect x="0" y="0" width="640" height="450" rx="12" fill="#fdfcf7" stroke="#e7d8c4">
+</rect>
+<text x="24" y="28" fill="#1e293b" font-size="15" font-weight="800">电场力做功与电势能</text>
+<line x1="24" y1="40" x2="616" y2="40" stroke="#e7d8c4" stroke-width="1">
+</line>
+<rect x="30" y="60" width="300" height="300" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<text x="180" y="88" fill="#1e293b" font-size="12.5" font-weight="700" text-anchor="middle">匀强电场中移动正电荷</text>
+<path d="M 90 110 L 90 240 M 87 234 L 90 240 L 93 234" stroke="#f59e0b" stroke-width="1.6" fill="none">
+</path>
+<path d="M 150 110 L 150 240 M 147 234 L 150 240 L 153 234" stroke="#f59e0b" stroke-width="1.6" fill="none">
+</path>
+<path d="M 210 110 L 210 240 M 207 234 L 210 240 L 213 234" stroke="#f59e0b" stroke-width="1.6" fill="none">
+</path>
+<path d="M 270 110 L 270 240 M 267 234 L 270 240 L 273 234" stroke="#f59e0b" stroke-width="1.6" fill="none">
+</path>
+<text x="180" y="100" fill="#d97706" font-size="12" font-weight="700" text-anchor="middle">电场线方向 E</text>
+<path d="M 120 175 L 240 175 M 234 178 L 240 175 L 234 172" stroke="#dc2626" stroke-width="2.6" fill="none">
+</path>
+<text x="126" y="105" fill="#dc2626" font-size="12" font-weight="700">正电荷顺场线移动</text>
+<text x="180" y="268" fill="#166534" font-size="12" font-weight="700" text-anchor="middle">电场力做正功 W&gt;0</text>
+<text x="180" y="290" fill="#166534" font-size="12" font-weight="700" text-anchor="middle">电势能减少 ΔEp&lt;0</text>
+<rect x="350" y="60" width="260" height="300" rx="8" fill="#fff" stroke="#e2e8f0">
+</rect>
+<text x="480" y="88" fill="#1e293b" font-size="12.5" font-weight="700" text-anchor="middle">公式与结论</text>
+<text x="480" y="118" fill="#dc2626" font-size="12.5" font-weight="700" text-anchor="middle">W_AB = qU_AB</text>
+<text x="480" y="146" fill="#334155" font-size="12" font-weight="500">电场力做正功 → 电势能减少</text>
+<text x="480" y="170" fill="#334155" font-size="12" font-weight="500">电场力做负功 → 电势能增加</text>
+<text x="480" y="198" fill="#334155" font-size="12" font-weight="500">负电荷：顺场线移动时</text>
+<text x="480" y="220" fill="#334155" font-size="12" font-weight="500">负电荷则相反</text>
+<text x="480" y="252" fill="#334155" font-size="12" font-weight="500">沿等势面移动电荷</text>
+<text x="480" y="274" fill="#166534" font-size="12" font-weight="700">电场力不做功，电势能不变</text>
+<text x="320" y="386" fill="#1e293b" font-size="12" font-weight="700" text-anchor="middle">正电荷顺着电场线走，电势能一定减少</text>
+<rect x="20" y="410" width="600" height="21" rx="5" fill="#eff6ff" stroke="#bfdbfe">
+</rect>
+<text x="320" y="423" fill="#1e40af" font-size="12" font-weight="600" text-anchor="middle">判断电势能变化：先看电场力做功的正负，再看电荷的正负。</text>
+</g>
+</svg>

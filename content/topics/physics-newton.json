@@ -1061,5 +1061,26 @@
         }
       }
     }
-  ]
+  ],
+  "diagrams": [
+    {
+      "src": "/assets/notes/phys-newton-slope.svg",
+      "title": "斜面受力与正交分解",
+      "caption": "先画重力、支持力、外力，再沿加速度方向建立坐标轴分解。"
+    },
+    {
+      "src": "/assets/notes/phys-newton-friction.svg",
+      "title": "摩擦力：静摩擦与滑动摩擦",
+      "caption": "判定顺序：有无相对运动；方向与相对运动/趋势相反；可以做正功（传送带）。"
+    },
+    {
+      "src": "/assets/notes/phys-newton-parallelogram.svg",
+      "title": "力的合成与分解",
+      "caption": "平行四边形定则合成合力；正交分解沿 x、y 轴分别求和。"
+    },
+    {
+      "src": "/assets/notes/phys-newton-weight.svg",
+      "title": "超重与失重",
+      "caption": "视重由支持力决定：加速度向上超重、向下失重，只看加速度方向。"
+    }  ]
 }

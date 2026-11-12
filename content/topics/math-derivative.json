@@ -8,7 +8,18 @@
   "reward_card": "gauss",
   "reviewed": true,
   "description": "导数不是公式，是「瞬时变化率」。先看图，再算数。",
-  "sections": [
+  "diagrams": [
+    {
+      "src": "/assets/notes/math-derivative-sign-table.svg",
+      "title": "导数与单调性 · 列表法",
+      "caption": "解 f′=0 分段，列符号表：单调区间与极值同时出现。"
+    },
+    {
+      "src": "/assets/notes/math-derivative-formulas.svg",
+      "title": "求导公式与法则速查表",
+      "caption": "基本初等函数公式与四则、复合法则都在一页。"
+    }
+  ],  "sections": [
     {
       "id": "quick",
       "type": "quiz",

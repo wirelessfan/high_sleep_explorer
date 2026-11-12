@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" width="100%" role="img" aria-labelledby="title description">
+  <title id="title">棣莫弗定理：幂的辐角乘 n</title>
+  <desc id="description">欧拉公式一行推出棣莫弗定理；幂运算变成“模长乘方、辐角乘 n”。。图示是 (1+i)^k 的落点螺旋：每乘一次 (1+i)，转 45° 并放大 √2 倍。</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+</marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+    </style>
+  </defs>
+  <rect width="800" height="560" rx="14" fill="#f7fbf9"/>
+  <text x="30" y="35" font-size="23" fill="#047857" text-anchor="start" font-weight="800">棣莫弗定理：幂的辐角乘 n</text>
+  <text x="30" y="62" font-size="15" fill="#50647a" text-anchor="start" font-weight="500">欧拉公式一行推出棣莫弗定理；幂运算变成“模长乘方、辐角乘 n”。</text>
+  <rect x="24" y="82" width="470" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="44" y="112" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">棣莫弗定理：[r(cosθ+i·sinθ)]ⁿ = rⁿ(cos nθ + i·sin nθ)</text>
+<circle cx="258.125" cy="291.875" r="4.5" fill="#2563eb" stroke="white" stroke-width="1.5"/>
+<line x1="250" y1="300" x2="258.125" y2="291.875" stroke="#2563eb" stroke-width="1.2"/>
+<text x="266.125" y="287.875" font-size="10.5" fill="#50647a" text-anchor="start" font-weight="700">1</text>
+<circle cx="250" cy="283.75" r="4.5" fill="#2563eb" stroke="white" stroke-width="1.5"/>
+<line x1="250" y1="300" x2="250" y2="283.75" stroke="#2563eb" stroke-width="1.2"/>
+<text x="258" y="279.75" font-size="10.5" fill="#50647a" text-anchor="start" font-weight="700">2</text>
+<circle cx="233.75" cy="283.75" r="4.5" fill="#2563eb" stroke="white" stroke-width="1.5"/>
+<line x1="250" y1="300" x2="233.75" y2="283.75" stroke="#2563eb" stroke-width="1.2"/>
+<text x="241.75" y="279.75" font-size="10.5" fill="#50647a" text-anchor="start" font-weight="700">3</text>
+<circle cx="217.5" cy="300" r="4.5" fill="#2563eb" stroke="white" stroke-width="1.5"/>
+<line x1="250" y1="300" x2="217.5" y2="300" stroke="#2563eb" stroke-width="1.2"/>
+<text x="225.5" y="296" font-size="10.5" fill="#50647a" text-anchor="start" font-weight="700">4</text>
+<circle cx="217.5" cy="332.5" r="4.5" fill="#2563eb" stroke="white" stroke-width="1.5"/>
+<line x1="250" y1="300" x2="217.5" y2="332.5" stroke="#2563eb" stroke-width="1.2"/>
+<text x="225.5" y="328.5" font-size="10.5" fill="#50647a" text-anchor="start" font-weight="700">5</text>
+<circle cx="250" cy="365" r="4.5" fill="#2563eb" stroke="white" stroke-width="1.5"/>
+<line x1="250" y1="300" x2="250" y2="365" stroke="#2563eb" stroke-width="1.2"/>
+<text x="258" y="361" font-size="10.5" fill="#50647a" text-anchor="start" font-weight="700">6</text>
+<circle cx="315" cy="365" r="4.5" fill="#2563eb" stroke="white" stroke-width="1.5"/>
+<line x1="250" y1="300" x2="315" y2="365" stroke="#2563eb" stroke-width="1.2"/>
+<text x="323" y="361" font-size="10.5" fill="#50647a" text-anchor="start" font-weight="700">7</text>
+<circle cx="380" cy="300" r="4.5" fill="#dc2626" stroke="white" stroke-width="1.5"/>
+<line x1="250" y1="300" x2="380" y2="300" stroke="#dc2626" stroke-width="1.2"/>
+<text x="388" y="296" font-size="10.5" fill="#50647a" text-anchor="start" font-weight="700">8</text>
+<text x="250" y="320" font-size="11" fill="#50647a" text-anchor="start" font-weight="500">O</text>
+<text x="44" y="456" font-size="12.5" fill="#50647a" text-anchor="start" font-weight="500">(1+i)^k 的落点：模长 (√2)^k 递增，辐角每次 +45°，绕 2 圈</text>
+<text x="44" y="484" font-size="13" fill="#dc2626" text-anchor="start" font-weight="700">k=8 时辐角 8×45°=360°，回到正实轴，模长 (√2)⁸ = 16</text>
+<rect x="514" y="82" width="262" height="430" rx="10" fill="#ffffff" stroke="#cbdcd5"/>
+<text x="534" y="112" font-size="16" fill="#047857" text-anchor="start" font-weight="700">定理内容</text>
+<text x="534" y="148" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">[r(cosθ+isinθ)]ⁿ</text>
+<text x="534" y="172" font-size="14" fill="#172b42" text-anchor="start" font-weight="700">= rⁿ(cos nθ + i·sin nθ)</text>
+<text x="534" y="204" font-size="13" fill="#50647a" text-anchor="start" font-weight="500">由欧拉公式一行可得：</text>
+<text x="534" y="228" font-size="13" fill="#172b42" text-anchor="start" font-weight="500">左边 = (r·e^(iθ))ⁿ = rⁿ·e^(inθ)</text>
+<text x="534" y="252" font-size="12.5" fill="#50647a" text-anchor="start" font-weight="500">右边由欧拉公式展开即原形式</text>
+<text x="534" y="288" font-size="15" fill="#047857" text-anchor="start" font-weight="700">与本站例题的对照</text>
+<text x="534" y="314" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">(1+i)⁸：1+i = √2·e^(iπ/4)</text>
+<text x="534" y="338" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">八次方：模长 (√2)⁸ = 16</text>
+<text x="534" y="362" font-size="12.5" fill="#172b42" text-anchor="start" font-weight="500">辐角 8×π/4 = 2π，回到正实轴</text>
+<text x="534" y="386" font-size="13.5" fill="#dc2626" text-anchor="start" font-weight="800">所以 (1+i)⁸ = 16</text>
+  <rect x="24" y="498" width="752" height="49" rx="6" fill="#eaf5ef" stroke="#c6dfd1"/>
+  <text x="400" y="518" font-size="14" fill="#047857" text-anchor="middle" font-weight="600">图示是 (1+i)^k 的落点螺旋：每乘一次 (1+i)，转 45° 并放大 √2 倍。</text>
+</svg>
