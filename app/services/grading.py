@@ -139,6 +139,15 @@ def grade_section(section: dict, answers: dict[str, int]) -> dict:
     raise ValueError(f"不支持的版块类型: {stype}")
 
 
+
+
+def flatten_details(result: dict) -> list[dict]:
+    """从判分结果中提取全部逐题明细（levels 类型嵌套在 levels[].details 里）。"""
+    details = list(result.get("details", []))
+    for lv in result.get("levels", []):
+        details.extend(lv.get("details", []))
+    return details
+
 def collect_skills(details: list[dict]) -> None:
     """占位：预留给后续按 skill 聚合统计。"""
     return None

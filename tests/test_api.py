@@ -1040,3 +1040,83 @@ def test_wrongbook_isolated_between_users(client):
     wb2 = client.get("/api/v1/wrongbook", headers=h2).json()
     assert wb1["summary"]["open_total"] == 1
     assert wb2["summary"]["open_total"] == 0
+
+
+def test_levels_wrong_questions_recorded(client, auth_headers):
+    """回归：基础闯关（levels）的错题也要进错题本。
+
+    grade_levels 把明细嵌在 levels[].details 里，曾因 submit 只读顶层
+    details 而漏记整个版块。
+    """
+    data = content_loader.topic("physics-induction")
+    sec = next(s for s in data["sections"] if s["type"] == "levels")
+    answers = _all_answers(sec)
+    # 把第一关第一题改错
+    lv = sec["levels"][0]
+    qid = lv["questions"][0]["id"]
+    answers[qid] = (lv["questions"][0]["answer"] + 1) % len(lv["questions"][0]["options"])
+
+    r = client.post("/api/v1/topics/physics-induction/sections/basic/submit",
+                    json={"answers": answers}, headers=auth_headers)
+    assert r.status_code == 200
+
+    wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    assert wb["summary"]["open_total"] >= 1, "闯关错题必须入本"
+    assert wb["items"][0]["section_id"] == "basic"
+
+    # 错题重做清零流程也要走得通
+    wrong_ids = [it["id"] for it in wb["items"] if it["status"] == "open"]
+    # 用内容文件里的正确答案构造重做提交
+    correct_map = {}
+    for s2 in data["sections"]:
+        if s2["type"] == "levels":
+            for lv2 in s2["levels"]:
+                for q2 in lv2["questions"]:
+                    if f"wq_" in "" : pass
+                    correct_map[q2["id"]] = q2["answer"]
+    redo_answers = {wid: None for wid in wrong_ids}
+    # 通过 wrongbook 行反查题目正确答案：直接用内容映射
+    redo_answers = {}
+    for wid in wrong_ids:
+        # 行 id 由复合键 hash，这里用重做接口逐题试错不可行；
+        # 直接从内容重建：错题行的 section/tier/question_id 存在于行里
+        pass
+    # 从内容 loader 拿正确答案
+    for s2 in data["sections"]:
+        for q2 in wrongbook_questions_of(s2, correct_map):
+            pass
+
+
+def test_levels_wrong_questions_recorded(client, auth_headers):
+    """回归：基础闯关（levels）的错题必须进错题本。
+
+    grade_levels 把明细嵌在 levels[].details 里，submit 曾只读顶层
+    details 导致整个闯关版块的错题漏记。
+    """
+    data = content_loader.topic("physics-induction")
+    sec = next(s for s in data["sections"] if s["type"] == "levels")
+    answers = _all_answers(sec)
+    lv = sec["levels"][0]
+    q0 = lv["questions"][0]
+    answers[q0["id"]] = (q0["answer"] + 1) % len(q0["options"])
+
+    r = client.post("/api/v1/topics/physics-induction/sections/basic/submit",
+                    json={"answers": answers}, headers=auth_headers)
+    assert r.status_code == 200
+
+    wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    assert wb["summary"]["open_total"] >= 1, "闯关错题必须入本"
+    item = next(it for it in wb["items"] if it["section_id"] == "basic")
+    assert item["stem"] == q0["stem"]
+    assert item["wrong_count"] == 1
+
+    # 重做清零：错题行自带正确答案，答对即清
+    r2 = client.post("/api/v1/wrongbook/physics-induction/redo",
+                     json={"answers": {item["id"]: item["answer"]}},
+                     headers=auth_headers)
+    assert r2.status_code == 200
+    assert r2.json()["cleared"] >= 1
+
+    wb2 = client.get("/api/v1/wrongbook", headers=auth_headers).json()
+    open_ids = [it["id"] for it in wb2["items"]]
+    assert item["id"] not in open_ids, "清零后不应再出现在待清零列表"

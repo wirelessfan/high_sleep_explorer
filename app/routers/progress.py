@@ -103,12 +103,13 @@ def submit(topic_id: str, section_id: str, body: SubmitIn, tier: str = "basic",
         # 清零只能走错题本的重做流程，保证清零奖励不被刷）
         try:
             wrongbook.record_wrong(conn, user["id"], topic_id, section_id, tier,
-                                   result.get("details", []),
+                                   grading.flatten_details(result),
                                    wrongbook.questions_of(content))
         except Exception:  # noqa: BLE001 —— 错题记录失败不影响判分主流程
             pass
 
-    details = result.get("details", [])
+    # levels 类型把明细嵌在 levels[].details 里，统一摊平供错题本与薄弱点统计使用
+    details = grading.flatten_details(result)
     skills = grading.weak_skills(details)
 
     return {
