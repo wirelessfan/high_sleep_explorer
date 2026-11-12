@@ -24,9 +24,9 @@ export async function renderSection(view, { id, sid, tier }) {
       ]),
     ]));
     wrap.appendChild(el('section', { class: 'panel' }, [
-      el('div', { style: 'font-size:14px;font-weight:800', text: '这一档题目正在出，先把基础打牢' }),
+      el('div', { style: 'font-size:14px;font-weight:800', text: '这个主题的高阶档位还没开放' }),
       el('div', { style: 'font-size:12.5px;color:#8a7a70;margin-top:6px;line-height:1.7',
-        text: '基础档覆盖课本常规题（70–80 分）。进阶（80–90）与高级（90–95）会陆续补齐，先把基础档六个版块全部走通，收益最大。' }),
+        text: '基础档覆盖课本常规题（70–80 分）。进阶（80–90）与高级（90–95）按主题逐个补齐，可以先走通当前主题的基础档，或到已开放高阶档的主题继续冲刺。' }),
       el('button', { class: 'btn sm', style: 'margin-top:14px', text: '回到基础档',
         onclick: () => navigate(`#/topic/${id}/${sid}/basic`) }),
     ]));

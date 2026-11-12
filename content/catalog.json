@@ -7,21 +7,35 @@
       "name": "物理",
       "color": "#3B82F6",
       "icon": "⚛",
-      "topics": ["physics-kinematics", "physics-newton", "physics-energy", "physics-electric", "physics-induction"]
+      "topics": [
+        "physics-kinematics",
+        "physics-newton",
+        "physics-energy",
+        "physics-electric",
+        "physics-induction"
+      ]
     },
     {
       "id": "chemistry",
       "name": "化学",
       "color": "#10B981",
       "icon": "⚗",
-      "topics": ["chemistry-equilibrium", "chemistry-redox", "chemistry-mole", "chemistry-periodic", "chemistry-ionic"]
+      "topics": [
+        "chemistry-equilibrium",
+        "chemistry-redox",
+        "chemistry-mole",
+        "chemistry-periodic",
+        "chemistry-ionic"
+      ]
     },
     {
       "id": "math",
       "name": "数学",
       "color": "#F59E0B",
       "icon": "∑",
-      "topics": ["math-derivative"]
+      "topics": [
+        "math-derivative"
+      ]
     }
   ],
   "topics": [
@@ -31,12 +45,17 @@
       "title": "匀变速直线运动",
       "subtitle": "基本公式与 v-t 图像面积法",
       "grade": "高一",
-      "minutes": 25,
+      "minutes": 36,
       "cover": "physics",
       "reward_card": "galileo",
       "description": "运动学是高中物理第一基石。三句话吃透运动学：v=v₀+at、x=v₀t+½at²、v-t 图像面积就是位移。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -45,12 +64,17 @@
       "title": "电磁感应",
       "subtitle": "楞次定律与感应电流方向",
       "grade": "高二",
-      "minutes": 25,
+      "minutes": 148,
       "cover": "induction",
       "reward_card": "faraday",
       "description": "从「磁铁插进线圈」这个实验出发，把感应电流的方向判断一次讲透。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -59,12 +83,17 @@
       "title": "牛顿运动定律",
       "subtitle": "受力分析与 F=ma",
       "grade": "高一",
-      "minutes": 25,
+      "minutes": 128,
       "cover": "physics",
       "reward_card": "newton",
       "description": "从「推一下箱子」出发，把受力分析 → F=ma → 两类问题一次走通。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -73,12 +102,17 @@
       "title": "机械能与功能关系",
       "subtitle": "动能定理与机械能守恒",
       "grade": "高一",
-      "minutes": 25,
+      "minutes": 148,
       "cover": "physics",
       "reward_card": "galileo",
       "description": "功是能量转化的量度。三句话吃透力学能量问题：W合=ΔEk、W重=−ΔEp、只有重力做功时机械能守恒。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -87,12 +121,17 @@
       "title": "电场强度与电势",
       "subtitle": "从库仑定律到电势差",
       "grade": "高二",
-      "minutes": 25,
+      "minutes": 109,
       "cover": "physics",
       "reward_card": "coulomb",
       "description": "电荷之间怎么「隔着空气」用力？先有力（库仑定律），再有场（E=F/q），最后有势（U=Ed）——一条线串起静电学。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -101,12 +140,17 @@
       "title": "化学平衡",
       "subtitle": "勒夏特列原理与平衡移动",
       "grade": "高二",
-      "minutes": 25,
+      "minutes": 36,
       "cover": "equilibrium",
       "reward_card": "curie",
       "description": "浓度、压强、温度改变时平衡往哪边移？用「对抗改变」四个字吃透。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -115,12 +159,17 @@
       "title": "氧化还原反应",
       "subtitle": "化合价升降与电子转移",
       "grade": "高一",
-      "minutes": 25,
+      "minutes": 128,
       "cover": "chemistry",
       "reward_card": "lavoisier",
       "description": "「升失氧、降得还」六个字吃透氧化还原；从得氧失氧到电子转移，一次讲清本质。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -129,12 +178,17 @@
       "title": "物质的量",
       "subtitle": "摩尔与阿伏加德罗常数",
       "grade": "高一",
-      "minutes": 25,
+      "minutes": 181,
       "cover": "chemistry",
       "reward_card": "avogadro",
       "description": "物质的量是连接「微观粒子」和「宏观称量」的桥。三个公式走天下：n=N/NA、n=m/M、n=V/Vm。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -143,12 +197,17 @@
       "title": "元素周期律",
       "subtitle": "位—构—性 三角关系",
       "grade": "高一",
-      "minutes": 25,
+      "minutes": 36,
       "cover": "chemistry",
       "reward_card": "mendeleev",
       "description": "位置、结构、性质，三者互相推导——看到元素先定位，定完位置推性质。一化儿把周期表称作化学的「地图」。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -157,12 +216,17 @@
       "title": "离子反应",
       "subtitle": "电解质、离子方程式与共存",
       "grade": "高一",
-      "minutes": 25,
+      "minutes": 36,
       "cover": "chemistry",
       "reward_card": "arrhenius",
       "description": "溶液中真正上场的往往只有几种离子。学会「拆」与「不拆」，再学会「共存」的四类冲突。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     },
     {
@@ -171,22 +235,57 @@
       "title": "导数的几何意义",
       "subtitle": "切线斜率与单调性",
       "grade": "高二",
-      "minutes": 25,
+      "minutes": 36,
       "cover": "derivative",
       "reward_card": "gauss",
       "description": "导数不是公式，是「瞬时变化率」。先看图，再算数。",
       "sections": [
-        "quick", "basic", "summary", "hard", "practice", "boss"
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
       ]
     }
   ],
   "sections": [
-    {"id": "quick", "name": "快速测试", "minutes": 4, "icon": "⚡"},
-    {"id": "basic", "name": "基础闯关", "minutes": 9, "icon": "🧩"},
-    {"id": "summary", "name": "知识点总结", "minutes": 5, "icon": "📘"},
-    {"id": "hard", "name": "难点剖析", "minutes": 5, "icon": "🔍"},
-    {"id": "practice", "name": "实战巩固", "minutes": 8, "icon": "✏️"},
-    {"id": "boss", "name": "Boss 彩蛋", "minutes": 5, "icon": "👾"}
+    {
+      "id": "quick",
+      "name": "快速测试",
+      "minutes": 4,
+      "icon": "⚡"
+    },
+    {
+      "id": "basic",
+      "name": "基础闯关",
+      "minutes": 9,
+      "icon": "🧩"
+    },
+    {
+      "id": "summary",
+      "name": "知识点总结",
+      "minutes": 5,
+      "icon": "📘"
+    },
+    {
+      "id": "hard",
+      "name": "难点剖析",
+      "minutes": 5,
+      "icon": "🔍"
+    },
+    {
+      "id": "practice",
+      "name": "实战巩固",
+      "minutes": 8,
+      "icon": "✏️"
+    },
+    {
+      "id": "boss",
+      "name": "Boss 彩蛋",
+      "minutes": 5,
+      "icon": "👾"
+    }
   ],
   "tiers": [
     {
