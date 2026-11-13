@@ -43,4 +43,12 @@
 
 ## 发布记录
 
-云端隔离验证及生产发布结果将在实际完成后补记。
+- 应用发布提交：`687b531d03adecf3657c3c5befd0ebc2e2889d1f`，已推送 Gitee master 并部署生产。
+- Linux 云端独立测试服务（127.0.0.1:8002，独立目录 `/opt/learning_highschool_ai_review`、独立数据库 `/var/lib/learning-highschool-ai-review/app.db`）通过错题本整条流程及907题、190判分单元、38阅读单元；AI仅为STUB，原有预览8091未改动。验收后临时服务已停止。
+- 生产迁移至 schema v8，服务、Caddy、原有预览服务均 active，无启动 error 日志。生产通过全部907题/190公开题面单元/38阅读单元核验（只读题目，不在生产作答发奖）。
+- 公网连字符域名8090、点分域名8090、原443入口均返回健康JSON；生产HTML200；错题本和管理页面JS的SHA-256与Git发布对象一致，Cache-Control包含no-cache；匿名管理接口401，普通用户403。
+- 迁移前后原有学习数据逐行比对均保留：progress 6，wrong_questions 0，events 9，achievements 4，checkins 7，card_owned 6，draws 11。迁移前17个用户保留，爸爸账号自动获得管理角色；验收只新建匿名读取会话。
+- 代码备份：`/var/backups/learning-highschool/wrongbook-pre-687b531-20261113-093031.tar.gz`；数据库备份：同前缀 `.db`；服务及修复后的Caddy配置另有备份。
+- Caddy入口修复前备份：`/var/backups/learning-highschool/caddy-8090-20261113-090522`。
+- 生产AI环境加载通过独立systemd drop-in添加：`/etc/systemd/system/learning-highschool.service.d/50-ai-review.conf`；现有密钥文件未覆盖。验收时实际状态为 `ai.enabled=false, ai.stub=false`，等待服务密钥后才能进行真实模型质量验收。
+- 正常访问：[8090站点](https://123-56-217-104.sslip.io:8090/)；备用[443站点](https://123-56-217-104.sslip.io/)。8090为HTTPS，请使用完整HTTPS地址。
