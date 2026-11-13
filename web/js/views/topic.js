@@ -115,7 +115,9 @@ export async function renderTopic(view, { id }) {
         bossThumb(s.boss, { done: finished, fallback: finished ? '✓' : (s.icon || String(i + 1)) }),
         el('div', { class: 'body', style: 'flex:1;min-width:0' }, [
           el('div', { class: 'nm', text: s.name }),
-          el('div', { class: 'mt', text: `${s.minutes} 分钟 · ${tiers.reduce((a, t) => a + (t.available ? t.questions : 0), 0)} 题` }),
+          el('div', { class: 'mt', text: s.type === 'reading'
+            ? `${s.minutes} 分钟 · 阅读总结`
+            : `${s.minutes} 分钟 · ${tiers.reduce((a, t) => a + (t.available ? t.questions : 0), 0)} 题` }),
           bossInline(s.boss),
         ]),
       ]),

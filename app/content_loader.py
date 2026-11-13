@@ -207,7 +207,8 @@ def count_questions(sec: dict) -> int:
         return len(sec.get("myths") or [])
     if t == "steps":
         return sum(len(p.get("steps") or []) for p in sec.get("problems") or [])
-    return 1 if sec.get("blocks") else 0
+    # 阅读单元参与学习进度，但不属于计分题目。
+    return 0
 
 
 def section_tier_list(sec: dict) -> list[dict]:

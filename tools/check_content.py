@@ -48,6 +48,32 @@ def questions_of(sec):
     return []
 
 
+def validate_questions(content, prefix, seen_ids=None):
+    """逐题检查；阅读单元没有题目也可安全调用。"""
+    errors, warnings = [], []
+    if seen_ids is None:
+        seen_ids = set()
+    for qid, q in questions_of(content):
+        key = f"{prefix}/{qid}"
+        if content["type"] in ("quiz", "levels", "boss"):
+            if qid in seen_ids:
+                errors.append(f"{key}: 同版块内题号重复")
+            seen_ids.add(qid)
+        opts = q.get("options") or []
+        if len(opts) < 2:
+            errors.append(f"{key}: 选项少于 2 个")
+        if len(set(opts)) != len(opts):
+            errors.append(f"{key}: 选项重复")
+        ans = q.get("answer")
+        if type(ans) is not int or not (0 <= ans < len(opts)):
+            errors.append(f"{key}: answer 越界或非整数 ({ans})")
+        if not (q.get("explain") or "").strip():
+            errors.append(f"{key}: 解析为空")
+        if "skill" not in q and content["type"] in ("quiz", "levels", "boss"):
+            warnings.append(f"{key}: 缺少 skill 标签")
+    return errors, warnings
+
+
 def main():
     errors = []
     warnings = []
@@ -77,23 +103,10 @@ def main():
                 for qid, q in questions_of(content):
                     total_q += 1
                     tier_counts[tier_id] = tier_counts.get(tier_id, 0) + 1
-                    # myths / steps 的 id 是按下标合成的（m0、p0s0），跨档位重复属正常
-                    if content["type"] in ("quiz", "levels", "boss"):
-                        if qid in seen_ids:
-                            errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 同版块内题号重复")
-                        seen_ids.add(qid)
-                opts = q.get("options") or []
-                if len(opts) < 2:
-                    errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 选项少于 2 个")
-                if len(set(opts)) != len(opts):
-                    errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 选项重复")
-                ans = q.get("answer")
-                if not isinstance(ans, int) or not (0 <= ans < len(opts)):
-                    errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: answer 越界 ({ans})")
-                if not (q.get("explain") or "").strip():
-                    errors.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 解析为空")
-                if "skill" not in q and content["type"] in ("quiz", "levels", "boss"):
-                    warnings.append(f"{tid}/{sec['id']}/{tier_id}/{qid}: 缺少 skill 标签")
+                found_errors, found_warnings = validate_questions(
+                    content, f"{tid}/{sec['id']}/{tier_id}", seen_ids)
+                errors.extend(found_errors)
+                warnings.extend(found_warnings)
 
             for tier_id, content in tiers.items():
                 if content["type"] == "reading" and not content.get("blocks"):

@@ -96,7 +96,10 @@ class TierLoaderTests(unittest.TestCase):
             listed = content_loader.section_tier_list(sec)
             with self.subTest(section=sec["id"]):
                 self.assertTrue(all(t["available"] for t in listed))
-                self.assertTrue(all(t["questions"] > 0 for t in listed))
+                if sec["type"] == "reading":
+                    self.assertTrue(all(t["questions"] == 0 for t in listed))
+                else:
+                    self.assertTrue(all(t["questions"] > 0 for t in listed))
 
     def test_tiers_do_not_leak_answers_via_api_shape(self):
         """strip_answers 必须对每一档都生效。"""

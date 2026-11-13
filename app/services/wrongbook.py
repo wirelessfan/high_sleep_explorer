@@ -47,7 +47,18 @@ def record_wrong(conn: sqlite3.Connection, user_id: str, topic_id: str,
         q = questions.get(qid)
         if not q:
             continue
-        rid = _row_id(user_id, topic_id, section_id, tier, qid)
+        # 同题号换题后另建版本；历史快照和对应答案继续成对保存。
+        snapshot = {k: q.get(k) for k in ("stem", "options", "answer", "explain")}
+        fingerprint = hashlib.sha256(json.dumps(snapshot, ensure_ascii=False,
+                                                sort_keys=True).encode()).hexdigest()[:16]
+        rid = _row_id(user_id, topic_id, section_id, tier, qid + ":" + fingerprint)
+        legacy_id = _row_id(user_id, topic_id, section_id, tier, qid)
+        legacy = conn.execute("SELECT * FROM wrong_questions WHERE id=?", (legacy_id,)).fetchone()
+        if legacy and (legacy["stem"], json.loads(legacy["options_json"]),
+                       legacy["answer"], legacy["explain"]) == (
+                           q.get("stem", ""), q.get("options", []),
+                           q.get("answer"), q.get("explain", "")):
+            rid = legacy_id
         existing = conn.execute(
             "SELECT id, wrong_count, status FROM wrong_questions WHERE id = ?", (rid,)
         ).fetchone()
@@ -94,7 +105,7 @@ def questions_of(content: dict) -> dict[str, dict]:
     elif t == "steps":
         for pi, p in enumerate(content.get("problems", [])):
             for si, st in enumerate(p.get("steps", [])):
-                out[f"p{pi}s{si}"] = {**st, "stem": st.get("ask", ""),
+                out[f"p{pi}s{si}"] = {**st, "stem": p.get("stem", "") + "\n" + st.get("ask", ""),
                                       "explain": st.get("explain", "")}
     return out
 

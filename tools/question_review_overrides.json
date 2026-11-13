@@ -1,0 +1,389 @@
+{
+  "physics-kinematics/practice/expert/p0s0": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-kinematics/practice/expert/p0s1": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-kinematics/practice/expert/p0s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-kinematics/practice/expert/p0s3": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-kinematics/practice/expert/p1s0": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-kinematics/practice/expert/p1s1": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-kinematics/practice/expert/p1s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-kinematics/practice/expert/p1s3": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-induction/practice/expert/p0s0": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-induction/practice/expert/p0s1": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-induction/practice/expert/p0s2": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-induction/practice/expert/p1s0": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-induction/practice/expert/p1s1": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-induction/practice/expert/p1s2": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-newton/practice/expert/p0s0": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-newton/practice/expert/p0s1": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-newton/practice/expert/p0s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-energy/practice/expert/p0s0": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-energy/practice/expert/p0s1": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-energy/practice/expert/p0s2": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-electric/practice/expert/p0s0": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-electric/practice/expert/p0s1": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "physics-electric/practice/expert/p0s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-equilibrium/practice/expert/p0s0": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-equilibrium/practice/expert/p0s1": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-equilibrium/practice/expert/p0s2": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-equilibrium/practice/expert/p1s0": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-equilibrium/practice/expert/p1s1": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-equilibrium/practice/expert/p1s2": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-redox/practice/expert/p0s0": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-redox/practice/expert/p0s1": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-redox/practice/expert/p0s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-mole/practice/expert/p0s0": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-mole/practice/expert/p0s1": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-mole/practice/expert/p0s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-mole/practice/expert/p1s0": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-mole/practice/expert/p1s1": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-mole/practice/expert/p1s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-periodic/practice/expert/p0s0": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-periodic/practice/expert/p0s1": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-periodic/practice/expert/p0s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-periodic/practice/expert/p1s0": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-periodic/practice/expert/p1s1": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-periodic/practice/expert/p1s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-ionic/practice/expert/p0s0": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-ionic/practice/expert/p0s1": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-ionic/practice/expert/p0s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-ionic/practice/expert/p1s0": {
+    "difficulty": 3,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-ionic/practice/expert/p1s1": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "chemistry-ionic/practice/expert/p1s2": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "math-derivative/practice/expert/p0s0": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "math-derivative/practice/expert/p0s1": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "math-derivative/practice/expert/p0s2": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "math-derivative/practice/expert/p0s3": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "math-derivative/practice/expert/p1s0": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "math-derivative/practice/expert/p1s1": {
+    "difficulty": 4,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "math-derivative/practice/expert/p1s2": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "math-derivative/practice/expert/p1s3": {
+    "difficulty": 5,
+    "reason": "结合父题给定数据与前步提示，按本步所需计算、条件筛选及推理链单独估计"
+  },
+  "math-euler/boss/basic/bq1": {
+    "difficulty": 6,
+    "reason": "需要先选复对数主值，再将i^i化为exp(i Log i)，超出普通高中主线",
+    "usefulness": 4
+  },
+  "physics-kinematics/quick/expert/eq2": {
+    "difficulty": 4,
+    "reason": "需解二次方程并保留上升、下降两个合法时刻"
+  },
+  "physics-kinematics/basic/expert/el1q1": {
+    "difficulty": 4,
+    "reason": "由共同起点的相遇条件求时刻，再求追赶者速度"
+  },
+  "physics-kinematics/basic/expert/el3q3": {
+    "difficulty": 4,
+    "reason": "同一高度对应两次经过，需保留双解",
+    "repeat": "quick/expert/eq2"
+  },
+  "physics-kinematics/basic/expert/el3q4": {
+    "difficulty": 3,
+    "reason": "两球加速度相同，距离差由初速度差决定"
+  },
+  "physics-kinematics/boss/expert/ebq1": {
+    "difficulty": 5,
+    "reason": "比较共速时最大靠近量与初始间距，并处理临界接触"
+  },
+  "physics-induction/quick/expert/eq3": {
+    "difficulty": 4,
+    "reason": "需分进入、全在磁场内、离开三段判断电流方向"
+  },
+  "physics-induction/basic/expert/el1q2": {
+    "difficulty": 4,
+    "reason": "法拉第定律、欧姆定律与焦耳定律三步串联"
+  },
+  "physics-induction/basic/expert/el2q4": {
+    "difficulty": 5,
+    "reason": "需区分焦耳热随速度改变与净电量只由磁通量变化决定"
+  },
+  "physics-induction/hard/expert/m1": {
+    "difficulty": 4,
+    "reason": "由线圈与灯泡稳态支路电流比较判断是否闪亮"
+  },
+  "physics-newton/quick/expert/eq3": {
+    "difficulty": 5,
+    "reason": "整体法求加速度后隔离单物体求绳张力"
+  },
+  "physics-newton/basic/expert/el1q2": {
+    "difficulty": 3,
+    "reason": "被剪断的是弹簧本体，与剪上方绳子的模型不同"
+  },
+  "physics-newton/basic/expert/el2q1": {
+    "difficulty": 4,
+    "reason": "在水平加速系中合成重力与惯性力"
+  },
+  "physics-newton/basic/expert/el2q2": {
+    "difficulty": 3,
+    "reason": "等效重力增大，代入单摆周期关系判断"
+  },
+  "physics-newton/basic/expert/el2q3": {
+    "difficulty": 4,
+    "reason": "自由落体中无回复力，不存在通常的小振动周期"
+  },
+  "physics-energy/basic/expert/el1q4": {
+    "difficulty": 3,
+    "reason": "直接代入弹性势能公式，一步计算"
+  },
+  "physics-energy/basic/expert/el2q2": {
+    "difficulty": 4,
+    "reason": "需区分物块动能、摩擦生热与电动机额外做功"
+  },
+  "physics-energy/basic/expert/el2q3": {
+    "difficulty": 5,
+    "reason": "最高点接触临界与最低至最高的机械能守恒联立"
+  },
+  "physics-electric/quick/expert/eq1": {
+    "difficulty": 5,
+    "reason": "先判零场区域，再联立两点电荷场强与距离关系"
+  },
+  "physics-electric/basic/expert/el1q1": {
+    "difficulty": 5,
+    "reason": "利用对称性叠加场强并判断轴向变化趋势"
+  },
+  "physics-electric/boss/expert/ebq1": {
+    "difficulty": 4,
+    "reason": "三力平衡列tanθ=qE/mg，一步代数求场强"
+  },
+  "chemistry-equilibrium/basic/expert/el2q3": {
+    "difficulty": 5,
+    "reason": "需对两反应取半、反转后相加，平衡常数同步乘除和开方"
+  },
+  "chemistry-redox/quick/expert/eq3": {
+    "difficulty": 5,
+    "reason": "需先配电子守恒，再在酸性介质补电荷与氢氧原子"
+  },
+  "chemistry-redox/basic/expert/el1q1": {
+    "difficulty": 4,
+    "reason": "离子共存需识别氧化还原冲突及介质条件"
+  },
+  "chemistry-redox/basic/expert/el2q2": {
+    "difficulty": 4,
+    "reason": "歧化反应需分别数升降价原子，转移电子只计一次"
+  },
+  "chemistry-redox/basic/expert/el2q3": {
+    "difficulty": 4,
+    "reason": "由两条自发反应串联氧化性排序"
+  },
+  "chemistry-mole/basic/expert/el1q5": {
+    "difficulty": 5,
+    "reason": "用两次称重消去空瓶质量并求气体物质的量"
+  },
+  "chemistry-mole/boss/expert/ebq1": {
+    "difficulty": 5,
+    "reason": "由称重差解气体摩尔质量，再筛选分子式",
+    "repeat": "basic/expert/el1q5"
+  },
+  "chemistry-periodic/basic/expert/el2q5": {
+    "difficulty": 5,
+    "reason": "同时筛选原子半径、两性氧化物及强酸氢化物条件"
+  },
+  "chemistry-ionic/quick/expert/eq1": {
+    "difficulty": 4,
+    "reason": "需区分电离增强与体积稀释两个阶段"
+  },
+  "chemistry-ionic/quick/expert/eq3": {
+    "difficulty": 5,
+    "reason": "按SO4恰好沉淀确定Ba与OH投料，再判断Al最终形态"
+  },
+  "chemistry-ionic/quick/expert/eq4": {
+    "difficulty": 4,
+    "reason": "识别酸性NO3氧化Fe2+并用电子守恒配平"
+  },
+  "chemistry-ionic/basic/expert/el2q1": {
+    "difficulty": 5,
+    "reason": "按Al恰好沉淀确定OH需求与Ba投料，避免套错另一当量"
+  },
+  "chemistry-ionic/basic/expert/el3q2": {
+    "difficulty": 5,
+    "reason": "三个实验现象需逐项排除干扰并联合确认两种离子"
+  },
+  "chemistry-ionic/hard/expert/m1": {
+    "difficulty": 4,
+    "reason": "需查反应产物以及电子、电荷、原子守恒"
+  },
+  "math-derivative/quick/expert/eq5": {
+    "difficulty": 4,
+    "reason": "辨认全实数域成立的切线不等式并排除定义域陷阱"
+  },
+  "math-derivative/basic/expert/el1q4": {
+    "difficulty": 5,
+    "reason": "由两驻点求导函数系数，再验证极大极小方向"
+  },
+  "math-derivative/basic/expert/el3q1": {
+    "difficulty": 5,
+    "reason": "先求两极值的符号，再结合单调区间数实根"
+  }
+}

@@ -6,6 +6,7 @@
 - 部署目标：阿里云轻量 `123.56.217.104`，独立端口 **8090**（与同机 Hugo 博客的 `:80` 隔离）
 - 技术栈：FastAPI + SQLite / 原生 ES Modules（**无构建链**，改完刷新即生效）
 - 设计文档：[实施计划.md](实施计划.md)
+- 2026-11-13 题库审校：[评价摘要](reports/question-review-2026-11-13.md) / [907 题筛选评分](reports/question-review-2026-11-13.html)（10 分制教学估分，非学生实测）
 
 ---
 
@@ -73,7 +74,7 @@ python tools/seed_users.py --password 123456
 
 ```bash
 python tools/check_content.py     # 内容完整性：选项重复、答案越界、解析为空、卡片缺图
-python tools/check_frontend.mjs . # 前端 import 路径 + 语法（需要 Node）
+node tools/check_frontend.mjs .   # 前端 import 路径 + 语法（需要 Node）
 python -m pytest tests -q         # 后端用例
 ```
 
@@ -150,8 +151,8 @@ app/services/              # 业务：grading / scoring / gacha / achievements /
 
 | 项 | 数量 |
 |---|---|
-| 主题 | 11 个（物理 5 / 化学 5 / 数学 1） |
-| 题目 | 777 题（基础 / 进阶 / 高级三档齐全，11 个主题全部 18 单元） |
+| 主题 | 16 个（物理 5 / 化学 5 / 数学 6） |
+| 题目 | 907 道计分单元（分步题每步计一题，不含阅读）；11 个主题三档齐全，5 个数学主题仅基础档 |
 | 卡片 | 17 张，7 个套装 |
 | Boss 立绘 | 60 张 SVG |
 | 后端测试 | 126 个用例（+144 个 subtest） |
@@ -227,3 +228,7 @@ LEARN_DB=/path/to/app.db python tools/seed_users.py
 
 人物肖像来自 Wikimedia Commons：17 张为 Public Domain，托勒密 1 张为 Wellcome Collection 的 CC BY 4.0 版画（需署名，已登记于 [实施计划.md](实施计划.md) 附录 15.1）。
 卡通插画（`assets/art/`）与 Boss 立绘（`assets/bosses/`）为原创 SVG。
+
+2026-11-13 挑战题升级：保留431道基础热身题，更新476道进阶/高级固定变式，覆盖88个模型。公开参考为OpenStax物理、化学和微积分教材，具体章节、作者、页面许可及采集哈希见[题源索引](content/challenge_sources.json)。新增中文挑战题内容以[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)提供，采用独立情境、数值与组合设问，并非原文逐句翻译；其他内容许可不变。
+
+[升级评估报告](reports/challenge-upgrade-2026-11-13.md)按实际推理任务给出6–7/10的教学难度估计，尚无学生实测标定。`python tools/verify_challenge_bank.py`独立复算476道题的正确选项唯一性；`python tools/build_challenge_bank.py`可重放固定变式。两脚本均只需标准库。

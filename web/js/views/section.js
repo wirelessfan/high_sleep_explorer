@@ -174,13 +174,13 @@ function applyResults(wrapEl, details) {
   });
 }
 
-function resultHero({ score, correct, total, message, rewards = [] }) {
+function resultHero({ score, correct, total, message, rewards = [], reading = false }) {
   return el('section', { class: 'panel result-hero' }, [
     el('div', { class: 'num' }, [
-      String(score),
-      el('small', { text: '分' }),
+      reading ? '✓' : String(score),
+      reading ? null : el('small', { text: '分' }),
     ]),
-    el('div', { class: 'lbl', text: `答对 ${correct} / ${total} 题` }),
+    el('div', { class: 'lbl', text: reading ? '阅读已完成' : `答对 ${correct} / ${total} 题` }),
     el('div', { class: 'msg', text: message }),
     rewards.length ? el('div', { class: 'reward-row' }, rewards.map((r) =>
       el('span', { class: 'reward-pill', text: r })
@@ -422,7 +422,7 @@ async function renderReading(body, topicId, sectionId, sec) {
         const res = await api.markRead(topicId, sectionId, ACTIVE_TIER);
         toast(res.points ? `+${res.points} 积分` : '已记录');
         const hero = resultHero({
-          score: 100, correct: 1, total: 1,
+          reading: true,
           message: res.is_review ? '复习完成' : '读完啦',
           rewards: rewardPills({ ...res, total_points: res.total_points }),
         });
@@ -512,6 +512,7 @@ async function renderMyths(body, topicId, sectionId, sec) {
         onclick: () => {
           answers[qid] = oi;
           opts.querySelectorAll('.opt').forEach((b, bi) => b.classList.toggle('sel', bi === oi));
+          submit.btn.disabled = !myths.every((_, i) => answers[`m${i}`] !== undefined);
         },
       }, [
         el('span', { class: 'key', text: LETTERS[oi] }),

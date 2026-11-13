@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>题库审校 · 逐题评分</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,"Microsoft YaHei",sans-serif;color:#243544;background:#f2f5f8}body{max-width:1250px;margin:30px auto;padding:0 20px}h1{font-size:28px}p{line-height:1.8}.cards{display:flex;gap:14px;flex-wrap:wrap}.card{padding:18px 25px;border:1px solid #d9e3ea;border-radius:12px;background:white;flex:1;min-width:170px}.card b{display:block;font-size:30px;color:#126b73}.muted,small{color:#647787}.filters{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 12px;position:sticky;top:0;background:#f2f5f8;padding:12px 0;z-index:2}input,select,button{padding:10px;border:1px solid #bdcbd6;border-radius:7px;background:white;color:inherit;font:inherit}input{min-width:230px;flex:1}button{cursor:pointer}table{border-collapse:collapse;width:100%;background:white;border-radius:10px;overflow:hidden}th,td{text-align:left;padding:13px;border-bottom:1px solid #e5ebef;vertical-align:top}th{background:#e1ebf0;white-space:nowrap}td:nth-child(2){min-width:105px}td:nth-child(4){min-width:220px}summary{cursor:pointer;line-height:1.7}details p{margin:9px 0}.tag{display:inline-block;border-radius:5px;background:#e6f1f3;color:#126b73;padding:2px 6px;margin:3px 3px 3px 0;font-size:12px}.revised{color:#a54716}code{overflow-wrap:anywhere;font-size:11px}.score{font-size:19px;font-weight:700;white-space:nowrap}.bar{height:4px;background:#e4ecef;margin:5px 0}.bar i{display:block;height:100%;background:#23949b}#pagination{display:flex;justify-content:center;gap:18px;margin:20px}.scroll{overflow:auto}.guide{background:#fff;border-left:4px solid #23949b;padding:12px 18px;margin-top:20px}a{color:#146c9b} @media(max-width:650px){body{padding:0 10px}.card{min-width:100px;padding:12px}.card b{font-size:24px}td,th{padding:9px}h1{font-size:24px}}
+</style>
+<h1>题库审校与逐题评分</h1><p id="subtitle" class="muted"></p>
+<div class="cards" id="cards"></div>
+<details class="guide"><summary>评分口径与使用方式</summary><p id="method"></p><p id="rubric"></p><p>难度表示完成任务的要求，数值越高越难；实用性表示对高中复习的帮助，数值越高越值得练。点击题干可查看父题干、正确答案、解析、评分依据与建议。可筛选已修订题、偏易高级题及重复题。评分针对本地修订版。</p></details>
+<div class="filters">
+<input id="search" aria-label="搜索题目" placeholder="搜索题干、题号、知识点…">
+<select id="topic" aria-label="主题"><option value="">全部主题</option></select>
+<select id="tier" aria-label="档位"><option value="">全部档位</option><option value="basic">基础</option><option value="advanced">进阶</option><option value="expert">高级</option></select>
+<select id="flag" aria-label="审校筛选"><option value="">全部题目</option><option value="revised">已修订题目</option><option>高级档偏易</option><option>同题干同选项复现</option><option>同模型近似复现</option><option>题干含解法提示</option><option>兴趣拓展</option></select>
+<select id="sort" aria-label="排序"><option value="default">题库顺序</option><option value="usefulness">实用性优先</option><option value="difficulty">难度从高到低</option><option value="easy">难度从低到高</option></select>
+<button id="reset">重置</button></div>
+<p id="count" class="muted" aria-live="polite"></p>
+<div class="scroll"><table><thead><tr><th>主题 / 定位</th><th>评分 / 10</th><th>题干与答案（点击展开）</th><th>评价与建议</th></tr></thead><tbody id="rows"></tbody></table></div>
+<div id="pagination"><button id="prev">上一页</button><span id="page"></span><button id="next">下一页</button></div>
+<p class="muted">报告可以离线打开。<a id="json">完整 JSON</a> · <a id="changes">修订前后记录</a> · <a id="summary">摘要</a></p>
+<script>
+const review=__REVIEW_DATA__;
+const meta=review.metadata, data=review.questions, $=id=>document.getElementById(id);
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+$('subtitle').textContent=`${meta.date} · 基线 ${meta.base} · 16 个主题 · 分步题按每步计数`;
+$('cards').innerHTML=[[meta.count,'计分单元'],[meta.revised_question_units,'题目或父题干已修订'],[meta.usefulness+'/10','平均实用性（估分）'],[meta.difficulty+'/10','平均难度（估分）']].map(([v,l])=>`<div class="card"><b>${esc(v)}</b>${esc(l)}</div>`).join('');
+$('method').textContent=meta.methodology;$('rubric').textContent=meta.difficulty_rubric+' '+meta.usefulness_rubric;
+meta.topics.forEach(t=>{const option=document.createElement('option');option.value=t.id;option.textContent=t.title;$('topic').append(option)});
+for(const [id,suffix] of [['json','.json'],['changes','-changes.json'],['summary','.md']])$(''+id).href='question-review-'+meta.date+suffix;
+let page=0, filtered=data;const size=40;
+function render(){
+ const query=$('search').value.trim().toLowerCase(), topic=$('topic').value,tier=$('tier').value,flag=$('flag').value;
+ filtered=data.filter(r=>(!topic||r.topic_id===topic)&&(!tier||r.tier===tier)&&(!query||(r.key+r.stem+r.skill+r.context).toLowerCase().includes(query))&&(!flag||(flag==='revised'?r.revised:r.flags.includes(flag))));
+ const sort=$('sort').value;if(sort==='usefulness')filtered.sort((a,b)=>b.usefulness-a.usefulness);if(sort==='difficulty')filtered.sort((a,b)=>b.difficulty-a.difficulty);if(sort==='easy')filtered.sort((a,b)=>a.difficulty-b.difficulty);
+ page=Math.min(page,Math.max(0,Math.ceil(filtered.length/size)-1));
+ $('count').textContent=`匹配 ${filtered.length} / ${meta.count} 题`;
+ $('rows').innerHTML=filtered.slice(page*size,(page+1)*size).map(r=>`<tr><td><b>${esc(r.topic)}</b><p><small>${esc(r.section)} · ${esc(r.tier_name)}</small><br><code>${esc(r.question_id)}</code></p>${r.revised?'<span class="revised">已修订</span>':''}<br><small>${esc(r.skill)}</small></td><td><small>实用性</small><div class="score">${r.usefulness}</div><div class="bar"><i style="width:${r.usefulness*10}%"></i></div><small>难度</small><div class="score">${r.difficulty}</div><div class="bar"><i style="width:${r.difficulty*10}%"></i></div></td><td><details><summary>${esc(r.stem)}</summary>${r.context?`<p><b>父题干：</b>${esc(r.context)}</p>`:''}<ol type="A">${r.options.map(o=>`<li>${esc(o)}</li>`).join('')}</ol><p><b>答案 ${String.fromCharCode(65+r.answer_index)}：</b>${esc(r.answer)}</p><p>${esc(r.explanation)}</p><code>${esc(r.key)}</code></details></td><td>${r.flags.map(f=>`<span class="tag">${esc(f)}</span>`).join('')}<p>${esc(r.usefulness_reason)}；${esc(r.difficulty_reason)}。</p><p><b>建议：</b>${esc(r.advice.join('；'))}</p></td></tr>`).join('');
+ $('page').textContent=`${page+1} / ${Math.max(1,Math.ceil(filtered.length/size))}`;$('prev').disabled=page===0;$('next').disabled=(page+1)*size>=filtered.length;
+}
+for(const id of ['search','topic','tier','flag','sort'])$(id).addEventListener(id==='search'?'input':'change',()=>{page=0;render()});
+$('prev').onclick=()=>{page--;render()};$('next').onclick=()=>{page++;render()};$('reset').onclick=()=>{for(const id of ['search','topic','tier','flag'])$(id).value='';$('sort').value='default';page=0;render()};render();
+</script></html>
