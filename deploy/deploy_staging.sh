@@ -53,7 +53,7 @@ ReadWritePaths=/var/lib/learning-highschool-staging
 [Install]
 WantedBy=multi-user.target
 UNIT
-ssh "$HOST" "mkdir -p /etc/learning-highschool && cat > /etc/learning-highschool/ai.env" <<'AIEOF'
+ssh "$HOST" "mkdir -p /etc/learning-highschool && if [ ! -e /etc/learning-highschool/ai.env ]; then umask 077; cat > /etc/learning-highschool/ai.env; else cat > /dev/null; fi" <<'AIEOF'
 # 预览环境 AI 配置。review 后切真实服务：
 #   LEARN_AI_STUB=0
 #   LEARN_AI_KEY=sk-你的key

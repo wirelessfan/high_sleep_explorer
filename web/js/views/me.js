@@ -133,6 +133,29 @@ export async function renderMe(view) {
     ]),
   ]));
 
+  /* ---- 管理中心入口（仅管理员可见） ---- */
+  if (me.is_admin) {
+    root.appendChild(el('section', {
+      class: 'panel',
+      style: 'cursor:pointer;background:linear-gradient(135deg,#eef7f6,#fff);border-color:#bfe3de',
+      onclick: () => { location.hash = '#/admin'; },
+    }, [
+      el('div', { class: 'row-between' }, [
+        el('div', { class: 'row', style: 'gap:11px' }, [
+          el('div', {
+            style: 'width:40px;height:40px;border-radius:12px;background:#ccfbf1;display:grid;place-items:center;font-size:17px',
+            text: '⚙️',
+          }),
+          el('div', {}, [
+            el('div', { style: 'font-size:13.5px;font-weight:800', text: '管理中心' }),
+            el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: 'AI 通道开关 · 任务路由 · 限额与用量' }),
+          ]),
+        ]),
+        el('div', { style: 'font-size:18px;color:#d9c8b4', text: '›' }),
+      ]),
+    ]));
+  }
+
   /* ---- 每日抽卡入口 ---- */
   root.appendChild(el('section', {
     class: 'panel',

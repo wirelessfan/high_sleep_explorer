@@ -15,7 +15,9 @@ DB_PATH = Path(os.environ.get("LEARN_DB", Path(__file__).resolve().parent.parent
 #     achievements 增加 source / gifted_from / gifted_at（每日抽卡与赠予）；
 # v5 = achievements 增加 redeemed_by（只有家长可核销）；
 # v6 = 新增 wrong_questions 错题本。
-SCHEMA_VERSION = 6
+# v7 = 多路 AI：users.role（管理员）、ai_config 策略单行表、
+#     wrong_questions 增加 source / ai_solve / variants。
+SCHEMA_VERSION = 8
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS schema_version (
@@ -39,6 +41,7 @@ CREATE TABLE IF NOT EXISTS users (
     pity_ssr INTEGER NOT NULL DEFAULT 0,
     makeup_used INTEGER NOT NULL DEFAULT 0,
     makeup_month TEXT,
+    role TEXT,                     -- NULL=普通用户；'admin'=管理员（管理界面/接口）
     created_at TEXT NOT NULL,
     last_seen TEXT NOT NULL
 );
@@ -126,15 +129,38 @@ CREATE TABLE IF NOT EXISTS wrong_questions (
     picked INTEGER NOT NULL,       -- 最近一次的错误选项
     wrong_count INTEGER NOT NULL DEFAULT 1,
     status TEXT NOT NULL DEFAULT 'open',   -- open / cleared
+    source TEXT NOT NULL DEFAULT 'practice',  -- practice=练习判分入本 / photo=拍照录入（预留）
     ai_analysis TEXT,              -- AI 生成 JSON：{misconception, analysis, suggestions}
     ai_model TEXT,
     ai_at TEXT,
+    ai_solve TEXT,                 -- AI 独立解题缓存 JSON：{answer, steps, key_point, channel, model}
+    variants TEXT,                 -- AI 举一反三缓存 JSON：{variants:[{stem, options, answer, explain}]}
     created_at TEXT NOT NULL,
     last_wrong_at TEXT NOT NULL,
     cleared_at TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_wq_user ON wrong_questions(user_id, topic_id, status);
+
+-- AI 策略单行表：任务路由 / 通道开关与模型覆盖 / 每任务限额。
+-- API Key 永不入库（只存环境变量），这里只存非敏感的策略面。
+CREATE TABLE IF NOT EXISTS ai_config (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    config TEXT NOT NULL,          -- JSON：{routing, channels, limits}
+    updated_at TEXT,
+    updated_by TEXT
+);
+
+-- Short-lived reservations protect daily quotas without holding a write lock over HTTP.
+CREATE TABLE IF NOT EXISTS ai_requests (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    wq_id TEXT NOT NULL,
+    task TEXT NOT NULL,
+    day TEXT NOT NULL,
+    expires_at REAL NOT NULL,
+    UNIQUE(user_id, wq_id, task)
+);
 
 CREATE INDEX IF NOT EXISTS idx_achv_code ON achievements(code);
 
@@ -267,6 +293,32 @@ def _migrate_achievements_gift(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE achievements ADD COLUMN redeemed_by TEXT")
 
 
+def _migrate_ai_admin(conn: sqlite3.Connection) -> None:
+    """v7：users 增加 role（dad 即管理员），wrong_questions 增加来源与 AI 缓存列。
+
+    ai_config 表由 SCHEMA 的 CREATE TABLE IF NOT EXISTS 兜底，
+    这里只处理老库的 ALTER TABLE；按列探测，幂等，重复执行安全。
+    """
+    user_cols = {r["name"] for r in conn.execute("PRAGMA table_info(users)").fetchall()}
+    if "role" not in user_cols:
+        conn.execute("ALTER TABLE users ADD COLUMN role TEXT")
+    # 管理员 = 爸爸：对已有账号幂等提升（新装库走 seed_users.py 同样会提升）
+    conn.execute(
+        "UPDATE users SET role='admin' WHERE LOWER(username)='dad' "
+        "AND (role IS NULL OR role='')"
+    )
+
+    wq_cols = {r["name"] for r in conn.execute("PRAGMA table_info(wrong_questions)").fetchall()}
+    if "source" not in wq_cols:
+        conn.execute(
+            "ALTER TABLE wrong_questions ADD COLUMN source TEXT NOT NULL DEFAULT 'practice'"
+        )
+    if "ai_solve" not in wq_cols:
+        conn.execute("ALTER TABLE wrong_questions ADD COLUMN ai_solve TEXT")
+    if "variants" not in wq_cols:
+        conn.execute("ALTER TABLE wrong_questions ADD COLUMN variants TEXT")
+
+
 def init_db() -> None:
     conn = connect()
     try:
@@ -281,6 +333,7 @@ def init_db() -> None:
         # 不依赖版本号比较，避免两个迁移撞同一个版本号时被跳过。
         _migrate_achievements_gift(conn)
         _migrate_progress_tiers(conn)
+        _migrate_ai_admin(conn)
         conn.execute(
             "INSERT INTO schema_version(id, version) VALUES (1, ?) "
             "ON CONFLICT(id) DO UPDATE SET version = excluded.version",

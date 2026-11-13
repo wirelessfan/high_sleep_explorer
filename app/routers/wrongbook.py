@@ -1,4 +1,4 @@
-"""错题本与 AI 错误分析。"""
+"""错题本与 AI 错误分析、AI 解题、举一反三。"""
 from __future__ import annotations
 
 import json
@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 
 from app import db
 from app.routers.session import current_user
-from app.services import ai_client, events, wrongbook
+from app.services import ai_client, ai_config, events, wrongbook
 
 router = APIRouter(tags=["wrongbook"])
 
@@ -23,6 +23,24 @@ class AnalyzeIn(BaseModel):
     ids: list[str] = Field(default_factory=list)
 
 
+class VariantsIn(BaseModel):
+    id: str = Field(min_length=1, max_length=64)
+    n: int = Field(default=2, ge=1, le=3)
+
+
+def _question_of(row: sqlite3.Row, with_answer: bool = True) -> dict:
+    """错题行 → AI 客户端用的题目 dict。解题任务不给标准答案（保证独立作答）。"""
+    q = {
+        "stem": row["stem"],
+        "options": json.loads(row["options_json"]),
+        "skill": row["skill"],
+    }
+    if with_answer:
+        q["answer"] = row["answer"]
+        q["explain"] = row["explain"]
+    return q
+
+
 @router.get("/wrongbook")
 def get_wrongbook(user: sqlite3.Row = Depends(current_user)):
     """按主题汇总 + 全部待清零题目（含已缓存的 AI 分析）。"""
@@ -32,11 +50,13 @@ def get_wrongbook(user: sqlite3.Row = Depends(current_user)):
         for t in st["topics"]:
             for it in wrongbook.topic_items(conn, user["id"], t["topic_id"]):
                 items.append({**it, "topic_title": t["title"], "subject": t["subject"]})
-        used = wrongbook.ai_used_today(conn, user["id"])
+        used_by_task = wrongbook.ai_used_by_task(conn, user["id"])
+        ai_state = {**ai_client.config_public(conn), "used_by_task": used_by_task,
+                    "used_today": sum(used_by_task.values())}
     return {
         "summary": st,
         "items": items,
-        "ai": {**ai_client.config_public(), "used_today": used},
+        "ai": ai_state,
     }
 
 
@@ -62,59 +82,110 @@ def redo_topic(topic_id: str, body: RedoIn, user: sqlite3.Row = Depends(current_
     return res
 
 
-@router.post("/wrongbook/ai")
-def analyze(body: AnalyzeIn, user: sqlite3.Row = Depends(current_user)):
-    """对错题生成 AI 错误分析与改进建议（结果缓存，不重复计费）。"""
-    if not ai_client.enabled():
-        raise HTTPException(status_code=503, detail="AI 服务未配置（缺少 LEARN_AI_KEY）")
+def _cached(row, column):
+    return wrongbook.cached_ai(row[column])
 
+
+def _run_ai(user_id: str, wq_id: str, task: str, n: int = 2) -> dict:
+    """Reserve atomically, call outside transactions, then publish only a current result."""
+    import time
+    column = {"analyze": "ai_analysis", "solve": "ai_solve", "variants": "variants"}[task]
+    reservation = uuid.uuid4().hex
+    with db.tx() as conn:
+        row = wrongbook.ai_pending(conn, user_id, wq_id)
+        if not row:
+            return {"id": wq_id, "error": "错题不存在"}
+        cached = _cached(row, column)
+        if cached:
+            return {"id": wq_id, "value": cached, "cached": True}
+        cfg = ai_config.load(conn)
+        if not ai_client.enabled() or not ai_client.candidates(task, cfg):
+            raise HTTPException(status_code=503, detail="AI 服务未配置可用通道，请联系管理员")
+        now = time.time()
+        conn.execute("DELETE FROM ai_requests WHERE expires_at < ?", (now,))
+        pending = conn.execute(
+            "SELECT 1 FROM ai_requests WHERE user_id=? AND wq_id=? AND task=?",
+            (user_id, wq_id, task)).fetchone()
+        if pending:
+            return {"id": wq_id, "error": "这道题正在生成，请稍后查看"}
+        used = wrongbook.ai_used_by_task(conn, user_id).get(task, 0)
+        held = conn.execute(
+            "SELECT COUNT(*) FROM ai_requests WHERE user_id=? AND task=? AND day=?",
+            (user_id, task, wrongbook.today_str())).fetchone()[0]
+        if used + held >= cfg["limits"][task]:
+            raise HTTPException(status_code=429, detail=f"今日「{ai_config.TASK_LABELS[task]}」次数已达上限（{cfg['limits'][task]} 次/天）")
+        conn.execute("INSERT INTO ai_requests VALUES (?,?,?,?,?,?)",
+                     (reservation, user_id, wq_id, task, wrongbook.today_str(), now + 600))
+        original = dict(row)
+
+    try:
+        q = _question_of(original, with_answer=task == "analyze")
+        if task == "analyze":
+            value = ai_client.analyze(q, original["picked"])
+        elif task == "solve":
+            value = ai_client.solve(q)
+        else:
+            value = ai_client.variants(q, n)
+        with db.tx() as conn:
+            # A timed-out lease must never overwrite the result of a replacement request.
+            active = conn.execute("SELECT 1 FROM ai_requests WHERE id=?", (reservation,)).fetchone()
+            if not active:
+                return {"id": wq_id, "error": "生成请求已过期，请重试"}
+            events.log(conn, user_id, f"ai:{reservation}", "ai",
+                       {"wq": wq_id, "task": task, "model": value.get("model", ""),
+                        "channel": value.get("channel", "")})
+            fresh = wrongbook.ai_pending(conn, user_id, wq_id)
+            if not fresh or (task == "analyze" and fresh["picked"] != original["picked"]):
+                return {"id": wq_id, "error": "错题选项已更新，请重新分析"}
+            conn.execute(f"UPDATE wrong_questions SET {column}=? WHERE id=? AND user_id=?",
+                         (json.dumps(value, ensure_ascii=False), wq_id, user_id))
+            if task == "analyze":
+                conn.execute("UPDATE wrong_questions SET ai_model=?, ai_at=? WHERE id=? AND user_id=?",
+                             (value.get("model", ""), wrongbook.today_str(), wq_id, user_id))
+        return {"id": wq_id, "value": value, "cached": False}
+    except RuntimeError as exc:
+        return {"id": wq_id, "error": str(exc)}
+    finally:
+        with db.tx() as conn:
+            conn.execute("DELETE FROM ai_requests WHERE id=?", (reservation,))
+
+
+def _usage(user_id, task):
+    with db.ro() as conn:
+        return {"ai_used_today": wrongbook.ai_used_by_task(conn, user_id).get(task, 0),
+                "daily_limit": ai_config.load(conn)["limits"][task]}
+
+
+def _batch(body, user, task):
     ids = list(dict.fromkeys(body.ids))[:5]
     if not ids:
-        raise HTTPException(status_code=400, detail="请选择要分析的错题")
-
-    with db.ro() as conn:
-        used = wrongbook.ai_used_today(conn, user["id"])
-    if used + len(ids) > ai_client.DAILY_LIMIT:
-        raise HTTPException(
-            status_code=429,
-            detail=f"今日 AI 分析次数已达上限（{ai_client.DAILY_LIMIT} 次/天）",
-        )
-
+        raise HTTPException(status_code=400, detail="请选择错题")
     out = []
-    with db.tx() as conn:
-        for wq_id in ids:
-            row = wrongbook.ai_pending(conn, user["id"], wq_id)
-            if not row:
-                out.append({"id": wq_id, "error": "错题不存在"})
-                continue
-            if row["ai_analysis"]:
-                out.append({"id": wq_id, "value": json.loads(row["ai_analysis"]),
-                            "cached": True})
-                continue
+    for wq_id in ids:
+        try:
+            out.append(_run_ai(user["id"], wq_id, task))
+        except HTTPException as exc:
+            if not out:
+                raise
+            out.append({"id": wq_id, "error": exc.detail})
+    return {"results": out, **_usage(user["id"], task)}
 
-            q = {
-                "stem": row["stem"],
-                "options": json.loads(row["options_json"]),
-                "answer": row["answer"],
-                "explain": row["explain"],
-                "skill": row["skill"],
-            }
-            try:
-                analysis = ai_client.analyze(q, row["picked"])
-            except RuntimeError as exc:
-                out.append({"id": wq_id, "error": str(exc)})
-                continue
 
-            wrongbook.save_ai(conn, user["id"], wq_id, analysis, ai_client.MODEL)
-            # 每次真实调用（缓存未命中）计一次用量，用于日限
-            events.log(conn, user["id"], f"ai:{uuid.uuid4().hex[:10]}", "ai",
-                       {"wq": wq_id, "model": ai_client.MODEL})
-            out.append({"id": wq_id, "value": analysis, "cached": False})
+@router.post("/wrongbook/ai")
+def analyze(body: AnalyzeIn, user: sqlite3.Row = Depends(current_user)):
+    return _batch(body, user, "analyze")
 
-        used_after = wrongbook.ai_used_today(conn, user["id"])
 
-    return {
-        "results": out,
-        "ai_used_today": used_after,
-        "daily_limit": ai_client.DAILY_LIMIT,
-    }
+@router.post("/wrongbook/ai/solve")
+def solve(body: AnalyzeIn, user: sqlite3.Row = Depends(current_user)):
+    return _batch(body, user, "solve")
+
+
+@router.post("/wrongbook/ai/variants")
+def variants(body: VariantsIn, user: sqlite3.Row = Depends(current_user)):
+    result = _run_ai(user["id"], body.id, "variants", body.n)
+    if "error" in result:
+        status = 404 if result["error"] == "错题不存在" else 502
+        raise HTTPException(status_code=status, detail=result["error"])
+    return {"result": {**result["value"], "cached": result["cached"]},
+            **_usage(user["id"], "variants")}

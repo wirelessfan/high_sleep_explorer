@@ -55,6 +55,9 @@ User=learn
 Group=learn
 WorkingDirectory=/opt/learning_highschool
 Environment=LEARN_DB=/var/lib/learning-highschool/app.db
+EnvironmentFile=-/etc/learning-highschool/ai.env
+# Production must never publish placeholder AI as a real analysis.
+UnsetEnvironment=LEARN_AI_STUB
 ExecStart=/opt/learning_highschool/.venv/bin/uvicorn app.main:app \\
   --host 127.0.0.1 --port 8000 --workers 1 --proxy-headers
 Restart=always
@@ -80,27 +83,13 @@ ssh "$HOST" bash -s <<EOF
 set -euo pipefail
 CF=/etc/caddy/Caddyfile
 cp -n \$CF \$CF.bak.learning 2>/dev/null || true
-python3 - <<'PY'
-import re, pathlib
-p = pathlib.Path("/etc/caddy/Caddyfile")
-s = p.read_text()
-block = """$DOMAIN:$PORT {
-	encode zstd gzip
-	log {
-		output file /var/log/caddy/learning.log
-	}
-	reverse_proxy 127.0.0.1:8000
-}
-"""
-# 移除同名旧块（含端口变体）
-s = re.sub(r"(?:^# [^\n]*\n)?^[^\n#]*:8090\s*\{.*?^\}\n?", "", s, flags=re.S | re.M)
-if "sslip.io:$PORT" not in s:
-    s = s.rstrip() + "\n\n# 高中理科学习助手\n" + block
-p.write_text(s)
-print("Caddyfile 已更新")
-PY
-caddy validate --config /etc/caddy/Caddyfile 2>&1 | tail -1
-systemctl restart caddy
+cp \$CF \$CF.pre-learning
+python3 $APP_DIR/deploy/configure_caddy.py \$CF --domains "$DOMAIN" --port "$PORT"
+if ! caddy validate --config /etc/caddy/Caddyfile; then
+    cp \$CF.pre-learning \$CF
+    exit 1
+fi
+systemctl reload caddy
 sleep 3
 systemctl is-active caddy
 EOF
@@ -118,7 +107,7 @@ chmod 0644 /etc/cron.d/$SERVICE-backup
 EOF
 
 say "完成"
-echo "  站点:    https://$DOMAIN:$PORT/"
-echo "  健康:    https://$DOMAIN:$PORT/api/v1/healthz"
-echo "  API文档: https://$DOMAIN:$PORT/api/docs"
+echo "  站点:    https://${DOMAIN%%,*}:$PORT/"
+echo "  健康:    https://${DOMAIN%%,*}:$PORT/api/v1/healthz"
+echo "  API文档: https://${DOMAIN%%,*}:$PORT/api/docs"
 echo "  日志:    ssh $HOST journalctl -u $SERVICE -f"

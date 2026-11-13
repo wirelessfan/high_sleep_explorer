@@ -12,6 +12,7 @@ import { renderAlbum } from './views/album.js';
 import { renderMe } from './views/me.js';
 import { renderAchievements } from './views/achievements.js';
 import { renderWrongbook } from './views/wrongbook.js';
+import { renderAdmin } from './views/admin.js';
 import { renderLogin } from './views/login.js';
 
 function registerRoutes() {
@@ -24,6 +25,7 @@ function registerRoutes() {
   route('/me', renderMe);
   route('/achievements', renderAchievements);
   route('/wrongbook', renderWrongbook);
+  route('/admin', renderAdmin);
   route('/login', renderLogin);
 }
 

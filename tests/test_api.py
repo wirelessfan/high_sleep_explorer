@@ -983,7 +983,8 @@ def test_redo_requires_answers(client, auth_headers):
 
 def test_ai_disabled_returns_503(client, auth_headers, monkeypatch):
     from app.services import ai_client
-    monkeypatch.setattr(ai_client, "API_KEY", "")
+    monkeypatch.setattr(ai_client, "CHANNELS", {cid: {**ch, "key": ""} for cid, ch in ai_client.CHANNELS.items()})
+    monkeypatch.delenv("LEARN_AI_STUB", raising=False)
     _fail_one_section(client, auth_headers)
     wb = client.get("/api/v1/wrongbook", headers=auth_headers).json()
     wq_id = wb["items"][0]["id"]
@@ -994,7 +995,7 @@ def test_ai_disabled_returns_503(client, auth_headers, monkeypatch):
 def test_ai_analyze_with_stub(client, auth_headers, monkeypatch):
     """无 Key 时走 stub 路径，验证缓存与结构。"""
     from app.services import ai_client
-    monkeypatch.setattr(ai_client, "API_KEY", "test-key")
+    monkeypatch.setenv("LEARN_AI_STUB", "1")
     monkeypatch.setattr(ai_client, "analyze", ai_client.analyze_stub)
 
     _fail_one_section(client, auth_headers)
@@ -1019,7 +1020,7 @@ def test_ai_analyze_with_stub(client, auth_headers, monkeypatch):
 
 def test_ai_batch_cap_five(client, auth_headers, monkeypatch):
     from app.services import ai_client
-    monkeypatch.setattr(ai_client, "API_KEY", "test-key")
+    monkeypatch.setenv("LEARN_AI_STUB", "1")
     monkeypatch.setattr(ai_client, "analyze", ai_client.analyze_stub)
 
     r = client.post("/api/v1/wrongbook/ai",

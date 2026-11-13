@@ -183,3 +183,18 @@ export const redoWrongbook = (tid, answers) =>
   request(`/wrongbook/${tid}/redo`, { method: 'POST', body: { answers } });
 export const analyzeWrong = (ids) =>
   request('/wrongbook/ai', { method: 'POST', body: { ids } });
+export const solveWrong = (ids) =>
+  request('/wrongbook/ai/solve', { method: 'POST', body: { ids } });
+export const variantsWrong = (id, n = 2) =>
+  request('/wrongbook/ai/variants', { method: 'POST', body: { id, n } });
+
+/* ---------- 管理中心（仅管理员） ---------- */
+
+export const getAdminAiConfig = () => request('/admin/ai/config');
+export const putAdminAiConfig = (patch) =>
+  request('/admin/ai/config', { method: 'PUT', body: patch });
+export const resetAdminAi = () => request('/admin/ai/reset', { method: 'POST' });
+export const adminAiTest = (task) =>
+  request('/admin/ai/test', { method: 'POST', body: { task } });
+export const adminAiUsage = (days = 1) => request(`/admin/ai/usage?days=${days}`);
+export const adminUsers = () => request('/admin/users');

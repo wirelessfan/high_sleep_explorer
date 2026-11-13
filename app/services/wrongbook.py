@@ -47,6 +47,11 @@ def record_wrong(conn: sqlite3.Connection, user_id: str, topic_id: str,
         q = questions.get(qid)
         if not q:
             continue
+        # An omitted/invalid choice is not a wrong selection. Do not let a NULL
+        # picked value abort collection of subsequent genuinely wrong answers.
+        picked = d.get("picked")
+        if type(picked) is not int or not 0 <= picked < len(q.get("options", [])):
+            continue
         # 同题号换题后另建版本；历史快照和对应答案继续成对保存。
         snapshot = {k: q.get(k) for k in ("stem", "options", "answer", "explain")}
         fingerprint = hashlib.sha256(json.dumps(snapshot, ensure_ascii=False,
@@ -64,9 +69,11 @@ def record_wrong(conn: sqlite3.Connection, user_id: str, topic_id: str,
         ).fetchone()
         if existing:
             conn.execute(
-                "UPDATE wrong_questions SET picked=?, wrong_count=wrong_count+1, "
+                "UPDATE wrong_questions SET ai_analysis=CASE WHEN picked IS ? THEN ai_analysis ELSE NULL END, "
+                "ai_model=CASE WHEN picked IS ? THEN ai_model ELSE NULL END, "
+                "ai_at=CASE WHEN picked IS ? THEN ai_at ELSE NULL END, picked=?, wrong_count=wrong_count+1, "
                 "last_wrong_at=?, status='open', cleared_at=NULL WHERE id=?",
-                (d.get("picked"), now, rid),
+                (d.get("picked"), d.get("picked"), d.get("picked"), d.get("picked"), now, rid),
             )
         else:
             conn.execute(
@@ -167,10 +174,26 @@ def topic_items(conn: sqlite3.Connection, user_id: str, topic_id: str,
             "answer": r["answer"],
             "explain": r["explain"],
             "wrong_count": r["wrong_count"],
-            "ai": json.loads(r["ai_analysis"]) if r["ai_analysis"] else None,
+            "source": r["source"] if "source" in r.keys() else "practice",
+            "ai": cached_ai(r["ai_analysis"]),
+            "ai_solve": cached_ai(r["ai_solve"]),
+            "variants": cached_ai(r["variants"]),
             "last_wrong_at": r["last_wrong_at"],
         })
     return items
+
+
+def cached_ai(raw) -> dict | None:
+    from app.services import ai_client
+    if not raw:
+        return None
+    try:
+        value = json.loads(raw)
+    except (ValueError, TypeError):
+        return None
+    if not isinstance(value, dict) or (value.get("stub") and not ai_client._stub_on()):
+        return None
+    return value
 
 
 def redo(conn: sqlite3.Connection, user: sqlite3.Row, topic_id: str,
@@ -204,9 +227,11 @@ def redo(conn: sqlite3.Connection, user: sqlite3.Row, topic_id: str,
             cleared_now += 1
         else:
             conn.execute(
-                "UPDATE wrong_questions SET picked=?, wrong_count=wrong_count+1, "
+                "UPDATE wrong_questions SET ai_analysis=CASE WHEN picked IS ? THEN ai_analysis ELSE NULL END, "
+                "ai_model=CASE WHEN picked IS ? THEN ai_model ELSE NULL END, "
+                "ai_at=CASE WHEN picked IS ? THEN ai_at ELSE NULL END, picked=?, wrong_count=wrong_count+1, "
                 "last_wrong_at=? WHERE id=? AND status='open'",
-                (picked, today_str(), r["id"]),
+                (picked, picked, picked, picked, today_str(), r["id"]),
             )
             re_wrong += 1
         results.append({
@@ -261,6 +286,22 @@ def save_ai(conn: sqlite3.Connection, user_id: str, wq_id: str, analysis: dict,
     )
 
 
+def save_solve(conn: sqlite3.Connection, user_id: str, wq_id: str, result: dict) -> None:
+    """缓存 AI 独立解题结果（含实际生效通道/模型，便于排查）。"""
+    conn.execute(
+        "UPDATE wrong_questions SET ai_solve=? WHERE id=? AND user_id=?",
+        (json.dumps(result, ensure_ascii=False), wq_id, user_id),
+    )
+
+
+def save_variants(conn: sqlite3.Connection, user_id: str, wq_id: str, result: dict) -> None:
+    """缓存 AI 举一反三的变式题组。"""
+    conn.execute(
+        "UPDATE wrong_questions SET variants=? WHERE id=? AND user_id=?",
+        (json.dumps(result, ensure_ascii=False), wq_id, user_id),
+    )
+
+
 def ai_pending(conn: sqlite3.Connection, user_id: str, wq_id: str) -> sqlite3.Row | None:
     return conn.execute(
         "SELECT * FROM wrong_questions WHERE id=? AND user_id=?",
@@ -269,8 +310,20 @@ def ai_pending(conn: sqlite3.Connection, user_id: str, wq_id: str) -> sqlite3.Ro
 
 
 def ai_used_today(conn: sqlite3.Connection, user_id: str) -> int:
+    """今日全部 AI 调用次数（各任务合计）。"""
     return conn.execute(
         "SELECT COUNT(*) AS n FROM events WHERE user_id=? AND kind='ai' "
         "AND substr(created_at,1,10)=?",
         (user_id, today_str()),
     ).fetchone()["n"]
+
+
+def ai_used_by_task(conn: sqlite3.Connection, user_id: str) -> dict[str, int]:
+    """今日按任务拆分的 AI 用量；旧事件 payload 无 task 字段，归入 analyze。"""
+    rows = conn.execute(
+        "SELECT COALESCE(json_extract(payload,'$.task'),'analyze') AS task, COUNT(*) AS n "
+        "FROM events WHERE user_id=? AND kind='ai' AND substr(created_at,1,10)=? "
+        "GROUP BY task",
+        (user_id, today_str()),
+    ).fetchall()
+    return {r["task"]: r["n"] for r in rows}

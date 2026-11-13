@@ -52,6 +52,14 @@ def current_user(authorization: str | None = Header(default=None)) -> sqlite3.Ro
     return row
 
 
+def require_admin(user: sqlite3.Row = Depends(current_user)) -> sqlite3.Row:
+    """管理员守卫：非管理员一律 403（管理接口与管理界面专用）。"""
+    role = user["role"] if "role" in user.keys() else None
+    if role != "admin":
+        raise HTTPException(status_code=403, detail="需要管理员身份")
+    return user
+
+
 def _user_payload(row: sqlite3.Row, token: str | None = None) -> dict:
     keys = row.keys()
     username = row["username"] if "username" in keys else None
@@ -61,6 +69,7 @@ def _user_payload(row: sqlite3.Row, token: str | None = None) -> dict:
         "nickname": row["nickname"],
         "username": username,
         "is_guest": is_guest,
+        "is_admin": bool(row["role"] == "admin" if "role" in keys else False),
         "has_password": bool(row["password_hash"]) if "password_hash" in keys else False,
         "points": row["points"],
         "streak": row["streak"],

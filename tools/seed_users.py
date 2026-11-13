@@ -43,6 +43,12 @@ def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname
             "UPDATE users SET password_hash = ?, nickname = ? WHERE id = ?",
             (pwd_hash, nickname, existing["id"]),
         )
+        if username.lower() == "dad":
+            # 管理员 = 爸爸：对已有账号幂等提升，重置密码不清 role
+            conn.execute(
+                "UPDATE users SET role='admin' WHERE id=? AND (role IS NULL OR role='')",
+                (existing["id"],),
+            )
         return existing["id"], "已存在，更新演示信息" if is_guest else "已存在，重置密码"
 
     uid = "u_guest_demo" if is_guest else auth.new_id()
@@ -60,9 +66,10 @@ def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname
 
     conn.execute(
         "INSERT INTO users(id, token_hash, sync_code, nickname, username, password_hash, "
-        "points, tickets, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        "points, tickets, role, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
         (uid, auth.hash_token(token), code, nickname, username,
-         pwd_hash, points, tickets, now, now),
+         pwd_hash, points, tickets,
+         "admin" if username.lower() == "dad" else None, now, now),
     )
     return uid, "已创建演示账号" if is_guest else "已创建"
 
