@@ -155,7 +155,7 @@ app/services/              # 业务：grading / scoring / gacha / achievements /
 | 题目 | 907 道计分单元（分步题每步计一题，不含阅读）；11 个主题三档齐全，5 个数学主题仅基础档 |
 | 卡片 | 17 张，7 个套装 |
 | Boss 立绘 | 60 张 SVG |
-| 后端测试 | 126 个用例（+144 个 subtest） |
+| 后端测试 | 140 个用例（+204 个 subtest，2026-11-13 挑战题发布版本） |
 
 > 内容仍在持续扩充。准确数字以 `python tools/check_content.py` 的输出为准。
 
