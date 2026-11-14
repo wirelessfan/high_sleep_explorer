@@ -22,6 +22,13 @@ from app.services import events
 
 RARITY_ORDER = ["N", "R", "SR", "SSR"]
 
+# 图片版本戳：换图后改这个值，浏览器会重新拉取（避免旧图缓存）
+ASSET_VERSION = "2"
+
+
+def _image_url(filename: str) -> str:
+    return f"/assets/blindbox/{filename}?v={ASSET_VERSION}"
+
 
 def _cfg() -> dict:
     return content_loader.rewards()["blindbox"]
@@ -147,7 +154,7 @@ def draw(conn: sqlite3.Connection, user: sqlite3.Row, count: int,
             "rarity": rarity,
             "color": ch.get("color", ""),
             "accessory": ch.get("accessory", ""),
-            "image": f"/assets/blindbox/{ch['image']}",
+            "image": _image_url(ch["image"]),
             "quote": ch.get("quote", ""),
             "is_new": is_new,
             "tickets_back": back,
@@ -297,7 +304,7 @@ def gallery(conn: sqlite3.Connection, user_id: str) -> list[dict]:
             "rarity": ch["rarity"],
             "color": ch.get("color", ""),
             "accessory": ch.get("accessory", ""),
-            "image": f"/assets/blindbox/{ch['image']}",
+            "image": _image_url(ch["image"]),
             "quote": ch.get("quote", ""),
             "story": ch.get("story", ""),
             "unlocked": ch["id"] in owned,   # count=0 也算解锁（曾拥有）

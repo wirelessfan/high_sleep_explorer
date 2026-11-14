@@ -32,6 +32,8 @@ tar -czf - \
   --exclude='./data' --exclude='./.pytest_cache' --exclude='./design' \
   . | ssh "$HOST" "tar -xzf - -C $APP_DIR"
 ssh "$HOST" "chown -R learn:learn $APP_DIR"
+# tar 是覆盖而非镜像：删掉已废弃的盲盒旧素材（bubu-*.svg 已被 labubu-*.png 取代）
+ssh "$HOST" "rm -f $APP_DIR/assets/blindbox/bubu-*.svg"
 
 say "3/7 安装依赖"
 ssh "$HOST" bash -s <<EOF

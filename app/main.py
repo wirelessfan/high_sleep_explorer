@@ -66,14 +66,20 @@ async def healthz():
 
 @app.middleware("http")
 async def no_cache_for_shell(request: Request, call_next):
-    """HTML/CSS/JS 不做强缓存。
+    """HTML/CSS/JS 不做强缓存，API 响应一律不缓存。
 
     前端没有构建链、也没有文件名哈希，如果浏览器缓存了旧 CSS，
     会出现「改了不生效」的困惑（实测踩过）。静态卡片图的缓存交给 Caddy。
+
+    API 必须 no-store：前端拿到的是「内容 + 资源路径」，一旦 JSON 被缓存，
+    换图后仍会指向旧资源，表现为「服务器已更新但页面还是旧图」。
     """
     response = await call_next(request)
     path = request.url.path
-    if path.endswith((".html", ".css", ".js")) or path in ("/", ""):
+    if path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+    elif path.endswith((".html", ".css", ".js")) or path in ("/", ""):
         response.headers["Cache-Control"] = "no-cache, must-revalidate"
     return response
 

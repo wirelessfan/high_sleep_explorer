@@ -48,3 +48,8 @@ design/review/
 .zcode/science-diagram-frames/
 .zcode/science-diagram-previews/
 .zcode/
+
+# 本地临时产物（截图、浏览器 profile、渲染预览）
+.tmp_*/
+.tmp_*
+tmp_*/

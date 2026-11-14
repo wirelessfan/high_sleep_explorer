@@ -120,7 +120,7 @@ def test_blindbox_gallery_has_image_paths(client, auth):
     d = client.get("/api/v1/blindbox", headers=auth).json()
     for c in d["gallery"]:
         assert c["image"].startswith("/assets/blindbox/")
-        assert c["image"].endswith(".png")
+        assert ".png" in c["image"], "角色图应为 PNG（可带 ?v= 版本戳）"
         assert c["unlocked"] is False
         assert c["value_cny"] >= 0
 
@@ -473,7 +473,7 @@ def test_svg_assets_exist(client):
     chars = content_loader.blindbox_characters()["characters"]
     assert len(chars) == 8
     for ch in chars:
-        assert ch["image"].endswith(".png")
+        assert ".png" in ch["image"]
     r = client.get(f"/assets/blindbox/{chars[0]['image']}")
     assert r.status_code == 200
     assert "png" in r.headers.get("content-type", "")
