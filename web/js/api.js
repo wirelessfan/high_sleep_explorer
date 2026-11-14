@@ -198,3 +198,30 @@ export const adminAiTest = (task) =>
   request('/admin/ai/test', { method: 'POST', body: { task } });
 export const adminAiUsage = (days = 1) => request(`/admin/ai/usage?days=${days}`);
 export const adminUsers = () => request('/admin/users');
+
+/* ---------- 盲盒 ---------- */
+
+export const getBlindbox = () => request('/blindbox');
+export const drawBlindbox = (count, key) =>
+  request('/blindbox/draw', { method: 'POST', body: { count, idempotency_key: key } });
+export const exchangeBlindbox = (count = 1) =>
+  request('/blindbox/exchange', { method: 'POST', body: { count } });
+export const redeemBlindbox = (characterId) =>
+  request('/blindbox/redeem', { method: 'POST', body: { character_id: characterId } });
+
+/* ---------- 许愿墙 ---------- */
+
+export const getWishes = () => request('/wishes');
+export const postWish = (content) => request('/wishes', { method: 'POST', body: { content } });
+export const adminWishes = () => request('/admin/wishes');
+export const adminModerateWish = (id, status, reply) =>
+  request(`/admin/wishes/${id}`, { method: 'PATCH', body: { status, reply } });
+
+/* ---------- 拍照错题（演示） ---------- */
+
+export const photoRecognize = (image) =>
+  request('/wrongbook/photo/recognize', { method: 'POST', body: { image } });
+export const photoAnalyze = (stem, options, picked) =>
+  request('/wrongbook/photo/analyze', { method: 'POST', body: { stem, options, picked } });
+export const photoSave = (payload) =>
+  request('/wrongbook/photo/save', { method: 'POST', body: payload });

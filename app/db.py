@@ -17,7 +17,10 @@ DB_PATH = Path(os.environ.get("LEARN_DB", Path(__file__).resolve().parent.parent
 # v6 = 新增 wrong_questions 错题本。
 # v7 = 多路 AI：users.role（管理员）、ai_config 策略单行表、
 #     wrong_questions 增加 source / ai_solve / variants。
-SCHEMA_VERSION = 8
+# v8 = 错题本 AI 并发/缓存/校验加固（与 v7 同批，兼容旧库）。
+# v9 = 盲盒系统：users 增加 blindbox_tickets / bb_pity_sr / bb_pity_ssr，
+#     新增 blindbox_owned 图鉴表；许愿墙新增 wishes 表。
+SCHEMA_VERSION = 9
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS schema_version (
@@ -41,6 +44,9 @@ CREATE TABLE IF NOT EXISTS users (
     pity_ssr INTEGER NOT NULL DEFAULT 0,
     makeup_used INTEGER NOT NULL DEFAULT 0,
     makeup_month TEXT,
+    blindbox_tickets INTEGER NOT NULL DEFAULT 3,  -- 盲盒券：与卡片 tickets 独立
+    bb_pity_sr INTEGER NOT NULL DEFAULT 0,        -- 盲盒保底计数（独立于卡片保底）
+    bb_pity_ssr INTEGER NOT NULL DEFAULT 0,
     role TEXT,                     -- NULL=普通用户；'admin'=管理员（管理界面/接口）
     created_at TEXT NOT NULL,
     last_seen TEXT NOT NULL
@@ -163,6 +169,29 @@ CREATE TABLE IF NOT EXISTS ai_requests (
 );
 
 CREATE INDEX IF NOT EXISTS idx_achv_code ON achievements(code);
+
+-- 盲盒图鉴：count=0 的行表示「曾开出过但已兑换成实物」，图鉴永久解锁。
+CREATE TABLE IF NOT EXISTS blindbox_owned (
+    user_id TEXT NOT NULL,
+    character_id TEXT NOT NULL,
+    count INTEGER NOT NULL DEFAULT 1,
+    first_at TEXT NOT NULL,
+    PRIMARY KEY (user_id, character_id)
+);
+
+-- 许愿墙：用户改进意见；status = open（待处理）/ planned（已采纳）/ done（已实现）
+CREATE TABLE IF NOT EXISTS wishes (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'open',
+    reply TEXT,
+    reply_at TEXT,
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_wishes_time ON wishes(created_at);
+CREATE INDEX IF NOT EXISTS idx_wishes_user ON wishes(user_id, created_at);
 
 -- progress / checkins 的复合主键已覆盖 (user_id, ...) 前缀，不需要重复索引。
 CREATE INDEX IF NOT EXISTS idx_draws_user ON draws(user_id, created_at);
@@ -319,6 +348,22 @@ def _migrate_ai_admin(conn: sqlite3.Connection) -> None:
         conn.execute("ALTER TABLE wrong_questions ADD COLUMN variants TEXT")
 
 
+def _migrate_blindbox(conn: sqlite3.Connection) -> None:
+    """v9：users 增加盲盒字段；blindbox_owned / wishes 由 SCHEMA 兜底建表。
+
+    老用户补 3 张体验券（列不存在时才 ALTER，ALTER 后默认值即生效）。
+    """
+    cols = {r["name"] for r in conn.execute("PRAGMA table_info(users)").fetchall()}
+    if "blindbox_tickets" not in cols:
+        conn.execute(
+            "ALTER TABLE users ADD COLUMN blindbox_tickets INTEGER NOT NULL DEFAULT 3"
+        )
+    if "bb_pity_sr" not in cols:
+        conn.execute("ALTER TABLE users ADD COLUMN bb_pity_sr INTEGER NOT NULL DEFAULT 0")
+    if "bb_pity_ssr" not in cols:
+        conn.execute("ALTER TABLE users ADD COLUMN bb_pity_ssr INTEGER NOT NULL DEFAULT 0")
+
+
 def init_db() -> None:
     conn = connect()
     try:
@@ -334,6 +379,7 @@ def init_db() -> None:
         _migrate_achievements_gift(conn)
         _migrate_progress_tiers(conn)
         _migrate_ai_admin(conn)
+        _migrate_blindbox(conn)
         conn.execute(
             "INSERT INTO schema_version(id, version) VALUES (1, ?) "
             "ON CONFLICT(id) DO UPDATE SET version = excluded.version",

@@ -158,5 +158,41 @@
   "wrongbook": {
     "clear_bonus": 20,
     "note": "一个主题的错题全部重做清零时 +20 分，每主题每天最多发一次。"
+  },
+  "blindbox": {
+    "single_cost": 1,
+    "ten_cost": 9,
+    "rarity": {
+      "N": 50,
+      "R": 30,
+      "SR": 15,
+      "SSR": 5
+    },
+    "duplicate_tickets": {
+      "N": 0,
+      "R": 0,
+      "SR": 1,
+      "SSR": 2
+    },
+    "pity_sr": 10,
+    "pity_ssr": 40,
+    "value_cny": {
+      "N": 5,
+      "R": 10,
+      "SR": 30,
+      "SSR": 100
+    },
+    "redeem_per_month": 1,
+    "exchange_points": 100,
+    "exchange_daily_limit": 1,
+    "checkin_drop_rate": 0.3,
+    "note": "盲盒用独立盲盒券（blindbox_tickets），与卡片卡包互不干扰。重复角色转盲盒券；实物兑换消耗 1 个副本并复用成就卡兑现码与家长核销链路，每月每角色 1 次。"
+  },
+  "wishes": {
+    "per_day": 3,
+    "min_len": 5,
+    "max_len": 300,
+    "ticket_reward": 1,
+    "note": "许愿墙每条意见 +1 盲盒券，每人每天最多 3 条；同人同内容去重。"
   }
 }

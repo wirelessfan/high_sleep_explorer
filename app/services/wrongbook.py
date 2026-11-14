@@ -133,6 +133,20 @@ def summary(conn: sqlite3.Connection, user_id: str) -> dict:
     cat = {t["id"]: t for t in content_loader.catalog()["topics"]}
     topics = []
     for r in rows:
+        # 拍照录入的错题没有真实主题，按 photo-<学科> 归组并给友好标题
+        if r["topic_id"].startswith("photo-"):
+            subj = r["topic_id"].split("-", 1)[1]
+            label = {"physics": "物理", "chemistry": "化学", "math": "数学"}.get(subj, "理科")
+            topics.append({
+                "topic_id": r["topic_id"],
+                "title": f"📷 拍照错题 · {label}",
+                "subject": subj if subj in ("physics", "chemistry", "math") else "",
+                "subtitle": "手机拍照导入的题目",
+                "open": r["open_n"],
+                "cleared": r["cleared_n"],
+                "last_at": r["last_at"],
+            })
+            continue
         t = cat.get(r["topic_id"], {})
         topics.append({
             "topic_id": r["topic_id"],

@@ -133,6 +133,46 @@ export async function renderMe(view) {
     ]),
   ]));
 
+  /* ---- 盲盒入口 ---- */
+  root.appendChild(el('section', {
+    class: 'panel',
+    style: 'cursor:pointer;background:linear-gradient(135deg,#fffbeb,#fff);border-color:#fcd34d',
+    onclick: () => { location.hash = '#/blindbox'; },
+  }, [
+    el('div', { class: 'row-between' }, [
+      el('div', { class: 'row', style: 'gap:11px' }, [
+        el('img', { src: '/assets/blindbox/box.svg', alt: '盲盒',
+          style: 'width:40px;height:40px;object-fit:contain' }),
+        el('div', {}, [
+          el('div', { style: 'font-size:13.5px;font-weight:800', text: '拉布布盲盒' }),
+          el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: '开出小伙伴 · 集齐可兑实物奖励' }),
+        ]),
+      ]),
+      el('div', { style: 'font-size:18px;color:#d9c8b4', text: '›' }),
+    ]),
+  ]));
+
+  /* ---- 许愿墙入口 ---- */
+  root.appendChild(el('section', {
+    class: 'panel',
+    style: 'cursor:pointer;background:linear-gradient(135deg,#f5f3ff,#fff);border-color:#ddd6fe',
+    onclick: () => { location.hash = '#/wishes'; },
+  }, [
+    el('div', { class: 'row-between' }, [
+      el('div', { class: 'row', style: 'gap:11px' }, [
+        el('div', {
+          style: 'width:40px;height:40px;border-radius:12px;background:#ede9fe;display:grid;place-items:center;font-size:17px',
+          text: '💌',
+        }),
+        el('div', {}, [
+          el('div', { style: 'font-size:13.5px;font-weight:800', text: '许愿墙' }),
+          el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: '提改进意见 · 每条得盲盒券' }),
+        ]),
+      ]),
+      el('div', { style: 'font-size:18px;color:#d9c8b4', text: '›' }),
+    ]),
+  ]));
+
   /* ---- 管理中心入口（仅管理员可见） ---- */
   if (me.is_admin) {
     root.appendChild(el('section', {

@@ -132,6 +132,13 @@ export async function renderWrongbook(view) {
     ]),
   ]));
 
+  /* ---- 拍照录入入口（演示页） ---- */
+  root.appendChild(el('button', {
+    class: 'btn soft full',
+    text: '📷 拍照录入错题（演示）',
+    onclick: () => { location.href = '/demo/photo.html'; },
+  }));
+
   if (!data.items.length) {
     root.appendChild(el('section', { class: 'panel', style: 'text-align:center;padding:34px 18px' }, [
       el('div', { style: 'font-size:40px', text: '🎉' }),

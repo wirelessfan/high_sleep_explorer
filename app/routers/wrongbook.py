@@ -189,3 +189,157 @@ def variants(body: VariantsIn, user: sqlite3.Row = Depends(current_user)):
         raise HTTPException(status_code=status, detail=result["error"])
     return {"result": {**result["value"], "cached": result["cached"]},
             **_usage(user["id"], "variants")}
+
+
+# ---------------------------------------------------------------- 拍照录入（演示流程）
+
+MAX_IMAGE_B64 = 6 * 1024 * 1024   # 压缩后仍偏大的图片直接拒绝，避免拖垮请求体
+
+
+class PhotoIn(BaseModel):
+    image: str = Field(min_length=32, max_length=MAX_IMAGE_B64)
+
+
+class PhotoAnalyzeIn(BaseModel):
+    stem: str = Field(min_length=1, max_length=2000)
+    options: list[str] = Field(default_factory=list)
+    picked: int = Field(ge=0, le=5)
+
+
+class PhotoSaveIn(BaseModel):
+    stem: str = Field(min_length=1, max_length=2000)
+    options: list[str] = Field(default_factory=list)
+    picked: int = Field(ge=0, le=5)
+    answer: int = Field(default=-1, ge=-1, le=5)
+    subject: str = Field(default="", max_length=16)
+    skill: str = Field(default="", max_length=64)
+    explain: str = Field(default="", max_length=1000)
+
+
+def _clean_b64(raw: str) -> str:
+    """接受 data URL 或裸 base64，只保留载荷部分。"""
+    s = (raw or "").strip()
+    if s.startswith("data:"):
+        _, _, s = s.partition(",")
+    return s
+
+
+def _photo_quota(conn: sqlite3.Connection, user_id: str, task: str) -> None:
+    """拍照流程的轻量限额检查（不占用 ai_requests 租约：单次请求内串行调用）。"""
+    cfg = ai_config.load(conn)
+    if not ai_client.enabled() or not ai_client.candidates(task, cfg):
+        raise HTTPException(status_code=503, detail="AI 服务未配置可用通道，请联系管理员")
+    used = wrongbook.ai_used_by_task(conn, user_id).get(task, 0)
+    limit = cfg["limits"][task]
+    if used >= limit:
+        raise HTTPException(
+            status_code=429,
+            detail=f"今日「{ai_config.TASK_LABELS[task]}」次数已达上限（{limit} 次/天）",
+        )
+
+
+@router.post("/wrongbook/photo/recognize")
+def photo_recognize(body: PhotoIn, user: sqlite3.Row = Depends(current_user)):
+    """拍照识别：图片 base64 → 结构化题目（只走视觉通道）。"""
+    image = _clean_b64(body.image)
+    if not image:
+        raise HTTPException(status_code=400, detail="图片为空")
+
+    with db.ro() as conn:
+        _photo_quota(conn, user["id"], "recognize")
+
+    try:
+        result = ai_client.recognize(image)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
+
+    with db.tx() as conn:
+        events.log(conn, user["id"], f"ai:{uuid.uuid4().hex[:10]}", "ai",
+                   {"task": "recognize", "model": result.get("model", ""),
+                    "channel": result.get("channel", "")})
+    return {"result": result}
+
+
+@router.post("/wrongbook/photo/analyze")
+def photo_analyze(body: PhotoAnalyzeIn, user: sqlite3.Row = Depends(current_user)):
+    """拍照题三合一分析：AI 解题 → 错因分析 → 举一反三（一次请求跑完）。"""
+    if not ai_client.enabled():
+        raise HTTPException(status_code=503, detail="AI 服务未配置（缺少通道 Key）")
+
+    options = [o for o in body.options if o.strip()]
+    q = {"stem": body.stem, "options": options, "skill": ""}
+
+    with db.ro() as conn:
+        for task in ("solve", "analyze", "variants"):
+            _photo_quota(conn, user["id"], task)
+
+    out: dict = {"solve": None, "analyze": None, "variants": None, "errors": {}}
+
+    try:
+        out["solve"] = ai_client.solve(q)
+    except RuntimeError as exc:
+        out["errors"]["solve"] = str(exc)
+
+    q_with_answer = dict(q)
+    if out["solve"] and out["solve"].get("answer", -1) >= 0:
+        q_with_answer["answer"] = out["solve"]["answer"]
+        q_with_answer["explain"] = out["solve"].get("key_point", "")
+    else:
+        q_with_answer["answer"] = 0
+        q_with_answer["explain"] = ""
+
+    try:
+        out["analyze"] = ai_client.analyze(q_with_answer, body.picked)
+    except RuntimeError as exc:
+        out["errors"]["analyze"] = str(exc)
+
+    try:
+        out["variants"] = ai_client.variants(q, 2)
+    except RuntimeError as exc:
+        out["errors"]["variants"] = str(exc)
+
+    with db.tx() as conn:
+        for task in ("solve", "analyze", "variants"):
+            if out[task]:
+                events.log(conn, user["id"], f"ai:{uuid.uuid4().hex[:10]}", "ai",
+                           {"task": task, "model": out[task].get("model", ""),
+                            "channel": out[task].get("channel", ""), "photo": True})
+
+    return out
+
+
+@router.post("/wrongbook/photo/save")
+def photo_save(body: PhotoSaveIn, user: sqlite3.Row = Depends(current_user)):
+    """把拍照题存进错题本（source='photo'，按学科归组，可直接重做清零）。"""
+    options = [o for o in body.options if o.strip()]
+    if len(options) < 2:
+        raise HTTPException(status_code=400, detail="至少需要两个选项")
+    if body.picked >= len(options):
+        raise HTTPException(status_code=400, detail="所选项超出范围")
+
+    subject = body.subject if body.subject in ("physics", "chemistry", "math") else ""
+    topic_id = f"photo-{subject or 'misc'}"
+    answer = body.answer if 0 <= body.answer < len(options) else 0
+    wq_id = "wq_" + uuid.uuid4().hex[:12]
+    now = wrongbook.today_str()
+
+    with db.tx() as conn:
+        conn.execute(
+            "INSERT INTO wrong_questions(id, user_id, topic_id, section_id, tier, "
+            "question_id, skill, stem, options_json, answer, explain, picked, "
+            "source, created_at, last_wrong_at) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (wq_id, user["id"], topic_id, "photo", "photo", uuid.uuid4().hex[:12],
+             body.skill or "拍照录入", body.stem,
+             json.dumps(options, ensure_ascii=False), answer, body.explain,
+             body.picked, "photo", now, now),
+        )
+        summary = wrongbook.summary(conn, user["id"])
+
+    return {
+        "id": wq_id,
+        "topic_id": topic_id,
+        "answer": answer,
+        "summary": summary,
+        "note": "已加入错题本，可在「错题本」里按主题重做清零。",
+    }

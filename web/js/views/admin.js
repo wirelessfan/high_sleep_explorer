@@ -278,8 +278,62 @@ async function renderAdmin(view) {
     }
     root.appendChild(userPanel);
 
+    /* ---- 许愿墙管理 ---- */
+    root.appendChild(el('div', { class: 'section-head' }, [
+      el('h3', { text: '许愿墙' }),
+      el('span', { class: 'hint', text: '改状态 + 官方回复' }),
+    ]));
+    const wishPanel = el('section', { class: 'panel', style: 'padding:13px' });
+    root.appendChild(wishPanel);
+
     view.innerHTML = '';
     view.appendChild(root);
+
+    try {
+      const wishes = await api.adminWishes();
+      wishPanel.innerHTML = '';
+      if (!wishes.items.length) {
+        wishPanel.appendChild(el('div', { style: 'font-size:12px;color:#a3928a', text: '还没有人许愿' }));
+      }
+      const STATUS = { open: '待处理', planned: '已采纳', done: '已实现' };
+      wishes.items.forEach((w) => {
+        const reply = el('input', {
+          type: 'text', value: w.reply || '', placeholder: '写一条回复（可选）',
+          style: 'flex:1;min-width:100px;font-size:11.5px;padding:6px 8px;border:1px solid #eaddc9;border-radius:8px;background:#fffdf9;color:#3b2f2a',
+        });
+        const select = el('select', {
+          style: 'font-size:11.5px;padding:6px 7px;border:1px solid #eaddc9;border-radius:8px;background:#fffdf9;color:#3b2f2a',
+        }, Object.entries(STATUS).map(([k, label]) => el('option', {
+          value: k, ...(w.status === k ? { selected: true } : {}), text: label,
+        })));
+
+        wishPanel.appendChild(el('div', { style: 'padding:10px 0;border-top:1px solid #f6ede0' }, [
+          el('div', { class: 'row-between', style: 'margin-bottom:5px' }, [
+            el('span', { style: 'font-size:11.5px;font-weight:800', text: w.nickname + (w.username ? ` @${w.username}` : '') }),
+            el('span', { style: 'font-size:10px;color:#b6a498', text: (w.created_at || '').slice(5, 16).replace('T', ' ') }),
+          ]),
+          el('div', { style: 'font-size:12px;color:#3b2f2a;line-height:1.7;margin-bottom:7px;white-space:pre-wrap', text: w.content }),
+          el('div', { class: 'row', style: 'gap:6px;align-items:center;flex-wrap:wrap' }, [
+            select, reply,
+            el('button', {
+              class: 'btn soft sm', text: '保存',
+              onclick: async (e) => {
+                const btn = e.currentTarget;
+                btn.disabled = true; btn.textContent = '…';
+                try {
+                  await api.adminModerateWish(w.id, select.value, reply.value.trim());
+                  toast('已保存');
+                } catch (err) { toast(err.message || '保存失败'); }
+                btn.disabled = false; btn.textContent = '保存';
+              },
+            }),
+          ]),
+        ]));
+      });
+    } catch (err) {
+      wishPanel.innerHTML = '';
+      wishPanel.appendChild(el('div', { style: 'font-size:12px;color:#b91c1c', text: err.message || '加载许愿墙失败' }));
+    }
 }
 
 export { renderAdmin };

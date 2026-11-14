@@ -1,0 +1,94 @@
+{
+  "version": 1,
+  "note": "盲盒角色池：拉布布风格卡通形象。rarity 决定概率与实物面值；image 为 assets/blindbox/ 下的文件名。",
+  "characters": [
+    {
+      "id": "bubu-mint",
+      "name": "薄荷布布",
+      "en": "Mint Bubu",
+      "rarity": "N",
+      "color": "#5eead4",
+      "accessory": "薄荷叶发夹",
+      "image": "bubu-mint.svg",
+      "quote": "慢慢来，也能走到很远的地方。",
+      "story": "住在薄荷田边的布布，最喜欢清晨的露水。它相信学习也一样，每天一点，就会清凉一整片。"
+    },
+    {
+      "id": "bubu-peach",
+      "name": "蜜桃布布",
+      "en": "Peach Bubu",
+      "rarity": "N",
+      "color": "#fda4af",
+      "accessory": "蜜桃蝴蝶结",
+      "image": "bubu-peach.svg",
+      "quote": "今天的错题，是明天的甜。",
+      "story": "蜜桃布布把每道错题都当成一颗还没熟透的果子，放一放、想一想，就会变甜。"
+    },
+    {
+      "id": "bubu-sky",
+      "name": "天空布布",
+      "en": "Sky Bubu",
+      "rarity": "R",
+      "color": "#7dd3fc",
+      "accessory": "小云朵围巾",
+      "image": "bubu-sky.svg",
+      "quote": "想不出来的时候，抬头看看。",
+      "story": "天空布布总是在窗台边发呆。它说，卡住的时候换个角度，答案常常就飘过来了。"
+    },
+    {
+      "id": "bubu-lemon",
+      "name": "柠檬布布",
+      "en": "Lemon Bubu",
+      "rarity": "R",
+      "color": "#fde047",
+      "accessory": "柠檬片帽子",
+      "image": "bubu-lemon.svg",
+      "quote": "酸过的题，才记得牢。",
+      "story": "被难题酸到皱眉的时候，柠檬布布会拍拍你：先别逃，再读一遍题干。"
+    },
+    {
+      "id": "bubu-lilac",
+      "name": "丁香布布",
+      "en": "Lilac Bubu",
+      "rarity": "SR",
+      "color": "#c4b5fd",
+      "accessory": "星月小夜灯",
+      "image": "bubu-lilac.svg",
+      "quote": "深夜的草稿纸，会发光。",
+      "story": "丁香布布守着一盏小夜灯，专门陪那些把演算写满整页的夜晚。"
+    },
+    {
+      "id": "bubu-coral",
+      "name": "珊瑚布布",
+      "en": "Coral Bubu",
+      "rarity": "SR",
+      "color": "#fb923c",
+      "accessory": "珊瑚小贝壳",
+      "image": "bubu-coral.svg",
+      "quote": "错得越清楚，改得越彻底。",
+      "story": "珊瑚布布会把每一次错误都记在小贝壳上，攒够了就变成一张漂亮的成绩单。"
+    },
+    {
+      "id": "bubu-galaxy",
+      "name": "星河布布",
+      "en": "Galaxy Bubu",
+      "rarity": "SSR",
+      "color": "#6366f1",
+      "accessory": "银河披风",
+      "image": "bubu-galaxy.svg",
+      "quote": "你解题时，宇宙在看你。",
+      "story": "传说星河布布只在真正想通一道大题的那一秒出现，披风上落满了被你点亮的星。"
+    },
+    {
+      "id": "bubu-aurora",
+      "name": "极光布布",
+      "en": "Aurora Bubu",
+      "rarity": "SSR",
+      "color": "#22d3ee",
+      "accessory": "极光王冠",
+      "image": "bubu-aurora.svg",
+      "quote": "坚持到最后一题，极光会为你升起。",
+      "story": "极光布布住在很冷的北方，它说最亮的光，总是留给最久的等待。"
+    }
+  ]
+}

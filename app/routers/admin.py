@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field, StrictInt
 
 from app import db
 from app.routers.session import require_admin
-from app.services import ai_client, ai_config, ratelimit
+from app.services import ai_client, ai_config, ratelimit, wishes
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -21,6 +21,11 @@ class AiConfigIn(BaseModel):
     routing: dict[str, str] = Field(default_factory=dict)
     channels: dict[str, dict] = Field(default_factory=dict)
     limits: dict[str, StrictInt] = Field(default_factory=dict)
+
+
+class WishModerateIn(BaseModel):
+    status: str = Field(min_length=1, max_length=16)
+    reply: str = Field(default="", max_length=600)
 
 
 class AiTestIn(BaseModel):
@@ -155,3 +160,21 @@ def list_users(user: sqlite3.Row = Depends(require_admin)):
             "last_seen": (r["last_seen"] or "")[:10],
         } for r in rows
     ]}
+
+
+@router.get("/wishes")
+def list_wishes(user: sqlite3.Row = Depends(require_admin)):
+    """许愿墙全部意见（待处理优先）。"""
+    with db.ro() as conn:
+        return {"items": wishes.admin_list(conn)}
+
+
+@router.patch("/wishes/{wish_id}")
+def moderate_wish(wish_id: str, body: WishModerateIn,
+                  user: sqlite3.Row = Depends(require_admin)):
+    """管理员：改状态（open/planned/done）并写官方回复。"""
+    with db.tx() as conn:
+        try:
+            return wishes.moderate(conn, wish_id, body.status, body.reply)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))

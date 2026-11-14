@@ -55,6 +55,12 @@ def cards() -> dict:
 
 
 @lru_cache(maxsize=1)
+def blindbox_characters() -> dict:
+    """盲盒角色池（拉布布风格卡通形象）。"""
+    return _read_json(CONTENT_DIR / "blindbox" / "characters.json")
+
+
+@lru_cache(maxsize=1)
 def rewards() -> dict:
     return _read_json(CONTENT_DIR / "rewards.json")
 
@@ -271,6 +277,7 @@ def clear_cache() -> None:
     topic.cache_clear()
     topic_minutes.cache_clear()
     cards.cache_clear()
+    blindbox_characters.cache_clear()
     rewards.cache_clear()
     media.cache_clear()
     bosses.cache_clear()

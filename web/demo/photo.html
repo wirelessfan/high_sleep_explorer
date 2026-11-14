@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>错题拍照录入 · 演示</title>
+<style>
+  :root {
+    --ink: #3b2f2a; --ink-2: #6b5b52; --ink-3: #a3928a;
+    --line: #eadfd0; --bg: #fbf6ee; --card: #fffdf9;
+    --ok: #047857; --err: #b91c1c; --brand: #14b8a6;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", sans-serif;
+    padding: 14px 14px 40px; max-width: 560px; margin-inline: auto;
+  }
+  h1 { font-size: 19px; margin: 6px 0 2px; letter-spacing: -.01em; }
+  .sub { font-size: 12px; color: var(--ink-3); margin-bottom: 14px; }
+  .panel {
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+    padding: 15px; margin-bottom: 11px; box-shadow: 0 1px 2px rgba(120,90,60,.05);
+  }
+  .step { font-size: 11px; font-weight: 800; color: var(--brand); letter-spacing: .08em; margin-bottom: 9px; }
+  button {
+    font-family: inherit; font-size: 14px; font-weight: 700; border: 0; border-radius: 12px;
+    padding: 13px 16px; background: #14b8a6; color: #fff; cursor: pointer; width: 100%;
+  }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+  button.ghost { background: #f2ece2; color: var(--ink); }
+  button.sm { font-size: 12.5px; padding: 9px 12px; width: auto; }
+  .filebtn {
+    display: block; text-align: center; border: 1.5px dashed #cbbba6; border-radius: 14px;
+    padding: 26px 14px; background: #fffdf9; cursor: pointer; color: var(--ink-2); font-size: 13px;
+  }
+  .filebtn strong { display: block; font-size: 15px; color: var(--ink); margin-bottom: 4px; }
+  input[type=file] { display: none; }
+  #preview { width: 100%; border-radius: 13px; display: none; margin-bottom: 10px; }
+  .field { margin-bottom: 9px; }
+  .field label { display: block; font-size: 11px; font-weight: 800; color: var(--ink-3); margin-bottom: 4px; }
+  textarea, input[type=text] {
+    width: 100%; font-family: inherit; font-size: 13px; line-height: 1.7; color: var(--ink);
+    padding: 10px 11px; border: 1px solid var(--line); border-radius: 11px; background: #fffdf9;
+    resize: vertical;
+  }
+  textarea:focus, input[type=text]:focus { outline: 2px solid #c7f0eb; outline-offset: 1px; }
+  .opt {
+    display: flex; gap: 9px; align-items: flex-start; width: 100%; text-align: left;
+    background: #fff; border: 1px solid var(--line); border-radius: 11px;
+    padding: 10px 11px; margin-bottom: 6px; font-size: 13px; color: var(--ink-2);
+    font-weight: 600; cursor: pointer;
+  }
+  .opt .k {
+    flex: 0 0 auto; width: 21px; height: 21px; border-radius: 6px; background: #f2ece2;
+    display: grid; place-items: center; font-size: 11px; font-weight: 900; color: var(--ink-2);
+  }
+  .opt.sel { border-color: var(--brand); background: #effcfb; color: var(--ink); }
+  .opt.sel .k { background: var(--brand); color: #fff; }
+  .hint { font-size: 11.5px; color: var(--ink-3); line-height: 1.7; }
+  .chip {
+    display: inline-block; font-size: 10px; font-weight: 800; padding: 2px 8px;
+    border-radius: 7px; background: #f2ece2; color: var(--ink-2); margin-right: 4px;
+  }
+  .card-ok { background: #f0fdf4; border-color: #a7f3d0; }
+  .card-err { background: #fef2f2; border-color: #fecaca; }
+  .steps li { font-size: 12.5px; line-height: 1.75; color: var(--ink-2); margin-bottom: 5px; }
+  .vcard { background: #f0f9ff; border-radius: 12px; padding: 11px; margin-top: 9px; }
+  .vopt {
+    display: block; width: 100%; text-align: left; font-size: 12.5px; padding: 7px 10px;
+    border-radius: 9px; margin-top: 5px; background: #fff; color: var(--ink-2);
+    border: 1px solid #e3f0fb; font-weight: 600;
+  }
+  .vopt.right { background: #f0fdf4; color: var(--ok); border-color: #a7f3d0; font-weight: 800; }
+  .vopt.wrong { background: #fef2f2; color: var(--err); border-color: #fecaca; font-weight: 800; }
+  #toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%);
+    background: rgba(40,32,28,.94); color: #fff; font-size: 13px; padding: 10px 16px;
+    border-radius: 11px; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 50;
+  }
+  #toast.show { opacity: 1; }
+  .hidden { display: none !important; }
+  .result-big { font-size: 30px; text-align: center; }
+  .row { display: flex; gap: 8px; align-items: center; }
+</style>
+</head>
+<body>
+
+<h1>📷 错题拍照录入</h1>
+<div class="sub">拍照 → AI 识别 → AI 解题 + 错因 + 举一反三 → 进错题本</div>
+
+<!-- 步骤 1：上传 -->
+<section class="panel" id="stepUpload">
+  <div class="step">第 1 步 · 上传题目照片</div>
+  <label class="filebtn" for="file">
+    <strong>📸 拍照 / 选择图片</strong>
+    手机点这里会直接打开相机；电脑上可选文件
+  </label>
+  <input type="file" id="file" accept="image/*" capture="environment">
+  <img id="preview" alt="题目预览">
+  <div class="hint" style="margin-top:8px">图片会在本地压缩到 1280px 再上传，节省流量。</div>
+</section>
+
+<!-- 步骤 2：确认题目 -->
+<section class="panel hidden" id="stepConfirm">
+  <div class="step">第 2 步 · 确认识别结果（可修改）</div>
+  <div class="row" style="margin-bottom:9px;flex-wrap:wrap">
+    <span class="chip" id="chipSubject">科目</span>
+    <span class="chip" id="chipChannel">通道</span>
+  </div>
+  <div class="field">
+    <label>题干</label>
+    <textarea id="stem" rows="4"></textarea>
+  </div>
+  <div class="field">
+    <label>选项（每行一个）</label>
+    <textarea id="options" rows="4"></textarea>
+  </div>
+  <div class="field">
+    <label>我当时选的是</label>
+    <div id="pickList"></div>
+  </div>
+  <button id="analyzeBtn">🤖 AI 分析这道错题</button>
+</section>
+
+<!-- 步骤 3：分析结果 -->
+<section class="panel hidden" id="stepResult">
+  <div class="step">第 3 步 · AI 分析结果</div>
+
+  <div class="panel card-ok" id="solveBox" style="margin:0 0 11px"></div>
+  <div class="panel" id="aiBox" style="margin:0 0 11px"></div>
+  <div class="panel" id="varBox" style="margin:0 0 11px"></div>
+
+  <button id="saveBtn">📥 保存到错题本</button>
+  <button class="ghost" id="restartBtn" style="margin-top:8px">再拍一道</button>
+</section>
+
+<div id="toast"></div>
+
+<script>
+/* 极简演示页：不依赖 SPA 框架，只复用后端 API 与 localStorage 令牌 */
+const API = '/api/v1';
+const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
+let state = { stem: '', options: [], picked: 0, subject: '', analyze: null };
+
+const $ = (id) => document.getElementById(id);
+
+function toast(msg, ms = 2200) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+/* ---------- 会话 ---------- */
+async function token() {
+  let t = localStorage.getItem('learn.token');
+  if (t) return t;
+  try {
+    const r = await fetch(`${API}/session`, { method: 'POST' });
+    if (!r.ok) throw new Error();
+    const d = await r.json();
+    localStorage.setItem('learn.token', d.token);
+    return d.token;
+  } catch {
+    toast('无法建立会话，请检查网络');
+    throw new Error('no-session');
+  }
+}
+
+async function api(path, { method = 'GET', body } = {}) {
+  const t = await token();
+  const headers = { Accept: 'application/json' };
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  if (t) headers.Authorization = `Bearer ${t}`;
+  const res = await fetch(`${API}${path}`, {
+    method, headers, body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const text = await res.text();
+  let data = null;
+  if (text) { try { data = JSON.parse(text); } catch {} }
+  if (!res.ok) {
+    throw new Error(data?.detail || data?.error?.message || `请求失败 (${res.status})`);
+  }
+  return data;
+}
+
+/* ---------- 图片压缩 ---------- */
+function compress(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const maxSide = 1280;
+      let { width, height } = img;
+      if (Math.max(width, height) > maxSide) {
+        const k = maxSide / Math.max(width, height);
+        width = Math.round(width * k);
+        height = Math.round(height * k);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', 0.8));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('图片读取失败')); };
+    img.src = url;
+  });
+}
+
+/* ---------- 步骤 1：上传 + 识别 ---------- */
+$('file').addEventListener('change', async (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  if (!/^image\//.test(file.type)) { toast('请选择图片文件'); return; }
+
+  try {
+    const dataUrl = await compress(file);
+    $('preview').src = dataUrl;
+    $('preview').style.display = 'block';
+    toast('正在识别题目…', 60000);
+
+    const res = await api('/wrongbook/photo/recognize', { method: 'POST', body: { image: dataUrl } });
+    const r = res.result;
+    state.stem = r.stem || '';
+    state.options = (r.options && r.options.length) ? r.options : ['选项 A', '选项 B', '选项 C', '选项 D'];
+    state.subject = r.subject || '';
+
+    $('stem').value = state.stem;
+    $('options').value = state.options.join('\n');
+    $('chipSubject').textContent = { physics: '物理', chemistry: '化学', math: '数学' }[state.subject] || '未识别科目';
+    $('chipChannel').textContent = `${r.channel || '?'} · ${r.model || ''}`;
+    paintPick();
+
+    $('stepConfirm').classList.remove('hidden');
+    $('stepConfirm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('识别完成，请确认题目');
+  } catch (err) {
+    toast(err.message || '识别失败，请重试', 3500);
+  }
+});
+
+/* ---------- 步骤 2：选项与作答 ---------- */
+function readForm() {
+  state.stem = $('stem').value.trim();
+  state.options = $('options').value.split('\n').map((s) => s.trim()).filter(Boolean);
+}
+
+function paintPick() {
+  const box = $('pickList');
+  box.innerHTML = '';
+  if (state.picked >= state.options.length) state.picked = 0;
+  state.options.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt' + (state.picked === i ? ' sel' : '');
+    b.innerHTML = `<span class="k">${LETTERS[i]}</span><span>${escapeHtml(opt)}</span>`;
+    b.onclick = () => { state.picked = i; paintPick(); };
+    box.appendChild(b);
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+}
+
+$('options').addEventListener('input', () => { readForm(); paintPick(); });
+
+/* ---------- 步骤 3：AI 分析 ---------- */
+$('analyzeBtn').addEventListener('click', async () => {
+  readForm();
+  if (state.stem.length < 5) { toast('题干太短了'); return; }
+  if (state.options.length < 2) { toast('至少需要两个选项'); return; }
+
+  const btn = $('analyzeBtn');
+  btn.disabled = true;
+  btn.textContent = 'AI 分析中…（约 10 秒）';
+  try {
+    const res = await api('/wrongbook/photo/analyze', {
+      method: 'POST',
+      body: { stem: state.stem, options: state.options, picked: state.picked },
+    });
+    state.analyze = res;
+    renderResult(res);
+    $('stepResult').classList.remove('hidden');
+    $('stepResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    toast(err.message || 'AI 分析失败', 3500);
+  }
+  btn.disabled = false;
+  btn.textContent = '🤖 AI 分析这道错题';
+});
+
+function renderResult(res) {
+  /* AI 解答 */
+  const solve = res.solve;
+  const box = $('solveBox');
+  box.innerHTML = '';
+  if (solve) {
+    const mine = LETTERS[state.picked];
+    const ai = solve.answer_letter || '?';
+    const agree = ai === mine;
+    box.innerHTML = `
+      <div style="font-size:11px;font-weight:800;color:#0369a1;margin-bottom:7px">🧠 AI 独立解答</div>
+      <div class="result-big">${escapeHtml(ai)}</div>
+      <div style="text-align:center;font-size:12px;color:${agree ? '#047857' : '#b45309'};font-weight:800;margin-top:5px">
+        ${agree ? `✓ 和你选的一样（${mine}）` : `你选 ${mine}，AI 认为是 ${ai}`}
+      </div>
+      ${solve.key_point ? `<div style="font-size:12px;color:#0f766e;margin-top:9px;line-height:1.7">💡 ${escapeHtml(solve.key_point)}</div>` : ''}
+      <ol class="steps" style="margin:10px 0 0;padding-left:19px">
+        ${(solve.steps || []).map((s) => `<li>${escapeHtml(s)}</li>`).join('')}
+      </ol>`;
+  } else {
+    box.className = 'panel card-err';
+    box.innerHTML = `<div class="hint">AI 解题失败：${escapeHtml(res.errors?.solve || '未知错误')}</div>`;
+  }
+
+  /* 错因分析 */
+  const ai = res.analyze;
+  const aiBox = $('aiBox');
+  aiBox.innerHTML = '';
+  if (ai) {
+    aiBox.innerHTML = `
+      <div style="font-size:11px;font-weight:800;color:#b45309;margin-bottom:7px">🎯 错在哪里</div>
+      ${ai.misconception ? `<div style="font-size:12.5px;font-weight:800;color:#b45309;background:#fffbeb;border-radius:9px;padding:8px 10px">${escapeHtml(ai.misconception)}</div>` : ''}
+      ${ai.analysis ? `<div style="font-size:12.5px;color:var(--ink-2);line-height:1.75;background:#fdf8f0;border-radius:9px;padding:9px 11px;margin-top:7px">${escapeHtml(ai.analysis)}</div>` : ''}
+      ${(ai.suggestions || []).map((s) => `<div style="font-size:12px;color:#0f766e;margin-top:6px">▸ ${escapeHtml(s)}</div>`).join('')}`;
+  } else {
+    aiBox.innerHTML = `<div class="hint">错因分析失败：${escapeHtml(res.errors?.analyze || '未知错误')}</div>`;
+  }
+
+  /* 举一反三 */
+  const vars = res.variants;
+  const varBox = $('varBox');
+  varBox.innerHTML = '';
+  if (vars && (vars.variants || []).length) {
+    varBox.innerHTML = `<div style="font-size:11px;font-weight:800;color:#0369a1;margin-bottom:4px">🌱 举一反三（先选答案，再看解析）</div>`;
+    vars.variants.forEach((v, vi) => {
+      const card = document.createElement('div');
+      card.className = 'vcard';
+      card.innerHTML = `<div style="font-size:12.5px;line-height:1.7;color:var(--ink);margin-bottom:6px">${vi + 1}. ${escapeHtml(v.stem)}</div>`;
+      v.options.forEach((o, oi) => {
+        const b = document.createElement('button');
+        b.className = 'vopt';
+        b.textContent = `${LETTERS[oi]}. ${o}`;
+        b.onclick = () => {
+          card.querySelectorAll('.vopt').forEach((x) => { x.disabled = true; });
+          b.classList.add(oi === v.answer ? 'right' : 'wrong');
+          if (oi !== v.answer) {
+            card.querySelectorAll('.vopt')[v.answer]?.classList.add('right');
+          }
+          const ex = document.createElement('div');
+          ex.style.cssText = 'font-size:12px;color:var(--ink-2);line-height:1.7;margin-top:8px;background:#fff;border-radius:8px;padding:8px 10px';
+          ex.textContent = `正确答案 ${LETTERS[v.answer]}。${v.explain || ''}`;
+          card.appendChild(ex);
+        };
+        card.appendChild(b);
+      });
+      varBox.appendChild(card);
+    });
+  } else {
+    varBox.innerHTML = `<div class="hint">举一反三生成失败：${escapeHtml(res.errors?.variants || '未知错误')}</div>`;
+  }
+}
+
+/* ---------- 保存 ---------- */
+$('saveBtn').addEventListener('click', async () => {
+  readForm();
+  const btn = $('saveBtn');
+  btn.disabled = true;
+  btn.textContent = '保存中…';
+  try {
+    const aiAnswer = state.analyze?.solve?.answer;
+    const res = await api('/wrongbook/photo/save', {
+      method: 'POST',
+      body: {
+        stem: state.stem,
+        options: state.options,
+        picked: state.picked,
+        answer: Number.isInteger(aiAnswer) ? aiAnswer : 0,
+        subject: state.subject,
+        skill: state.analyze?.solve?.key_point || '拍照录入',
+        explain: state.analyze?.analyze?.analysis || '',
+      },
+    });
+    toast('✓ 已保存到错题本');
+    $('saveBtn').textContent = '✓ 已保存';
+    setTimeout(() => { location.href = '/#/wrongbook'; }, 900);
+  } catch (err) {
+    toast(err.message || '保存失败', 3500);
+    btn.disabled = false;
+    btn.textContent = '📥 保存到错题本';
+  }
+});
+
+$('restartBtn').addEventListener('click', () => location.reload());
+</script>
+</body>
+</html>

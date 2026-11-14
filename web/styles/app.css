@@ -684,3 +684,101 @@ a{color:inherit;text-decoration:none}
   font-weight: 700;
 }
 
+
+/* ================= 盲盒 ================= */
+
+.bb-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.bb-card {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 8px 6px 9px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+.bb-card:active { transform: scale(.97); }
+.bb-card img { width: 100%; display: block; aspect-ratio: 220 / 270; object-fit: contain; }
+.bb-card.locked { background: #faf7f2; }
+.bb-nm { font-size: 11.5px; font-weight: 800; margin-top: 4px; color: #3b2f2a; }
+.bb-rar {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  padding: 1px 7px;
+  border-radius: 6px;
+  margin-top: 3px;
+}
+.bb-rar.rar-N { background: #f1f5f9; color: #64748b; }
+.bb-rar.rar-R { background: #dbeafe; color: #1d4ed8; }
+.bb-rar.rar-SR { background: #ede9fe; color: #6d28d9; }
+.bb-rar.rar-SSR { background: linear-gradient(120deg,#fef08a,#fda4af); color: #92400e; }
+.bb-cnt { font-size: 10px; color: #a3928a; margin-top: 1px; }
+
+.bb-draw-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.bb-draw-grid.ten { grid-template-columns: repeat(3, 1fr); }
+.bb-draw-item {
+  position: relative;
+  background: linear-gradient(160deg, #fffdf8, #fdf6ea);
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  padding: 7px 5px 8px;
+  text-align: center;
+  animation: bbPop .46s cubic-bezier(.2,1.5,.4,1) both;
+}
+.bb-draw-item img { width: 100%; display: block; }
+.bb-draw-item.rar-SSR { box-shadow: 0 0 0 2px #fcd34d, 0 6px 18px rgba(251,191,36,.32); }
+.bb-draw-item.rar-SR { box-shadow: 0 0 0 1.5px #ddd6fe; }
+
+.bb-spark {
+  position: absolute;
+  inset: -6px;
+  border-radius: 16px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 22%, #fde68a 0 3px, transparent 3px),
+    radial-gradient(circle at 84% 16%, #fbcfe8 0 2.5px, transparent 2.5px),
+    radial-gradient(circle at 74% 84%, #a5f3fc 0 2.5px, transparent 2.5px);
+  opacity: 0;
+  animation: bbSpark .8s ease-out .18s both;
+}
+
+@keyframes bbPop {
+  0%   { transform: translateY(16px) scale(.7); opacity: 0; }
+  70%  { transform: translateY(-4px) scale(1.05); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+@keyframes bbSpark {
+  0%   { opacity: 0; transform: scale(.8); }
+  45%  { opacity: 1; transform: scale(1.06); }
+  100% { opacity: 0; transform: scale(1.14); }
+}
+
+@keyframes bbFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-5px) rotate(-1.5deg); }
+}
+.bb-float { animation: bbFloat 3.4s ease-in-out infinite; }
+
+.new-tag {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: .05em;
+  background: #ef4444;
+  color: #fff;
+  border-radius: 5px;
+  padding: 1px 5px;
+}
