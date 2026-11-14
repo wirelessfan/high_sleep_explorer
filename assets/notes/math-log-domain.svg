@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" width="100%" role="img" aria-labelledby="lg3Title lg3Desc">
+  <title id="lg3Title">含参对数不等式：底数分类讨论的决策树</title>
+  <desc id="lg3Desc">解 logₐ(x+1) &lt; logₐ(3−x) 时，必须先按 a&gt;1 与 0&lt;a&lt;1 分类：前者不等号方向不变，后者要翻转；两条分支各自再叠加真数大于零的条件，最后取交集。图中用决策树连线展示这个流程。</desc>
+  <defs>
+    <marker id="lg3Arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+    </marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .draw { stroke-dasharray: 320; stroke-dashoffset: 320; animation: draw 2.4s ease forwards; }
+      @keyframes draw { to { stroke-dashoffset: 0; } }
+      @media (prefers-reduced-motion: reduce) {
+        .draw { animation: none; stroke-dashoffset: 0; }
+      }
+    </style>
+  </defs>
+
+  <rect width="800" height="580" rx="14" fill="#f7f9fd"/>
+  <text x="30" y="38" font-size="23" fill="#1e3a8a" font-weight="800">含参对数不等式：先分底数，再并真数条件</text>
+  <text x="30" y="64" font-size="14.5" fill="#50647a">例：解 logₐ(x+1) &lt; logₐ(3−x)。底数 a 未定 → 单调性未定 → 必须分两路。</text>
+
+  <!-- 起点 -->
+  <rect x="288" y="86" width="224" height="46" rx="10" fill="#1e3a8a"/>
+  <text x="400" y="115" font-size="14" fill="#ffffff" font-weight="700" text-anchor="middle">logₐ(x+1) &lt; logₐ(3−x)</text>
+
+  <!-- 真数条件（常驻） -->
+  <rect x="288" y="148" width="224" height="40" rx="9" fill="#fef3c7" stroke="#fcd34d"/>
+  <text x="400" y="174" font-size="12.5" fill="#92400e" font-weight="700" text-anchor="middle">真数 &gt; 0：x+1&gt;0 且 3−x&gt;0</text>
+  <text x="400" y="204" font-size="12" fill="#a16207" text-anchor="middle">⇒ −1 &lt; x &lt; 3（这一条两路都要）</text>
+
+  <line x1="400" y1="132" x2="400" y2="146" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#lg3Arrow)"/>
+
+  <!-- 分支 -->
+  <line x1="400" y1="222" x2="200" y2="262" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#lg3Arrow)" class="draw"/>
+  <line x1="400" y1="222" x2="600" y2="262" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#lg3Arrow)" class="draw"/>
+  <text x="258" y="238" font-size="11.5" fill="#64748b">a &gt; 1</text>
+  <text x="528" y="238" font-size="11.5" fill="#64748b">0 &lt; a &lt; 1</text>
+
+  <!-- 左分支 a>1 -->
+  <rect x="60" y="258" width="280" height="112" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-width="2"/>
+  <text x="76" y="284" font-size="13.5" fill="#1d4ed8" font-weight="700">a &gt; 1：递增，方向不变</text>
+  <text x="76" y="310" font-size="12.5" fill="#334155">logₐM &lt; logₐN ⟺ M &lt; N</text>
+  <text x="76" y="334" font-size="12.5" fill="#334155">⇒ x + 1 &lt; 3 − x</text>
+  <text x="76" y="358" font-size="12.5" fill="#334155">⇒ x &lt; 1</text>
+
+  <!-- 右分支 0<a<1 -->
+  <rect x="460" y="258" width="280" height="112" rx="10" fill="#ffffff" stroke="#fca5a5" stroke-width="2"/>
+  <text x="476" y="284" font-size="13.5" fill="#b91c1c" font-weight="700">0 &lt; a &lt; 1：递减，方向翻转</text>
+  <text x="476" y="310" font-size="12.5" fill="#334155">logₐM &lt; logₐN ⟺ M &gt; N</text>
+  <text x="476" y="334" font-size="12.5" fill="#334155">⇒ x + 1 &gt; 3 − x</text>
+  <text x="476" y="358" font-size="12.5" fill="#334155">⇒ x &gt; 1</text>
+
+  <!-- 合流 -->
+  <line x1="200" y1="370" x2="300" y2="410" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#lg3Arrow)"/>
+  <line x1="600" y1="370" x2="500" y2="410" stroke="#94a3b8" stroke-width="1.8" marker-end="url(#lg3Arrow)"/>
+
+  <rect x="230" y="410" width="340" height="64" rx="10" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="2"/>
+  <text x="400" y="434" font-size="13" fill="#047857" font-weight="700" text-anchor="middle">与 −1 &lt; x &lt; 3 取交集</text>
+  <text x="400" y="458" font-size="12.5" fill="#065f46" text-anchor="middle">a&gt;1：−1 &lt; x &lt; 1　｜　0&lt;a&lt;1：1 &lt; x &lt; 3</text>
+
+  <!-- 结论 -->
+  <rect x="150" y="492" width="500" height="62" rx="10" fill="#1e3a8a"/>
+  <text x="400" y="516" font-size="13" fill="#e0e7ff" font-weight="700" text-anchor="middle">最终答案必须写成两种情况</text>
+  <text x="400" y="540" font-size="12.5" fill="#ffffff" text-anchor="middle">a&gt;1 时 x∈(−1,1)；0&lt;a&lt;1 时 x∈(1,3)</text>
+
+  <text x="30" y="574" font-size="11.5" fill="#b45309">⚠ 漏写「真数 &gt; 0」或忘记翻转不等号，是这类题最常见的两处丢分。</text>
+</svg>

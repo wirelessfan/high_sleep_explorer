@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 580" width="100%" role="img" aria-labelledby="lgTitle lgDesc">
+  <title id="lgTitle">对数函数面面观：指数与对数互为逆运算</title>
+  <desc id="lgDesc">左图把 2 的幂次画成台阶，右图把 y=log₂x 画成曲线，两图关于 y=x 对称，体现指数与对数互为反函数；动画演示点沿曲线滑动并投影到对应对称点。</desc>
+  <defs>
+    <marker id="lgArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="context-stroke"/>
+    </marker>
+    <style>
+      text { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; }
+      .still { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .motion { display: none; }
+        .still { display: inline; }
+      }
+      .dot { animation: slide 6s ease-in-out infinite; }
+      .dot2 { animation: slide2 6s ease-in-out infinite; }
+      @keyframes slide {
+        0%, 100% { transform: translate(0, 0); }
+        50%      { transform: translate(96px, -144px); }
+      }
+      @keyframes slide2 {
+        0%, 100% { transform: translate(0, 0); }
+        50%      { transform: translate(144px, -96px); }
+      }
+    </style>
+  </defs>
+
+  <rect width="800" height="580" rx="14" fill="#f7f9fd"/>
+  <text x="30" y="38" font-size="23" fill="#1e3a8a" font-weight="800">指数与对数：同一个关系的两种写法</text>
+  <text x="30" y="64" font-size="14.5" fill="#50647a">2³ = 8 与 log₂8 = 3 说的是同一件事 —— 底数、指数、结果，三者转个身。</text>
+
+  <!-- 左：指数 -->
+  <rect x="24" y="82" width="360" height="470" rx="10" fill="#ffffff" stroke="#c7d2e8"/>
+  <text x="44" y="112" font-size="15" fill="#1d4ed8" font-weight="700">① 指数视角：y = 2ˣ（增长越来越快）</text>
+
+  <line x1="70" y1="470" x2="340" y2="470" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#lgArrow)"/>
+  <line x1="70" y1="470" x2="70" y2="150" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#lgArrow)"/>
+  <text x="330" y="492" font-size="12" fill="#64748b">x</text>
+  <text x="46" y="156" font-size="12" fill="#64748b">y</text>
+
+  <!-- y=2^x 曲线（示意） -->
+  <path d="M70 462 C 150 458, 200 448, 232 420 C 262 394, 278 348, 292 288 C 306 226, 314 178, 320 152"
+        fill="none" stroke="#2563eb" stroke-width="3"/>
+  <text x="250" y="150" font-size="13" fill="#1d4ed8" font-weight="700">y = 2ˣ</text>
+
+  <!-- 关键点 -->
+  <circle cx="70" cy="462" r="4.5" fill="#1d4ed8"/>
+  <text x="52" y="482" font-size="11.5" fill="#334155">(0,1)</text>
+  <circle cx="160" cy="450" r="4.5" fill="#1d4ed8"/>
+  <text x="146" y="440" font-size="11.5" fill="#334155">(1,2)</text>
+  <circle cx="232" cy="420" r="4.5" fill="#1d4ed8"/>
+  <text x="214" y="410" font-size="11.5" fill="#334155">(2,4)</text>
+  <circle cx="292" cy="288" r="4.5" fill="#1d4ed8"/>
+  <text x="272" y="278" font-size="11.5" fill="#334155">(3,8)</text>
+
+  <text x="44" y="522" font-size="12.5" fill="#475569">定义域 x∈R · 值域 y&gt;0 · 过定点 (0,1)</text>
+
+  <!-- 右：对数 -->
+  <rect x="416" y="82" width="360" height="470" rx="10" fill="#ffffff" stroke="#c7d2e8"/>
+  <text x="436" y="112" font-size="15" fill="#0f766e" font-weight="700">② 对数视角：y = log₂x（增长越来越慢）</text>
+
+  <line x1="460" y1="470" x2="740" y2="470" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#lgArrow)"/>
+  <line x1="460" y1="470" x2="460" y2="150" stroke="#94a3b8" stroke-width="1.6" marker-end="url(#lgArrow)"/>
+  <text x="730" y="492" font-size="12" fill="#64748b">x</text>
+  <text x="436" y="156" font-size="12" fill="#64748b">y</text>
+
+  <!-- y=log2 x：先陡后平，x→0+ 时 y→-∞，x→∞ 时缓慢上升 -->
+  <path d="M468 470 C 476 400, 486 360, 502 330 C 540 300, 600 282, 660 272 C 700 266, 725 262, 740 258"
+        fill="none" stroke="#0d9488" stroke-width="3"/>
+  <text x="650" y="240" font-size="13" fill="#0f766e" font-weight="700">y = log₂x</text>
+
+  <!-- 对称关键点：(2,1)(4,2)(8,3)：y 随 x 增大而缓慢上升 -->
+  <circle cx="520" cy="400" r="4.5" fill="#0f766e"/>
+  <text x="500" y="392" font-size="11.5" fill="#334155">(2,1)</text>
+  <circle cx="610" cy="352" r="4.5" fill="#0f766e"/>
+  <text x="590" y="344" font-size="11.5" fill="#334155">(4,2)</text>
+  <circle cx="700" cy="310" r="4.5" fill="#0f766e"/>
+  <text x="680" y="302" font-size="11.5" fill="#334155">(8,3)</text>
+
+  <text x="436" y="522" font-size="12.5" fill="#475569">定义域 x&gt;0 · 值域 y∈R · 过定点 (1,0)</text>
+
+  <!-- 中间对称提示 -->
+  <g transform="translate(392 300)">
+    <path d="M-22 -10 L 22 10" stroke="#f59e0b" stroke-width="2.4" stroke-dasharray="5 4" marker-end="url(#lgArrow)"/>
+    <text x="-26" y="-18" font-size="11" fill="#b45309" font-weight="700" text-anchor="middle">关于 y=x</text>
+    <text x="-26" y="-4" font-size="11" fill="#b45309" text-anchor="middle">对称</text>
+  </g>
+
+  <!-- 底部结论条 -->
+  <rect x="24" y="556" width="752" height="0" fill="none"/>
+  <text x="30" y="566" font-size="12.5" fill="#0f766e" font-weight="700">记住：aˣ = N  ⟺  x = logₐN。指数解决「涨到多少」，对数解决「涨了几次」。</text>
+</svg>

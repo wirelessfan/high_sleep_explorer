@@ -1936,6 +1936,126 @@
         "accent": "#38bdf8"
       },
       "card_id": "arrhenius"
+    },
+    {
+      "id": "math-log-quick",
+      "topic_id": "math-log",
+      "section_id": "quick",
+      "tier": "mini",
+      "name": "指数迷",
+      "en": "Expo",
+      "code": "No.81",
+      "element": "指对互逆混淆",
+      "skill": "互逆错位",
+      "hp": 4,
+      "taunt": "2³=8 和 log₂8=3，你真觉得这是两道题？",
+      "purified": "它转过身：原来只是把指数解出来。",
+      "svg": "/assets/bosses/math-log-quick.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-log-basic",
+      "topic_id": "math-log",
+      "section_id": "basic",
+      "tier": "mini",
+      "name": "拆和妖",
+      "en": "Splitter",
+      "code": "No.82",
+      "element": "log(M+N) 误拆",
+      "skill": "法则错用",
+      "hp": 12,
+      "taunt": "log(M+N) = logM + logN？先代个数试试。",
+      "purified": "它承认：只有积才能拆成和。",
+      "svg": "/assets/bosses/math-log-basic.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-log-summary",
+      "topic_id": "math-log",
+      "section_id": "summary",
+      "tier": "mini",
+      "name": "底数灵",
+      "en": "Basey",
+      "code": "No.83",
+      "element": "底数越小越陡",
+      "skill": "陡缓错觉",
+      "hp": 1,
+      "taunt": "底数越大，曲线到底是陡还是平？",
+      "purified": "曲线摊平在眼前：a 越大越贴近 x 轴。",
+      "svg": "/assets/bosses/math-log-summary.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-log-hard",
+      "topic_id": "math-log",
+      "section_id": "hard",
+      "tier": "mini",
+      "name": "忘域兽",
+      "en": "Domainus",
+      "code": "No.84",
+      "element": "漏写真数大于零",
+      "skill": "定义域丢失",
+      "hp": 3,
+      "taunt": "答案写完了？真数大于零那句话写了没有？",
+      "purified": "它把「真数>0」钉在解题第一步。",
+      "svg": "/assets/bosses/math-log-hard.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-log-practice",
+      "topic_id": "math-log",
+      "section_id": "practice",
+      "tier": "mini",
+      "name": "复合匠",
+      "en": "Compositor",
+      "code": "No.85",
+      "element": "同增异减用反",
+      "skill": "单调性错判",
+      "hp": 11,
+      "taunt": "内层递减、外层递增——那你告诉我整体往哪走？",
+      "purified": "它把内外层分开算：同增异减，一步不混。",
+      "svg": "/assets/bosses/math-log-practice.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": null
+    },
+    {
+      "id": "math-log-boss",
+      "topic_id": "math-log",
+      "section_id": "boss",
+      "tier": "big",
+      "name": "欧拉",
+      "en": "Leonhard Euler",
+      "code": "BOSS",
+      "element": "指数与对数的桥",
+      "skill": "互逆审判",
+      "hp": 4,
+      "taunt": "e^(iπ)+1=0；指对互逆，也是同一条桥的两端。",
+      "purified": "他在桥上写下 logₐ(aˣ)=x：两边本是一体。",
+      "svg": "/assets/bosses/math-log-boss.svg",
+      "colors": {
+        "main": "#f59e0b",
+        "accent": "#fb7185"
+      },
+      "card_id": "euler"
     }
   ]
 }

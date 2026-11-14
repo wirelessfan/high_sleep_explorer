@@ -39,7 +39,8 @@
         "math-probability",
         "math-ellipse",
         "math-substitution",
-        "math-trig"
+        "math-trig",
+        "math-log"
       ]
     }
   ],
@@ -339,6 +340,25 @@
       "cover": "trig",
       "reward_card": "ptolemy",
       "description": "三角函数公式多，但都能从单位圆里读出来。记住坐标与符号，公式忘了也能自己推。",
+      "sections": [
+        "quick",
+        "basic",
+        "summary",
+        "hard",
+        "practice",
+        "boss"
+      ]
+    },
+    {
+      "id": "math-log",
+      "subject": "math",
+      "title": "对数函数面面观",
+      "subtitle": "从互逆关系到含参分类，一次讲透",
+      "grade": "高一",
+      "minutes": 32,
+      "cover": "log",
+      "reward_card": "euler",
+      "description": "对数是指数的另一种问法。本主题从定义、运算、图像一路讲到含参分类与复合单调性，难度对标 75–90 分。",
       "sections": [
         "quick",
         "basic",

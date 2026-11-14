@@ -60,7 +60,7 @@ def test_every_open_unit_grades_correct_and_wrong_answers(tmp_path, monkeypatch)
                         assert len(result["details"]) == len(questions)
                     count += len(questions)
                     units += 1
-        assert (count, units, read_count) == (907, 190, 38)
+        assert (count, units, read_count) == (985, 205, 41)
 
 
 def test_challenge_models_have_unique_independently_verified_answers():
