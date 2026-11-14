@@ -44,7 +44,10 @@ def _channel(cid: str, name: str, default_base: str, default_model: str,
         "base_url": base_url,
         "key": key,
         "model": model,
-        "vision": cid == "gpt",  # 视觉通道标记（拍照识别需要）
+        # 视觉通道标记：默认只有 gpt；中转站若把视觉能力放在别的通道，
+        # 用 LEARN_AI_<CID>_VISION=1 显式声明（例如 GLM 也支持读图时）。
+        "vision": os.environ.get(p + "VISION") == "1" or
+                  (os.environ.get(p + "VISION") is None and cid == "gpt"),
     }
 
 
