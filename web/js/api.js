@@ -2,14 +2,23 @@
 
 const TOKEN_KEY = 'learn.token';
 const ME_KEY = 'learn.me';
+const EXPIRY_KEY = 'learn.session-expires-at';
 
 export function getToken() {
+  const expires = Number(localStorage.getItem(EXPIRY_KEY));
+  if (expires && Date.now() >= expires * 1000) {
+    logout();
+    return '';
+  }
   return localStorage.getItem(TOKEN_KEY) || '';
 }
 
 export function setToken(t) {
   if (t) localStorage.setItem(TOKEN_KEY, t);
-  else localStorage.removeItem(TOKEN_KEY);
+  else {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(EXPIRY_KEY);
+  }
 }
 
 export function getMeCache() {
@@ -17,6 +26,7 @@ export function getMeCache() {
 }
 
 export function setMeCache(me) {
+  if (me?.session_expires_at) localStorage.setItem(EXPIRY_KEY, String(me.session_expires_at));
   if (me) localStorage.setItem(ME_KEY, JSON.stringify(me));
   else localStorage.removeItem(ME_KEY);
 }
@@ -106,6 +116,16 @@ export const changePassword = (oldPassword, newPassword) =>
 export function logout() {
   setToken('');
   setMeCache(null);
+}
+
+/** 主动退出时撤销服务端会话。普通的本地清理不触发网络请求。 */
+export async function signOut() {
+  try {
+    if (getToken()) await request('/session/logout', { method: 'POST' });
+  } catch (err) {
+    if (err.status !== 401) throw err;
+  }
+  logout();
 }
 
 export async function adoptByCode(code) {

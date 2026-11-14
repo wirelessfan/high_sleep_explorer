@@ -6,6 +6,16 @@ import { el, toast } from '../ui.js';
 let selected = '';
 
 export async function renderLogin(view) {
+  if (api.getToken()) {
+    try {
+      await api.fetchMe();
+      location.hash = '#/';
+      return;
+    } catch (err) {
+      if (err.status !== 401) throw err;
+      api.logout();
+    }
+  }
   view.classList.add('no-tab');
   document.getElementById('tabbar').hidden = true;
 
@@ -88,7 +98,7 @@ export async function renderLogin(view) {
     card.appendChild(btn);
     card.appendChild(el('div', {
       style: 'font-size:11px;color:#b6a498;text-align:center;margin-top:12px',
-      text: '首次登录后可在「我的」页修改密码',
+      text: '登录后，此浏览器 7 天内免密；主动退出后需重新登录。',
     }));
 
     /* ---- 访客免密演示通道 ---- */

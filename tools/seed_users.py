@@ -39,6 +39,7 @@ def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname
     pwd_hash = "" if is_guest else auth.hash_password(password)
 
     if existing:
+        conn.execute("DELETE FROM sessions WHERE user_id=?", (existing["id"],))
         conn.execute(
             "UPDATE users SET password_hash = ?, nickname = ? WHERE id = ?",
             (pwd_hash, nickname, existing["id"]),

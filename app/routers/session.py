@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import sqlite3
+import time
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
@@ -11,6 +12,25 @@ from app import auth, db
 from app.services import ratelimit
 
 router = APIRouter(tags=["session"])
+SESSION_SECONDS = 7 * 24 * 60 * 60
+
+
+def _issue_session(conn: sqlite3.Connection, user_id: str, token: str) -> None:
+    now = time.time()
+    conn.execute("DELETE FROM sessions WHERE expires_at <= ?", (now,))
+    conn.execute(
+        "INSERT INTO sessions(token_hash,user_id,created_at,expires_at) VALUES(?,?,?,?)",
+        (auth.hash_token(token), user_id, now, now + SESSION_SECONDS),
+    )
+
+
+def _session_user(conn, token: str):
+    return conn.execute(
+        "SELECT users.*, sessions.expires_at AS session_expires_at FROM sessions "
+        "JOIN users ON users.id=sessions.user_id "
+        "WHERE sessions.token_hash=? AND sessions.expires_at>?",
+        (auth.hash_token(token), time.time()),
+    ).fetchone()
 
 
 class AdoptIn(BaseModel):
@@ -44,11 +64,9 @@ def current_user(authorization: str | None = Header(default=None)) -> sqlite3.Ro
         raise HTTPException(status_code=401, detail="身份令牌为空")
 
     with db.ro() as conn:
-        row = conn.execute(
-            "SELECT * FROM users WHERE token_hash = ?", (auth.hash_token(token),)
-        ).fetchone()
+        row = _session_user(conn, token)
     if not row:
-        raise HTTPException(status_code=401, detail="身份令牌无效")
+        raise HTTPException(status_code=401, detail="登录已失效，请重新登录（登录状态保留 7 天）")
     return row
 
 
@@ -82,6 +100,8 @@ def _user_payload(row: sqlite3.Row, token: str | None = None) -> dict:
     }
     if token:
         data["token"] = token
+    if "session_expires_at" in keys:
+        data["session_expires_at"] = row["session_expires_at"]
     return data
 
 
@@ -106,7 +126,8 @@ def create_session():
             "VALUES (?,?,?,?,?)",
             (user_id, auth.hash_token(token), sync_code, now, now),
         )
-        row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+        _issue_session(conn, user_id, token)
+        row = _session_user(conn, token)
 
     return _user_payload(row, token=token)
 
@@ -129,7 +150,8 @@ def login(body: LoginIn, request: Request):
             "UPDATE users SET token_hash = ?, last_seen = ? WHERE id = ?",
             (auth.hash_token(token), _now(), row["id"]),
         )
-        row = conn.execute("SELECT * FROM users WHERE id = ?", (row["id"],)).fetchone()
+        _issue_session(conn, row["id"], token)
+        row = _session_user(conn, token)
 
     return _user_payload(row, token=token)
 
@@ -162,6 +184,8 @@ def guest_session(request: Request):
             )
             row = conn.execute("SELECT * FROM users WHERE id = ?", (row["id"],)).fetchone()
 
+        _issue_session(conn, row["id"], token)
+        row = _session_user(conn, token)
     return _user_payload(row, token=token)
 
 
@@ -178,7 +202,8 @@ def list_public_users():
 
 
 @router.post("/session/password")
-def change_password(body: PasswordIn, user: sqlite3.Row = Depends(current_user)):
+def change_password(body: PasswordIn, user: sqlite3.Row = Depends(current_user),
+                    authorization: str = Header()):
     """修改自己的密码，需验证旧密码（访客账号禁止修改）。"""
     if "username" in user.keys() and user["username"] and user["username"].lower() == "guest":
         raise HTTPException(status_code=403, detail="演示访客账号不支持修改密码")
@@ -194,6 +219,8 @@ def change_password(body: PasswordIn, user: sqlite3.Row = Depends(current_user))
             "UPDATE users SET password_hash = ? WHERE id = ?",
             (auth.hash_password(body.new_password), user["id"]),
         )
+        conn.execute("DELETE FROM sessions WHERE user_id=? AND token_hash<>?",
+                     (user["id"], auth.hash_token(authorization[7:].strip())))
     return {"ok": True}
 
 
@@ -218,9 +245,19 @@ def adopt_session(body: AdoptIn, request: Request):
             "UPDATE users SET token_hash = ?, last_seen = ? WHERE id = ?",
             (auth.hash_token(token), _now(), row["id"]),
         )
-        row = conn.execute("SELECT * FROM users WHERE id = ?", (row["id"],)).fetchone()
+        _issue_session(conn, row["id"], token)
+        row = _session_user(conn, token)
 
     return _user_payload(row, token=token)
+
+
+@router.post("/session/logout")
+def logout(user: sqlite3.Row = Depends(current_user), authorization: str = Header()):
+    """退出仅撤销本设备的会话，其他设备保持登录。"""
+    with db.tx() as conn:
+        conn.execute("DELETE FROM sessions WHERE user_id=? AND token_hash=?",
+                     (user["id"], auth.hash_token(authorization[7:].strip())))
+    return {"ok": True}
 
 
 @router.post("/session/rotate-code")

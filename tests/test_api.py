@@ -735,6 +735,8 @@ def test_received_cards_lists_gifts(client):
     with db.tx() as conn:
         conn.execute("UPDATE users SET token_hash=? WHERE id='u_recv_sunny'",
                      (_auth.hash_token(token),))
+        from app.routers.session import _issue_session
+        _issue_session(conn, 'u_recv_sunny', token)
     sh = {"Authorization": f"Bearer {token}"}
 
     r = client.get("/api/v1/achievements/received", headers=sh)

@@ -40,6 +40,10 @@ export async function renderMe(view) {
       style: 'font-size:11.5px;color:#a3928a;margin-top:3px;line-height:1.7',
       text: me.is_guest ? '当前为免密公开演示账号，所有功能即开即用' : `当前登录：${me.username || '—'}（${me.nickname}）`,
     }),
+    !me.is_guest && me.session_expires_at ? el('div', {
+      class: 'hint', style: 'margin-top:4px',
+      text: `此设备免密至 ${new Date(me.session_expires_at * 1000).toLocaleString('zh-CN', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`,
+    }) : null,
     el('div', { class: 'row', style: 'margin-top:12px;gap:8px' }, [
       me.is_guest ? el('button', {
         class: 'btn ghost sm', style: 'flex:1;opacity:.65', text: '免密账号',
@@ -50,10 +54,17 @@ export async function renderMe(view) {
       }),
       el('button', {
         class: 'btn ghost sm', style: 'flex:1;color:#b45309;border-color:#fbe6b8', text: '退出登录',
-        onclick: () => {
-          api.logout();
-          location.hash = '#/login';
-          location.reload();
+        onclick: async (e) => {
+          const btn = e.currentTarget;
+          btn.disabled = true;
+          try {
+            await api.signOut();
+            location.hash = '#/login';
+            location.reload();
+          } catch (err) {
+            toast(err.message || '退出失败，请重试');
+            btn.disabled = false;
+          }
         },
       }),
     ]),

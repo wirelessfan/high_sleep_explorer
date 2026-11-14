@@ -20,9 +20,18 @@ DB_PATH = Path(os.environ.get("LEARN_DB", Path(__file__).resolve().parent.parent
 # v8 = 错题本 AI 并发/缓存/校验加固（与 v7 同批，兼容旧库）。
 # v9 = 盲盒系统：users 增加 blindbox_tickets / bb_pity_sr / bb_pity_ssr，
 #     新增 blindbox_owned 图鉴表；许愿墙新增 wishes 表。
-SCHEMA_VERSION = 9
+# v10 = 每台设备独立的七天登录会话。
+SCHEMA_VERSION = 10
 
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS sessions (
+    token_hash TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at REAL NOT NULL,
+    expires_at REAL NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
+
 CREATE TABLE IF NOT EXISTS schema_version (
     id INTEGER PRIMARY KEY CHECK (id = 1),
     version INTEGER NOT NULL
@@ -412,6 +421,15 @@ def init_db() -> None:
         _migrate_progress_tiers(conn)
         _migrate_ai_admin(conn)
         _migrate_blindbox(conn)
+        if current < 10:
+            # Existing browsers retain their current token for one bounded grace
+            # period; repeated application restarts must not extend the deadline.
+            import time
+            now = time.time()
+            conn.execute(
+                "INSERT OR IGNORE INTO sessions(token_hash,user_id,created_at,expires_at) "
+                "SELECT token_hash,id,?,? FROM users", (now, now + 7 * 24 * 60 * 60)
+            )
         conn.execute(
             "INSERT INTO schema_version(id, version) VALUES (1, ?) "
             "ON CONFLICT(id) DO UPDATE SET version = excluded.version",
