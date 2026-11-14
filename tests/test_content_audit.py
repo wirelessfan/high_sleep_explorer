@@ -88,3 +88,38 @@ def test_wrongbook_keeps_changed_questions_separate_and_steps_have_context(tmp_p
         assert pairs=={"旧题":(0,1),"新题":(1,2)}
     content={"type":"steps","problems":[{"stem":"父题给定长度5米", "steps":[{"ask":"求时间", "options":["1s","2s"],"answer":0}]}]}
     assert wrongbook.questions_of(content)['p0s0']['stem']=="父题给定长度5米\n求时间"
+
+def test_every_topic_has_intro_guide_svg():
+    """主题页顶部「动态引导」缩略图按约定读 /assets/notes/intro-<id>.svg。
+
+    缺这张图会显示成破图（前端不报错，只在页面上露出裂开的图标），
+    所以必须在内容自检阶段就拦住。
+    """
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent
+    catalog = json.loads((root / "content" / "catalog.json").read_text(encoding="utf-8"))
+    missing = []
+    for t in catalog["topics"]:
+        svg = root / "assets" / "notes" / f"intro-{t['id']}.svg"
+        if not svg.exists() or svg.stat().st_size < 1000:
+            missing.append(t["id"])
+    assert not missing, f"以下主题缺少动态引导图 intro-<id>.svg: {missing}"
+
+
+def test_topic_diagrams_all_exist():
+    """主题里声明的 diagrams 图片必须真实存在。"""
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent
+    catalog = json.loads((root / "content" / "catalog.json").read_text(encoding="utf-8"))
+    missing = []
+    for t in catalog["topics"]:
+        data = json.loads((root / "content" / "topics" / f"{t['id']}.json").read_text(encoding="utf-8"))
+        for d in data.get("diagrams") or []:
+            rel = d["src"].lstrip("/")
+            if not (root / rel).exists():
+                missing.append(f"{t['id']}: {d['src']}")
+    assert not missing, f"图解文件缺失: {missing}"
