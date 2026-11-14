@@ -24,6 +24,27 @@ def auth(client):
     return {"Authorization": f"Bearer {r.json()['token']}"}
 
 
+@pytest.fixture()
+def clean(client):
+    """全新匿名用户 + 固定基线（3 张券、0 积分、空事件）。
+
+    其他测试文件可能调用 db.init_db() 或写入同名用户，导致共享状态串扰；
+    这里在用例开始前显式重置，保证盲盒/许愿相关断言可重复。
+    """
+    from app import auth as _auth
+    r = client.post("/api/v1/session")
+    token = r.json()["token"]
+    with db.tx() as conn:
+        uid = conn.execute("SELECT id FROM users WHERE token_hash=?",
+                           (_auth.hash_token(token),)).fetchone()["id"]
+        conn.execute("DELETE FROM events WHERE user_id=?", (uid,))
+        conn.execute("DELETE FROM blindbox_owned WHERE user_id=?", (uid,))
+        conn.execute("DELETE FROM wishes WHERE user_id=?", (uid,))
+        conn.execute("UPDATE users SET blindbox_tickets=3, points=0, bb_pity_sr=0, "
+                     "bb_pity_ssr=0 WHERE id=?", (uid,))
+    return {"Authorization": f"Bearer {token}"}
+
+
 def _make_account(username, password, nickname, role=None):
     from app import auth as _auth
     with db.tx() as conn:
@@ -77,8 +98,8 @@ class _NoRateLimit:
 
 # ---------- 内容与初始状态 ----------
 
-def test_blindbox_content_and_initial_state(client, auth):
-    r = client.get("/api/v1/blindbox", headers=auth)
+def test_blindbox_content_and_initial_state(client, clean):
+    r = client.get("/api/v1/blindbox", headers=clean)
     assert r.status_code == 200
     d = r.json()
 
@@ -99,22 +120,22 @@ def test_blindbox_gallery_has_image_paths(client, auth):
     d = client.get("/api/v1/blindbox", headers=auth).json()
     for c in d["gallery"]:
         assert c["image"].startswith("/assets/blindbox/")
-        assert c["image"].endswith(".svg")
+        assert c["image"].endswith(".png")
         assert c["unlocked"] is False
         assert c["value_cny"] >= 0
 
 
 # ---------- 抽盒 ----------
 
-def test_draw_requires_tickets(client, auth, monkeypatch):
+def test_draw_requires_tickets(client, clean, monkeypatch):
     # 花光 3 张券后第 4 次必须报「券不足」（全程绕过 1 秒限流，确保测的是余额而非限流）
     with _NoRateLimit(monkeypatch):
         for i in range(3):
             r = client.post("/api/v1/blindbox/draw",
-                            json={"count": 1, "idempotency_key": f"k{i}"}, headers=auth)
+                            json={"count": 1, "idempotency_key": f"k{i}"}, headers=clean)
             assert r.status_code == 200, r.text
         r = client.post("/api/v1/blindbox/draw", json={"count": 1, "idempotency_key": "k4"},
-                        headers=auth)
+                        headers=clean)
     assert r.status_code == 400
     assert "盲盒券不足" in r.json()["detail"]
 
@@ -160,18 +181,15 @@ def test_draw_idempotent(client, auth):
     assert second["tickets_left"] == first["tickets_left"], "重放不再扣券"
 
 
-def test_draw_rate_limited(client, auth):
-    # 用全新匿名用户，避免其他用例残留的 blindbox 事件干扰 1 秒限流判定
-    r0 = client.post("/api/v1/session")
-    fresh = {"Authorization": f"Bearer {r0.json()['token']}"}
+def test_draw_rate_limited(client, clean):
+    # clean fixture 已清空该用户的事件与券，从零开始才测得准 1 秒限流
     first = client.post("/api/v1/blindbox/draw",
-                        json={"count": 1, "idempotency_key": "r1"}, headers=fresh)
+                        json={"count": 1, "idempotency_key": "r1"}, headers=clean)
     assert first.status_code == 200, first.text
     r = client.post("/api/v1/blindbox/draw", json={"count": 1, "idempotency_key": "r2"},
-                    headers=fresh)
+                    headers=clean)
     assert r.status_code == 400
     assert "太快" in r.json()["detail"]
-
 
 def test_draw_invalid_count(client, auth):
     r = client.post("/api/v1/blindbox/draw", json={"count": 11, "idempotency_key": "x"},
@@ -220,11 +238,11 @@ def test_duplicate_returns_tickets(client, auth, monkeypatch):
 
 # ---------- 积分换券 ----------
 
-def test_exchange_points_to_tickets(client, auth):
+def test_exchange_points_to_tickets(client, clean):
     with db.tx() as conn:
         conn.execute("UPDATE users SET points = 250")
 
-    r = client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=auth)
+    r = client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=clean)
     assert r.status_code == 200
     d = r.json()
     assert d["points_spent"] == 100
@@ -232,17 +250,17 @@ def test_exchange_points_to_tickets(client, auth):
     assert d["tickets_total"] == 4, "原有 3 张 + 兑换 1 张"
 
 
-def test_exchange_daily_limit(client, auth):
+def test_exchange_daily_limit(client, clean):
     with db.tx() as conn:
         conn.execute("UPDATE users SET points = 1000")
-    assert client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=auth).status_code == 200
-    r = client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=auth)
+    assert client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=clean).status_code == 200
+    r = client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=clean)
     assert r.status_code == 400
     assert "已经兑换过" in r.json()["detail"]
 
 
-def test_exchange_insufficient_points(client, auth):
-    r = client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=auth)
+def test_exchange_insufficient_points(client, clean):
+    r = client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=clean)
     assert r.status_code == 400
     assert "积分不足" in r.json()["detail"]
 
@@ -252,7 +270,7 @@ def test_exchange_insufficient_points(client, auth):
 def test_redeem_requires_copy(client):
     r = client.post("/api/v1/session")
     h = {"Authorization": f"Bearer {r.json()['token']}"}
-    r2 = client.post("/api/v1/blindbox/redeem", json={"character_id": "bubu-mint"}, headers=h)
+    r2 = client.post("/api/v1/blindbox/redeem", json={"character_id": "labubu-mint"}, headers=h)
     assert r2.status_code == 400
     assert "副本" in r2.json()["detail"]
 
@@ -264,10 +282,10 @@ def test_redeem_creates_code_and_consumes_copy(client):
         uid = conn.execute("SELECT id FROM users LIMIT 1").fetchone()["id"]
         conn.execute(
             "INSERT INTO blindbox_owned(user_id, character_id, count, first_at) VALUES (?,?,2,?)",
-            (uid, "bubu-galaxy", "2026-01-01T00:00:00"),
+            (uid, "labubu-rose", "2026-01-01T00:00:00"),
         )
 
-    r2 = client.post("/api/v1/blindbox/redeem", json={"character_id": "bubu-galaxy"}, headers=h)
+    r2 = client.post("/api/v1/blindbox/redeem", json={"character_id": "labubu-rose"}, headers=h)
     assert r2.status_code == 200
     d = r2.json()
     assert d["value_cny"] == 100, "SSR 面值 100"
@@ -276,7 +294,7 @@ def test_redeem_creates_code_and_consumes_copy(client):
 
     # 图鉴仍解锁
     gal = client.get("/api/v1/blindbox", headers=h).json()["gallery"]
-    target = next(g for g in gal if g["id"] == "bubu-galaxy")
+    target = next(g for g in gal if g["id"] == "labubu-rose")
     assert target["unlocked"] is True and target["count"] == 1
 
 
@@ -287,11 +305,11 @@ def test_redeem_once_per_month(client):
         uid = conn.execute("SELECT id FROM users LIMIT 1").fetchone()["id"]
         conn.execute(
             "INSERT INTO blindbox_owned(user_id, character_id, count, first_at) VALUES (?,?,3,?)",
-            (uid, "bubu-mint", "2026-01-01T00:00:00"),
+            (uid, "labubu-mint", "2026-01-01T00:00:00"),
         )
     assert client.post("/api/v1/blindbox/redeem",
-                       json={"character_id": "bubu-mint"}, headers=h).status_code == 200
-    r2 = client.post("/api/v1/blindbox/redeem", json={"character_id": "bubu-mint"}, headers=h)
+                       json={"character_id": "labubu-mint"}, headers=h).status_code == 200
+    r2 = client.post("/api/v1/blindbox/redeem", json={"character_id": "labubu-mint"}, headers=h)
     assert r2.status_code == 400
     assert "本月" in r2.json()["detail"]
 
@@ -311,10 +329,10 @@ def test_blindbox_codes_visible_to_parent_verify(client):
                            (_auth.hash_token(kid_token),)).fetchone()["id"]
         conn.execute(
             "INSERT INTO blindbox_owned(user_id, character_id, count, first_at) VALUES (?,?,1,?)",
-            (uid, "bubu-sky", "2026-01-01T00:00:00"),
+            (uid, "labubu-sky", "2026-01-01T00:00:00"),
         )
     code = client.post("/api/v1/blindbox/redeem",
-                       json={"character_id": "bubu-sky"}, headers=kid).json()["code"]
+                       json={"character_id": "labubu-sky"}, headers=kid).json()["code"]
 
     v = client.post("/api/v1/achievements/verify", json={"code": code}, headers=dad)
     assert v.status_code == 200
@@ -324,14 +342,14 @@ def test_blindbox_codes_visible_to_parent_verify(client):
 
 # ---------- 许愿墙 ----------
 
-def test_wish_submit_rewards_ticket(client, auth):
-    before = client.get("/api/v1/blindbox", headers=auth).json()["tickets"]
-    r = client.post("/api/v1/wishes", json={"content": "希望增加化学方程式的配平练习"}, headers=auth)
+def test_wish_submit_rewards_ticket(client, clean):
+    before = client.get("/api/v1/blindbox", headers=clean).json()["tickets"]
+    r = client.post("/api/v1/wishes", json={"content": "希望增加化学方程式的配平练习"}, headers=clean)
     assert r.status_code == 200
     d = r.json()
     assert d["bonus"] == 1
     assert d["left_today"] == 2
-    after = client.get("/api/v1/blindbox", headers=auth).json()["tickets"]
+    after = client.get("/api/v1/blindbox", headers=clean).json()["tickets"]
     assert after == before + 1
 
 
@@ -455,8 +473,105 @@ def test_svg_assets_exist(client):
     chars = content_loader.blindbox_characters()["characters"]
     assert len(chars) == 8
     for ch in chars:
-        assert ch["image"].endswith(".svg")
+        assert ch["image"].endswith(".png")
     r = client.get(f"/assets/blindbox/{chars[0]['image']}")
     assert r.status_code == 200
-    assert "svg" in r.headers.get("content-type", "")
+    assert "png" in r.headers.get("content-type", "")
     assert client.get("/assets/blindbox/box.svg").status_code == 200
+
+
+def test_blindbox_assets_from_mit_source(client):
+    """角色图必须来自 MIT 许可素材，且文件真实存在。"""
+    data = content_loader.blindbox_characters()
+    src = data.get("source") or {}
+    assert src.get("license") == "MIT", "角色素材必须是 MIT 许可"
+    assert "leafer-labubu" in src.get("repo", "")
+    for ch in data["characters"]:
+        r = client.get(f"/assets/blindbox/{ch['image']}")
+        assert r.status_code == 200, ch["image"]
+        assert len(r.content) > 10000, f"{ch['image']} 过小，可能缺图"
+
+
+# ---------- 管理员在许愿墙上直接回复 ----------
+
+def test_wall_exposes_is_admin_flag(client):
+    _make_account("dad", "123456", "爸爸", role="admin")
+    dad = _login(client, "dad")
+    kid = {"Authorization": f"Bearer {client.post('/api/v1/session').json()['token']}"}
+
+    assert client.get("/api/v1/wishes", headers=dad).json()["is_admin"] is True
+    assert client.get("/api/v1/wishes", headers=kid).json()["is_admin"] is False
+
+
+def test_admin_can_reply_from_wall(client):
+    """管理员拿到墙数据后直接 PATCH，回复应立刻出现在同一份墙数据里。"""
+    _make_account("dad", "123456", "爸爸", role="admin")
+    dad = _login(client, "dad")
+    kid = {"Authorization": f"Bearer {client.post('/api/v1/session').json()['token']}"}
+
+    wid = client.post("/api/v1/wishes", headers=kid,
+                      json={"content": "希望盲盒能开出更多种类的角色"}).json()["id"]
+
+    wall = client.get("/api/v1/wishes", headers=dad).json()
+    target = next(i for i in wall["items"] if i["id"] == wid)
+    assert target["reply"] is None and target["status"] == "open"
+
+    r = client.patch(f"/api/v1/admin/wishes/{wid}", headers=dad,
+                     json={"status": "planned", "reply": "已经在画新角色了，下版上"})
+    assert r.status_code == 200
+
+    after = client.get("/api/v1/wishes", headers=dad).json()
+    item = next(i for i in after["items"] if i["id"] == wid)
+    assert item["reply"] == "已经在画新角色了，下版上"
+    assert item["status"] == "planned"
+
+    # 普通用户也能看到回复
+    kid_view = client.get("/api/v1/wishes", headers=kid).json()
+    assert next(i for i in kid_view["items"] if i["id"] == wid)["reply"] == "已经在画新角色了，下版上"
+
+
+def test_admin_can_reply_without_changing_status(client):
+    """只回复不改状态也应生效（回复与状态解耦）。"""
+    _make_account("dad", "123456", "爸爸", role="admin")
+    dad = _login(client, "dad")
+    kid = {"Authorization": f"Bearer {client.post('/api/v1/session').json()['token']}"}
+    wid = client.post("/api/v1/wishes", headers=kid,
+                      json={"content": "希望能导出错题 PDF"}).json()["id"]
+
+    r = client.patch(f"/api/v1/admin/wishes/{wid}", headers=dad,
+                     json={"status": "open", "reply": "收到，先记下来"})
+    assert r.status_code == 200
+    assert r.json()["status"] == "open"
+    assert r.json()["reply"] == "收到，先记下来"
+
+
+def test_non_admin_cannot_patch_wish(client):
+    kid = {"Authorization": f"Bearer {client.post('/api/v1/session').json()['token']}"}
+    wid = client.post("/api/v1/wishes", headers=kid,
+                      json={"content": "普通用户不能自己回复自己"}).json()["id"]
+    r = client.patch(f"/api/v1/admin/wishes/{wid}", headers=kid,
+                     json={"status": "done", "reply": "我自己批准自己"})
+    assert r.status_code == 403
+
+
+def test_character_id_migration_is_idempotent(tmp_path, monkeypatch):
+    """旧 bubu-* 图鉴记录迁移到 labubu-*，且重复迁移安全。"""
+    dbfile = tmp_path / "mig.db"
+    monkeypatch.setattr(db, "DB_PATH", dbfile)
+    db.init_db()
+
+    with db.tx() as conn:
+        conn.execute("INSERT INTO users(id, token_hash, sync_code, created_at, last_seen) "
+                     "VALUES ('u_m','th','sc','2026-01-01','2026-01-01')")
+        conn.execute("INSERT INTO blindbox_owned(user_id, character_id, count, first_at) "
+                     "VALUES ('u_m','bubu-mint',2,'2026-01-01T00:00:00')")
+        conn.execute("INSERT INTO blindbox_owned(user_id, character_id, count, first_at) "
+                     "VALUES ('u_m','bubu-galaxy',1,'2026-01-02T00:00:00')")
+
+    db.init_db()  # 触发迁移
+    db.init_db()  # 再跑一次验证幂等
+
+    with db.ro() as conn:
+        rows = {r["character_id"]: r["count"] for r in conn.execute(
+            "SELECT character_id, count FROM blindbox_owned WHERE user_id='u_m'").fetchall()}
+    assert rows == {"labubu-mint": 2, "labubu-rose": 1}, rows

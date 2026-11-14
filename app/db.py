@@ -363,6 +363,38 @@ def _migrate_blindbox(conn: sqlite3.Connection) -> None:
     if "bb_pity_ssr" not in cols:
         conn.execute("ALTER TABLE users ADD COLUMN bb_pity_ssr INTEGER NOT NULL DEFAULT 0")
 
+    # v9.1：角色形象换成正版 Labubu 后 id 变了，把老图鉴记录迁到新 id。
+    # 幂等：迁移后旧 id 不再存在，重复执行是空操作。
+    remap = {
+        "bubu-mint": "labubu-mint",
+        "bubu-peach": "labubu-peach",
+        "bubu-sky": "labubu-sky",
+        "bubu-lemon": "labubu-lemon",
+        "bubu-lilac": "labubu-lilac",
+        "bubu-coral": "labubu-rose",
+        "bubu-galaxy": "labubu-rose",
+        "bubu-aurora": "labubu-aurora",
+    }
+    for old_id, new_id in remap.items():
+        rows = conn.execute(
+            "SELECT user_id, count, first_at FROM blindbox_owned WHERE character_id=?",
+            (old_id,),
+        ).fetchall()
+        for r in rows:
+            # 目标已存在时累加副本数，保留更早的获取时间
+            conn.execute(
+                "INSERT INTO blindbox_owned(user_id, character_id, count, first_at) "
+                "VALUES (?,?,?,?) "
+                "ON CONFLICT(user_id, character_id) DO UPDATE SET "
+                "count = count + excluded.count, "
+                "first_at = MIN(first_at, excluded.first_at)",
+                (r["user_id"], new_id, r["count"], r["first_at"]),
+            )
+            conn.execute(
+                "DELETE FROM blindbox_owned WHERE user_id=? AND character_id=?",
+                (r["user_id"], old_id),
+            )
+
 
 def init_db() -> None:
     conn = connect()

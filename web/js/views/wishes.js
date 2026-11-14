@@ -100,6 +100,57 @@ export async function renderWishes(view) {
         el('div', { text: w.reply, style: 'white-space:pre-wrap' }),
       ]));
     }
+
+    /* ---- 管理员：就在墙上回复 / 改状态 ---- */
+    if (data.is_admin) {
+      const replyInput = el('textarea', {
+        rows: '2', placeholder: '写一条官方回复…',
+        style: 'width:100%;box-sizing:border-box;font-size:12px;line-height:1.6;padding:8px 10px;' +
+          'border:1px solid #bfe3de;border-radius:9px;background:#f8fffd;color:#2f2a26;' +
+          'resize:vertical;font-family:inherit;margin-top:8px',
+      });
+      replyInput.value = w.reply || '';
+      const statusSel = el('select', {
+        style: 'font-size:11.5px;padding:6px 8px;border:1px solid #bfe3de;border-radius:8px;' +
+          'background:#f8fffd;color:#2f2a26',
+      }, Object.entries(STATUS_LABEL).map(([k, label]) => el('option', {
+        value: k, ...(w.status === k ? { selected: true } : {}), text: label,
+      })));
+
+      const saveBtn = el('button', {
+        class: 'btn sm', text: '回复',
+        onclick: async () => {
+          const text = replyInput.value.trim();
+          if (!text && statusSel.value === w.status) { toast('写点回复内容或改个状态'); return; }
+          saveBtn.disabled = true;
+          saveBtn.textContent = '发送中…';
+          try {
+            await api.adminModerateWish(w.id, statusSel.value, text);
+            toast('已回复，对方刷新就能看到');
+            renderWishes(view);
+          } catch (err) {
+            toast(err.message || '回复失败');
+            saveBtn.disabled = false;
+            saveBtn.textContent = '回复';
+          }
+        },
+      });
+
+      card.appendChild(el('div', {
+        style: 'margin-top:9px;padding-top:9px;border-top:1px dashed #cfe9e4',
+      }, [
+        el('div', { style: 'font-size:10px;font-weight:800;color:#0f766e;margin-bottom:5px',
+          text: '👨‍👦 管理员回复' }),
+        replyInput,
+        el('div', { class: 'row', style: 'gap:7px;margin-top:6px;align-items:center' }, [
+          statusSel,
+          saveBtn,
+          w.mine ? null : el('span', { style: 'font-size:10px;color:#b6a498',
+            text: `提交者：${w.nickname}` }),
+        ]),
+      ]));
+    }
+
     list.appendChild(card);
   });
   root.appendChild(list);

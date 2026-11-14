@@ -703,7 +703,7 @@ a{color:inherit;text-decoration:none}
   transition: transform .16s ease, box-shadow .16s ease;
 }
 .bb-card:active { transform: scale(.97); }
-.bb-card img { width: 100%; display: block; aspect-ratio: 220 / 270; object-fit: contain; }
+.bb-card img { width: 100%; display: block; aspect-ratio: 4 / 3; object-fit: contain; }
 .bb-card.locked { background: #faf7f2; }
 .bb-nm { font-size: 11.5px; font-weight: 800; margin-top: 4px; color: #3b2f2a; }
 .bb-rar {
@@ -736,7 +736,7 @@ a{color:inherit;text-decoration:none}
   text-align: center;
   animation: bbPop .46s cubic-bezier(.2,1.5,.4,1) both;
 }
-.bb-draw-item img { width: 100%; display: block; }
+.bb-draw-item img { width: 100%; display: block; aspect-ratio: 4 / 3; object-fit: contain; }
 .bb-draw-item.rar-SSR { box-shadow: 0 0 0 2px #fcd34d, 0 6px 18px rgba(251,191,36,.32); }
 .bb-draw-item.rar-SR { box-shadow: 0 0 0 1.5px #ddd6fe; }
 

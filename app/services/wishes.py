@@ -82,7 +82,11 @@ def submit(conn: sqlite3.Connection, user: sqlite3.Row, content: str) -> dict:
 
 
 def wall(conn: sqlite3.Connection, user_id: str, limit: int = 100) -> dict:
-    """公开许愿墙：昵称 + 内容 + 状态 + 官方回复。"""
+    """公开许愿墙：昵称 + 内容 + 状态 + 官方回复。
+
+    is_admin=True 时前端会在每条意见上直接给出「回复/改状态」入口，
+    管理员不必跳到管理中心也能处理。
+    """
     rows = conn.execute(
         "SELECT w.id, w.content, w.status, w.reply, w.reply_at, w.created_at, w.user_id, "
         "COALESCE(u.nickname, '匿名同学') AS nickname "
@@ -99,13 +103,18 @@ def wall(conn: sqlite3.Connection, user_id: str, limit: int = 100) -> dict:
         "created_at": r["created_at"],
         "nickname": r["nickname"],
         "mine": r["user_id"] == user_id,
+        "user_id": r["user_id"],
     } for r in rows]
 
     cfg = _cfg()
     per_day = int(cfg.get("per_day", 3))
     used = today_count(conn, user_id)
+    is_admin = bool(conn.execute(
+        "SELECT 1 FROM users WHERE id=? AND role='admin'", (user_id,)
+    ).fetchone())
     return {
         "items": items,
+        "is_admin": is_admin,
         "mine_today": used,
         "left_today": max(0, per_day - used),
         "per_day": per_day,
