@@ -168,32 +168,63 @@ def chat(task: str, system: str, user_msg: str, *, conn=None, json_mode: bool = 
     cfg = _load_cfg(conn)
     last_err: RuntimeError | None = None
     for ch, model in candidates(task, cfg, vision_only=vision_only):
-        try:
-            text = _post(ch, model, messages, json_mode, max_tokens)
-            return {"text": text, "channel": ch["id"], "model": model}
-        except RuntimeError as exc:
-            last_err = exc
+        # 中转站的 5xx 多为瞬时抖动：同一通道重试一次，再走回退链。
+        for attempt in range(2):
+            try:
+                text = _post(ch, model, messages, json_mode, max_tokens)
+                return {"text": text, "channel": ch["id"], "model": model}
+            except RuntimeError as exc:
+                last_err = exc
+                transient = "返回 5" in str(exc) or "过于频繁" in str(exc)
+                if not transient or attempt == 1:
+                    break
     raise last_err or RuntimeError("没有可用的 AI 通道")
 
 
 def _parse(content: str) -> dict:
     """尽量稳健地从回复里抠出 JSON。"""
+    result = None
     try:
         result = json.loads(content)
-        if isinstance(result, dict) and result:
-            return result
     except json.JSONDecodeError:
-        pass
-    start = content.find("{")
-    end = content.rfind("}")
-    if start != -1 and end > start:
-        try:
-            result = json.loads(content[start:end + 1])
-            if isinstance(result, dict) and result:
-                return result
-        except json.JSONDecodeError:
-            pass
-    raise RuntimeError("AI 返回的 JSON 格式无效，请重试")
+        start = content.find("{")
+        end = content.rfind("}")
+        if start != -1 and end > start:
+            try:
+                result = json.loads(content[start:end + 1])
+            except json.JSONDecodeError:
+                result = None
+    if not isinstance(result, dict) or not result:
+        raise RuntimeError("AI 返回的 JSON 格式无效，请重试")
+    return _normalize_keys(result)
+
+
+# 中转/国产模型偶尔会把 JSON 键名翻译成中文，这里做一层兜底映射。
+_KEY_ALIASES = {
+    "变式题": "variants", "变式": "variants", "题目": "variants",
+    "题干": "stem", "题目内容": "stem",
+    "选项": "options",
+    "答案": "answer", "正确答案": "answer",
+    "解析": "explain", "解答": "explain",
+    "答案字母": "answer", "选项字母": "answer",
+    "误区": "misconception", "错误分析": "analysis", "分析": "analysis",
+    "建议": "suggestions",
+    "解题步骤": "steps", "步骤": "steps", "核心考点": "key_point", "考点": "key_point",
+    "科目": "subject", "学科": "subject",
+}
+
+
+def _normalize_keys(data):
+    """递归把已知的中文键名映射成英文；未知键保持原样。"""
+    if isinstance(data, list):
+        return [_normalize_keys(v) for v in data]
+    if not isinstance(data, dict):
+        return data
+    out = {}
+    for k, v in data.items():
+        key = _KEY_ALIASES.get(k.strip(), k)
+        out[key] = _normalize_keys(v)
+    return out
 
 
 def _strings(value, name: str, maximum: int = 8) -> list[str]:
@@ -355,11 +386,15 @@ def solve_stub(q: dict, conn=None) -> dict:
 VARIANTS_PROMPT = (
     "你是一名严谨的高中理科命题老师。学生会给你一道他做错的选择题，"
     "请围绕同一知识点与同一考法原创变式题（举一反三）。要求：\n"
-    "1. 完全原创：可以沿用题型结构，但必须更换情境与数据，不得照抄原题数字或原题文字。\n"
-    "2. 变式题与原题选项数量一致，难度相当，答案分布不要都落在同一个选项上。\n"
-    "3. 每道变式给一句话解析（不超过 80 字），讲清答案怎么来的。\n"
-    "4. 语言面向高中生，不用 markdown 格式符号。\n"
-    "5. 只输出 JSON，格式："
+    "1. 完全原创：必须更换情境、对象与数据，不得照抄原题文字或原题数字。\n"
+    "2. 最关键：每道变式题的题干必须与原题题干完全不同（不得原样复用、"
+    "不得只改标点或语序），否则视为无效输出。\n"
+    "3. 变式题与原题选项数量一致，难度相当，答案分布不要都落在同一个选项上。\n"
+    "4. 每道变式给一句话解析（不超过 80 字），讲清答案怎么来的。\n"
+    "5. 语言面向高中生，不用 markdown 格式符号。\n"
+    "6. JSON 的键名必须严格使用下面给出的英文键（variants / stem / options / "
+    "answer / explain），不要翻译成中文键名。\n"
+    "7. 只输出 JSON，格式："
     '{"variants": [{"stem": "题干", "options": ["A内容", "B内容", "C内容", "D内容"], '
     '"answer": 0, "explain": "解析"}]}，answer 是正确选项的序号（从 0 开始）。'
 )
@@ -385,22 +420,33 @@ def variants(q: dict, n: int = 2, conn=None) -> dict:
     parsed = _parse(r["text"])
 
     generated = parsed.get("variants")
-    if not isinstance(generated, list) or len(generated) != n:
+    if not isinstance(generated, list) or not generated:
         raise RuntimeError("AI 生成的变式题数量不完整，请重试")
     out = []
+    rejected = []
     stems = {q.get("stem", "").strip()}
     for v in generated:
         if not isinstance(v, dict):
-            raise RuntimeError("AI 变式题结构无效，请重试")
+            rejected.append("结构无效")
+            continue
         stem = v.get("stem")
         opts = _strings(v.get("options"), "变式选项", 6)
         ans = v.get("answer")
-        if (not isinstance(stem, str) or not stem.strip() or len(stem) > 2000
-                or stem.strip() in stems or len(opts) != len(options)
-                or len(set(opts)) != len(opts) or type(ans) is not int
-                or not 0 <= ans < len(opts) or not isinstance(v.get("explain"), str)
-                or not v["explain"].strip()):
-            raise RuntimeError("AI 变式题题干、选项或答案无效，请重试")
+        if not isinstance(stem, str) or not stem.strip() or len(stem) > 2000:
+            rejected.append("题干为空")
+            continue
+        if stem.strip() in stems:
+            rejected.append("题干与原题或其它变式重复")
+            continue
+        if len(opts) != len(options) or len(set(opts)) != len(opts):
+            rejected.append("选项数量或内容不合规")
+            continue
+        if type(ans) is not int or not 0 <= ans < len(opts):
+            rejected.append("答案越界")
+            continue
+        if not isinstance(v.get("explain"), str) or not v["explain"].strip():
+            rejected.append("缺少解析")
+            continue
         stem = stem.strip()
         stems.add(stem)
         out.append({
@@ -410,7 +456,9 @@ def variants(q: dict, n: int = 2, conn=None) -> dict:
             "explain": str(v.get("explain", "")).strip()[:200],
         })
     if not out:
-        raise RuntimeError("AI 没能生成有效的变式题，请稍后再试")
+        detail = "、".join(dict.fromkeys(rejected)) or "格式不符"
+        raise RuntimeError(f"AI 变式题无效（{detail}），请重试")
+    out = out[:n]
     return {"variants": out, **_meta(r["channel"], r["model"])}
 
 

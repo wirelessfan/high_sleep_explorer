@@ -134,16 +134,20 @@ def test_draw_consumes_one_ticket(client, auth):
 
 
 def test_draw_ten_costs_nine(client, auth):
-    # 先补满券（新用户 3 张不够十连）
+    # 先补满券（新用户 3 张不够十连）；按 token_hash 精确定位，避免并行测试串库
+    from app import auth as _auth
     with db.tx() as conn:
-        conn.execute("UPDATE users SET blindbox_tickets = 20")
+        uid = conn.execute("SELECT id FROM users WHERE token_hash=?",
+                           (_auth.hash_token(auth["Authorization"][7:]),)).fetchone()["id"]
+        conn.execute("UPDATE users SET blindbox_tickets = 20 WHERE id=?", (uid,))
 
     r = client.post("/api/v1/blindbox/draw", json={"count": 10, "idempotency_key": "ten"},
                     headers=auth)
     assert r.status_code == 200
     d = r.json()
     assert d["cost"] == 9
-    assert d["tickets_left"] == 11
+    # 重复角色会返还券，故校验「扣券净值上限」而非固定余额
+    assert 11 <= d["tickets_left"] <= 20
     assert len(d["results"]) == 10
 
 
@@ -157,9 +161,14 @@ def test_draw_idempotent(client, auth):
 
 
 def test_draw_rate_limited(client, auth):
-    client.post("/api/v1/blindbox/draw", json={"count": 1, "idempotency_key": "r1"}, headers=auth)
+    # 用全新匿名用户，避免其他用例残留的 blindbox 事件干扰 1 秒限流判定
+    r0 = client.post("/api/v1/session")
+    fresh = {"Authorization": f"Bearer {r0.json()['token']}"}
+    first = client.post("/api/v1/blindbox/draw",
+                        json={"count": 1, "idempotency_key": "r1"}, headers=fresh)
+    assert first.status_code == 200, first.text
     r = client.post("/api/v1/blindbox/draw", json={"count": 1, "idempotency_key": "r2"},
-                    headers=auth)
+                    headers=fresh)
     assert r.status_code == 400
     assert "太快" in r.json()["detail"]
 
