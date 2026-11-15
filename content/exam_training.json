@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "title": "考点雷达 · 条件与速解专项",
-  "scope": "人教版必修 1 备考补充",
-  "intro": "先识别线索，检查条件，再选模型；每题建议60–90秒，计时只帮助自查，不影响奖励。",
+  "title": "看图找规律 · 轻松备考",
+  "scope": "人教版必修 1 · 发现小站",
+  "intro": "从一根绳、一辆小车、一杯溶液开始，看看规律藏在哪里。先猜一猜，再用自己的话讲讲发现；轻松备考，抽着奖把题做了 🙂",
   "evaluator_note": "当前使用预设考点自动对照（规则评估），未调用在线AI。匹配分是辅助反馈，不等于语义判卷或考试成绩。",
   "rewards": {
     "match_threshold": 80,
@@ -95,8 +95,13 @@
           ],
           "answer": 3,
           "explain": "同一轻绳和理想滑轮给出等张力，2T 不等于总重的静力关系。对2 kg物体：T−20=2a；对3 kg：30−T=3a，得a=2 m/s²、T=24 N。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/rope-1.svg",
+            "title": "轻绳等张力 · 情境图",
+            "alt": "题目情境示意：两物体 2 kg、3 kg 经同一根不可伸长的轻绳跨过理想定滑轮，由静止释放。g=10 m/s²。正确的快速处理及张力为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "rope-2",
@@ -109,8 +114,13 @@
           ],
           "answer": 1,
           "explain": "条件检查先于套模型。下端支持物体为20 N；上端还要支持绳自身，故30 N。轻绳近似失效。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/rope-2.svg",
+            "title": "轻绳等张力 · 情境图",
+            "alt": "题目情境示意：一根质量 1 kg 的均匀绳竖直静止，上端固定，下端吊 2 kg 物体，g=10 m/s²。如何检查“同根绳张力处处相等”？",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -177,8 +187,13 @@
           ],
           "answer": 3,
           "explain": "两个支承绳段各为T，匀速时2T=mg，T=20 N。一端固定时按绳长约束，自由端速率为动滑轮2倍。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/pulley-1.svg",
+            "title": "动滑轮 · 情境图",
+            "alt": "题目情境示意：理想动滑轮下吊4 kg物体，两个支承绳段均竖直，装置匀速上升。g=10。手拉自由端的力与物体速度的关系是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "pulley-2",
@@ -191,8 +206,13 @@
           ],
           "answer": 0,
           "explain": "先列2T−60=6×2，T=36 N；再由绳长约束a自由端=2a滑轮=4 m/s²。不能因“省力”漏掉加速项。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/pulley-2.svg",
+            "title": "动滑轮 · 情境图",
+            "alt": "题目情境示意：同一结构改吊6 kg物体并以2 m/s²向上加速，g=10。拉力和自由端向上加速度是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -258,8 +278,13 @@
           ],
           "answer": 1,
           "explain": "先按静止求所需f=6 N，小于最大静摩擦10 N，假设成立。未滑动时不能用μkN。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/friction-1.svg",
+            "title": "静摩擦 · 情境图",
+            "alt": "题目情境示意：2 kg箱子在水平地面上，μs=0.5、μk=0.4，g=10，受6 N水平推力仍静止。摩擦力是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "friction-2",
@@ -272,8 +297,13 @@
           ],
           "answer": 0,
           "explain": "先假设共速，物块所需f=ma；上限μsN=8 N。a=3需6 N，a=5需10 N，后者超过上限。静摩擦可与对地运动方向一致。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/friction-2.svg",
+            "title": "静摩擦 · 情境图",
+            "alt": "题目情境示意：2 kg物块放在水平加速的板上，μs=0.4、g=10。板向右加速时，关于物块与板保持相对静止的判断正确的是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -337,8 +367,13 @@
           ],
           "answer": 0,
           "explain": "整体：a=10/(2+3)=2。隔离B：接触力N=3a=6 N。整体法消去内力，不代表内力为零。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/system-1.svg",
+            "title": "整体求加速度，隔离求内力 · 情境图",
+            "alt": "题目情境示意：光滑水平面上，A为2 kg、B为3 kg，两物体相接，10 N水平力推A，B在A前方。加速度与A对B的推力为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "system-2",
@@ -351,8 +386,13 @@
           ],
           "answer": 1,
           "explain": "假设共速时a=F/5，A需静摩擦2a；上限8 N。F=15需6 N成立，F=25需10 N超过上限，整体共同加速的假设失败。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/system-2.svg",
+            "title": "整体求加速度，隔离求内力 · 情境图",
+            "alt": "题目情境示意：上层A=2 kg，下层B=3 kg，地面光滑，层间μs=0.4，g=10。仅拉B。下列判断正确的是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -419,8 +459,13 @@
           ],
           "answer": 2,
           "explain": "示数是N，取向上为正：N−500=50×(−2)，N=400 N。判断超失重看a，不看速度方向。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/elevator-1.svg",
+            "title": "超失重 · 情境图",
+            "alt": "题目情境示意：50 kg乘客随电梯向上运动，但加速度为竖直向下2 m/s²。g=10，体重计示数为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "elevator-2",
@@ -433,8 +478,13 @@
           ],
           "answer": 0,
           "explain": "向下减速意味着a向上。N−600=60×2，N=720 N。重力仍为600 N。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/elevator-2.svg",
+            "title": "超失重 · 情境图",
+            "alt": "题目情境示意：60 kg乘客随电梯向下运动并以2 m/s²减速，g=10。正确判断是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -499,8 +549,13 @@
           ],
           "answer": 2,
           "explain": "先算停车时间4 s，6 s中只有前4 s在运动。制动距离v0²/(2|a|)=40 m，停车后不自动倒车。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/brake-1.svg",
+            "title": "刹车与反应距离 · 情境图",
+            "alt": "题目情境示意：汽车以20 m/s行驶，刹车加速度为−5 m/s²。刹车后6 s内的路程为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "brake-2",
@@ -513,8 +568,13 @@
           ],
           "answer": 3,
           "explain": "反应阶段后车20 m，制动40 m，总60 m；前车停下走25 m。分段检查可知后车在前5 s一直追近，最大相对接近量35 m。初距=35 m会最终接触，故不接触需大于35 m。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/brake-2.svg",
+            "title": "刹车与反应距离 · 情境图",
+            "alt": "题目情境示意：前车初速10 m/s，立即以2 m/s²减速；后车初速20 m/s，反应1 s后以5 m/s²减速，直至两车停下。若全程不接触，初距至少应大于多少？",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -578,8 +638,13 @@
           ],
           "answer": 0,
           "explain": "时间轴上方三角形面积4 m、下方面积−4 m，位移0；路程取绝对值相加为8 m。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/vt-1.svg",
+            "title": "v-t图像 · 情境图",
+            "alt": "题目情境示意：v-t图为一直线，t=0时v=4 m/s，t=2 s时v=0，t=4 s时v=−4 m/s。前4 s位移和路程为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "vt-2",
@@ -592,8 +657,13 @@
           ],
           "answer": 1,
           "explain": "斜率a=2，t=1 s速度过零。0至1 s面积−1 m，1至3 s面积4 m，位移3 m、路程5 m。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/vt-2.svg",
+            "title": "v-t图像 · 情境图",
+            "alt": "题目情境示意：质点在0≤t≤3 s内满足v=−2+2t（m/s）。位移和路程分别为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -601,7 +671,7 @@
       "id": "log-domain",
       "subject": "math",
       "topic_id": "math-log",
-      "title": "对数先保命：底数与真数一起查",
+      "title": "对数的通行证：底数与真数一起看",
       "cues": "看到log先写底数大于0且不等于1，真数严格大于0。",
       "conditions": "实数范围内的对数；复合式每个真数都要满足正值条件。",
       "route": "先求定义域，再用运算法则合并或转不等式，最后取交集检验端点。",
@@ -655,8 +725,13 @@
           ],
           "answer": 3,
           "explain": "底数a−1>0且a−1≠1，故a>1且a≠2；真数x−2>0，故x>2。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/log-domain-1.svg",
+            "title": "对数的通行证 · 情境图",
+            "alt": "题目情境示意：y=log_(a−1)(x−2)在实数范围有意义，a和x应满足：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "log-domain-2",
@@ -669,8 +744,13 @@
           ],
           "answer": 3,
           "explain": "先定1<x<3，再合并得(x−1)(3−x)≥1，即1−(x−2)²≥1，只有x=2。不能只看乘积的正负。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/log-domain-2.svg",
+            "title": "对数的通行证 · 情境图",
+            "alt": "题目情境示意：解log₂(x−1)+log₂(3−x)≥0，最快且严谨的结果为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -733,8 +813,13 @@
           ],
           "answer": 2,
           "explain": "先有−1<x<3。底数在(0,1)递减，比较真数时不等号反向：x+1>3−x，得x>1，交集为(1,3)。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/log-base-1.svg",
+            "title": "对数不等式 · 情境图",
+            "alt": "题目情境示意：0<a<1时，log_a(x+1)<log_a(3−x)的解集为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "log-base-2",
@@ -747,8 +832,13 @@
           ],
           "answer": 0,
           "explain": "定义域1/2<x<5。底数1/2递减，2x−1≤5−x，得x≤2，故(1/2,2]。左端因真数为0不能取。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/log-base-2.svg",
+            "title": "对数不等式 · 情境图",
+            "alt": "题目情境示意：解log_(1/2)(2x−1)≥log_(1/2)(5−x)：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -812,8 +902,13 @@
           ],
           "answer": 1,
           "explain": "统一为以2为底：log₆4=log₂4/log₂6=2/(1+a)。底数6=2×3，log₂6=1+a。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/log-change-1.svg",
+            "title": "换底与同值设等 · 情境图",
+            "alt": "题目情境示意：已知log₂3=a，log₆4等于：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "log-change-2",
@@ -826,8 +921,13 @@
           ],
           "answer": 0,
           "explain": "把倒数转到同一底数：1/x=log₆2，1/y=log₆3，和为log₆6=1。不是把底数直接相加。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/log-change-2.svg",
+            "title": "换底与同值设等 · 情境图",
+            "alt": "题目情境示意：若2ˣ=3ʸ=6，则1/x+1/y为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -890,8 +990,13 @@
           ],
           "answer": 3,
           "explain": "令x−2=1，得x=3、对数项为0，y=3。x=2会使真数0，曲线上无此点。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/log-fixed-1.svg",
+            "title": "恒过定点 · 情境图",
+            "alt": "题目情境示意：y=log_a(x−2)+3（a>0且a≠1）恒过定点：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "log-fixed-2",
@@ -904,8 +1009,13 @@
           ],
           "answer": 2,
           "explain": "真数2x−1=1给x=1、y=−2；定义域由2x−1>0得x>1/2，边界不是定点。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/log-fixed-2.svg",
+            "title": "恒过定点 · 情境图",
+            "alt": "题目情境示意：y=log_a(2x−1)−2（底数合法）的恒过定点与定义域分别是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -970,8 +1080,13 @@
           ],
           "answer": 3,
           "explain": "第二象限sin正cos负；由平方关系cos=−√(1−9/25)=−4/5，tan=sin/cos=−3/4。先定号再开方。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/trig-sign-1.svg",
+            "title": "三角函数 · 情境图",
+            "alt": "题目情境示意：sinα=3/5，α位于第二象限，则cosα与tanα分别为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "trig-sign-2",
@@ -984,8 +1099,13 @@
           ],
           "answer": 2,
           "explain": "单位圆/诱导公式：sin(π/2+α)=cosα，cos(π+α)=−cosα，乘积−cos²α。π/2平移涉及函数名变化。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/trig-sign-2.svg",
+            "title": "三角函数 · 情境图",
+            "alt": "题目情境示意：α为锐角，sin(π/2+α)cos(π+α)等于：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -1049,8 +1169,13 @@
           ],
           "answer": 0,
           "explain": "标准状况和气态缺一不可。氧气为1 mol分子、2 mol氧原子；液态水不能套22.4 L/mol。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/gas-volume-1.svg",
+            "title": "22.4 · 情境图",
+            "alt": "题目情境示意：标准状况下，把22.4 L水和22.4 L氧气都判作1 mol，错误点在：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "gas-volume-2",
@@ -1063,8 +1188,13 @@
           ],
           "answer": 2,
           "explain": "总量0.2 mol，同条件体积分数等于物质的量分数；O₂为0.05 mol、O₃为0.15 mol。氧原子为2×0.05+3×0.15=0.55 mol。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/gas-volume-2.svg",
+            "title": "22.4 · 情境图",
+            "alt": "题目情境示意：标准状况下4.48 L O₂/O₃混合气体，O₂体积分数25%，忽略非理想性。含氧原子总数为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -1131,8 +1261,13 @@
           ],
           "answer": 1,
           "explain": "c的分母是溶液体积。加水100 mL不等于定容至100 mL。若只是近似估算需说明近似，不能认定严格1 mol/L。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/concentration-1.svg",
+            "title": "浓度分母 · 情境图",
+            "alt": "题目情境示意：0.1 mol NaCl溶于100 mL水，未提供最终溶液体积。能否严格认定c=1 mol/L？",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "concentration-2",
@@ -1145,8 +1280,13 @@
           ],
           "answer": 0,
           "explain": "先数氯离子：NaCl给0.1 mol，CaCl₂给2×0.1=0.2 mol，共0.3 mol；最终体积0.3 L，所以c=1 mol/L。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/concentration-2.svg",
+            "title": "浓度分母 · 情境图",
+            "alt": "题目情境示意：100 mL 1 mol/L NaCl与200 mL 0.5 mol/L CaCl₂混合，体积可加且无反应。c(Cl⁻)是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -1209,8 +1349,13 @@
           ],
           "answer": 1,
           "explain": "比较0.1/2和0.2/6，后者小，HCl限量；H₂=0.2×3/6=0.1 mol。不能直接比较两种物质的mol数。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/limiting-1.svg",
+            "title": "限量试剂 · 情境图",
+            "alt": "题目情境示意：0.1 mol Al和0.2 mol HCl按2Al+6HCl→2AlCl₃+3H₂完全反应。限量试剂与H₂量为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "limiting-2",
@@ -1223,8 +1368,13 @@
           ],
           "answer": 3,
           "explain": "完全反应需HCl=2×0.1+3×0.1=0.5 mol，现只有0.4，酸限量。2H⁺给1H₂，所以H₂=0.2 mol。未给反应分配条件，不能唯一确定每种金属剩余量。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/limiting-2.svg",
+            "title": "限量试剂 · 情境图",
+            "alt": "题目情境示意：0.1 mol Mg、0.1 mol Al混合，与0.4 mol HCl充分反应，假设仅生成相应氯化物和H₂。正确结论是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -1286,8 +1436,13 @@
           ],
           "answer": 1,
           "explain": "CaCO₃固体不能拆；盐酸拆出H⁺，Cl⁻为旁观离子。式中原子和电荷都守恒。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/ionic-1.svg",
+            "title": "离子式 · 情境图",
+            "alt": "题目情境示意：大理石中的CaCO₃与稀盐酸反应，净离子方程式应采用：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "ionic-2",
@@ -1300,8 +1455,13 @@
           ],
           "answer": 2,
           "explain": "先分别计量：SO₄²⁻为0.1，Ba²⁺为0.075，沉淀0.075 mol；H⁺为0.1，OH⁻为0.15，中和后余0.05 mol OH⁻。两套限量约束分开检查。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/ionic-2.svg",
+            "title": "离子式 · 情境图",
+            "alt": "题目情境示意：0.1 mol NaHSO₄和0.075 mol Ba(OH)₂在水溶液中混合，忽略水电离和沉淀溶解。沉淀量与剩余OH⁻量分别为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -1366,8 +1526,13 @@
           ],
           "answer": 2,
           "explain": "同一Cl₂中一半氯由0价降到−1，一半升到+1。得1 mol和失1 mol是同一电子转移，转移量1 mol，不能相加为2 mol。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/redox-1.svg",
+            "title": "氧化还原 · 情境图",
+            "alt": "题目情境示意：Cl₂+2OH⁻→Cl⁻+ClO⁻+H₂O中，1 mol Cl₂参与反应时转移电子的物质的量是：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "redox-2",
@@ -1380,8 +1545,13 @@
           ],
           "answer": 2,
           "explain": "Cl₂为氧化剂，每mol得2 mol电子；Fe²⁺每mol失1 mol。只能氧化0.06 mol Fe²⁺，生成Fe³⁺0.06，剩Fe²⁺0.04 mol。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/redox-2.svg",
+            "title": "氧化还原 · 情境图",
+            "alt": "题目情境示意：0.1 mol Fe²⁺溶液中通入0.03 mol Cl₂，按2Fe²⁺+Cl₂→2Fe³⁺+2Cl⁻定量反应。Fe³⁺和剩余Fe²⁺量为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     },
@@ -1452,8 +1622,13 @@
           ],
           "answer": 1,
           "explain": "X⁺有10电子，原子X有11质子，故Na。中子数=质量数23−质子数11=12。离子失去电子不改核内粒子数。",
-          "target_seconds": 60,
-          "level": "辨识"
+          "level": "辨识",
+          "diagram": {
+            "src": "/diagrams/discoveries/periodic-1.svg",
+            "title": "等电子粒子 · 情境图",
+            "alt": "题目情境示意：X⁺与Ne等电子，X的一种同位素质量数为23。元素及中子数为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         },
         {
           "id": "periodic-2",
@@ -1466,8 +1641,13 @@
           ],
           "answer": 3,
           "explain": "先确认等电子结构，再比较Z：8、9、11、12。核电荷越大，对同数电子吸引通常越强，半径越小。不能按所带电荷绝对值单独排序。",
-          "target_seconds": 90,
-          "level": "迁移"
+          "level": "迁移",
+          "diagram": {
+            "src": "/diagrams/discoveries/periodic-2.svg",
+            "title": "等电子粒子 · 情境图",
+            "alt": "题目情境示意：O²⁻、F⁻、Na⁺、Mg²⁺均有10个电子，其半径由大到小排列为：",
+            "caption": "点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。"
+          }
         }
       ]
     }

@@ -20,7 +20,7 @@ def profile(user, day: date | None = None) -> dict | None:
     phase = next((p for p in cfg['phases'] if p['start'] <= day.isoformat() <= p['end']), None)
     return {k: cfg[k] for k in ('id', 'region', 'grade', 'scope', 'exam_date', 'date_estimated', 'assumptions', 'coverage_note', 'reward_note')} | {
         'active': start <= day <= exam, 'days_left': max(0, (exam-day).days),
-        'phase': phase or {'name': '计划未开始' if day < start else '本轮备考已结束', 'advice': '继续按学校安排学习。'},
+        'phase': phase or {'name': '自由探索', 'advice': '挑一个好奇的问题，按自己的节奏慢慢探索。'},
         'points_multiplier': cfg['points_multiplier'] if start <= day <= exam else 1,
         'tickets_multiplier': cfg['tickets_multiplier'] if start <= day <= exam else 1,
     }
@@ -39,7 +39,7 @@ def unit_context(user, topic_id: str, section_id: str, tier: str) -> dict | None
     eligible = (section_id, tier) in pairs(topic_id)
     active = p['active'] and eligible
     return {'eligible': eligible, 'active': active, 'plan_id': p['id'],
-            'label': '必修 1 备考' if eligible else '拓展内容 · 暂不列入本轮备考',
+            'label': '必修 1 · 轻松探索' if eligible else '拓展小站 · 有兴趣时再逛',
             'points_multiplier': p['points_multiplier'] if active else 1,
             'tickets_multiplier': p['tickets_multiplier'] if active else 1,
             'ends_on': p['exam_date']}
@@ -56,7 +56,7 @@ def topic_context(user, topic_id: str, done: set[tuple[str, str]]) -> dict | Non
         return None
     core = pairs(topic_id)
     return {'eligible': bool(core), 'done': sum(pair in done for pair in core), 'total': len(core),
-            'label': content_loader.study_plan()['topics'].get(topic_id, {}).get('label', '拓展 · 考后再学'),
+            'label': content_loader.study_plan()['topics'].get(topic_id, {}).get('label', '拓展小站 · 有兴趣时再逛'),
             'active': p['active'] and bool(core)}
 
 
@@ -91,5 +91,5 @@ def dashboard(conn: sqlite3.Connection, user) -> dict | None:
                 'action': 'wrongbook' if u in wrong else 'section',
                 'title': cat[tid]['title'], 'subject': subj, 'section_name': sections[sid],
                 'tier_name': content_loader.tier_meta_of(tier)['name'],
-                'reason': '先清理本单元错题' if u in wrong else '继续巩固，已有首通按复习奖励' if u in done else '完成本轮未通关单元'})
+                'reason': '和老朋友再见一面，也许会有新发现' if u in wrong else '熟悉的风景，再逛一遍也有收获' if u in done else '这里还没逛过，选一个好奇的小站'})
     return p | {'done': sum(u in done for u in units), 'total': len(units), 'recommendations': recommendations}

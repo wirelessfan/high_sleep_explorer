@@ -138,7 +138,7 @@ export async function renderHome(view) {
   /* ---- 各科入口 ---- */
   const sec = el('div', { class: 'section-head' }, [
     el('h3', { text: '按科目' }),
-    el('span', { class: 'hint', text: `每个主题 ${minMinutes}–${maxMinutes} 分钟` }),
+    el('span', { class: 'hint', text: catalog.study_plan?.active ? '挑一个好奇的话题，慢慢逛' : `每个主题 ${minMinutes}–${maxMinutes} 分钟` }),
   ]);
   root.appendChild(sec);
 
@@ -179,7 +179,7 @@ export async function renderHome(view) {
   /* ---- 底部小提示 ---- */
   root.appendChild(el('div', {
     style: 'text-align:center;font-size:11px;color:#b6c2d2;padding:10px 0 4px',
-    text: '每天 20–30 分钟，一个主题慢慢学上一两周',
+    text: '有空就逛一小站，带着好奇心慢慢发现',
   }));
 
   view.innerHTML = '';
@@ -208,7 +208,7 @@ function renderDaily(daily) {
     el('div', { class: 'daily-head-txt' }, [
       el('div', {
         class: 'daily-eyebrow',
-        text: `${daily.study_plan?.active ? '备考推荐' : s ? '节日特辑' : '今日主题'} · ${daily.weekday} · ${fmtDate(daily.date)}`,
+        text: `${daily.study_plan?.active ? '今天想探索什么' : s ? '节日特辑' : '今日主题'} · ${daily.weekday} · ${fmtDate(daily.date)}`,
       }),
       el('h2', { class: 'daily-title', text: s ? s.title : t.title }),
     ]),
@@ -238,7 +238,7 @@ function renderDaily(daily) {
     if (s.aside) wrap.appendChild(el('div', { class: 'daily-aside', text: s.aside }));
   } else {
     wrap.appendChild(el('p', { class: 'daily-tag', text: t.subtitle }));
-    wrap.appendChild(el('p', { class: 'daily-desc', text: t.description }));
+    wrap.appendChild(el('p', { class: 'daily-desc', text: daily.study_plan?.active ? '从图像和小问题出发，慢慢把规律想明白。可以先看提示，再试试自己的想法。' : t.description }));
     if (daily.quote) {
       wrap.appendChild(el('div', { class: 'daily-quote' }, [
         el('span', { text: daily.quote.text }),
@@ -251,12 +251,12 @@ function renderDaily(daily) {
   wrap.appendChild(el('div', { class: 'daily-foot' }, [
     el('div', { class: 'row', style: 'gap:6px;flex-wrap:wrap' }, [
       el('span', { class: `chip ${SUBJECT_CLASS[t.subject]}`, text: t.subject_name }),
-      el('span', { class: 'chip', text: `⏱ ${daily.study_plan?.active ? "备考单元合计" : "全程"} ${t.minutes} 分钟` }),
-      el('span', { class: 'chip', text: `${t.done}/${t.total} ${daily.study_plan?.active ? '备考单元' : '单元'}` }),
+      !daily.study_plan?.active ? el('span', { class: 'chip', text: `⏱ 全程 ${t.minutes} 分钟` }) : null,
+      el('span', { class: 'chip', text: daily.study_plan?.active ? `已探索 ${t.done} 个小站` : `${t.done}/${t.total} 单元` }),
     ]),
     el('button', {
       class: 'btn sm',
-      text: daily.study_plan?.active ? (daily.study_plan.recommendations[0]?.action === 'wrongbook' ? '去错题本回顾' : '做今日备考单元') : s ? '开始今日主题' : (t.complete ? '复习一遍' : '去闯关'),
+      text: daily.study_plan?.active ? (daily.study_plan.recommendations[0]?.action === 'wrongbook' ? '再看看，可能有新发现' : '逛逛这个小站') : s ? '开始今日主题' : (t.complete ? '复习一遍' : '去闯关'),
       onclick: () => {
         const r = daily.study_plan?.active && daily.study_plan.recommendations[0];
         navigate(r?.action === "wrongbook" ? "#/wrongbook" : r ? `#/topic/${r.topic_id}/${r.section_id}/${r.tier}` : `#/topic/${t.id}`);

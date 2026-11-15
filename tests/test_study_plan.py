@@ -139,7 +139,7 @@ def test_recommendations_follow_progress_wrongbook_and_date_is_display_only(setu
         wrongbook.record_wrong(conn,'sunny',rec['topic_id'],rec['section_id'],rec['tier'],
             [{'id':'qtest','correct':False,'picked':1}],{'qtest':{'stem':'test','options':['a','b'],'answer':0,'explain':'test'}})
     updated=client.get('/api/v1/catalog',headers=h['sunny']).json()['study_plan']
-    assert updated['recommendations'][0]['reason']=='先清理本单元错题'
+    assert updated['recommendations'][0]['reason']=='和老朋友再见一面，也许会有新发现'
     assert updated['recommendations'][0]['action']=='wrongbook'
     daily=client.get('/api/v1/daily?date=2030-01-01',headers=h['sunny']).json()
     assert daily['study_plan']['active'] and daily['study_plan']['days_left']==46

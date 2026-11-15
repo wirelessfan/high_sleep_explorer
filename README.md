@@ -239,4 +239,6 @@ LEARN_DB=/path/to/app.db python tools/seed_users.py
 
 ### 考点专项与逐题总结
 
-首页备考卡、路线页进入「考点雷达」，18 类模型、36 道辨识/迁移题，练习识别线索、适用条件、速解和反例。原题各题型、错题本重做也支持判分后总结。总结达标奖励与三题高匹配连击规则、离线评分限制见 [专项说明](reports/exam-summary-training-2026-11-15.md)；内容与奖励配置为 `content/exam_training.json`。本功能不调用在线 AI。
+首页学习卡、路线页进入「看图找规律」，18 类模型、36 道辨识/迁移题，每题配 SVG 情境图，可点击放大。主旋律是「轻松备考，抽着奖把题做了 🙂」；不展示考试倒计时、目标秒数或作答用时。原题各题型、错题本重做也支持判分后总结。总结奖励与三题高匹配连击规则、离线评分限制见 [专项说明](reports/exam-summary-training-2026-11-15.md)，本轮体验调整见 [图解更新](reports/relaxed-visual-learning-2026-11-15.md)。内容与奖励配置为 `content/exam_training.json`，本功能不调用在线 AI。
+
+`python tools/build_exploration_diagrams.py` 重放 36 张 SVG 及对应题目插图信息；加 `--check` 检查生成文件、XML 和配置引用是否一致。
