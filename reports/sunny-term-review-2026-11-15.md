@@ -43,4 +43,15 @@ Sunny 为北京东城区高一。按用户确认的人教版教材建立个人�
 
 本地最终验证：323 个 pytest 用例、216 个子测试通过；22 个前端模块语法与 import 路径检查通过；题库结构检查通过。新增 29 个用例覆盖身份/日期边界、单元排除、难度叠加、积分卡包实到账、并发首通防重、混合复习配额与旧日志兼容、全通余额、个人进度与错题推荐、展示日期不可影响奖励。
 
-隔离数据库中的 Sunny 测试账号已检查首页和学习页，未使用真实 Sunny 账号作答或抽卡。线上部署结果在发布后追加。
+隔离数据库中的 Sunny 测试账号已检查首页和学习页，未使用真实 Sunny 账号作答或抽卡。线上部署结果如下。
+
+
+## 发布结果
+
+运行版本：`caccdac037904af1965a163d8b1ffb277cc4e406`，已推送 Gitee master 与 codex/sunny-term-review。部署前与 5d3f121 基线逐文件比较，更新 12 个运行文件，所有线上文件 SHA-256 与发布包一致。
+
+备份：`/var/backups/learning-highschool/term-pre-caccdac-20261115-113558`（旧代码与完整数据库）。离线初始化前后，对 users、checkins、card_owned、draws、events、achievements、progress、wrong_questions、ai_config、ai_requests、blindbox_owned、wishes、sessions、question_feedback 共 14 张业务表的全部列/行进行摘要比对，完全一致；schema 保持 12。
+
+主站 `https://123-56-217-104.sslip.io/` 与 `https://123.56.217.104.sslip.io:8090/` 健康检查通过，两入口公开 JS 哈希匹配发布，未登录目录访问仍要求认证。
+
+使用只读 SQLite 连接核验真实 Sunny：活动已生效，积分与卡包倍率均为 2，已有备考进度 5/86，距离预计考试 46 天；物理错题纳入推荐，平抛/Ksp 混合单元不享受奖励。未对真实账号提交答案、签到或抽卡。AI 配置、服务及代理配置未改动。本地预览已关闭。
