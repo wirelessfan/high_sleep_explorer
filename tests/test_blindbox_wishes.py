@@ -37,7 +37,7 @@ def clean(client):
     with db.tx() as conn:
         uid = conn.execute("SELECT id FROM users WHERE token_hash=?",
                            (_auth.hash_token(token),)).fetchone()["id"]
-        conn.execute("DELETE FROM events WHERE user_id=?", (uid,))
+        conn.execute("DELETE FROM events WHERE user_id=? AND kind<>'bbox_daily'", (uid,))
         conn.execute("DELETE FROM blindbox_owned WHERE user_id=?", (uid,))
         conn.execute("DELETE FROM wishes WHERE user_id=?", (uid,))
         conn.execute("UPDATE users SET blindbox_tickets=3, points=0, bb_pity_sr=0, "

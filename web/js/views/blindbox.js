@@ -41,6 +41,8 @@ export async function renderBlindbox(view) {
       el('div', { style: 'font-size:12px;color:#a3928a', text: `盲盒券 ${data.tickets} 张` }),
       el('div', { style: 'font-size:12px;color:#a3928a', text: `已解锁 ${data.unlocked} / ${data.total}` }),
     ]),
+    el('div', { style: 'font-size:12px;color:#0f766e;margin-bottom:10px;line-height:1.7',
+      text: `今日 ${data.daily.tickets} 张免费券已到账 · 每天北京时间 0 点更新` }),
     boxImg,
     el('div', { style: 'font-size:12px;color:#6b5b52;margin-top:10px;line-height:1.7',
       text: `距保底 SR 还需 ${data.pity.sr_left} 次 · 距 SSR 还需 ${data.pity.ssr_left} 次` }),
@@ -119,6 +121,7 @@ export async function renderBlindbox(view) {
   root.appendChild(el('section', { class: 'panel', style: 'padding:13px' }, [
     el('div', { style: 'font-size:12px;font-weight:800;margin-bottom:6px', text: '玩法' }),
     ...[
+      `每天首次进入盲盒页自动领 ${data.daily.tickets} 张免费券，跨设备不重复领取；到账的券可保留，未访问的日期不补领。`,
       `开盒消耗盲盒券：单开 ${data.costs.single} 张，十连 ${data.costs.ten} 张。`,
       `概率：${Object.entries(data.rates).map(([r, v]) => `${r} ${v}%`).join(' · ')}。`,
       '重复角色按稀有度返还盲盒券；SR 与 SSR 可换实物。',
@@ -217,7 +220,7 @@ function showDrawResult(res, onClose) {
   });
 
   const summary = el('div', { class: 'reward-row', style: 'justify-content:center;margin-top:14px' }, [
-    el('span', { class: 'reward-pill', text: `剩余盲盒券 ${res.tickets_left}` }),
+    el('span', { class: 'reward-pill', text: `剩余盲盒券 ${res.tickets}` }),
     res.tickets_back > 0 ? el('span', { class: 'reward-pill', text: `重复返还 +${res.tickets_back} 券` }) : null,
     el('span', { class: 'reward-pill', text: `已解锁 ${res.unlocked}/${res.total}` }),
   ]);

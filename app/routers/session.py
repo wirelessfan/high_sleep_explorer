@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from app import auth, db
-from app.services import ratelimit
+from app.services import blindbox, ratelimit
 
 router = APIRouter(tags=["session"])
 SESSION_SECONDS = 7 * 24 * 60 * 60
@@ -126,6 +126,7 @@ def create_session():
             "VALUES (?,?,?,?,?)",
             (user_id, auth.hash_token(token), sync_code, now, now),
         )
+        blindbox.grant_daily_tickets(conn, user_id, initial=True)
         _issue_session(conn, user_id, token)
         row = _session_user(conn, token)
 
@@ -176,6 +177,7 @@ def guest_session(request: Request):
                 "points, tickets, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?,?)",
                 (uid, token_hash, code, "演示访客", "guest", 260, 6, now, now),
             )
+            blindbox.grant_daily_tickets(conn, uid, initial=True)
             row = conn.execute("SELECT * FROM users WHERE id = ?", (uid,)).fetchone()
         else:
             conn.execute(

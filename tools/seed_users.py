@@ -20,6 +20,7 @@ sys.path.insert(0, str(ROOT))
 
 from app import auth  # noqa: E402
 from app import db as dbmod  # noqa: E402
+from app.services import blindbox  # noqa: E402
 
 ACCOUNTS = [
     ("sunny", "sunny", "sunny"),
@@ -72,6 +73,7 @@ def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname
          pwd_hash, points, tickets,
          "admin" if username.lower() == "dad" else None, now, now),
     )
+    blindbox.grant_daily_tickets(conn, uid, initial=True)
     return uid, "已创建演示账号" if is_guest else "已创建"
 
 

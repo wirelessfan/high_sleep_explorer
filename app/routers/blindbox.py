@@ -38,12 +38,14 @@ def _wall_cfg() -> dict:
 
 def _snapshot(conn: sqlite3.Connection, user: sqlite3.Row) -> dict:
     cfg = _cfg()
+    daily = blindbox.grant_daily_tickets(conn, user["id"])
     row = conn.execute(
         "SELECT blindbox_tickets, bb_pity_sr, bb_pity_ssr FROM users WHERE id=?",
         (user["id"],),
     ).fetchone()
     return {
         "tickets": row["blindbox_tickets"],
+        "daily": daily,
         "pity": {
             "sr_left": max(0, cfg["pity_sr"] - row["bb_pity_sr"]),
             "ssr_left": max(0, cfg["pity_ssr"] - row["bb_pity_ssr"]),
@@ -63,7 +65,7 @@ def _snapshot(conn: sqlite3.Connection, user: sqlite3.Row) -> dict:
 
 @router.get("/blindbox")
 def get_blindbox(user: sqlite3.Row = Depends(current_user)):
-    with db.ro() as conn:
+    with db.tx() as conn:
         snap = _snapshot(conn, user)
         gallery = blindbox.gallery(conn, user["id"])
     unlocked = sum(1 for g in gallery if g["unlocked"])

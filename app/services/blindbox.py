@@ -15,10 +15,13 @@ import json
 import random
 import sqlite3
 import uuid
-from datetime import date, datetime
+from datetime import datetime, timedelta, timezone
 
 from app import content_loader
 from app.services import events
+
+CHINA_TZ = timezone(timedelta(hours=8))
+DAILY_TICKETS = 3
 
 RARITY_ORDER = ["N", "R", "SR", "SSR"]
 
@@ -67,6 +70,23 @@ def _roll_rarity(pity_sr: int, pity_ssr: int) -> str:
     return "N"
 
 
+def grant_daily_tickets(conn: sqlite3.Connection, user_id: str, *, initial: bool = False) -> dict:
+    """北京时间每天首次打开/抽盒时发券；新号默认的 3 张就是首日额度。
+
+    事件唯一键与余额变动处于同一个写事务，多设备或重复请求不会多领。
+    未访问日不追补；已到账的券不清零。initial 仅供新建账号调用。
+    """
+    day = _today()
+    credited = 0 if initial else DAILY_TICKETS
+    payload = {"date": day, "tickets": DAILY_TICKETS, "credited": credited,
+               "source": "initial" if initial else "daily"}
+    inserted = events.log(conn, user_id, f"bbox_daily:{day}", "bbox_daily", payload)
+    if inserted and credited:
+        add_tickets(conn, user_id, credited)
+    return {"date": day, "tickets": DAILY_TICKETS, "received": True,
+            "credited_now": credited if inserted else 0, "timezone": "Asia/Shanghai"}
+
+
 def draw(conn: sqlite3.Connection, user: sqlite3.Row, count: int,
          idempotency_key: str) -> dict:
     """开盲盒主流程。"""
@@ -94,6 +114,8 @@ def draw(conn: sqlite3.Connection, user: sqlite3.Row, count: int,
         if 0 <= elapsed < 1:
             raise ValueError("操作太快，请稍后再试")
 
+    grant_daily_tickets(conn, user_id)
+    user = conn.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
     cost = cfg["ten_cost"] if count == 10 else cfg["single_cost"] * count
     have = user["blindbox_tickets"]
     if have < cost:
@@ -192,6 +214,8 @@ def exchange_points(conn: sqlite3.Connection, user: sqlite3.Row, count: int = 1)
     if not isinstance(count, int) or isinstance(count, bool) or not 1 <= count <= 5:
         raise ValueError("一次最多兑换 5 张")
 
+    grant_daily_tickets(conn, user_id)
+    user = conn.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
     per = int(cfg.get("exchange_points", 100))
     limit = int(cfg.get("exchange_daily_limit", 1))
     used = conn.execute(
@@ -335,4 +359,4 @@ def _now() -> str:
 
 
 def _today() -> str:
-    return date.today().isoformat()
+    return datetime.now(CHINA_TZ).date().isoformat()

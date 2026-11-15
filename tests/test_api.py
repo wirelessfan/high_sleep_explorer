@@ -261,7 +261,17 @@ def test_draw_idempotent(client, auth_headers):
     assert r2.json()["tickets_left"] == left1, "重放不应重复扣券"
 
 
-def test_draw_rate_limited(client, auth_headers):
+def test_draw_rate_limited(client, auth_headers, monkeypatch):
+    # Both requests must occur at the same instant; wall-clock scheduling and
+    # second-resolution event timestamps otherwise make this test intermittent.
+    from datetime import datetime
+    from app.services import events, gacha
+    class FixedClock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return cls(2026, 11, 15, 9, 0, 0)
+    monkeypatch.setattr(gacha, 'datetime', FixedClock)
+    monkeypatch.setattr(events, 'now', lambda: FixedClock.now().isoformat(timespec='seconds'))
     _fill_tickets(client, auth_headers, 10)
     r1 = client.post("/api/v1/cards/draw", json={"count": 1, "idempotency_key": "x1"},
                      headers=auth_headers)
