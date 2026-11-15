@@ -3,6 +3,8 @@
 import * as api from '../api.js';
 import { el, toast, openSheet, biliEmbed, biliLink, previewImage } from '../ui.js';
 import { navigate } from '../router.js';
+import { questionContent } from '../question-content.js';
+import { feedbackButton } from '../question-feedback.js';
 import { bossBanner, bindBossProgress } from '../boss.js';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
@@ -107,15 +109,15 @@ function tierSwitcher(tiers, active, topicId, sid) {
 
 /* ---------- 通用：选项组 ---------- */
 
-function optionsBlock(questions, getSelection, onChange, { disabled = false, showResult = null } = {}) {
+function optionsBlock(questions, getSelection, onChange, { disabled = false, showResult = null, feedback = null } = {}) {
   const wrap = el('div', { class: 'stack', style: 'gap:18px' });
 
   questions.forEach((q, qi) => {
     const block = el('div', { class: 'q-block' });
-    block.appendChild(el('div', {
-      class: 'q-stem',
-      html: `<span style="color:#a3928a;font-weight:800;margin-right:6px">${qi + 1}.</span>${q.stem}`,
-    }));
+    block.appendChild(el('div', { class: 'q-stem' }, [
+      el('span', { style: 'color:#a3928a;font-weight:800;margin-right:6px', text: `${qi + 1}.` }),
+      questionContent(q.stem),
+    ]));
 
     const opts = el('div', { class: 'q-options' });
     q.options.forEach((opt, oi) => {
@@ -140,6 +142,7 @@ function optionsBlock(questions, getSelection, onChange, { disabled = false, sho
       opts.appendChild(btn);
     });
     block.appendChild(opts);
+    if (feedback) block.appendChild(feedbackButton({ ...feedback, question_id: q.id }, q));
     wrap.appendChild(block);
   });
 
@@ -238,7 +241,7 @@ async function renderQuiz(body, topicId, sectionId, sec) {
     const filled = questions.every((q) => answers[q.id] !== undefined);
     submit.btn.disabled = !filled;
     submit.wrap.querySelector('.btn').textContent = filled ? '提交答案' : `还有 ${questions.filter(q=>answers[q.id]===undefined).length} 题未答`;
-  });
+  }, { feedback: { topic_id: topicId, section_id: sectionId, tier: ACTIVE_TIER } });
 
   body.appendChild(el('section', { class: 'panel' }, [optWrap]));
 
@@ -309,7 +312,7 @@ async function renderLevels(body, topicId, sectionId, sec) {
       const filled = lv.questions.every((q) => answers[q.id] !== undefined);
       btn.disabled = !filled;
       btn.textContent = filled ? '提交本关' : `还有 ${lv.questions.filter(q=>answers[q.id]===undefined).length} 题`;
-    });
+    }, { feedback: { topic_id: topicId, section_id: sectionId, tier: ACTIVE_TIER } });
 
     holder.appendChild(el('section', { class: 'panel' }, [
       el('div', { style: 'font-size:13px;font-weight:800;margin-bottom:12px', text: lv.name }),
@@ -521,6 +524,7 @@ async function renderMyths(body, topicId, sectionId, sec) {
     });
     block.appendChild(opts);
 
+    block.appendChild(feedbackButton({ topic_id: topicId, section_id: sectionId, tier: ACTIVE_TIER, question_id: qid }, m.check));
     block.dataset.mythIndex = String(mi);
     body.appendChild(block);
   });
@@ -598,6 +602,7 @@ async function renderSteps(body, topicId, sectionId, sec) {
         ]));
       });
       block.appendChild(opts);
+      block.appendChild(feedbackButton({ topic_id: topicId, section_id: sectionId, tier: ACTIVE_TIER, question_id: qid }, { stem: `${p.stem}\n${step.ask}`, options: step.options }));
       block.dataset.stepKey = qid;
       body.appendChild(block);
     });
@@ -680,7 +685,7 @@ async function renderBoss(body, topicId, sectionId, sec) {
     const filled = questions.every((q) => answers[q.id] !== undefined);
     submit.btn.disabled = !filled;
     submit.btn.textContent = filled ? '提交答案' : '请先作答';
-  });
+  }, { feedback: { topic_id: topicId, section_id: sectionId, tier: ACTIVE_TIER } });
 
   body.appendChild(el('section', { class: 'panel' }, [optWrap]));
 

@@ -260,6 +260,8 @@ async function renderAdmin(view) {
     root.appendChild(el('div', { class: 'section-head' }, [el('h3', { text: 'AI 用量' })]));
     root.appendChild(usageBox);
 
+    root.appendChild(el('a', { href: '#/feedback/review', class: 'btn full', text: '审核题目反馈 · 通过奖励 50 积分' }));
+
     /* ---- 账号 ---- */
     root.appendChild(el('div', { class: 'section-head' }, [
       el('h3', { text: '账号' }),

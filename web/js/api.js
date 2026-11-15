@@ -245,3 +245,9 @@ export const photoAnalyze = (stem, options, picked) =>
   request('/wrongbook/photo/analyze', { method: 'POST', body: { stem, options, picked } });
 export const photoSave = (payload) =>
   request('/wrongbook/photo/save', { method: 'POST', body: payload });
+
+/* ---------- 题目问题反馈 ---------- */
+export const postQuestionFeedback = (payload) => request('/question-feedback', { method: 'POST', body: payload });
+export const getQuestionFeedback = () => request('/question-feedback');
+export const adminQuestionFeedback = () => request('/admin/question-feedback');
+export const reviewQuestionFeedback = (id, status, note) => request(`/admin/question-feedback/${id}`, { method: 'PATCH', body: { status, note } });

@@ -3,14 +3,11 @@
 import * as api from '../api.js';
 import { el, toast, openSheet, SUBJECT_LABEL, SUBJECT_CLASS } from '../ui.js';
 
+import { questionText } from '../question-content.js';
+import { feedbackButton } from '../question-feedback.js';
+
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-function questionText(value) {
-  if (!/<\/?[a-z][^>]*>/i.test(value || '')) return value || '';
-  const parsed = new DOMParser().parseFromString(value.replace(/<br\s*\/?\s*>|<\/(div|p|li)>/gi, '\n'), 'text/html');
-  parsed.querySelectorAll('script,style').forEach((node) => node.remove());
-  return parsed.body.textContent.trim();
-}
 
 function paintAi(holder, value) {
   holder.innerHTML = '';
@@ -292,6 +289,7 @@ async function renderRedo(view, topicId, title, items) {
       )),
     ]));
 
+    if (it.source === 'practice') body.appendChild(feedbackButton({ topic_id: it.topic_id, section_id: it.section_id, tier: it.tier, question_id: it.question_id, wrong_question_id: it.id }, it));
     body.appendChild(el('button', {
       class: 'btn full',
       style: 'margin-top:14px',
@@ -379,6 +377,7 @@ function showTopicSheet(topicId, title, items, ai, onUsage) {
       el('div', { class: 'ai-slot', style: 'margin-top:8px' }),
     ]);
 
+    if (it.source === 'practice') block.appendChild(feedbackButton({ topic_id: it.topic_id, section_id: it.section_id, tier: it.tier, question_id: it.question_id, wrong_question_id: it.id }, it));
     if (it.ai) paintAi(block.querySelector('.ai-slot'), it.ai);
     else {
       block.querySelector('.ai-slot').appendChild(el('button', {

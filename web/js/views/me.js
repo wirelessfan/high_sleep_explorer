@@ -123,6 +123,12 @@ export async function renderMe(view) {
     cal,
   ]));
 
+  root.appendChild(el('section', { class: 'panel' }, [
+    el('a', { href: '#/feedback', style: 'font-weight:800;font-size:13.5px', text: '📝 题目反馈 · 我的反馈进度' }),
+    el('div', { class: 'hint', style: 'margin-top:6px', text: '题目缺失、答案或解析有误？做题时反馈，通过奖励 50 积分。' }),
+    me.is_admin ? el('a', { href: '#/feedback/review', class: 'btn ghost sm', style: 'margin-top:10px', text: '审核题目反馈' }) : null,
+  ]));
+
   /* ---- 错题本入口 ---- */
   root.appendChild(el('section', {
     class: 'panel',

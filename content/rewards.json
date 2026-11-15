@@ -184,7 +184,7 @@
     },
     "redeem_per_month": 1,
     "exchange_points": 100,
-    "exchange_daily_limit": 1,
+    "exchange_daily_limit": 9,
     "checkin_drop_rate": 0.3,
     "note": "盲盒用独立盲盒券（blindbox_tickets），与卡片卡包互不干扰。重复角色转盲盒券；实物兑换消耗 1 个副本并复用成就卡兑现码与家长核销链路，每月每角色 1 次。"
   },

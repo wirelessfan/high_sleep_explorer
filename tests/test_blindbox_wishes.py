@@ -253,10 +253,13 @@ def test_exchange_points_to_tickets(client, clean):
 def test_exchange_daily_limit(client, clean):
     with db.tx() as conn:
         conn.execute("UPDATE users SET points = 1000")
-    assert client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=clean).status_code == 200
+    first = client.post("/api/v1/blindbox/exchange", json={"count": 5}, headers=clean)
+    assert first.status_code == 200 and first.json()['left_today'] == 4
+    second = client.post("/api/v1/blindbox/exchange", json={"count": 4}, headers=clean)
+    assert second.status_code == 200 and second.json()['left_today'] == 0
     r = client.post("/api/v1/blindbox/exchange", json={"count": 1}, headers=clean)
     assert r.status_code == 400
-    assert "已经兑换过" in r.json()["detail"]
+    assert "每天最多兑换 9 张" in r.json()["detail"]
 
 
 def test_exchange_insufficient_points(client, clean):

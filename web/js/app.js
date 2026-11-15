@@ -16,6 +16,7 @@ import { renderAdmin } from './views/admin.js';
 import { renderBlindbox } from './views/blindbox.js';
 import { renderWishes } from './views/wishes.js';
 import { renderLogin } from './views/login.js';
+import { renderFeedback } from './views/feedback.js';
 
 function registerRoutes() {
   route('/', renderHome);
@@ -31,6 +32,8 @@ function registerRoutes() {
   route('/wishes', renderWishes);
   route('/admin', renderAdmin);
   route('/login', renderLogin);
+  route('/feedback', renderFeedback);
+  route('/feedback/review', (view) => renderFeedback(view, { review: true }));
 }
 
 function showFatal(message) {

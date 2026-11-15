@@ -207,32 +207,40 @@ def draw(conn: sqlite3.Connection, user: sqlite3.Row, count: int,
     return {"replayed": False, **payload}
 
 
+def exchange_status(conn: sqlite3.Connection, user_id: str) -> dict:
+    cfg = _cfg()
+    used = conn.execute(
+        "SELECT COALESCE(SUM(CAST(json_extract(payload,'$.count') AS INTEGER)),0) AS n "
+        "FROM events WHERE user_id=? AND kind='bbox_exchange' "
+        "AND COALESCE(json_extract(payload,'$.date'),substr(created_at,1,10))=?",
+        (user_id, _today()),
+    ).fetchone()["n"]
+    limit = int(cfg.get("exchange_daily_limit", 9))
+    return {"points": int(cfg.get("exchange_points", 100)), "daily_limit": limit,
+            "used_today": used, "remaining_today": max(0, limit-used)}
+
+
 def exchange_points(conn: sqlite3.Connection, user: sqlite3.Row, count: int = 1) -> dict:
-    """积分 → 盲盒券（每日限 1 次，与卡片卡包兑换互不占用）。"""
+    """积分 → 盲盒券；按北京时间累计兑换张数，每天最多 9 张。"""
     cfg = _cfg()
     user_id = user["id"]
-    if not isinstance(count, int) or isinstance(count, bool) or not 1 <= count <= 5:
-        raise ValueError("一次最多兑换 5 张")
+    if not isinstance(count, int) or isinstance(count, bool) or not 1 <= count <= 9:
+        raise ValueError("一次最多兑换 9 张")
 
     grant_daily_tickets(conn, user_id)
     user = conn.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
-    per = int(cfg.get("exchange_points", 100))
-    limit = int(cfg.get("exchange_daily_limit", 1))
-    used = conn.execute(
-        "SELECT COUNT(*) AS n FROM events WHERE user_id=? AND kind='bbox_exchange' "
-        "AND substr(created_at,1,10)=?",
-        (user_id, _today()),
-    ).fetchone()["n"]
-    if used + 1 > limit:
-        raise ValueError(f"今天已经兑换过盲盒券了（每天 {limit} 次）")
+    state = exchange_status(conn, user_id)
+    per, limit, used = state['points'], state['daily_limit'], state['used_today']
+    if count > state['remaining_today']:
+        raise ValueError(f"每天最多兑换 {limit} 张，今天还可兑换 {state['remaining_today']} 张")
 
     cost = per * count
     if user["points"] < cost:
         raise ValueError(f"积分不足，需要 {cost} 分，当前 {user['points']} 分")
 
-    key = f"bbox_ex:{_today()}:{used}"
+    key = f"bbox_ex_tickets:{_today()}:{used}"
     if not events.log(conn, user_id, key, "bbox_exchange",
-                      {"count": count, "points": cost}):
+                      {"count": count, "points": cost, "date": _today()}):
         raise ValueError("请勿重复提交")
 
     conn.execute(
@@ -245,7 +253,7 @@ def exchange_points(conn: sqlite3.Connection, user: sqlite3.Row, count: int = 1)
         "points_spent": cost,
         "points_left": user["points"] - cost,
         "tickets_total": user["blindbox_tickets"] + count,
-        "left_today": max(0, limit - used - 1),
+        "left_today": max(0, limit - used - count),
     }
 
 

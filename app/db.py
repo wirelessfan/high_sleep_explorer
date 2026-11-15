@@ -21,7 +21,8 @@ DB_PATH = Path(os.environ.get("LEARN_DB", Path(__file__).resolve().parent.parent
 # v9 = 盲盒系统：users 增加 blindbox_tickets / bb_pity_sr / bb_pity_ssr，
 #     新增 blindbox_owned 图鉴表；许愿墙新增 wishes 表。
 # v10 = 每台设备独立的七天登录会话。
-SCHEMA_VERSION = 10
+# v11 = 题目反馈、审核与一次性积分奖励。
+SCHEMA_VERSION = 11
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS sessions (
@@ -201,6 +202,29 @@ CREATE TABLE IF NOT EXISTS wishes (
 
 CREATE INDEX IF NOT EXISTS idx_wishes_time ON wishes(created_at);
 CREATE INDEX IF NOT EXISTS idx_wishes_user ON wishes(user_id, created_at);
+
+-- 题目问题反馈：快照版本去重，审核与积分在同一事务提交。
+CREATE TABLE IF NOT EXISTS question_feedback (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    topic_id TEXT NOT NULL,
+    section_id TEXT NOT NULL,
+    tier TEXT NOT NULL,
+    question_id TEXT NOT NULL,
+    question_version TEXT NOT NULL,
+    snapshot_json TEXT NOT NULL,
+    category TEXT NOT NULL,
+    detail TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+    reward_points INTEGER NOT NULL DEFAULT 0 CHECK(reward_points IN (0,50)),
+    review_note TEXT,
+    reviewed_by TEXT,
+    reviewed_at TEXT,
+    created_at TEXT NOT NULL,
+    UNIQUE(user_id,topic_id,section_id,tier,question_id,question_version)
+);
+CREATE INDEX IF NOT EXISTS idx_feedback_status ON question_feedback(status,created_at);
+CREATE INDEX IF NOT EXISTS idx_feedback_user ON question_feedback(user_id,created_at);
 
 -- progress / checkins 的复合主键已覆盖 (user_id, ...) 前缀，不需要重复索引。
 CREATE INDEX IF NOT EXISTS idx_draws_user ON draws(user_id, created_at);

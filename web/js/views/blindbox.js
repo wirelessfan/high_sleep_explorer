@@ -53,19 +53,19 @@ export async function renderBlindbox(view) {
   ]);
   root.appendChild(heroPanel);
 
-  /* ---- 券不足引导 ---- */
-  if (data.tickets < data.costs.single) {
-    root.appendChild(el('section', { class: 'panel', style: 'padding:13px;background:#fffbeb;border-color:#fcd34d' }, [
-      el('div', { style: 'font-size:12.5px;color:#92400e;line-height:1.7',
-        text: `盲盒券不够啦。去「许愿墙」提改进意见，每条 +${data.wish_bonus} 张；或用 ${data.exchange.points} 积分换 1 张。` }),
-      el('div', { class: 'row', style: 'gap:8px;margin-top:10px' }, [
-        el('button', { class: 'btn soft sm', style: 'flex:1', text: '💌 去许愿墙',
-          onclick: () => { location.hash = '#/wishes'; } }),
-        el('button', { class: 'btn sm', style: 'flex:1', text: `🔄 ${data.exchange.points} 积分换券`,
-          onclick: doExchange }),
-      ]),
-    ]));
-  }
+  /* ---- 积分换券：按当日剩余张数与积分共同限制 ---- */
+  const affordable = Math.floor(me.points / data.exchange.points);
+  const maxExchange = Math.min(data.exchange.remaining_today, affordable);
+  const exchangeCount = el('select', { 'aria-label': '兑换盲盒券张数', style: 'padding:9px;border:1px solid #eaddc9;border-radius:9px' },
+    Array.from({ length: Math.max(1, maxExchange) }, (_, i) => el('option', { value: String(i + 1), text: `${i + 1} 张 · ${(i + 1) * data.exchange.points} 积分` })));
+  exchangeCount.disabled = maxExchange < 1;
+  const exchangeBtn = el('button', { class: 'btn sm', text: '确认兑换', disabled: maxExchange < 1, onclick: doExchange });
+  root.appendChild(el('section', { class: 'panel', style: 'padding:14px' }, [
+    el('div', { style: 'font-size:13px;font-weight:800', text: '积分换盲盒券' }),
+    el('div', { class: 'hint', style: 'margin-top:6px;line-height:1.7', text: `${data.exchange.points} 积分 = 1 张，每天最多 ${data.exchange.daily_limit} 张；今日已兑 ${data.exchange.used_today} 张，还可兑 ${data.exchange.remaining_today} 张。当前 ${me.points} 积分。` }),
+    el('div', { class: 'row', style: 'gap:8px;margin-top:10px;flex-wrap:wrap' }, [exchangeCount, exchangeBtn]),
+    maxExchange < 1 ? el('div', { class: 'hint', style: 'margin-top:8px', text: data.exchange.remaining_today < 1 ? '今天的兑换额度已用完，明天再来。' : '积分不足，做题积累积分后即可兑换。' }) : null,
+  ]));
 
   /* ---- 图鉴 ---- */
   root.appendChild(el('div', { class: 'section-head' }, [
@@ -125,7 +125,7 @@ export async function renderBlindbox(view) {
       `开盒消耗盲盒券：单开 ${data.costs.single} 张，十连 ${data.costs.ten} 张。`,
       `概率：${Object.entries(data.rates).map(([r, v]) => `${r} ${v}%`).join(' · ')}。`,
       '重复角色按稀有度返还盲盒券；SR 与 SSR 可换实物。',
-      `积分兑换：${data.exchange.points} 积分 = 1 张盲盒券，每天限 ${data.exchange.daily_limit} 次。`,
+      `积分兑换：${data.exchange.points} 积分 = 1 张盲盒券，每天最多兑换 ${data.exchange.daily_limit} 张。`,
     ].map((t) => el('div', { style: 'font-size:11.5px;color:#6b5b52;line-height:1.8', text: `· ${t}` })),
   ]));
 
@@ -158,12 +158,15 @@ export async function renderBlindbox(view) {
   tenBtn.addEventListener('click', () => doDraw(10));
 
   async function doExchange() {
+    exchangeBtn.disabled = true;
     try {
-      const res = await api.exchangeBlindbox(1);
-      toast(`兑换成功，获得 1 张盲盒券`);
-      renderBlindbox(view);
+      const count = Number(exchangeCount.value);
+      await api.exchangeBlindbox(count);
+      toast(`兑换成功，获得 ${count} 张盲盒券`);
+      await renderBlindbox(view);
     } catch (err) {
       toast(err.message || '兑换失败');
+      exchangeBtn.disabled = maxExchange < 1;
     }
   }
 

@@ -19,7 +19,7 @@ class DrawIn(BaseModel):
 
 
 class ExchangeIn(BaseModel):
-    count: int = Field(default=1, ge=1, le=5)
+    count: int = Field(default=1, ge=1, le=9)
 
 
 class RedeemIn(BaseModel):
@@ -55,10 +55,7 @@ def _snapshot(conn: sqlite3.Connection, user: sqlite3.Row) -> dict:
         "costs": {"single": cfg["single_cost"], "ten": cfg["ten_cost"]},
         "rates": cfg["rarity"],
         "value_cny": cfg["value_cny"],
-        "exchange": {
-            "points": cfg.get("exchange_points", 100),
-            "daily_limit": cfg.get("exchange_daily_limit", 1),
-        },
+        "exchange": blindbox.exchange_status(conn, user["id"]),
         "wish_bonus": _wall_cfg().get("ticket_reward", 1),
     }
 
