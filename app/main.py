@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import content_loader, db
-from app.routers import question_feedback
+from app.routers import question_feedback, exam_training
 from app.routers import (achievements, admin, blindbox, bosses, cards, content,
                          progress, rewards, session, wishes, wrongbook)
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,6 +97,7 @@ app.include_router(blindbox.router, prefix="/api/v1")
 app.include_router(wishes.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
 app.include_router(question_feedback.router, prefix="/api/v1")
+app.include_router(exam_training.router, prefix="/api/v1")
 
 # 静态资源：卡片图、示意图
 if ASSETS_DIR.exists():

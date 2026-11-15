@@ -252,3 +252,10 @@ export const postQuestionFeedback = (payload) => request('/question-feedback', {
 export const getQuestionFeedback = () => request('/question-feedback');
 export const adminQuestionFeedback = () => request('/admin/question-feedback');
 export const reviewQuestionFeedback = (id, status, note) => request(`/admin/question-feedback/${id}`, { method: 'PATCH', body: { status, note } });
+
+/* 考点专项与逐题总结 */
+export const getExamTraining = () => request('/exam-training');
+export const getExamModel = (id) => request(`/exam-training/${encodeURIComponent(id)}`);
+export const answerExamQuestion = (id, question_id, picked) => request(`/exam-training/${encodeURIComponent(id)}/answer`, {method:'POST',body:{question_id,picked}});
+export const postReflection = (body) => request('/reflections', {method:'POST',body});
+export const getSectionReflections = (id,sid,tier='basic') => request(`/topics/${encodeURIComponent(id)}/sections/${encodeURIComponent(sid)}/reflections?tier=${encodeURIComponent(tier)}`);

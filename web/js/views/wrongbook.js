@@ -1,5 +1,6 @@
 /* 错题本：按主题清零 + AI 错误分析 */
 
+import { mountReflection } from '../reflection.js';
 import * as api from '../api.js';
 import { el, toast, openSheet, SUBJECT_LABEL, SUBJECT_CLASS } from '../ui.js';
 
@@ -336,13 +337,15 @@ function showRedoResult(res, onClose) {
   if (rewards.children.length) box.appendChild(rewards);
 
   res.results.forEach((r) => {
-    box.appendChild(el('div', {
+    const item = el('div', {
       style: `text-align:left;border:1px solid ${r.correct ? '#a7f3d0' : '#fecaca'};border-radius:11px;padding:10px 12px;background:${r.correct ? '#f0fdf4' : '#fef2f2'}`,
     }, [
       el('div', { style: 'font-size:12px;line-height:1.6;color:#334155', text: r.stem.slice(0, 60) + (r.stem.length > 60 ? '…' : '') }),
       el('div', { style: `font-size:11px;font-weight:800;margin-top:4px;color:${r.correct ? '#047857' : '#b91c1c'}`,
         text: r.skipped ? '未作答' : (r.correct ? '✓ 答对，已清零' : '✗ 又错了，答对再清') }),
-    ]));
+    ]);
+    mountReflection(item,r.reflection);
+    box.appendChild(item);
   });
 
   openSheet(el('div', {}, [

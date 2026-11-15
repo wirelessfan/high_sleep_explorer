@@ -8,6 +8,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
+from app.services import reflections
 from app import db
 from app.routers.session import current_user
 from app.services import ai_client, ai_config, events, wrongbook
@@ -77,6 +78,15 @@ def redo_topic(topic_id: str, body: RedoIn, user: sqlite3.Row = Depends(current_
             res = wrongbook.redo(conn, fresh, topic_id, body.answers)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc))
+        for result in res['results']:
+            if result.get('skipped') or type(result.get('picked')) is not int:
+                continue
+            original = conn.execute("SELECT * FROM wrong_questions WHERE id=? AND user_id=? AND source='practice'", (result['id'],user['id'])).fetchone()
+            if original:
+                question = {'stem':original['stem'],'options':json.loads(original['options_json']),
+                            'answer':original['answer'],'explain':original['explain'],'skill':original['skill']}
+                result['reflection'] = reflections.record_attempt(conn,user['id'],question,source='bank',
+                    topic_id=original['topic_id'],section_id=original['section_id'],tier=original['tier'],question_id=original['question_id'])
         row = conn.execute("SELECT points FROM users WHERE id=?", (user["id"],)).fetchone()
     res["points"] = row["points"]
     return res

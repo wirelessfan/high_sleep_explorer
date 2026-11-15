@@ -17,11 +17,14 @@ import { renderBlindbox } from './views/blindbox.js';
 import { renderWishes } from './views/wishes.js';
 import { renderLogin } from './views/login.js';
 import { renderFeedback } from './views/feedback.js';
+import { renderExamTraining } from './views/exam-training.js';
 import { renderAccounts } from './views/accounts.js';
 
 function registerRoutes() {
   route('/', renderHome);
   route('/subjects', renderSubjects);
+  route('/exam-training', renderExamTraining);
+  route('/exam-training/:id', renderExamTraining);
   route('/topic/:id', renderTopic);
   route('/topic/:id/:sid', renderSection);
   route('/topic/:id/:sid/:tier', renderSection);

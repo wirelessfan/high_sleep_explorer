@@ -236,3 +236,7 @@ LEARN_DB=/path/to/app.db python tools/seed_users.py
 ### Sunny 的期末备考
 
 人教版必修 1 范围、阶段与双倍学习奖励见 [备考说明](reports/sunny-term-review-2026-11-15.md)。配置入口为 `content/study_plan.json`，考试日期为估计值，需以学校通知为准。
+
+### 考点专项与逐题总结
+
+首页备考卡、路线页进入「考点雷达」，18 类模型、36 道辨识/迁移题，练习识别线索、适用条件、速解和反例。原题各题型、错题本重做也支持判分后总结。总结达标奖励与三题高匹配连击规则、离线评分限制见 [专项说明](reports/exam-summary-training-2026-11-15.md)；内容与奖励配置为 `content/exam_training.json`。本功能不调用在线 AI。

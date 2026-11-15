@@ -23,9 +23,47 @@ DB_PATH = Path(os.environ.get("LEARN_DB", Path(__file__).resolve().parent.parent
 # v10 = 每台设备独立的七天登录会话。
 # v11 = 题目反馈、审核与一次性积分奖励。
 # v12 = 正式账号、独立访客与历史临时记录分离。
-SCHEMA_VERSION = 12
+# v13 = 逐题总结、作答凭据和连续高匹配奖励。
+SCHEMA_VERSION = 13
 
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS question_attempts (
+    user_id TEXT NOT NULL REFERENCES users(id),
+    fingerprint TEXT NOT NULL,
+    source TEXT NOT NULL,
+    topic_id TEXT NOT NULL,
+    section_id TEXT NOT NULL,
+    tier TEXT NOT NULL,
+    question_id TEXT NOT NULL,
+    question_json TEXT NOT NULL,
+    rubric_json TEXT,
+    created_at TEXT NOT NULL,
+    PRIMARY KEY(user_id, fingerprint)
+);
+CREATE TABLE IF NOT EXISTS question_reflections (
+    user_id TEXT NOT NULL REFERENCES users(id),
+    fingerprint TEXT NOT NULL,
+    summary_json TEXT NOT NULL,
+    score INTEGER NOT NULL,
+    best_score INTEGER NOT NULL,
+    feedback_json TEXT NOT NULL,
+    rewarded INTEGER NOT NULL DEFAULT 0,
+    base_points INTEGER NOT NULL DEFAULT 0,
+    points INTEGER NOT NULL DEFAULT 0,
+    reward_day TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY(user_id, fingerprint),
+    FOREIGN KEY(user_id,fingerprint) REFERENCES question_attempts(user_id,fingerprint)
+);
+CREATE TABLE IF NOT EXISTS reflection_state (
+    user_id TEXT PRIMARY KEY REFERENCES users(id),
+    day TEXT NOT NULL,
+    streak INTEGER NOT NULL DEFAULT 0,
+    drops INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_reflections_day ON question_reflections(user_id,reward_day);
+
 CREATE TABLE IF NOT EXISTS sessions (
     token_hash TEXT PRIMARY KEY,
     user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

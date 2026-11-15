@@ -12,6 +12,7 @@ export function studyPlanCard(plan, compact = false) {
     el('span', { class: 'chip', text: `学习卡包 ×${plan.tickets_multiplier}` }),
     el('span', { class: 'chip', text: `备考单元 ${plan.done}/${plan.total}` }),
   ]));
+  wrap.appendChild(el('button', { class:'btn sm',style:'margin-top:12px',text:'考点雷达：条件与速解专项 →',onclick:()=>navigate('#/exam-training') }));
   if (!compact) {
     wrap.appendChild(el('p', { text: plan.phase.advice }));
     if (plan.active) for (const r of plan.recommendations) {

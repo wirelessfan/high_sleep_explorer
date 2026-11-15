@@ -25,6 +25,13 @@ def _now():
 
 
 def resolve_question(conn, user_id, body):
+    if body['section_id'].startswith('drill-') and not body.get('wrong_question_id'):
+        model_id = body['section_id'][6:]
+        model = next((m for m in content_loader.exam_training()['models'] if m['id']==model_id),None)
+        question = next((q for q in model['questions'] if q['id']==body['question_id']),None) if model else None
+        if not model or not question or body['topic_id']!=model['topic_id'] or body['tier']!='basic':
+            raise FeedbackError('专项题目定位不存在',404)
+        return question
     if body.get('wrong_question_id'):
         row = conn.execute("SELECT * FROM wrong_questions WHERE id=? AND user_id=? AND source='practice'",
                            (body['wrong_question_id'], user_id)).fetchone()

@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from app import content_loader, db
 from app.routers.session import current_user
-from app.services import grading, gacha, scoring, wrongbook, study_plan
+from app.services import grading, gacha, scoring, wrongbook, study_plan, reflections
 
 router = APIRouter(tags=["progress"])
 
@@ -103,6 +103,8 @@ def submit(topic_id: str, section_id: str, body: SubmitIn, tier: str = "basic",
         wrongbook.record_wrong(conn, user["id"], topic_id, section_id, tier,
                                grading.flatten_details(result),
                                wrongbook.questions_of(content))
+        reflections.record_bank(conn,user['id'],topic_id,section_id,tier,
+                                grading.flatten_details(result),wrongbook.questions_of(content))
 
     # levels 类型把明细嵌在 levels[].details 里，统一摊平供错题本与薄弱点统计使用
     details = grading.flatten_details(result)

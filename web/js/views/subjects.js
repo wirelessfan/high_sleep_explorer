@@ -29,6 +29,8 @@ export async function renderSubjects(view) {
 
   if (catalog.study_plan) root.appendChild(studyPlanCard(catalog.study_plan, true));
 
+  root.appendChild(el('button',{class:'btn ghost',text:'考点雷达 · 专项训练与总结奖励',onclick:()=>navigate('#/exam-training')}));
+
   for (const subj of catalog.subjects) {
     const art = SUBJECT_ART[subj.id];
     const doneCount = subj.items.filter((t) => t.complete).length;
