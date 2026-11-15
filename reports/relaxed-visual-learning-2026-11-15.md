@@ -30,4 +30,8 @@
 
 ## 发布结果
 
-待发布验证后补充。
+运行版本：`312dc5269ef143ad2779c7a6a498807e6cc9f032`，已推送 Gitee master 和 codex/relaxed-visual-learning。以 97d11b8 为基线比较线上文件，更新 44 个运行文件（包含 36 张 SVG），文件哈希全部匹配发布包。
+
+备份：`/var/backups/learning-highschool/relaxed-pre-312dc52-20261115-125611`，包含完整数据库、旧代码和业务表摘要。停服更新前后，原有全部 17 张业务表的全部列/行摘要完全一致，包括 users、progress、events、question_attempts、question_reflections、reflection_state 等；schema 保持 13，数据库完整性和外键检查通过。
+
+主站 `https://123-56-217-104.sslip.io/` 与 `https://123.56.217.104.sslip.io:8090/` 的健康检查、全部公开 JS/SVG 哈希和未登录专项 API 认证保护检查均通过。服务端只读验证 18 类/36 题均有插图且无目标秒数字段，18 类预设可用，Sunny 活动倍率仍为 2、原进度仍为 5/86。未使用真实账号作答、签到或抽奖，未修改 AI、systemd 或代理配置。隔离本地预览已关闭。
