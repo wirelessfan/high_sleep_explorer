@@ -53,11 +53,17 @@ def beaker(x,y,label,fill='#dceefa',unknown=False):
 def diagram(mid, n):
     if mid=='rope':
         if n==1:
-            return (line(160,65,480,65)+line(320,65,320,94)+circle(320,120,27,'#fff')+
-                path('M 290 213 V 120 A 30 30 0 0 1 350 120 V 245',ORANGE,5)+
-                box(252,210,76,55,'2 kg')+box(312,245,76,55,'3 kg')+
-                arrow(250,200,250,145)+text(227,150,'T')+arrow(400,232,400,172)+text(423,177,'T')+
-                text(476,130,'同一根轻绳',size=17)+text(476,158,'理想定滑轮',size=17))
+            return (line(130,65,430,65)+line(280,65,280,84)+circle(280,130,46,'#fff')+
+                path('M 230 210 V 130 A 50 50 0 0 1 330 130 V 230',ORANGE,5)+
+                box(190,210,80,52,'2 kg')+box(290,230,80,52,'3 kg')+
+                arrow(230,210,230,155)+text(207,171,'T',GREEN)+
+                arrow(330,230,330,175)+text(351,190,'T',GREEN)+
+                arrow(230,262,230,307,ORANGE)+text(184,298,'20 N',ORANGE)+
+                arrow(330,282,330,327,ORANGE)+text(373,317,'30 N',ORANGE)+
+                arrow(145,254,145,195,BLUE)+text(101,217,'加速度',BLUE,size=16)+text(101,241,'向上',BLUE,size=16)+
+                arrow(420,220,420,279,BLUE)+text(486,242,'加速度',BLUE,size=16)+text(486,266,'向下',BLUE,size=16)+
+                text(488,112,'同一根轻绳',size=17)+text(488,140,'理想定滑轮',size=17)+
+                text(320,349,'张力相等 ≠ 各自受力平衡',size=18))
         return (line(240,65,400,65)+path('M 320 65 V 215',ORANGE,12)+
             box(272,215,96,65,'2 kg')+text(445,145,'绳本身有质量：1 kg',size=17)+
             arrow(260,115,260,72)+text(211,104,'T上')+arrow(260,185,260,226)+text(205,211,'T下')+
@@ -180,6 +186,8 @@ def build(check=False):
         for n,q in enumerate(model['questions'],1):
             title=model['title'].split('：')[0]+' · 情境图'
             alt='题目情境示意：'+q['stem']
+            if q['id']=='rope-1':
+                alt+=' 图中同时标出两物体向上的相同张力T、向下的20N和30N重力，以及释放后的加速度方向：2kg向上、3kg向下。张力相等不代表各自受力平衡。'
             svg=(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title desc">'
                 f'<title id="title">{escape(title)}</title><desc id="desc">{escape(alt)}</desc>'
                 '<rect width="640" height="360" rx="20" fill="#f5faf7"/>'
@@ -189,8 +197,9 @@ def build(check=False):
             assert tree.attrib['viewBox']=='0 0 640 360'
             assert all(e.tag.split('}')[-1] not in {'script','image','foreignObject','animate'} for e in tree.iter())
             target=OUT/(q['id']+'.svg')
-            meta={'src':'/diagrams/discoveries/'+target.name,'title':title,'alt':alt,
-                  'caption':'点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。'}
+            meta={'src':'/diagrams/discoveries/'+target.name+('?v=2' if q['id']=='rope-1' else ''),'title':title,'alt':alt,
+                  'caption':('点图可以放大。绿色为绳的张力，橙色为物体重力，蓝色为释放后的加速度方向。“由静止释放”只是初速度为零，不代表保持静止。箭头示意不按比例。' if q['id']=='rope-1' else
+                             '点图可以放大。示意图不按比例；观察图中的线索，再以题干条件为准。')}
             if check:
                 assert target.read_text(encoding='utf-8')==svg,target
                 assert q.get('diagram')==meta,q['id']
