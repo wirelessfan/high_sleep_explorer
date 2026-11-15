@@ -1,5 +1,6 @@
 /* 科目 / 主题列表 */
 
+import { studyPlanCard, studyLabel } from '../study-plan.js';
 import * as api from '../api.js';
 import { el, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR } from '../ui.js';
 import { navigate } from '../router.js';
@@ -25,6 +26,8 @@ export async function renderSubjects(view) {
     el('div', { style: 'font-size:19px;font-weight:800;letter-spacing:-.01em;margin-top:2px', text: '三条探险路线' }),
     el('div', { style: 'font-size:12px;color:#a3928a;margin-top:3px', text: '每科一条线，挑你想走的那条' }),
   ]));
+
+  if (catalog.study_plan) root.appendChild(studyPlanCard(catalog.study_plan, true));
 
   for (const subj of catalog.subjects) {
     const art = SUBJECT_ART[subj.id];
@@ -65,7 +68,7 @@ export async function renderSubjects(view) {
               text: '已完成',
             }) : null,
           ]),
-          el('div', { class: 'dsc', text: t.subtitle }),
+          el('div', { class: 'dsc', text: studyLabel(t.study) || t.subtitle }),
           el('div', { class: 'row', style: 'gap:6px;margin-top:9px' }, [
             el('span', { class: `chip ${SUBJECT_CLASS[subj.id]}`, style: 'font-size:10px;padding:2px 8px', text: t.grade }),
             el('span', { class: 'chip', style: 'font-size:10px;padding:2px 8px', text: `⏱ ${t.minutes} 分钟` }),

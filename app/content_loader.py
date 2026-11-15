@@ -61,6 +61,11 @@ def blindbox_characters() -> dict:
 
 
 @lru_cache(maxsize=1)
+def study_plan() -> dict:
+    return _read_json(CONTENT_DIR / "study_plan.json")
+
+
+@lru_cache(maxsize=1)
 def rewards() -> dict:
     return _read_json(CONTENT_DIR / "rewards.json")
 
@@ -279,6 +284,7 @@ def clear_cache() -> None:
     cards.cache_clear()
     blindbox_characters.cache_clear()
     rewards.cache_clear()
+    study_plan.cache_clear()
     media.cache_clear()
     bosses.cache_clear()
     daily.cache_clear()

@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 
 from app import content_loader, db
 from app.routers.session import current_user
-from app.services import grading, gacha, scoring, wrongbook
+from app.services import grading, gacha, scoring, wrongbook, study_plan
 
 router = APIRouter(tags=["progress"])
 
@@ -87,17 +87,16 @@ def submit(topic_id: str, section_id: str, body: SubmitIn, tier: str = "basic",
                 (_now(), user["id"], topic_id, section_id, tier),
             )
 
-        row = conn.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
         section_ids = [s["id"] for s in data["sections"]]
         topic_reward = scoring.topic_complete(conn, user["id"], topic_id, section_ids)
         if sec["type"] == "boss" and passed and not is_review:
             boss_tickets = scoring.boss_reward(conn, user["id"], topic_id, section_id, passed,
                                                tier=tier)
             if boss_tickets:
-                row = conn.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
                 topic_reward = {**topic_reward, "tickets": topic_reward["tickets"] + boss_tickets}
+        row = conn.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
 
-        unlocked = _next_unit(data, topic_id, section_id, tier)
+        unlocked = _next_unit(data, topic_id, section_id, tier, user)
 
         # 答错的题写入错题本（重复答错累加次数；正常重做版块不清错，
         # 清零只能走错题本的重做流程，保证清零奖励不被刷）
@@ -119,6 +118,8 @@ def submit(topic_id: str, section_id: str, body: SubmitIn, tier: str = "basic",
         "weak_skills": skills,
         "points": award["points"],
         "points_reason": award["reason"],
+        "study_reward": award['reward'],
+        "total_tickets": row['tickets'],
         "total_points": row["points"],
         "is_review": is_review,
         "next_section": unlocked[0] if unlocked else None,
@@ -166,13 +167,15 @@ def mark_read(topic_id: str, section_id: str, body: ReadIn, tier: str = "basic",
             (user["id"], topic_id, section_id, tier),
         )
 
-        row = conn.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
         section_ids = [s["id"] for s in data["sections"]]
         topic_reward = scoring.topic_complete(conn, user["id"], topic_id, section_ids)
-        unlocked = _next_unit(data, topic_id, section_id, tier)
+        row = conn.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
+        unlocked = _next_unit(data, topic_id, section_id, tier, user)
 
     return {
         "ok": True,
+        "study_reward": award['reward'],
+        "total_tickets": row['tickets'],
         "points": award["points"],
         "total_points": row["points"],
         "is_review": is_review,
@@ -262,9 +265,12 @@ def _is_passed(section: dict, result: dict) -> bool:
 
 
 def _next_unit(data: dict, topic_id: str, current_section: str,
-               current_tier: str) -> tuple[str, str] | None:
+               current_tier: str, user=None) -> tuple[str, str] | None:
     """下一学习单元：基础的六个版块走完，再进进阶、高级。"""
     pairs = content_loader.topic_pairs(topic_id)
+    plan = study_plan.profile(user)
+    if plan and plan['active'] and (current_section, current_tier) in study_plan.pairs(topic_id):
+        pairs = study_plan.pairs(topic_id)
     try:
         idx = pairs.index((current_section, current_tier))
     except ValueError:

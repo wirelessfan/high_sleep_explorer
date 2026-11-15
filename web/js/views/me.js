@@ -1,10 +1,11 @@
 /* 我的：账号、积分、签到、统计 */
 
+import { studyPlanCard } from '../study-plan.js';
 import * as api from '../api.js';
 import { el, toast, openSheet } from '../ui.js';
 
 export async function renderMe(view) {
-  const [me, checkin] = await Promise.all([api.fetchMe(), api.getCheckin()]);
+  const [me, checkin, catalog] = await Promise.all([api.fetchMe(), api.getCheckin(), api.getCatalog()]);
 
   const root = el('div', { class: 'stack' });
 
@@ -257,6 +258,8 @@ export async function renderMe(view) {
       el('div', { style: 'font-size:18px;color:#d9c8b4', text: '›' }),
     ]),
   ]));
+
+  if (catalog.study_plan) root.appendChild(studyPlanCard(catalog.study_plan, true));
 
   /* ---- 卡包 / 碎片 ---- */
   root.appendChild(el('section', { class: 'panel' }, [

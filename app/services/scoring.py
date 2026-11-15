@@ -5,7 +5,7 @@ import sqlite3
 from datetime import date, timedelta
 
 from app import content_loader
-from app.services import events
+from app.services import events, study_plan
 
 
 def _cfg() -> dict:
@@ -100,6 +100,9 @@ def award_section(conn: sqlite3.Connection, user_id: str, topic_id: str, section
     幂等：同一次提交不会重复发分（由 events.key 唯一约束保证）。
     """
     cfg = _cfg()
+    reward = study_plan.reward_context(conn, user_id, topic_id, section_id, tier)
+    multiplier = reward['points_multiplier']
+    base_points = 0
     row = conn.execute(
         "SELECT * FROM progress WHERE user_id=? AND topic_id=? AND section_id=? AND tier=?",
         (user_id, topic_id, section_id, tier),
@@ -112,31 +115,33 @@ def award_section(conn: sqlite3.Connection, user_id: str, topic_id: str, section
     if is_review or already_awarded:
         # 复习：固定分，检查日上限
         used = conn.execute(
-            "SELECT COALESCE(SUM(CAST(json_extract(payload,'$.points') AS INTEGER)),0) AS s "
+            "SELECT COALESCE(SUM(CAST(COALESCE(json_extract(payload,'$.base_points'),json_extract(payload,'$.points')) AS INTEGER)),0) AS s "
             "FROM events WHERE user_id=? AND kind='review' AND substr(created_at,1,10)=?",
             (user_id, today_str()),
         ).fetchone()["s"]
         remain = max(0, cfg["review_daily_cap"] - int(used))
-        points = min(cfg["review_points"], remain)
+        base_points = min(cfg["review_points"], remain)
+        points = base_points * multiplier
         reason = "review"
         # 事件必须写成功才发分；冲突说明这次提交已经处理过。
         if points > 0 and not _log_event(
             conn, user_id, f"review:{topic_id}:{section_id}:{tier}:{today_str()}:{used}",
-            "review", {"points": points, "section": section_id, "tier": tier}
+            "review", {"points": points, "base_points": base_points, "reward": reward, "section": section_id, "tier": tier}
         ):
             points = 0
     elif passed:
-        points = round(section_points(section_id) * tier_multiplier(tier))
+        base_points = round(section_points(section_id) * tier_multiplier(tier))
+        points = base_points * multiplier
         reason = "first"
         if not _log_event(conn, user_id, f"first:{topic_id}:{section_id}:{tier}", "first",
-                          {"points": points, "section": section_id, "tier": tier}):
+                          {"points": points, "base_points": base_points, "reward": reward, "section": section_id, "tier": tier}):
             points = 0
 
     if points:
         conn.execute("UPDATE users SET points = points + ?, last_seen = ? WHERE id = ?",
                      (points, today_str(), user_id))
 
-    return {"points": points, "reason": reason, "already_awarded": already_awarded}
+    return {"points": points, "reason": reason, "already_awarded": already_awarded, "reward": reward}
 
 
 def _log_event(conn: sqlite3.Connection, user_id: str, key: str, kind: str, payload: dict) -> bool:
@@ -168,10 +173,14 @@ def topic_complete(conn: sqlite3.Connection, user_id: str, topic_id: str, sectio
         return awarded
 
     cfg = _cfg()["tickets"]
-    if _log_event(conn, user_id, f"topic_done:{topic_id}", "topic_complete", {"tickets": cfg["topic_complete"]}):
+    user = conn.execute('SELECT * FROM users WHERE id=?', (user_id,)).fetchone()
+    plan = study_plan.profile(user)
+    multiplier = plan['tickets_multiplier'] if plan and study_plan.pairs(topic_id) else 1
+    tickets = cfg['topic_complete'] * multiplier
+    if _log_event(conn, user_id, f"topic_done:{topic_id}", "topic_complete", {"tickets": tickets, "multiplier": multiplier}):
         conn.execute("UPDATE users SET tickets = tickets + ? WHERE id = ?",
-                     (cfg["topic_complete"], user_id))
-        awarded = {"tickets": cfg["topic_complete"], "complete": True}
+                     (tickets, user_id))
+        awarded = {"tickets": tickets, "complete": True}
     return awarded
 
 
@@ -181,10 +190,12 @@ def boss_reward(conn: sqlite3.Connection, user_id: str, topic_id: str, section_i
     if not passed:
         return 0
     tickets = int(_cfg()["tickets"].get("boss_first", 0))
+    reward = study_plan.reward_context(conn, user_id, topic_id, section_id, tier)
+    tickets *= reward['tickets_multiplier']
     if tickets <= 0:
         return 0
     if _log_event(conn, user_id, f"boss:{topic_id}:{section_id}:{tier}", "boss_first",
-                  {"tickets": tickets, "tier": tier}):
+                  {"tickets": tickets, "tier": tier, "reward": reward}):
         conn.execute("UPDATE users SET tickets = tickets + ? WHERE id = ?", (tickets, user_id))
         return tickets
     return 0

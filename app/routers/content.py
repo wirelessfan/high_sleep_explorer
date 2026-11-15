@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app import content_loader, db
 from app.routers.session import current_user
+from app.services import study_plan
 
 router = APIRouter(tags=["content"])
 
@@ -32,6 +33,7 @@ def get_catalog(user: sqlite3.Row = Depends(current_user)):
             "WHERE user_id=? AND status='done'",
             (user["id"],),
         ).fetchall()
+        plan = study_plan.dashboard(conn, user)
     done_set = {(r["topic_id"], r["section_id"], r["tier"]) for r in done_rows}
 
     subjects = []
@@ -66,10 +68,13 @@ def get_catalog(user: sqlite3.Row = Depends(current_user)):
                 "complete": done >= total,
                 "percent": round(done / total * 100) if total else 0,
                 "tiers": tier_progress,
+                "study": study_plan.topic_context(user, tid, {(s, tier) for t, s, tier in done_set if t == tid}),
             })
+        if plan and plan['active']:
+            items.sort(key=lambda t: not bool(t['study'] and t['study']['eligible']))
         subjects.append({**subj, "items": items})
 
-    return {"subjects": subjects, "sections": cat["sections"], "tiers": content_loader.tier_meta()}
+    return {"subjects": subjects, "sections": cat["sections"], "tiers": content_loader.tier_meta(), "study_plan": plan}
 
 
 @router.get("/topics/{topic_id}")
@@ -89,6 +94,7 @@ def get_topic(topic_id: str, user: sqlite3.Row = Depends(current_user)):
         tiers = content_loader.section_tier_list(sec)
         for tier in tiers:
             tier["status"] = progress.get((sec["id"], tier["id"]), "open")
+            tier['study'] = study_plan.unit_context(user, topic_id, sec['id'], tier['id'])
         sections_out.append({
             "id": sec["id"],
             "type": sec["type"],
@@ -113,6 +119,7 @@ def get_topic(topic_id: str, user: sqlite3.Row = Depends(current_user)):
         "reward_card": data.get("reward_card"),
         "diagrams": data.get("diagrams") or [],
         "sections": sections_out,
+        "study": study_plan.topic_context(user, topic_id, {pair for pair, status in progress.items() if status == 'done'}),
         "tiers": content_loader.tier_meta(),
     }
 
@@ -155,6 +162,7 @@ def get_section(topic_id: str, section_id: str, tier: str = "basic",
         "status": row["status"] if row else "open",
         "best_score": row["best_score"] if row else 0,
         "boss": content_loader.boss_for(topic_id, section_id),
+        "study": study_plan.unit_context(user, topic_id, section_id, tier),
     }
     return payload
 
@@ -220,6 +228,11 @@ def get_daily(date_str: str | None = Query(default=None, alias="date"),
     """
     day = _parse_day(date_str)
     info = content_loader.daily_for(day)
+    with db.ro() as conn:
+        plan = study_plan.dashboard(conn, user)
+    # 展示日期不能启动、延长或改变服务端奖励活动。
+    if plan and plan['active'] and plan['recommendations']:
+        info = {**info, 'special': None, 'topic_id': plan['recommendations'][0]['topic_id']}
     cat = content_loader.catalog()
     topic_meta = next((t for t in cat["topics"] if t["id"] == info["topic_id"]), None)
     if not topic_meta:
@@ -227,13 +240,20 @@ def get_daily(date_str: str | None = Query(default=None, alias="date"),
 
     subject = next((s for s in cat["subjects"] if s["id"] == topic_meta["subject"]), {})
     pairs = content_loader.topic_pairs(topic_meta["id"])
+    if plan and plan['active']:
+        pairs = study_plan.pairs(topic_meta['id'])
     total = len(pairs)
     with db.ro() as conn:
-        row = conn.execute(
-            "SELECT COUNT(*) AS n FROM progress WHERE user_id=? AND topic_id=? AND status='done'",
+        rows = conn.execute(
+            "SELECT section_id,tier FROM progress WHERE user_id=? AND topic_id=? AND status='done'",
             (user["id"], topic_meta["id"]),
-        ).fetchone()
-    done = row["n"] if row else 0
+        ).fetchall()
+    done_pairs = {(r['section_id'], r['tier']) for r in rows}
+    done = sum(pair in done_pairs for pair in pairs)
+    minutes = content_loader.topic_minutes(topic_meta['id'])
+    if plan and plan['active']:
+        minutes = sum(t['minutes'] for sec in content_loader.topic(topic_meta['id'])['sections']
+                      for t in content_loader.section_tier_list(sec) if (sec['id'], t['id']) in pairs)
 
     special = info["special"]
     return {
@@ -250,6 +270,7 @@ def get_daily(date_str: str | None = Query(default=None, alias="date"),
             "digest": special.get("digest", []),
         } if special else None,
         "quote": info["quote"],
+        "study_plan": plan,
         "topic": {
             "id": topic_meta["id"],
             "subject": topic_meta["subject"],
@@ -257,7 +278,7 @@ def get_daily(date_str: str | None = Query(default=None, alias="date"),
             "title": topic_meta["title"],
             "subtitle": topic_meta["subtitle"],
             "grade": topic_meta["grade"],
-            "minutes": content_loader.topic_minutes(topic_meta["id"]),
+            "minutes": minutes,
             "description": topic_meta["description"],
             "reward_card": topic_meta.get("reward_card"),
             "done": done,

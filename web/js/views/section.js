@@ -49,6 +49,10 @@ export async function renderSection(view, { id, sid, tier }) {
     ]),
   ]));
 
+  if (data.study) root.appendChild(el('section', { class: 'panel', text: data.study.active
+    ? `必修 1 备考奖励：本单元首通、复习积分 ×2，Boss 首通卡包 ×2（至 ${data.study.ends_on}）。复习仍按原基础额度计入每日上限。`
+    : `${data.study.label}。本单元当前按常规奖励发放。` }));
+
   // 难度开关：基础 / 进阶 / 高级
   root.appendChild(tierSwitcher(data.tiers || [], ACTIVE_TIER, id, sid));
 
@@ -224,6 +228,7 @@ function afterSubmit(root, res, topicId, sectionId) {
 
 function rewardPills(res) {
   const out = [];
+  if (res.study_reward?.active && res.points > 0) out.push('已含备考 ×2');
   if (res.points > 0) out.push(`+${res.points} 积分`);
   if (res.topic_reward?.tickets) out.push(`+${res.topic_reward.tickets} 卡包`);
   if (res.total_points !== undefined) out.push(`总积分 ${res.total_points}`);

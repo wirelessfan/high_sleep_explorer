@@ -232,3 +232,7 @@ LEARN_DB=/path/to/app.db python tools/seed_users.py
 2026-11-13 挑战题升级：保留431道基础热身题，更新476道进阶/高级固定变式，覆盖88个模型。公开参考为OpenStax物理、化学和微积分教材，具体章节、作者、页面许可及采集哈希见[题源索引](content/challenge_sources.json)。新增中文挑战题内容以[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)提供，采用独立情境、数值与组合设问，并非原文逐句翻译；其他内容许可不变。
 
 [升级评估报告](reports/challenge-upgrade-2026-11-13.md)按实际推理任务给出6–7/10的教学难度估计，尚无学生实测标定。`python tools/verify_challenge_bank.py`独立复算476道题的正确选项唯一性；`python tools/build_challenge_bank.py`可重放固定变式。两脚本均只需标准库。
+
+### Sunny 的期末备考
+
+人教版必修 1 范围、阶段与双倍学习奖励见 [备考说明](reports/sunny-term-review-2026-11-15.md)。配置入口为 `content/study_plan.json`，考试日期为估计值，需以学校通知为准。

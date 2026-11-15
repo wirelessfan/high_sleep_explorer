@@ -1,5 +1,6 @@
 /* 主题详情：六版块 × 三档难度 */
 
+import { studyLabel } from '../study-plan.js';
 import * as api from '../api.js';
 import { el, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR, previewImage, previewGallery } from '../ui.js';
 import { navigate } from '../router.js';
@@ -16,6 +17,8 @@ export async function renderTopic(view, { id }) {
       el('div', { class: 'sub', text: topic.subtitle }),
     ]),
   ]));
+
+  if (topic.study) root.appendChild(el('section', { class: 'panel', text: `${studyLabel(topic.study)}。按下方各档标记选择：有 ×2 的单元纳入本轮备考，其余作为拓展。` }));
 
   const sections = topic.sections || [];
   const units = sections.flatMap((s) => (s.tiers || []).filter((t) => t.available));
@@ -128,7 +131,7 @@ export async function renderTopic(view, { id }) {
         onclick: () => { if (t.available) navigate(`#/topic/${id}/${s.id}/${t.id}`); },
       }, [
         el('span', { class: 'tp-name', text: t.name }),
-        el('span', { class: 'tp-score', text: t.available ? t.score : '建设中' }),
+        el('span', { class: 'tp-score', text: t.available ? (t.study?.active ? `${t.score} · ×2` : t.study && !t.study.eligible ? `${t.score} · 拓展` : t.score) : '建设中' }),
         t.status === 'done' ? el('span', { class: 'tp-done', text: '✓' }) : null,
       ]))),
     ]);

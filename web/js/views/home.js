@@ -1,5 +1,6 @@
 /* 首页：今日任务、签到、进度 */
 
+import { studyPlanCard, studyLabel } from '../study-plan.js';
 import * as api from '../api.js';
 import { el, toast, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR } from '../ui.js';
 import { navigate } from '../router.js';
@@ -42,11 +43,13 @@ export async function renderHome(view) {
     ]),
   ]));
 
+  if (catalog.study_plan) root.appendChild(studyPlanCard(catalog.study_plan));
+
   /* ---- 每日主题（节日特辑优先） ---- */
   root.appendChild(renderDaily(daily));
 
   /* ---- 今日任务 ---- */
-  if (next) {
+  if (next && !catalog.study_plan?.active) {
     const left = next.total - next.done;
     const mins = Math.max(5, Math.min(30, Math.round(next.minutes * (left / next.total))));
     root.appendChild(el('section', { class: 'panel hero' }, [
@@ -162,7 +165,7 @@ export async function renderHome(view) {
           el('div', { class: 'accent', style: `background:${SUBJECT_COLOR[subj.id]}` }),
           el('div', { class: 'body' }, [
             el('div', { class: 'ttl', text: t.title }),
-            el('div', { class: 'dsc', text: t.subtitle }),
+            el('div', { class: 'dsc', text: studyLabel(t.study) || t.subtitle }),
             el('div', { class: 'bar' }, [
               el('i', { style: `width:${t.percent}%;background:${SUBJECT_COLOR[subj.id]}` }),
             ]),
@@ -205,7 +208,7 @@ function renderDaily(daily) {
     el('div', { class: 'daily-head-txt' }, [
       el('div', {
         class: 'daily-eyebrow',
-        text: `${s ? '节日特辑' : '今日主题'} · ${daily.weekday} · ${fmtDate(daily.date)}`,
+        text: `${daily.study_plan?.active ? '备考推荐' : s ? '节日特辑' : '今日主题'} · ${daily.weekday} · ${fmtDate(daily.date)}`,
       }),
       el('h2', { class: 'daily-title', text: s ? s.title : t.title }),
     ]),
@@ -248,13 +251,16 @@ function renderDaily(daily) {
   wrap.appendChild(el('div', { class: 'daily-foot' }, [
     el('div', { class: 'row', style: 'gap:6px;flex-wrap:wrap' }, [
       el('span', { class: `chip ${SUBJECT_CLASS[t.subject]}`, text: t.subject_name }),
-      el('span', { class: 'chip', text: `⏱ 全程 ${t.minutes} 分钟` }),
-      el('span', { class: 'chip', text: t.complete ? '✓ 已全通' : `${t.done}/${t.total} 单元` }),
+      el('span', { class: 'chip', text: `⏱ ${daily.study_plan?.active ? "备考单元合计" : "全程"} ${t.minutes} 分钟` }),
+      el('span', { class: 'chip', text: `${t.done}/${t.total} ${daily.study_plan?.active ? '备考单元' : '单元'}` }),
     ]),
     el('button', {
       class: 'btn sm',
-      text: s ? '开始今日主题' : (t.complete ? '复习一遍' : '去闯关'),
-      onclick: () => navigate(`#/topic/${t.id}`),
+      text: daily.study_plan?.active ? (daily.study_plan.recommendations[0]?.action === 'wrongbook' ? '去错题本回顾' : '做今日备考单元') : s ? '开始今日主题' : (t.complete ? '复习一遍' : '去闯关'),
+      onclick: () => {
+        const r = daily.study_plan?.active && daily.study_plan.recommendations[0];
+        navigate(r?.action === "wrongbook" ? "#/wrongbook" : r ? `#/topic/${r.topic_id}/${r.section_id}/${r.tier}` : `#/topic/${t.id}`);
+      },
     }),
   ]));
   return wrap;

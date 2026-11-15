@@ -1,0 +1,208 @@
+{
+  "id": "sunny-2026-term1",
+  "username": "sunny",
+  "region": "北京东城区",
+  "grade": "高一",
+  "scope": "必修 1 期末备考",
+  "start": "2026-11-15",
+  "exam_date": "2026-12-31",
+  "date_estimated": true,
+  "points_multiplier": 2,
+  "tickets_multiplier": 2,
+  "assumptions": "教材按人教版必修 1 对齐，暂按 2019 版、数学 A 版编排；12 月 31 日为约一个半月后的预计日期，非学校公布考期。具体版本和学校范围有差异时可调整。",
+  "coverage_note": "本计划仅覆盖站内已有题目，不是完整期末考纲。数学还需结合课本补集合、逻辑、函数与指数；物理补实验；化学补元素化合物与实验。以学校复习范围为准。",
+  "reward_note": "活动期内，标注必修 1 的单元首通、复习积分及 Boss 首通卡包额外 ×2；含备考单元的主题全通卡包 2→4。复习按原基础额度每日 20 分计，全部为备考内容时实得最多 40 分。签到、错题清零、反馈奖励与兑换规则沿用原规则。已有首通不追溯补发。",
+  "phases": [
+    {
+      "id": "foundation",
+      "start": "2026-11-15",
+      "end": "2026-11-30",
+      "name": "基础查漏",
+      "advice": "每天 20–30 分钟：先做基础诊断，整理公式、条件与易错点；结合学校当前教学进度。"
+    },
+    {
+      "id": "improve",
+      "start": "2026-12-01",
+      "end": "2026-12-20",
+      "name": "综合提升",
+      "advice": "每天 20–30 分钟：优先进阶综合题，再挑战高级题；周末配合学校试卷限时练习。"
+    },
+    {
+      "id": "review",
+      "start": "2026-12-21",
+      "end": "2026-12-31",
+      "name": "考前回顾",
+      "advice": "优先错题和薄弱基础，回看实验步骤；按学校试卷做限时训练，避免盲目追逐跨册题。"
+    }
+  ],
+  "topics": {
+    "math-log": {
+      "label": "必修 1 · 对数函数面面观",
+      "units": {
+        "basic": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ],
+        "advanced": [
+          "quick",
+          "basic",
+          "hard",
+          "practice",
+          "boss"
+        ],
+        "expert": [
+          "quick",
+          "basic",
+          "hard",
+          "practice",
+          "boss"
+        ]
+      }
+    },
+    "math-trig": {
+      "label": "必修 1 · 三角函数这样记",
+      "units": {
+        "basic": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ]
+      }
+    },
+    "physics-kinematics": {
+      "label": "必修 1 · 匀变速直线运动",
+      "units": {
+        "basic": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ],
+        "advanced": [
+          "summary",
+          "boss"
+        ],
+        "expert": [
+          "quick",
+          "summary",
+          "hard",
+          "boss"
+        ]
+      }
+    },
+    "physics-newton": {
+      "label": "必修 1 · 牛顿运动定律",
+      "units": {
+        "basic": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ],
+        "expert": [
+          "boss"
+        ]
+      }
+    },
+    "chemistry-mole": {
+      "label": "必修 1 · 物质的量",
+      "units": {
+        "basic": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ],
+        "advanced": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ],
+        "expert": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ]
+      }
+    },
+    "chemistry-redox": {
+      "label": "必修 1 · 氧化还原反应",
+      "units": {
+        "basic": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ],
+        "expert": [
+          "hard",
+          "boss"
+        ],
+        "advanced": [
+          "boss"
+        ]
+      }
+    },
+    "chemistry-ionic": {
+      "label": "必修 1 · 离子反应",
+      "units": {
+        "basic": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ],
+        "advanced": [
+          "hard",
+          "boss"
+        ],
+        "expert": [
+          "boss"
+        ]
+      }
+    },
+    "chemistry-periodic": {
+      "label": "必修 1 · 元素周期律",
+      "units": {
+        "basic": [
+          "quick",
+          "basic",
+          "summary",
+          "hard",
+          "practice",
+          "boss"
+        ],
+        "advanced": [
+          "hard",
+          "boss"
+        ],
+        "expert": [
+          "boss"
+        ]
+      }
+    }
+  }
+}
