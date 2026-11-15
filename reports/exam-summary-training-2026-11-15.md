@@ -46,4 +46,10 @@
 
 ## 发布结果
 
-待上线后补充运行版本、数据保持比对及双入口验证结果。
+运行版本：`b913c998a5ab0728703062a3bbba219bbba6ff0d`，已推送 Gitee master 和 codex/exam-summary-training。以 c447e74 为基线逐文件核对后更新 17 个运行文件，线上 SHA-256 全部匹配发布包。
+
+备份：`/var/backups/learning-highschool/training-pre-b913c99-20261115-122129`，包含完整数据库、旧代码和业务表摘要。停服迁移前后，原有 users、checkins、card_owned、draws、events、achievements、progress、wrong_questions、ai_config、ai_requests、blindbox_owned、wishes、sessions、question_feedback 共 14 张业务表全部列/行摘要完全一致。schema 升至 13，新增三张表在启动前均为空，数据库完整性和外键检查通过。
+
+主站 `https://123-56-217-104.sslip.io/` 和 `https://123.56.217.104.sslip.io:8090/` 健康检查、公开 JS 文件哈希、专项 API 未登录 401 检查均通过。
+
+服务端只读验证确认 18 类/36 题和全部 18 类预设评分可用；Sunny 备考范围的专项总结倍率为 2，原进度仍为 5/86。未给生产账号预置总结、连击或奖励，未修改 AI、systemd 或代理配置。隔离本地预览在验收后关闭。
