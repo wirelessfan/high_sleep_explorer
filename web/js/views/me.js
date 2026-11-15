@@ -18,8 +18,11 @@ export async function renderMe(view) {
         text: '演示访客',
       }) : null,
     ]),
-    el('div', { style: 'font-size:11.5px;color:#b6a498;margin-top:2px', text: `账号 ${me.username || '—'}` }),
+    el('div', { style: 'font-size:11.5px;color:#b6a498;margin-top:2px', text: `${me.account_label} · ${me.username ? '@'+me.username : me.is_historical ? '历史临时记录' : '独立体验记录'}` }),
   ]));
+
+  if (me.is_historical) root.appendChild(el('section', { class: 'panel', text: '这是早期临时学习记录。请联系管理员登记为独立同学账号，原有进度和积分可以完整保留。' }));
+  if (me.is_admin) root.appendChild(el('a', { href: '#/admin/accounts', class: 'btn ghost', text: '账号管理 · 家庭 / 同学 / 访客' }));
 
   /* ---- 演示访客专用提示卡 ---- */
   if (me.is_guest) {
@@ -280,7 +283,7 @@ export async function renderMe(view) {
         el('div', { style: 'font-size:12.5px;font-weight:800', text: '换设备怎么办' }),
         el('div', {
           style: 'font-size:11.5px;color:#a3928a;margin-top:4px;line-height:1.75',
-          text: '在另一台设备上打开本站，直接选同一个账号登录即可，进度会自动同步。',
+          text: me.is_guest ? '访客进度属于当前体验记录。长期学习请联系管理员开通独立同学账号。' : '在另一台设备上选择相同身份，使用自己的账号密码登录，进度会自动同步。',
         }),
       ]),
     ]),

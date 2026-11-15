@@ -80,10 +80,10 @@ export async function ensureSession() {
 }
 
 /** 账号密码登录。成功后保存 token。 */
-export async function login(username, password) {
+export async function login(username, password, accountType) {
   const data = await request('/session/login', {
     method: 'POST',
-    body: { username, password },
+    body: { username, password, ...(accountType ? { account_type: accountType } : {}) },
     auth: false,
   });
   setToken(data.token);
@@ -104,6 +104,7 @@ export async function guestLogin() {
 
 /** 已登记账号（登录页展示，仅用户名与昵称）。 */
 export const listUsers = () => request('/session/users', { auth: false });
+export const createStudent = (body) => request('/admin/students', { method: 'POST', body });
 
 /** 修改自己的密码。 */
 export const changePassword = (oldPassword, newPassword) =>

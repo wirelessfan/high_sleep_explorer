@@ -262,23 +262,11 @@ async function renderAdmin(view) {
 
     root.appendChild(el('a', { href: '#/feedback/review', class: 'btn full', text: '审核题目反馈 · 通过奖励 50 积分' }));
 
-    /* ---- 账号 ---- */
-    root.appendChild(el('div', { class: 'section-head' }, [
-      el('h3', { text: '账号' }),
-      el('span', { class: 'hint', text: `${users.users.length} 个` }),
+    root.appendChild(el('section', { class: 'panel stack' }, [
+      el('strong', { text: `账号管理 · ${users.registered_count} 个正式账号` }),
+      el('div', { class: 'hint', text: '爸爸 / 妈妈 / Sunny / 同学 / 访客；历史临时记录独立保留。' }),
+      el('a', { href: '#/admin/accounts', class: 'btn ghost', text: '进入账号管理' }),
     ]));
-    const userPanel = el('section', { class: 'panel', style: 'padding:13px' });
-    for (const u of users.users) {
-      userPanel.appendChild(el('div', { class: 'row-between', style: 'padding:7px 0;border-top:1px solid #f6ede0' }, [
-        el('div', { style: 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;min-width:0' }, [
-          el('span', { style: 'font-size:13px;font-weight:800', text: u.nickname }),
-          u.username ? el('span', { style: 'font-size:11px;color:#a3928a', text: `@${u.username}` }) : null,
-          u.is_admin ? badge('管理员', 'solid') : null,
-        ]),
-        el('span', { style: 'font-size:11.5px;color:#6b5b52', text: `${u.points} 分 · 最近 ${u.last_seen || '?'}` }),
-      ]));
-    }
-    root.appendChild(userPanel);
 
     /* ---- 许愿墙管理 ---- */
     root.appendChild(el('div', { class: 'section-head' }, [

@@ -195,4 +195,4 @@ def test_v10_upgrade_preserves_existing_session_and_records(setup):
     assert c.get('/api/v1/me',headers=h['sunny']).status_code==200
     assert c.get('/api/v1/question-feedback',headers=h['sunny']).json()['items'][0]['id']==rid
     with db.ro() as conn:
-        assert conn.execute('SELECT version FROM schema_version').fetchone()[0]==11
+        assert conn.execute('SELECT version FROM schema_version').fetchone()[0]==db.SCHEMA_VERSION

@@ -1,145 +1,72 @@
-/* 登录页：选择账号 + 密码 */
-
+/* Five identity entrances; classmates use individual private credentials. */
 import * as api from '../api.js';
 import { el, toast } from '../ui.js';
 
-let selected = '';
+let selected = 'sunny';
+const TYPES = [
+  ['dad', '👨', '爸爸', 'dad'], ['mom', '👩', '妈妈', 'mom'],
+  ['sunny', '☀️', 'Sunny', 'sunny'], ['student', '🎒', '同学', '独立账号'],
+  ['guest', '✨', '访客', '免密体验'],
+];
+const INPUT_STYLE = 'width:100%;min-height:48px;border:1.5px solid #efe2ce;border-radius:12px;padding:0 14px;font-size:15px;background:#fffdf8;box-sizing:border-box';
 
 export async function renderLogin(view) {
   if (api.getToken()) {
-    try {
-      await api.fetchMe();
-      location.hash = '#/';
-      return;
-    } catch (err) {
-      if (err.status !== 401) throw err;
-      api.logout();
-    }
+    try { await api.fetchMe(); location.hash = '#/'; return; }
+    catch (err) { if (err.status !== 401) throw err; api.logout(); }
   }
+  const { users } = await api.listUsers();
   view.classList.add('no-tab');
   document.getElementById('tabbar').hidden = true;
-
-  let users = [];
-  try {
-    const res = await api.listUsers();
-    users = res.users || [];
-  } catch { /* 首次部署可能还没有账号 */ }
-
-  const root = el('div', { class: 'login-wrap' });
-
-  /* ---- 头图 ---- */
-  root.appendChild(el('div', { class: 'login-hero' }, [
-    el('img', { src: '/assets/art/hero-journey.svg', alt: '' }),
-    el('div', { class: 'lh-text' }, [
-      el('div', { class: 'lh-title', text: 'Sunny 的高中探索旅程' }),
-      el('div', { class: 'lh-sub', text: '选一个账号，继续今天的探险' }),
+  const root = el('div', { class: 'login-wrap' }, [
+    el('div', { class: 'login-hero' }, [
+      el('img', { src: '/assets/art/hero-journey.svg', alt: '' }),
+      el('div', { class: 'lh-text' }, [
+        el('div', { class: 'lh-title', text: 'Sunny 的高中探索旅程' }),
+        el('div', { class: 'lh-sub', text: '选择身份，继续今天的探险' }),
+      ]),
     ]),
-  ]));
-
-  /* ---- 表单 ---- */
+  ]);
   const card = el('section', { class: 'panel login-card' });
-
-  if (!users.length) {
-    card.appendChild(el('div', {
-      style: 'font-size:13px;color:#8a7a70;text-align:center;padding:20px 0',
-      text: '还没有创建账号。请联系管理员初始化。',
-    }));
-  } else {
-    if (!selected) selected = users[0].username;
-
-    const avatarOf = { sunny: '☀️', dad: '👨', mom: '👩' };
-    const chips = el('div', { class: 'login-users' });
-    users.forEach((u) => {
-      chips.appendChild(el('button', {
-        class: `login-user ${u.username === selected ? 'on' : ''}`,
-        type: 'button',
-        onclick: () => { selected = u.username; renderLogin(view); },
-      }, [
-        el('span', { class: 'lu-avatar', text: avatarOf[u.username] || '🙂' }),
-        el('span', { class: 'lu-name', text: u.nickname }),
-        el('span', { class: 'lu-id', text: u.username }),
-      ]));
-    });
-    card.appendChild(chips);
-
-    const pwd = el('input', {
-      type: 'password',
-      placeholder: '请输入密码',
-      autocomplete: 'current-password',
-      style: 'width:100%;min-height:48px;border:1.5px solid #efe2ce;border-radius:12px;padding:0 14px;font-size:15px;outline:none;background:#fffdf8;margin-top:16px;box-sizing:border-box',
-    });
-    pwd.addEventListener('focus', () => { pwd.style.borderColor = '#fbbf24'; });
-    pwd.addEventListener('blur', () => { pwd.style.borderColor = '#efe2ce'; });
-
-    const btn = el('button', { class: 'btn full', style: 'margin-top:12px', text: '进入' });
-
-    const submit = async () => {
-      const password = pwd.value.trim();
-      if (!password) { toast('请输入密码'); pwd.focus(); return; }
-      btn.disabled = true;
-      btn.textContent = '登录中…';
-      try {
-        await api.login(selected, password);
-        toast('欢迎回来');
-        location.hash = '#/';
-        location.reload();
-      } catch (err) {
-        toast(err.message || '登录失败');
-        btn.disabled = false;
-        btn.textContent = '进入';
-        pwd.select();
-      }
-    };
-
-    pwd.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
-    btn.addEventListener('click', submit);
-
-    card.appendChild(pwd);
-    card.appendChild(btn);
-    card.appendChild(el('div', {
-      style: 'font-size:11px;color:#b6a498;text-align:center;margin-top:12px',
-      text: '登录后，此浏览器 7 天内免密；主动退出后需重新登录。',
-    }));
-
-    /* ---- 访客免密演示通道 ---- */
-    const guestDivider = el('div', {
-      style: 'display:flex;align-items:center;gap:10px;margin:20px 0 12px;color:#a3928a;font-size:12px',
-    }, [
-      el('div', { style: 'flex:1;height:1px;background:#f0e4d4' }),
-      el('span', { text: '或 免密码体验' }),
-      el('div', { style: 'flex:1;height:1px;background:#f0e4d4' }),
-    ]);
-    card.appendChild(guestDivider);
-
-    const guestBtn = el('button', {
-      class: 'btn ghost full',
-      style: 'background:#fdfaf3;border:1.5px solid #ebd9b8;color:#92400e;font-weight:800;border-radius:12px',
-      text: '✨ 访客一键体验（免密演示）',
-      onclick: async () => {
-        guestBtn.disabled = true;
-        guestBtn.textContent = '正在进入演示环境…';
-        try {
-          await api.guestLogin();
-          toast('已以演示访客身份进入');
-          location.hash = '#/';
-          location.reload();
-        } catch (err) {
-          toast(err.message || '访客模式进入失败');
-          guestBtn.disabled = false;
-          guestBtn.textContent = '✨ 访客一键体验（免密演示）';
-        }
-      },
-    });
-    card.appendChild(guestBtn);
-    card.appendChild(el('div', {
-      style: 'font-size:11px;color:#8a7a70;text-align:center;margin-top:8px;line-height:1.5',
-      text: '演示模式：可自由浏览全学科知识图解、SVG 动效及做题体验，管理权限受限',
-    }));
+  const chips = el('div', { class: 'login-users', 'aria-label': '选择账号类别' });
+  const formArea = el('div', { style: 'margin-top:16px' });
+  let busy = false;
+  function paint() {
+    chips.replaceChildren(...TYPES.map(([key, avatar, name, subtitle]) => el('button', {
+      type: 'button', class: `login-user${selected === key ? ' on' : ''}`, 'aria-pressed': String(selected === key),
+      onclick: () => { if (!busy) { selected = key; paint(); } },
+    }, [el('span', { class: 'lu-avatar', text: avatar }), el('span', { class: 'lu-name', text: name }), el('span', { class: 'lu-id', text: subtitle })])));
+    formArea.replaceChildren();
+    if (selected === 'guest') {
+      const button = el('button', { class: 'btn full', text: '访客一键体验', onclick: async () => {
+        if (busy) return;
+        busy = true; button.disabled = true;
+        try { await api.guestLogin(); location.hash = '#/'; location.reload(); }
+        catch (err) { toast(err.message || '暂时无法进入'); busy = false; button.disabled = false; }
+      } });
+      formArea.append(el('p', { class: 'hint', text: '无需密码。每位访客的体验进度独立；需要长期学习请联系管理员开通同学账号。' }), button);
+      return;
+    }
+    const student = selected === 'student';
+    if (!student && !users.some((u) => u.username === selected)) {
+      formArea.append(el('p', { class: 'hint', text: '该家庭账号尚未初始化，请联系管理员。' })); return;
+    }
+    const user = el('input', { type: student ? 'text' : 'hidden', autocomplete: 'username', value: student ? '' : selected,
+      'aria-label': '同学账号', placeholder: '输入你的同学账号', autocapitalize: 'none', spellcheck: 'false', style: INPUT_STYLE });
+    const password = el('input', { type: 'password', autocomplete: 'current-password', 'aria-label': '密码', placeholder: '请输入密码', style: INPUT_STYLE + ';margin-top:12px' });
+    const submit = el('button', { type: 'submit', class: 'btn full', style: 'margin-top:12px', text: '进入' });
+    const form = el('form', { onsubmit: async (event) => {
+      event.preventDefault();
+      if (busy) return;
+      if (!user.value.trim() || !password.value) { toast('请输入账号和密码'); return; }
+      busy = true; submit.disabled = true; submit.textContent = '登录中…';
+      try { await api.login(user.value.trim(), password.value, selected); location.hash = '#/'; location.reload(); }
+      catch (err) { toast(err.message || '登录失败'); busy = false; submit.disabled = false; submit.textContent = '进入'; }
+    } }, [user, password, submit]);
+    formArea.append(form, el('p', { class: 'hint', style: 'line-height:1.7', text: student
+      ? '每位同学使用独立账号，积分、错题和学习进度各自保存。账号由管理员开通。'
+      : '使用该家庭成员原有的账号密码登录。' }),
+    el('p', { class: 'hint', text: '登录后，此浏览器 7 天内免密；主动退出后需重新登录。' }));
   }
-
-  root.appendChild(card);
-
-  view.innerHTML = '';
-  view.appendChild(root);
-  if (users.length) setTimeout(() => document.querySelector('.login-card input')?.focus(), 120);
+  card.append(chips, formArea); root.append(card); view.replaceChildren(root); paint();
 }

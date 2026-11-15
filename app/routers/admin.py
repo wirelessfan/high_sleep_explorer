@@ -8,11 +8,11 @@ import sqlite3
 from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field, StrictInt
+from pydantic import BaseModel, ConfigDict, Field, StrictInt
 
 from app import db
 from app.routers.session import require_admin
-from app.services import ai_client, ai_config, ratelimit, wishes
+from app.services import accounts, ai_client, ai_config, ratelimit, wishes
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -30,6 +30,14 @@ class WishModerateIn(BaseModel):
 
 class AiTestIn(BaseModel):
     task: str = Field(min_length=1, max_length=32)
+
+
+class StudentIn(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    username: str = Field(min_length=3,max_length=32)
+    nickname: str = Field(min_length=1,max_length=20)
+    password: str = Field(min_length=8,max_length=128)
+    legacy_user_id: str | None = Field(default=None,max_length=100)
 
 
 def _channel_admin_view(cfg: dict) -> dict:
@@ -143,23 +151,18 @@ def ai_usage(days: int = 1, user: sqlite3.Row = Depends(require_admin)):
 
 @router.get("/users")
 def list_users(user: sqlite3.Row = Depends(require_admin)):
-    """账号列表（只读）：家庭账号管理参考。"""
+    """按五类身份展示，历史临时数据独立保留。"""
     with db.ro() as conn:
-        rows = conn.execute(
-            "SELECT id, username, nickname, role, points, created_at, last_seen "
-            "FROM users ORDER BY created_at ASC"
-        ).fetchall()
-    return {"users": [
-        {
-            "id": r["id"],
-            "username": r["username"],
-            "nickname": r["nickname"],
-            "is_admin": r["role"] == "admin",
-            "points": r["points"],
-            "created_at": r["created_at"],
-            "last_seen": (r["last_seen"] or "")[:10],
-        } for r in rows
-    ]}
+        return accounts.directory(conn)
+
+
+@router.post('/students')
+def create_student(body: StudentIn, user: sqlite3.Row = Depends(require_admin)):
+    with db.tx() as conn:
+        try:
+            return accounts.create_student(conn,body.username,body.nickname,body.password,user['id'],body.legacy_user_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=400,detail=str(exc))
 
 
 @router.get("/wishes")

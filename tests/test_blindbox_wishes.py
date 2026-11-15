@@ -181,7 +181,16 @@ def test_draw_idempotent(client, auth):
     assert second["tickets_left"] == first["tickets_left"], "重放不再扣券"
 
 
-def test_draw_rate_limited(client, clean):
+def test_draw_rate_limited(client, clean, monkeypatch):
+    from datetime import datetime
+    from app.services import blindbox, events
+    instant=datetime.now().replace(microsecond=0)
+    class Frozen(datetime):
+        @classmethod
+        def now(cls,tz=None):
+            return instant if tz is None else instant.replace(tzinfo=tz)
+    monkeypatch.setattr(blindbox,'datetime',Frozen)
+    monkeypatch.setattr(events,'now',lambda:instant.isoformat(timespec='seconds'))
     # clean fixture 已清空该用户的事件与券，从零开始才测得准 1 秒限流
     first = client.post("/api/v1/blindbox/draw",
                         json={"count": 1, "idempotency_key": "r1"}, headers=clean)
@@ -330,6 +339,7 @@ def test_blindbox_codes_visible_to_parent_verify(client):
     with db.tx() as conn:
         uid = conn.execute("SELECT id FROM users WHERE token_hash=?",
                            (_auth.hash_token(kid_token),)).fetchone()["id"]
+        conn.execute("UPDATE users SET username='registered_kid',password_hash=? WHERE id=?",(_auth.hash_password('test-password'),uid))
         conn.execute(
             "INSERT INTO blindbox_owned(user_id, character_id, count, first_at) VALUES (?,?,1,?)",
             (uid, "labubu-sky", "2026-01-01T00:00:00"),

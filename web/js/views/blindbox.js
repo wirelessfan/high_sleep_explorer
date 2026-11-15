@@ -52,6 +52,7 @@ export async function renderBlindbox(view) {
       text: `每开一次消耗 ${data.costs.single} 张盲盒券；重复角色返还盲盒券` }),
   ]);
   root.appendChild(heroPanel);
+  if (me.is_guest) root.appendChild(el('div', { class: 'panel hint', text: '访客奖励仅供体验，不能赠送给正式账号或真实核销。' }));
 
   /* ---- 积分换券：按当日剩余张数与积分共同限制 ---- */
   const affordable = Math.floor(me.points / data.exchange.points);

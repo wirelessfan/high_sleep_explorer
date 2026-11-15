@@ -22,7 +22,8 @@ DB_PATH = Path(os.environ.get("LEARN_DB", Path(__file__).resolve().parent.parent
 #     新增 blindbox_owned 图鉴表；许愿墙新增 wishes 表。
 # v10 = 每台设备独立的七天登录会话。
 # v11 = 题目反馈、审核与一次性积分奖励。
-SCHEMA_VERSION = 11
+# v12 = 正式账号、独立访客与历史临时记录分离。
+SCHEMA_VERSION = 12
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS sessions (
@@ -42,7 +43,7 @@ CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY,
     token_hash TEXT NOT NULL UNIQUE,
     sync_code TEXT NOT NULL UNIQUE,
-    nickname TEXT NOT NULL DEFAULT 'sunny',
+    nickname TEXT NOT NULL DEFAULT '访客',
     username TEXT,
     password_hash TEXT,
     points INTEGER NOT NULL DEFAULT 0,
@@ -58,6 +59,7 @@ CREATE TABLE IF NOT EXISTS users (
     bb_pity_sr INTEGER NOT NULL DEFAULT 0,        -- 盲盒保底计数（独立于卡片保底）
     bb_pity_ssr INTEGER NOT NULL DEFAULT 0,
     role TEXT,                     -- NULL=普通用户；'admin'=管理员（管理界面/接口）
+    account_status TEXT NOT NULL DEFAULT 'active' CHECK(account_status IN ('active','historical')),
     created_at TEXT NOT NULL,
     last_seen TEXT NOT NULL
 );
@@ -429,6 +431,16 @@ def _migrate_blindbox(conn: sqlite3.Connection) -> None:
             )
 
 
+def _migrate_account_categories(conn: sqlite3.Connection, current: int) -> None:
+    cols = {r['name'] for r in conn.execute('PRAGMA table_info(users)')}
+    if 'account_status' not in cols:
+        conn.execute("ALTER TABLE users ADD COLUMN account_status TEXT NOT NULL DEFAULT 'active' CHECK(account_status IN ('active','historical'))")
+    if current < 12:
+        # 昵称不能证明账号归属。保留原ID、余额、进度与会话，仅标记历史匿名数据。
+        conn.execute("UPDATE users SET account_status='historical' WHERE username IS NULL OR trim(username)=''")
+    conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username_normalized ON users(lower(trim(username))) WHERE username IS NOT NULL AND trim(username)<>''")
+
+
 def init_db() -> None:
     conn = connect()
     try:
@@ -445,6 +457,7 @@ def init_db() -> None:
         _migrate_progress_tiers(conn)
         _migrate_ai_admin(conn)
         _migrate_blindbox(conn)
+        _migrate_account_categories(conn, current)
         if current < 10:
             # Existing browsers retain their current token for one bounded grace
             # period; repeated application restarts must not extend the deadline.

@@ -40,6 +40,16 @@ def auth_headers(client):
     return {"Authorization": f"Bearer {r.json()['token']}"}
 
 
+@pytest.fixture()
+def registered_headers(client,auth_headers):
+    """Gift and real redemption tests use a registered student's identity."""
+    uid=client.get('/api/v1/me',headers=auth_headers).json()['id']
+    with db.tx() as conn:
+        conn.execute("UPDATE users SET username='giver_test',password_hash=? WHERE id=?",
+                     (__import__('app.auth',fromlist=['x']).hash_password('test-password'),uid))
+    return auth_headers
+
+
 # ---------- 内容 ----------
 
 def test_catalog_has_three_subjects(client, auth_headers):
@@ -464,7 +474,8 @@ def test_achievement_cannot_exceed_daily_limit_in_one_call(client, auth_headers)
     assert "还能兑 2 张" in r.json()["detail"]
 
 
-def test_achievement_verify_once(client, auth_headers):
+def test_achievement_verify_once(client, registered_headers):
+    auth_headers=registered_headers
     """核销需家长账号：用 dad 核销，验证只能核销一次。"""
     _set_points(client, auth_headers, 200)
     r = client.post("/api/v1/achievements/redeem", json={"count": 1}, headers=auth_headers)
@@ -668,7 +679,8 @@ def test_daily_draw_distribution():
         assert abs(pct - expected) < 3.5, f"{v}元 {pct:.1f}% 偏离 {expected}%"
 
 
-def test_gift_card_to_sunny(client, auth_headers):
+def test_gift_card_to_sunny(client, registered_headers):
+    auth_headers=registered_headers
     from app import auth as _auth
     # 建 sunny 账号作为接收方
     with db.tx() as conn:
@@ -697,7 +709,8 @@ def test_gift_card_to_sunny(client, auth_headers):
     assert r2.status_code == 400
 
 
-def test_gift_unknown_target(client, auth_headers):
+def test_gift_unknown_target(client, registered_headers):
+    auth_headers=registered_headers
     draw = client.post("/api/v1/achievements/daily/draw", headers=auth_headers)
     card = draw.json()["card"]
     r = client.post("/api/v1/achievements/gift",
@@ -727,6 +740,7 @@ def test_received_cards_lists_gifts(client):
     giver = client.post("/api/v1/session").json()
     gh = {"Authorization": f"Bearer {giver['token']}"}
     with db.tx() as conn:
+        conn.execute("UPDATE users SET username='giver_test',password_hash=? WHERE id=?",(_auth.hash_password('test-password'),giver['id']))
         conn.execute(
             "INSERT OR IGNORE INTO users(id, token_hash, sync_code, nickname, username, "
             "password_hash, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?)",
@@ -776,8 +790,9 @@ def test_daily_draw_does_not_consume_redeem_quota(client, auth_headers):
     assert st2["total_count"] == 3, "累计应包含抽卡 + 两张兑换"
 
 
-def test_gifting_does_not_reset_daily_quota(client, auth_headers):
+def test_gifting_does_not_reset_daily_quota(client, registered_headers):
     """回归：抽完立刻送人，不能因此再抽一次。"""
+    auth_headers=registered_headers
     from app import auth as _auth
     with db.tx() as conn:
         conn.execute(

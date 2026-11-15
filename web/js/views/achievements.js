@@ -93,7 +93,7 @@ export async function renderAchievements(view) {
 
     dailyCard.appendChild(el('div', {
       style: 'font-size:11px;color:#b6a498;margin-top:10px;line-height:1.6',
-      text: `抽到的卡可以赠送给 ${daily.gift_target_nickname || 'sunny'}，也可以自己留着兑现。`,
+      text: daily.is_demo ? '当前为访客体验，奖励仅供演示，不可赠送或真实兑现。' : `抽到的卡可以赠送给 ${daily.gift_target_nickname || 'sunny'}，也可以自己留着兑现。`,
     }));
 
     root.appendChild(dailyCard);
@@ -412,7 +412,7 @@ export function drawReveal(card, daily, onClose) {
       style: 'font-family:ui-monospace,Menlo,monospace;font-size:15px;font-weight:800;letter-spacing:.1em;color:#3b2f2a;margin-top:14px',
       text: card.code,
     }),
-    el('div', { style: 'font-size:11px;color:#a3928a;margin-top:8px', text: '这是你的兑现码' }),
+    el('div', { style: 'font-size:11px;color:#a3928a;margin-top:8px', text: daily.is_demo ? '访客演示奖励，不可真实兑现' : '这是你的兑现码' }),
   ]));
 
   const targetName = daily.gift_target_nickname || daily.gift_to || 'sunny';
@@ -440,7 +440,7 @@ export function drawReveal(card, daily, onClose) {
       class: 'btn ghost', style: 'flex:1', text: '自己留着',
       onclick: () => { document.getElementById('overlay').hidden = true; onClose?.(); },
     }),
-    el('div', { style: 'flex:1;display:flex' }, [giftBtn]),
+    daily.gift_target_exists ? el('div', { style: 'flex:1;display:flex' }, [giftBtn]) : null,
   ]));
 
   openSheet(box, { title: '恭喜，抽到了！', sub: '每天一次，明天还能再来' });

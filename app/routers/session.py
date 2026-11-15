@@ -4,12 +4,13 @@ from __future__ import annotations
 import sqlite3
 import time
 from datetime import datetime
+from typing import Literal
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from app import auth, db
-from app.services import blindbox, ratelimit
+from app.services import accounts, blindbox, ratelimit
 
 router = APIRouter(tags=["session"])
 SESSION_SECONDS = 7 * 24 * 60 * 60
@@ -44,6 +45,7 @@ class NicknameIn(BaseModel):
 class LoginIn(BaseModel):
     username: str = Field(min_length=1, max_length=32)
     password: str = Field(min_length=1, max_length=128)
+    account_type: Literal['dad','mom','sunny','student'] | None = None
 
 
 class PasswordIn(BaseModel):
@@ -81,12 +83,16 @@ def require_admin(user: sqlite3.Row = Depends(current_user)) -> sqlite3.Row:
 def _user_payload(row: sqlite3.Row, token: str | None = None) -> dict:
     keys = row.keys()
     username = row["username"] if "username" in keys else None
-    is_guest = bool(username and username.lower() == "guest")
+    account_type = accounts.kind(row)
+    is_guest = account_type == 'guest'
     data = {
         "id": row["id"],
         "nickname": row["nickname"],
         "username": username,
         "is_guest": is_guest,
+        "account_type": account_type,
+        "account_label": dict(accounts.CATEGORIES)[account_type],
+        "is_historical": accounts.historical(row),
         "is_admin": bool(row["role"] == "admin" if "role" in keys else False),
         "has_password": bool(row["password_hash"]) if "password_hash" in keys else False,
         "points": row["points"],
@@ -105,9 +111,8 @@ def _user_payload(row: sqlite3.Row, token: str | None = None) -> dict:
     return data
 
 
-@router.post("/session")
-def create_session():
-    """首次访问建号，返回令牌与同步码。"""
+def _create_visitor(*, demo=False):
+    """访客按访问者隔离；临时记录永不冒充 Sunny 或正式同学。"""
     token = auth.new_token()
     user_id = auth.new_id()
     sync_code = auth.normalize_sync_code(auth.new_sync_code())
@@ -122,15 +127,23 @@ def create_session():
                 break
             sync_code = auth.normalize_sync_code(auth.new_sync_code())
         conn.execute(
-            "INSERT INTO users(id, token_hash, sync_code, created_at, last_seen) "
-            "VALUES (?,?,?,?,?)",
-            (user_id, auth.hash_token(token), sync_code, now, now),
+            "INSERT INTO users(id, token_hash, sync_code, nickname, points, tickets, created_at, last_seen) "
+            "VALUES (?,?,?,?,?,?,?,?)",
+            (user_id, auth.hash_token(token), sync_code, '访客', 260 if demo else 0, 6 if demo else 0, now, now),
         )
         blindbox.grant_daily_tickets(conn, user_id, initial=True)
         _issue_session(conn, user_id, token)
         row = _session_user(conn, token)
 
     return _user_payload(row, token=token)
+
+
+@router.post("/session")
+def create_session(request: Request):
+    """兼容旧客户端的临时会话入口；新访客不进入正式账号列表。"""
+    if not ratelimit.allow(f"visitor:{ratelimit.client_ip(request)}",limit=30,window_seconds=60):
+        raise HTTPException(status_code=429,detail='请求过于频繁，请稍后再试')
+    return _create_visitor()
 
 
 @router.post("/session/login")
@@ -142,7 +155,9 @@ def login(body: LoginIn, request: Request):
     username = auth.normalize_username(body.username)
     with db.tx() as conn:
         row = conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
-        if not row or not auth.verify_password(body.password, row["password_hash"]):
+        if (not row or accounts.historical(row) or accounts.kind(row)=='guest'
+            or (body.account_type and accounts.kind(row)!=body.account_type)
+            or not auth.verify_password(body.password, row["password_hash"])):
             # 不区分「账号不存在」和「密码错误」，避免枚举账号
             raise HTTPException(status_code=401, detail="账号或密码不正确")
 
@@ -163,42 +178,17 @@ def guest_session(request: Request):
     if not ratelimit.allow(f"guest:{ratelimit.client_ip(request)}", limit=30, window_seconds=60):
         raise HTTPException(status_code=429, detail="请求过于频繁，请稍后再试")
 
-    now = _now()
-    token = auth.new_token()
-    token_hash = auth.hash_token(token)
-
-    with db.tx() as conn:
-        row = conn.execute("SELECT * FROM users WHERE username = 'guest'").fetchone()
-        if not row:
-            uid = "u_guest_demo"
-            code = "GUEST-DEMO-01"
-            conn.execute(
-                "INSERT INTO users(id, token_hash, sync_code, nickname, username, "
-                "points, tickets, created_at, last_seen) VALUES (?,?,?,?,?,?,?,?,?)",
-                (uid, token_hash, code, "演示访客", "guest", 260, 6, now, now),
-            )
-            blindbox.grant_daily_tickets(conn, uid, initial=True)
-            row = conn.execute("SELECT * FROM users WHERE id = ?", (uid,)).fetchone()
-        else:
-            conn.execute(
-                "UPDATE users SET token_hash = ?, last_seen = ? WHERE id = ?",
-                (token_hash, now, row["id"]),
-            )
-            row = conn.execute("SELECT * FROM users WHERE id = ?", (row["id"],)).fetchone()
-
-        _issue_session(conn, row["id"], token)
-        row = _session_user(conn, token)
-    return _user_payload(row, token=token)
+    return _create_visitor(demo=True)
 
 
 @router.get("/session/users")
 def list_public_users():
-    """登录页展示已有账号名（不含任何敏感信息，排除访客演示号）。"""
+    """只展示固定家庭入口；同学通过自己的账号密码登录，不公开同学名单。"""
     with db.ro() as conn:
         rows = conn.execute(
             "SELECT nickname, username FROM users "
-            "WHERE username IS NOT NULL AND LOWER(username) != 'guest' "
-            "ORDER BY username"
+            "WHERE username IN ('dad','mom','sunny') AND account_status='active' "
+            "ORDER BY CASE username WHEN 'dad' THEN 0 WHEN 'mom' THEN 1 ELSE 2 END"
         ).fetchall()
     return {"users": [{"username": r["username"], "nickname": r["nickname"]} for r in rows]}
 
@@ -207,7 +197,7 @@ def list_public_users():
 def change_password(body: PasswordIn, user: sqlite3.Row = Depends(current_user),
                     authorization: str = Header()):
     """修改自己的密码，需验证旧密码（访客账号禁止修改）。"""
-    if "username" in user.keys() and user["username"] and user["username"].lower() == "guest":
+    if accounts.kind(user) == 'guest':
         raise HTTPException(status_code=403, detail="演示访客账号不支持修改密码")
 
     with db.tx() as conn:
@@ -265,7 +255,7 @@ def logout(user: sqlite3.Row = Depends(current_user), authorization: str = Heade
 @router.post("/session/rotate-code")
 def rotate_code(user: sqlite3.Row = Depends(current_user)):
     """重置同步码，旧码立即失效（访客账号禁止操作）。"""
-    if "username" in user.keys() and user["username"] and user["username"].lower() == "guest":
+    if (user['username'] or '').lower() == 'guest':
         raise HTTPException(status_code=403, detail="演示访客账号不支持重置同步码")
 
     with db.tx() as conn:

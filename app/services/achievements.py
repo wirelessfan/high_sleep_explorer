@@ -12,6 +12,7 @@ import uuid
 from datetime import date
 
 from app import content_loader
+from app.services import accounts
 
 _CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"  # 去掉 0/O/1/I/L
 
@@ -171,6 +172,9 @@ def mark_redeemed(conn: sqlite3.Connection, code: str, operator_id: str) -> dict
     row = conn.execute("SELECT * FROM achievements WHERE code = ?", (normalized,)).fetchone()
     if not row:
         raise ValueError("兑现码不存在")
+    owner = conn.execute('SELECT * FROM users WHERE id=?',(row['user_id'],)).fetchone()
+    if owner and accounts.kind(owner)=='guest':
+        raise ValueError('访客体验奖励不能核销，请先核实身份并登记为正式账号')
     if row["status"] == "redeemed":
         raise ValueError("这张卡已经兑现过了")
     if row["status"] == "void":
@@ -228,6 +232,8 @@ def daily_status(conn: sqlite3.Connection, user_id: str) -> dict:
         "SELECT id, nickname, username FROM users WHERE username = ?", (gift_to,)
     ).fetchone()
 
+    owner = conn.execute('SELECT * FROM users WHERE id=?',(user_id,)).fetchone()
+    guest = owner is not None and accounts.kind(owner)=='guest'
     return {
         "enabled": True,
         "per_day": int(cfg.get("per_day", 1)),
@@ -235,7 +241,8 @@ def daily_status(conn: sqlite3.Connection, user_id: str) -> dict:
         "left_today": max(0, int(cfg.get("per_day", 1)) - used),
         "tiers": cfg.get("tiers", []),
         "gift_to": gift_to,
-        "gift_target_exists": target is not None,
+        "gift_target_exists": target is not None and not guest,
+        "is_demo": guest,
         "gift_target_nickname": target["nickname"] if target else None,
     }
 
@@ -288,6 +295,8 @@ def gift_card(conn: sqlite3.Connection, user: sqlite3.Row, card_id: str,
 
     限制：只能赠出自己名下的、未兑现的卡；不能赠给自己。
     """
+    if accounts.kind(user)=='guest':
+        raise ValueError('访客体验奖励不能赠送给正式账号')
     cfg = _daily_cfg()
     target_name = (to_username or cfg.get("gift_to") or "sunny").strip().lower()
 

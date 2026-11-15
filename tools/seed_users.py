@@ -3,10 +3,10 @@
 用法（在服务器上执行，或本地指定 LEARN_DB）：
 
     python tools/seed_users.py
-    python tools/seed_users.py --password 123456
-    python tools/seed_users.py --claim-progress u_5NhEuKbHeerohMD4   # 把某匿名账号的进度归给 sunny
+    python tools/seed_users.py --password <初始密码>
+    python tools/seed_users.py --password <新密码> --reset-password
 
-幂等：账号已存在则只重置密码，不新建、不清进度。
+默认只初始化缺失的家庭账号；重置已有密码需显式 --reset-password。
 """
 
 import argparse
@@ -26,18 +26,20 @@ ACCOUNTS = [
     ("sunny", "sunny", "sunny"),
     ("dad", "dad", "爸爸"),
     ("mom", "mom", "妈妈"),
-    ("guest", "guest", "演示访客"),
 ]
 
 
-def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname: str) -> tuple[str, str]:
+def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname: str, *, reset_password=False) -> tuple[str, str]:
     """返回 (user_id, 动作说明)。"""
     existing = conn.execute(
         "SELECT * FROM users WHERE username = ?", (username,)
     ).fetchone()
 
-    is_guest = username.lower() == "guest"
-    pwd_hash = "" if is_guest else auth.hash_password(password)
+    if existing and not reset_password:
+        return existing['id'], '已存在，保留密码、会话和数据'
+    if not password or len(password)<8:
+        raise ValueError('创建或重置家庭账号时请指定至少8位的密码')
+    pwd_hash = auth.hash_password(password)
 
     if existing:
         conn.execute("DELETE FROM sessions WHERE user_id=?", (existing["id"],))
@@ -51,14 +53,14 @@ def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname
                 "UPDATE users SET role='admin' WHERE id=? AND (role IS NULL OR role='')",
                 (existing["id"],),
             )
-        return existing["id"], "已存在，更新演示信息" if is_guest else "已存在，重置密码"
+        return existing["id"], "已存在，重置密码"
 
-    uid = "u_guest_demo" if is_guest else auth.new_id()
+    uid = auth.new_id()
     token = auth.new_token()
-    code = "GUEST-DEMO-01" if is_guest else auth.normalize_sync_code(auth.new_sync_code())
+    code = auth.normalize_sync_code(auth.new_sync_code())
     now = datetime.now().isoformat(timespec="seconds")
-    points = 300 if is_guest else 0
-    tickets = 8 if is_guest else 0
+    points = 0
+    tickets = 0
 
     for _ in range(5):
         clash = conn.execute("SELECT 1 FROM users WHERE sync_code = ?", (code,)).fetchone()
@@ -74,45 +76,24 @@ def upsert_user(conn: sqlite3.Connection, username: str, password: str, nickname
          "admin" if username.lower() == "dad" else None, now, now),
     )
     blindbox.grant_daily_tickets(conn, uid, initial=True)
-    return uid, "已创建演示账号" if is_guest else "已创建"
+    return uid, "已创建"
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--password", default="123456", help="统一初始密码")
-    ap.add_argument("--claim-progress", default="", help="把该 user_id 的进度并入 sunny")
+    ap.add_argument("--password", default=None, help="创建缺失账号的初始密码，至少8位")
+    ap.add_argument("--reset-password", action='store_true', help="显式重置已有家庭账号密码并撤销会话")
     args = ap.parse_args()
 
     dbmod.init_db()
     with dbmod.tx() as conn:
         ids = {}
         for username, nickname, display in ACCOUNTS:
-            uid, action = upsert_user(conn, username, args.password, display)
+            uid, action = upsert_user(conn, username, args.password, display, reset_password=args.reset_password)
             ids[username] = uid
             print(f"  {username:6s} {display:4s}  {action}  id={uid}")
 
-        if args.claim_progress:
-            src = args.claim_progress.strip()
-            dst = ids["sunny"]
-            if src == dst:
-                print("  进度已在 sunny 名下，跳过归并")
-            else:
-                # progress 主键 (user_id, topic_id, section_id)，直接搬会被冲突挡，
-                # 用 INSERT OR IGNORE 保留两侧较优记录
-                moved = conn.execute(
-                    "INSERT OR IGNORE INTO progress(user_id, topic_id, section_id, status, "
-                    "best_score, attempts, awarded, updated_at) "
-                    "SELECT ?, topic_id, section_id, status, best_score, attempts, awarded, updated_at "
-                    "FROM progress WHERE user_id = ?",
-                    (dst, src),
-                ).rowcount
-                conn.execute(
-                    "UPDATE progress SET status='done', best_score=MAX(best_score, 0) "
-                    "WHERE user_id=? AND awarded=1", (dst,),
-                )
-                print(f"  归并进度：{moved} 条 {src} -> sunny")
-
-    print("\n完成。三个账号均可登录，初始密码：", args.password)
+    print('\n完成。未修改学习数据；同学账号请通过管理页面开通。')
     return 0
 
 
