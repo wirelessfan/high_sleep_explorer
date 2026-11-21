@@ -115,6 +115,29 @@ export async function renderHome(view) {
   ]);
   root.appendChild(checkinPanel);
 
+  /* ---- 错题本快捷入口 ---- */
+  root.appendChild(el('section', {
+    class: 'panel', style: 'padding:13px;cursor:pointer',
+    onclick: () => navigate('#/wrongbook'),
+  }, [
+    el('div', { class: 'row-between' }, [
+      el('div', { class: 'row', style: 'gap:10px;min-width:0' }, [
+        el('div', {
+          style: 'width:36px;height:36px;border-radius:12px;background:#fff1f2;border:1px solid #fecdd3;display:grid;place-items:center;font-size:17px;flex:0 0 auto',
+          text: '📕',
+        }),
+        el('div', { style: 'min-width:0' }, [
+          el('div', { style: 'font-size:13px;font-weight:800', text: '错题本' }),
+          el('div', { style: 'font-size:11px;color:#a3928a;margin-top:2px', text: '错过的题，别再错第二遍' }),
+        ]),
+      ]),
+      el('button', {
+        class: 'btn sm', text: '去复习',
+        onclick: (e) => { e.stopPropagation(); navigate('#/wrongbook'); },
+      }),
+    ]),
+  ]));
+
   /* ---- 放松抽卡入口 ---- */
   root.appendChild(el('section', { class: 'panel', style: 'padding:13px;margin-top:10px' }, [
     el('div', { class: 'row-between' }, [
@@ -166,35 +189,47 @@ export async function renderHome(view) {
 
   for (const subj of catalog.subjects) {
     const items = subj.items;
-    const allDone = items.every((t) => t.complete);
+    const color = SUBJECT_COLOR[subj.id];
+    const subjTotal = items.reduce((a, t) => a + t.total, 0);
+    const subjDone = items.reduce((a, t) => a + t.done, 0);
+    const subjPct = subjTotal ? Math.round((subjDone / subjTotal) * 100) : 0;
+    const doneCount = items.filter((t) => t.complete).length;
+    /* 下一站 = 第一个没做完的主题；全做完就回第一站复习 */
+    const nextT = items.find((t) => !t.complete) || items[0];
+
     root.appendChild(el('section', { class: 'panel', style: 'padding:14px' }, [
-      el('div', { class: 'row-between', style: 'margin-bottom:10px' }, [
-        el('div', { class: 'row', style: 'gap:8px' }, [
+      el('div', { class: 'row-between', style: 'margin-bottom:9px' }, [
+        el('div', { class: 'row', style: 'gap:8px;min-width:0' }, [
           el('span', { class: `chip ${SUBJECT_CLASS[subj.id]}`, text: subj.name }),
-          el('span', { style: 'font-size:11.5px;color:#a3928a', text: allDone ? '已完成' : `${items.filter(t=>t.complete).length}/${items.length} 主题` }),
+          el('span', { style: 'font-size:11.5px;color:#a3928a', text: `${doneCount}/${items.length} 主题` }),
         ]),
         el('button', {
-          style: `font-size:12px;font-weight:700;color:${SUBJECT_COLOR[subj.id]}`,
+          style: `font-size:12px;font-weight:700;color:${color}`,
           text: '查看全部 →',
           onclick: () => navigate('#/subjects'),
         }),
       ]),
-      el('div', { class: 'stack', style: 'gap:8px' }, items.map((t) =>
-        el('div', {
-          class: 'topic-card', style: 'cursor:pointer;box-shadow:none;padding:11px',
-          onclick: () => navigate(`#/topic/${t.id}`),
-        }, [
-          el('div', { class: 'accent', style: `background:${SUBJECT_COLOR[subj.id]}` }),
-          el('div', { class: 'body' }, [
-            el('div', { class: 'ttl', text: t.title }),
-            el('div', { class: 'dsc', text: studyLabel(t.study) || t.subtitle }),
-            el('div', { class: 'bar' }, [
-              el('i', { style: `width:${t.percent}%;background:${SUBJECT_COLOR[subj.id]}` }),
-            ]),
-          ]),
-          el('div', { style: 'font-size:11px;font-weight:800;color:#a3928a;flex:0 0 auto', text: `${t.done}/${t.total}` }),
-        ])
-      )),
+      el('div', { class: 'row-between', style: 'font-size:11.5px;color:#a3928a;margin-bottom:5px' }, [
+        el('span', { text: `${subjDone}/${subjTotal} 单元` }),
+        el('span', { style: 'font-weight:800', text: `${subjPct}%` }),
+      ]),
+      el('div', { class: 'bar', style: 'margin-bottom:11px' }, [
+        el('i', { style: `width:${subjPct}%;background:${color}` }),
+      ]),
+      nextT ? el('div', {
+        class: 'topic-card', style: 'cursor:pointer;box-shadow:none;padding:11px;margin:0',
+        onclick: () => navigate(`#/topic/${nextT.id}`),
+      }, [
+        el('div', { class: 'accent', style: `background:${color}` }),
+        el('div', { class: 'body' }, [
+          el('div', { style: 'font-size:10px;font-weight:800;color:#b6a498;letter-spacing:.04em',
+            text: nextT.complete ? '已全部完成 · 复习' : '下一站' }),
+          el('div', { class: 'ttl', style: 'margin-top:2px', text: nextT.title }),
+          el('div', { class: 'dsc', text: studyLabel(nextT.study) || nextT.subtitle }),
+        ]),
+        el('div', { style: `font-size:11px;font-weight:800;color:${color};flex:0 0 auto`,
+          text: nextT.complete ? '复习 ›' : '出发 ›' }),
+      ]) : null,
     ]));
   }
 
