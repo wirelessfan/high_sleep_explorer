@@ -2,6 +2,7 @@
 
 import * as api from '../api.js';
 import { el, toast, openSheet } from '../ui.js';
+import { fmtTime, showBuildSheet } from '../build-info.js';
 
 function badge(text, cls = '') {
   return el('span', { class: `chip ${cls}`, style: 'font-size:10px;padding:2px 8px', text });
@@ -9,15 +10,6 @@ function badge(text, cls = '') {
 
 function keyBadge(ok) {
   return ok ? badge('Key ✓', 'solid') : badge('未配置 Key');
-}
-
-/** ISO 时间 → 「2026-11-21 18:52」，本地时区。 */
-function fmtTime(iso) {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return String(iso).replace('T', ' ').slice(0, 16);
-  const p = (n) => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 
 async function renderAdmin(view) {
@@ -51,30 +43,6 @@ async function renderAdmin(view) {
     ]));
 
     if (build) {
-      const rows = [
-        ['版本', build.label || `v${build.version}`],
-        ['提交', build.commit || 'unknown'],
-        ['分支', build.branch || 'unknown'],
-        ['部署时间', fmtTime(build.built_at)],
-        ['提交时间', fmtTime(build.commit_date)],
-        ['数据版本', `schema v${build.schema_version ?? '?'}`],
-        ['审核引擎', build.wrongbook_review_version || '—'],
-      ];
-      const openDetail = () => {
-        openSheet(el('div', { class: 'stack' }, [
-          el('div', { style: 'font-size:11px;color:#a3928a', text: '线上服务当前运行的代码版本' }),
-          el('div', { class: 'panel', style: 'padding:4px 13px' }, rows.map(([k, v]) => el('div', {
-            class: 'row-between', style: 'gap:12px;padding:9px 0;border-top:1px solid #f6ede0',
-          }, [
-            el('span', { style: 'font-size:11.5px;color:#8a7a70;flex-shrink:0', text: k }),
-            el('span', { style: 'font-size:12px;font-weight:700;text-align:right;word-break:break-all', text: v }),
-          ]))),
-          el('div', { style: 'font-size:10.5px;color:#b6a498;line-height:1.7',
-            text: build.dirty
-              ? '注意：该版本的部署包含未提交改动（dirty），与仓库 HEAD 不完全一致。'
-              : '与仓库 HEAD 一致，可直接对照提交记录。' }),
-        ]), { title: '版本信息', sub: build.label || '' });
-      };
       root.appendChild(el('section', {
         class: 'panel', style: 'padding:11px 13px;display:flex;gap:10px;align-items:center',
       }, [
@@ -89,7 +57,7 @@ async function renderAdmin(view) {
           el('div', { style: 'font-size:10.5px;color:#a3928a;margin-top:2px',
             text: `部署于 ${fmtTime(build.built_at)}` }),
         ]),
-        el('button', { class: 'btn ghost sm', text: '详情', onclick: openDetail }),
+        el('button', { class: 'btn ghost sm', text: '详情', onclick: () => showBuildSheet(build) }),
       ]));
     }
 

@@ -3,9 +3,12 @@
 import { studyPlanCard } from '../study-plan.js';
 import * as api from '../api.js';
 import { el, toast, openSheet } from '../ui.js';
+import { loadBuild, versionLine } from '../build-info.js';
 
 export async function renderMe(view) {
-  const [me, checkin, catalog] = await Promise.all([api.fetchMe(), api.getCheckin(), api.getCatalog()]);
+  const [me, checkin, catalog, build] = await Promise.all([
+    api.fetchMe(), api.getCheckin(), api.getCatalog(), loadBuild(),
+  ]);
 
   const root = el('div', { class: 'stack' });
 
@@ -331,10 +334,7 @@ export async function renderMe(view) {
     ]),
   ]));
 
-  root.appendChild(el('div', {
-    style: 'text-align:center;font-size:10.5px;color:#b6c2d2;padding:10px 0 4px',
-    text: '数据仅保存在本站，昵称可随时修改',
-  }));
+  root.appendChild(versionLine(build, '数据仅保存在本站，昵称可随时修改'));
 
   view.innerHTML = '';
   view.appendChild(root);

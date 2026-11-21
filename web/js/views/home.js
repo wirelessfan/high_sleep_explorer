@@ -4,15 +4,17 @@ import { studyPlanCard, studyLabel } from '../study-plan.js';
 import * as api from '../api.js';
 import { el, toast, SUBJECT_LABEL, SUBJECT_CLASS, SUBJECT_COLOR } from '../ui.js';
 import { navigate } from '../router.js';
+import { loadBuild, versionLine } from '../build-info.js';
 
 export async function renderHome(view) {
-  const [catalog, me, checkin, daily, history] = await Promise.all([
+  const [catalog, me, checkin, daily, history, build] = await Promise.all([
     api.getCatalog(),
     api.fetchMe(),
     api.getCheckin(),
     api.getDaily(),
     /* 历史事件库为空或接口异常时不应拖垮整个首页 */
     api.getHistory().catch(() => null),
+    loadBuild(),
   ]);
 
   const topics = catalog.subjects.flatMap((s) =>
@@ -196,11 +198,8 @@ export async function renderHome(view) {
     ]));
   }
 
-  /* ---- 底部小提示 ---- */
-  root.appendChild(el('div', {
-    style: 'text-align:center;font-size:11px;color:#b6c2d2;padding:10px 0 4px',
-    text: '有空就逛一小站，带着好奇心慢慢发现',
-  }));
+  /* ---- 底部小提示 + 版本号 ---- */
+  root.appendChild(versionLine(build, '有空就逛一小站，带着好奇心慢慢发现'));
 
   view.innerHTML = '';
   view.appendChild(root);
