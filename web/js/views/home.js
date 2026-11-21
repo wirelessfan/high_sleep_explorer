@@ -63,7 +63,7 @@ export async function renderHome(view) {
       el('div', { class: 'meta' }, [
         el('span', { class: `chip ${SUBJECT_CLASS[next.subjectId]}`, text: SUBJECT_LABEL[next.subjectId] }),
         el('span', { class: 'chip', text: `⏱ 约 ${mins} 分钟` }),
-        el('span', { class: 'chip', text: `✓ ${next.done}/${next.total} 单元` }),
+        el('span', { class: 'chip', text: next.done > 0 ? `✓ ${next.done}/${next.total} 单元` : `${next.done}/${next.total} 单元` }),
       ]),
       el('div', { class: 'row', style: 'margin-top:16px;gap:9px' }, [
         el('button', {

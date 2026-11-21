@@ -37,8 +37,28 @@ export function toast(msg, ms = 2000) {
 export function openSheet(content, { title, sub } = {}) {
   const overlay = document.getElementById('overlay');
   const sheet = el('div', { class: 'sheet' });
-  if (title) sheet.appendChild(el('h3', { text: title }));
-  if (sub) sheet.appendChild(el('div', { class: 'sub', text: sub }));
+  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  const onOverlayClick = (e) => { if (e.target === overlay) close(); };
+  const close = () => {
+    overlay.hidden = true;
+    overlay.innerHTML = '';
+    overlay.removeEventListener('click', onOverlayClick);
+    document.removeEventListener('keydown', onKey);
+  };
+  const closeBtn = el('button', {
+    class: 'btn ghost',
+    text: '×',
+    style: 'min-width:32px;height:32px;padding:0;line-height:1;font-size:18px;flex-shrink:0',
+    onclick: close,
+  });
+  if (title || sub) {
+    const headLeft = el('div', { style: 'flex:1;min-width:0' });
+    if (title) headLeft.appendChild(el('h3', { text: title }));
+    if (sub) headLeft.appendChild(el('div', { class: 'sub', text: sub }));
+    sheet.appendChild(el('div', { class: 'row', style: 'align-items:flex-start;justify-content:space-between;gap:12px' }, [headLeft, closeBtn]));
+  } else {
+    sheet.appendChild(el('div', { class: 'row', style: 'justify-content:flex-end' }, [closeBtn]));
+  }
   if (typeof content === 'string') {
     const wrap = el('div', { html: content });
     sheet.appendChild(wrap);
@@ -49,9 +69,7 @@ export function openSheet(content, { title, sub } = {}) {
   overlay.appendChild(sheet);
   overlay.hidden = false;
 
-  const close = () => { overlay.hidden = true; overlay.innerHTML = ''; document.removeEventListener('keydown', onKey); };
-  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); }, { once: true });
-  const onKey = (e) => { if (e.key === 'Escape') close(); };
+  overlay.addEventListener('click', onOverlayClick);
   document.addEventListener('keydown', onKey);
   return { close, sheet };
 }

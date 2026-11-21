@@ -556,7 +556,7 @@ export async function renderMiniGames(view) {
     const root = el('div', { class: 'stack' });
 
     root.appendChild(el('div', { class: 'topbar' }, [
-      el('button', { class: 'back', text: '‹', onclick: () => { location.hash = '#/'; } }),
+      el('button', { class: 'back', text: '‹', onclick: () => { if (history.length > 1) history.back(); else location.hash = '#/me'; } }),
       el('div', { style: 'flex:1' }, [
         el('h1', { text: '休闲游戏广场' }),
         el('div', { class: 'sub', text: '放松一下 · 想玩就玩' }),
