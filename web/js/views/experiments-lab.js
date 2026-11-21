@@ -3,6 +3,7 @@
 import { el } from '../ui.js';
 import { navigate } from '../router.js';
 import { mountLabBonus } from '../lab-bonus.js';
+import { canvasHud, FS } from '../lab-canvas.js';
 
 const LAB_CSS = `
 .explab{display:flex;flex-direction:column;gap:12px}
@@ -320,20 +321,21 @@ export async function renderExperimentsLab(view) {
     for (let k = 1; k <= 4; k++) {
       const s = aScale * k * k, mx = x0 + s * Math.cos(rad), my = y0 + s * Math.sin(rad), ok = gal.t >= k;
       ctxG.fillStyle = ok ? '#2563eb' : '#d6c7b2'; ctxG.beginPath(); ctxG.arc(mx, my, ok ? 6 : 4, 0, Math.PI * 2); ctxG.fill();
-      ctxG.fillStyle = ok ? '#1e3a8a' : '#9c8b7e'; ctxG.font = '700 12px sans-serif'; ctxG.fillText(`${k}s`, mx - 8, my - 14);
+      ctxG.fillStyle = ok ? '#1e3a8a' : '#9c8b7e'; ctxG.font = FS.small; ctxG.fillText(`${k}s`, mx - 10, my - 18);
     }
-    ctxG.fillStyle = '#fff'; ctxG.strokeStyle = '#efe4d3'; ctxG.lineWidth = 1; ctxG.beginPath(); ctxG.roundRect(445, 16, 255, 76, 12); ctxG.fill(); ctxG.stroke();
-    ctxG.fillStyle = '#5b5049'; ctxG.font = '700 12.5px sans-serif'; ctxG.fillText(`倾角 ${gal.angle}° · ${gal.air ? '空气阻力开启' : '真空无阻力'}`, 460, 38);
-    ctxG.fillStyle = '#2563eb'; ctxG.font = '800 14px sans-serif'; ctxG.fillText('铁球位移比：1 : 3 : 5 : 7', 460, 60);
-    ctxG.fillStyle = gal.air ? '#b45309' : '#059669'; ctxG.font = '700 12px sans-serif'; ctxG.fillText(gal.air ? '羽毛受空气阻力明显滞后' : '铁球与羽毛完全同步抵达', 460, 80);
+    canvasHud(ctxG, { x: 724, y: 14, lh: 32, align: 'right', bg: '#fff', stroke: '#efe4d3', radius: 12, lines: [
+      { text: `倾角 ${gal.angle}° · ${gal.air ? '有空气阻力' : '真空无阻力'}`, font: FS.hudSub, color: '#5b5049' },
+      { text: '位移比 1 : 3 : 5 : 7', font: FS.hudSub, color: '#2563eb' },
+      { text: gal.air ? '羽毛被阻力拖慢' : '铁球与羽毛同步抵达', font: FS.small, color: gal.air ? '#b45309' : '#059669' },
+    ] });
     const sI = Math.min(L, aScale * gal.t * gal.t), ix = x0 + sI * Math.cos(rad), iy = y0 + sI * Math.sin(rad) - 11;
     const sF = gal.air ? Math.min(L, L * 0.42 * (1 - Math.exp(-gal.t * 0.75)) + 26 * gal.t) : sI;
     const fx = x0 + Math.min(L, sF) * Math.cos(rad), fy = y0 + Math.min(L, sF) * Math.sin(rad) - 28;
     ctxG.fillStyle = '#2563eb'; ctxG.beginPath(); ctxG.arc(ix, iy, 10, 0, Math.PI * 2); ctxG.fill();
-    ctxG.fillStyle = '#fff'; ctxG.font = '700 10px sans-serif'; ctxG.fillText('球', ix - 5, iy + 3.5);
+    ctxG.fillStyle = '#1e3a8a'; ctxG.font = FS.small; ctxG.fillText('铁球', ix + 14, iy + 6);
     ctxG.save(); ctxG.translate(fx, fy); ctxG.rotate(rad - 0.15 + (gal.air && gal.running ? Math.sin(gal.t * 6) * 0.2 : 0));
     ctxG.fillStyle = '#f59e0b'; ctxG.beginPath(); ctxG.ellipse(0, 0, 14, 5, 0, 0, Math.PI * 2); ctxG.fill(); ctxG.restore();
-    ctxG.fillStyle = '#8c7b70'; ctxG.font = '600 12px sans-serif'; ctxG.fillText(`计时：${gal.t.toFixed(2)} s`, 24, 300);
+    ctxG.fillStyle = '#8c7b70'; ctxG.font = FS.small; ctxG.fillText(`计时 ${gal.t.toFixed(2)} s`, 24, 300);
   }
   function stepGal(ts) {
     if (disposed) return;
@@ -375,9 +377,10 @@ export async function renderExperimentsLab(view) {
       ctxN.strokeStyle = a.color; ctxN.lineWidth = 2.6; ctxN.beginPath(); a.pts.forEach((p, i) => (i ? ctxN.lineTo(p.x, p.y) : ctxN.moveTo(p.x, p.y))); ctxN.stroke();
       ctxN.fillStyle = '#fde047'; ctxN.beginPath(); ctxN.arc(a.x, a.y, 5.5, 0, Math.PI * 2); ctxN.fill();
     }
-    ctxN.fillStyle = 'rgba(15,23,42,.82)'; ctxN.beginPath(); ctxN.roundRect(16, 14, 290, 52, 10); ctxN.fill();
-    ctxN.fillStyle = '#e2e8f0'; ctxN.font = '700 12.5px sans-serif'; ctxN.fillText(`发射速度：${nSim.v0.toFixed(1)} km/s（第一宇宙速度 7.9）`, 28, 35);
-    ctxN.fillStyle = '#fcd34d'; ctxN.font = '700 12px sans-serif'; ctxN.fillText(nSim.status, 28, 55);
+    canvasHud(ctxN, { x: 14, y: 10, lh: 32, bg: 'rgba(15,23,42,.85)', lines: [
+      { text: `v₀ = ${nSim.v0.toFixed(1)} km/s`, font: FS.hud, color: '#e2e8f0' },
+      { text: nSim.status, font: FS.small, color: '#fcd34d' },
+    ] });
   }
   function fireCannon() {
     cancelAnimationFrame(rafs.newt);
@@ -458,23 +461,25 @@ export async function renderExperimentsLab(view) {
       const pC = sampleTrack(tCyc, BR.t), pL = sampleTrack(tLin, BR.t), pD = sampleTrack(tDep, BR.t);
       [{ p: pL, c: '#f97316', l: '直' }, { p: pD, c: '#64748b', l: '陡' }, { p: pC, c: '#2563eb', l: '摆' }].forEach(({ p, c, l }) => {
         ctxB.fillStyle = c; ctxB.beginPath(); ctxB.arc(p.x, p.y, 10, 0, Math.PI * 2); ctxB.fill();
-        ctxB.fillStyle = '#fff'; ctxB.font = '700 10px sans-serif'; ctxB.fillText(l, p.x - 5, p.y + 3.5);
+        ctxB.fillStyle = c; ctxB.font = FS.label; ctxB.fillText(l, p.x + 13, p.y + 6);
       });
-      ctxB.fillStyle = '#fff'; ctxB.strokeStyle = '#efe4d3'; ctxB.beginPath(); ctxB.roundRect(455, 18, 245, 94, 12); ctxB.fill(); ctxB.stroke();
-      ctxB.fillStyle = '#5b5049'; ctxB.font = '700 12px sans-serif'; ctxB.fillText(`计时：${BR.t.toFixed(2)} s（三轨竞速）`, 470, 38);
-      ctxB.fillStyle = '#2563eb'; ctxB.fillText(`● 摆线：${pC.done ? tCyc[tCyc.length - 1].t.toFixed(2) + ' s 🏆 最快' : '滑行中...'}`, 470, 60);
-      ctxB.fillStyle = '#ea580c'; ctxB.fillText(`● 直线：${pL.done ? tLin[tLin.length - 1].t.toFixed(2) + ' s' : '滑行中...'}`, 470, 80);
-      ctxB.fillStyle = '#64748b'; ctxB.fillText(`● 深弯：${pD.done ? tDep[tDep.length - 1].t.toFixed(2) + ' s' : '滑行中...'}`, 470, 100);
+      canvasHud(ctxB, { x: 724, y: 14, lh: 30, align: 'right', bg: '#fff', stroke: '#efe4d3', lines: [
+        { text: `计时 ${BR.t.toFixed(2)} s`, font: FS.hudSub, color: '#5b5049' },
+        { text: `● 摆线 ${pC.done ? tCyc[tCyc.length - 1].t.toFixed(2) + 's 🏆' : '滑行中…'}`, font: FS.small, color: '#2563eb' },
+        { text: `● 直线 ${pL.done ? tLin[tLin.length - 1].t.toFixed(2) + 's' : '滑行中…'}`, font: FS.small, color: '#ea580c' },
+        { text: `● 深弯 ${pD.done ? tDep[tDep.length - 1].t.toFixed(2) + 's' : '滑行中…'}`, font: FS.small, color: '#64748b' },
+      ] });
     } else {
       drawLine(tCyc, '#2563eb', 4);
       const pH = sampleTauto(0.05, BR.t), pM = sampleTauto(1.45, BR.t);
       [{ p: pH, c: '#2563eb', l: '高' }, { p: pM, c: '#059669', l: '低' }].forEach(({ p, c, l }) => {
         ctxB.fillStyle = c; ctxB.beginPath(); ctxB.arc(p.x, p.y, 10, 0, Math.PI * 2); ctxB.fill();
-        ctxB.fillStyle = '#fff'; ctxB.font = '700 10px sans-serif'; ctxB.fillText(l, p.x - 5, p.y + 3.5);
+        ctxB.fillStyle = c; ctxB.font = FS.label; ctxB.fillText(l, p.x + 13, p.y + 6);
       });
-      ctxB.fillStyle = '#fff'; ctxB.strokeStyle = '#efe4d3'; ctxB.beginPath(); ctxB.roundRect(445, 18, 255, 80, 12); ctxB.fill(); ctxB.stroke();
-      ctxB.fillStyle = '#5b5049'; ctxB.font = '700 12px sans-serif'; ctxB.fillText(`计时：${BR.t.toFixed(2)} s（摆线等时性）`, 460, 40);
-      ctxB.fillStyle = '#059669'; ctxB.fillText(pH.done ? `✨ 两球在 ${pH.T.toFixed(2)} s 完全同时撞线！` : '高低两球同时向谷底滑行...', 460, 68);
+      canvasHud(ctxB, { x: 724, y: 14, lh: 32, align: 'right', bg: '#fff', stroke: '#efe4d3', lines: [
+        { text: `计时 ${BR.t.toFixed(2)} s（等时性）`, font: FS.hudSub, color: '#5b5049' },
+        { text: pH.done ? `✨ 同时撞线 ${pH.T.toFixed(2)} s` : '两球同向谷底滑行…', font: FS.small, color: '#059669' },
+      ] });
     }
   }
   function stepBrach(ts) {
@@ -510,7 +515,7 @@ export async function renderExperimentsLab(view) {
     ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - 8 * Math.cos(a - 0.4), y2 - 8 * Math.sin(a - 0.4)); ctx.lineTo(x2 - 8 * Math.cos(a + 0.4), y2 - 8 * Math.sin(a + 0.4)); ctx.closePath(); ctx.fill();
-    if (lbl) { ctx.font = '800 12px sans-serif'; ctx.fillText(lbl, x2 + 5, y2 + 4); }
+    if (lbl) { ctx.font = FS.label; ctx.fillText(lbl, x2 + 6, y2 + 6); }
   }
   function drawCentri() {
     const W = cCen.width, H = cCen.height;
@@ -541,11 +546,12 @@ export async function renderExperimentsLab(view) {
       ctxC.fillStyle = '#059669'; ctxC.beginPath(); ctxC.arc(CEN.bx, CEN.by, 11, 0, Math.PI * 2); ctxC.fill();
     }
     ctxC.restore();
-    ctxC.fillStyle = '#fff'; ctxC.strokeStyle = '#efe4d3'; ctxC.beginPath(); ctxC.roundRect(495, 16, 208, 108, 12); ctxC.fill(); ctxC.stroke();
-    ctxC.fillStyle = '#5b5049'; ctxC.font = '700 12px sans-serif'; ctxC.fillText(CEN.rot ? '视角：随动转盘内' : '视角：地面观察者', 510, 38);
-    ctxC.fillStyle = '#2563eb'; ctxC.fillText(`向心力 F ≈ ${CEN.cut ? '0.0' : (CEN.omega * CEN.omega * 0.96).toFixed(1)} N`, 510, 62);
-    ctxC.fillStyle = '#8c7b70'; ctxC.fillText('细绳极限：22.0 N (ω≈4.8)', 510, 84);
-    ctxC.fillStyle = CEN.cut ? '#059669' : '#5b5049'; ctxC.fillText(CEN.cut ? '✓ 沿切线直线飞出' : '可剪断或提速拉断', 510, 106);
+    canvasHud(ctxC, { x: 724, y: 14, lh: 32, align: 'right', bg: '#fff', stroke: '#efe4d3', lines: [
+      { text: CEN.rot ? '视角：随动转盘内' : '视角：地面观察者', font: FS.small, color: '#5b5049' },
+      { text: `向心力 F ≈ ${CEN.cut ? '0.0' : (CEN.omega * CEN.omega * 0.96).toFixed(1)} N`, font: FS.hudSub, color: '#2563eb' },
+      { text: '细绳极限 22.0 N', font: FS.small, color: '#8c7b70' },
+      { text: CEN.cut ? '✓ 沿切线飞出' : '可剪断或提速拉断', font: FS.small, color: CEN.cut ? '#059669' : '#5b5049' },
+    ] });
   }
   function stepCentri(ts) {
     if (disposed) return;
@@ -585,7 +591,7 @@ export async function renderExperimentsLab(view) {
     }
     ctxF.fillStyle = bright > 0.08 ? `rgba(253,224,71,${0.35 + 0.65 * bright})` : '#e5e7eb';
     ctxF.strokeStyle = '#78716c'; ctxF.lineWidth = 2; ctxF.beginPath(); ctxF.arc(260, 68, 22, 0, Math.PI * 2); ctxF.fill(); ctxF.stroke();
-    ctxF.fillStyle = '#5b5049'; ctxF.font = '700 11.5px sans-serif'; ctxF.fillText(bright > 0.12 ? '灯泡亮了！' : '熄灭', 238, 108);
+    ctxF.fillStyle = '#5b5049'; ctxF.font = FS.small; ctxF.fillText(bright > 0.12 ? '💡 灯泡亮了' : '熄灭', 226, 116);
     ctxF.fillStyle = '#fff'; ctxF.strokeStyle = '#d6c2a8'; ctxF.beginPath(); ctxF.arc(590, 68, 36, 0, Math.PI * 2); ctxF.fill(); ctxF.stroke();
     const ang = Math.max(-1.1, Math.min(1.1, far.emf * 0.32));
     ctxF.strokeStyle = '#dc2626'; ctxF.lineWidth = 2.5; ctxF.beginPath(); ctxF.moveTo(590, 74); ctxF.lineTo(590 + Math.sin(ang) * 28, 74 - Math.cos(ang) * 28); ctxF.stroke();
@@ -593,7 +599,7 @@ export async function renderExperimentsLab(view) {
     for (let i = 0; i < 6; i++) { ctxF.beginPath(); ctxF.ellipse(coilX + 12 + i * 21, coilY + coilH / 2, 10, coilH / 2, 0, Math.PI * 0.5, Math.PI * 1.5); ctxF.stroke(); }
     ctxF.fillStyle = '#2563eb'; ctxF.fillRect(far.x - magW / 2, magY, magW / 2, magH);
     ctxF.fillStyle = '#dc2626'; ctxF.fillRect(far.x, magY, magW / 2, magH);
-    ctxF.fillStyle = '#fff'; ctxF.font = '800 15px sans-serif'; ctxF.fillText('S', far.x - magW / 4 - 5, magY + 24); ctxF.fillText('N', far.x + magW / 4 - 6, magY + 24);
+    ctxF.fillStyle = '#fff'; ctxF.font = FS.label; ctxF.fillText('S', far.x - magW / 4 - 6, magY + 26); ctxF.fillText('N', far.x + magW / 4 - 8, magY + 26);
     ctxF.strokeStyle = '#b45309'; ctxF.lineWidth = 5;
     for (let i = 0; i < 6; i++) { ctxF.beginPath(); ctxF.ellipse(coilX + 12 + i * 21, coilY + coilH / 2, 10, coilH / 2, 0, -Math.PI * 0.5, Math.PI * 0.5); ctxF.stroke(); }
   }

@@ -3,6 +3,7 @@
 import { el } from '../ui.js';
 import { navigate } from '../router.js';
 import { mountLabBonus } from '../lab-bonus.js';
+import { canvasHud, FS } from '../lab-canvas.js';
 
 const LAB_CSS = `
 .emlab{display:flex;flex-direction:column;gap:12px}
@@ -266,17 +267,14 @@ export async function renderEmCosmosLab(view) {
     // Telemetry HUD on right
     const speed = Math.hypot(cyc.vx, cyc.vy);
     const eMaxMeV = (cyc.B * cyc.B * 12.5).toFixed(1);
-    ctxCy.fillStyle = 'rgba(15, 23, 42, 0.88)'; ctxCy.strokeStyle = '#243044'; ctxCy.lineWidth = 1;
-    ctxCy.beginPath(); ctxCy.roundRect(445, 24, 272, 224, 14); ctxCy.fill(); ctxCy.stroke();
-    ctxCy.fillStyle = '#7dd3fc'; ctxCy.font = '800 13.5px sans-serif'; ctxCy.fillText('回旋加速器遥测面板', 464, 52);
-    ctxCy.fillStyle = '#cbd5e1'; ctxCy.font = '700 12.5px sans-serif';
-    ctxCy.fillText(`磁场 B = ${cyc.B.toFixed(1)} T · 电压 U = ${cyc.U} kV`, 464, 82);
-    ctxCy.fillText(`缝隙电场加速次数：${cyc.kicks} 次`, 464, 110);
-    ctxCy.fillStyle = '#fde047'; ctxCy.fillText(`当前粒子速率：${(speed * 0.08).toFixed(1)} ×10⁶ m/s`, 464, 138);
-    ctxCy.fillStyle = '#34d399'; ctxCy.fillText(`理论出射最大动能：${eMaxMeV} MeV`, 464, 166);
-    ctxCy.fillStyle = '#94a3b8'; ctxCy.font = '600 11.5px sans-serif';
-    ctxCy.fillText('金光闪动 = 穿过缝隙被电场加速', 464, 200);
-    ctxCy.fillText(cyc.escaped ? '✨ 粒子已高速射出 D 形盒！' : '观察：B 越大，螺旋圈越密、能量越高', 464, 224);
+    canvasHud(ctxCy, { x: 728, y: 12, lh: 34, align: 'right', stroke: '#243044', lines: [
+      { text: '回旋加速器遥测', font: '800 20px sans-serif', color: '#7dd3fc' },
+      { text: `B ${cyc.B.toFixed(1)} T · U ${cyc.U} kV`, font: FS.hudSub, color: '#cbd5e1' },
+      { text: `加速 ${cyc.kicks} 次`, font: FS.hudSub, color: '#cbd5e1' },
+      { text: `速率 ${(speed * 0.08).toFixed(1)} ×10⁶ m/s`, font: FS.hudSub, color: '#fde047' },
+      { text: `最大动能 ${eMaxMeV} MeV`, font: FS.hudSub, color: '#34d399' },
+      { text: cyc.escaped ? '✨ 已射出 D 形盒' : 'B 越大，螺旋越密', font: FS.small, color: '#94a3b8' },
+    ] });
   }
   function stepCyc(ts) {
     if (disposed) return;
@@ -347,9 +345,9 @@ export async function renderEmCosmosLab(view) {
     ctxRa.strokeStyle = rail.firing ? '#38bdf8' : '#64748b'; ctxRa.lineWidth = 2;
     ctxRa.strokeRect(60, 118, 520, 14); ctxRa.strokeRect(60, 184, 520, 14);
     // Current arrows
-    ctxRa.fillStyle = '#fbbf24'; ctxRa.font = '700 12px sans-serif';
+    ctxRa.fillStyle = '#fbbf24'; ctxRa.font = FS.small;
     ctxRa.fillText(`电流 I = ${rail.I} kA →`, 72, 108);
-    ctxRa.fillText(`← 回路电流`, 72, 218);
+    ctxRa.fillText('← 回路电流', 72, 222);
     // Plasma sparks
     rail.sparks.forEach((sp) => {
       ctxRa.fillStyle = `rgba(125,211,252,${sp.a})`;
@@ -361,13 +359,11 @@ export async function renderEmCosmosLab(view) {
     // HUD
     const forceKN = (rail.B * rail.I * 0.25).toFixed(1);
     const targetMach = (Math.sqrt(rail.B * rail.I * 0.25) * 1.18).toFixed(1);
-    ctxRa.fillStyle = 'rgba(15,23,42,0.88)'; ctxRa.strokeStyle = '#243044';
-    ctxRa.beginPath(); ctxRa.roundRect(450, 16, 268, 86, 12); ctxRa.fill(); ctxRa.stroke();
-    ctxRa.fillStyle = '#7dd3fc'; ctxRa.font = '800 13px sans-serif'; ctxRa.fillText(`安培推力 F = BIL ≈ ${forceKN} kN`, 466, 42);
-    ctxRa.fillStyle = Number(targetMach) >= 5 ? '#34d399' : '#fde047';
-    ctxRa.fillText(`预计出膛：Mach ${targetMach}${Number(targetMach) >= 5 ? ' 🚀 超高音速！' : ''}`, 466, 66);
-    ctxRa.fillStyle = '#94a3b8'; ctxRa.font = '600 11.5px sans-serif';
-    ctxRa.fillText(rail.mach > 0 ? `上次实测出膛：Mach ${rail.mach.toFixed(1)}` : '点击「⚡ 充能发射！」测试', 466, 88);
+    canvasHud(ctxRa, { x: 728, y: 6, lh: 32, align: 'right', stroke: null, lines: [
+      { text: `推力 F = BIL ≈ ${forceKN} kN`, font: FS.hud, color: '#7dd3fc' },
+      { text: `预计出膛 Mach ${targetMach}${Number(targetMach) >= 5 ? ' 🚀' : ''}`, font: FS.hudSub, color: '#fbbf24' },
+      { text: rail.mach > 0 ? `上次实测 Mach ${rail.mach.toFixed(1)}` : '点「⚡ 充能发射」测试', font: FS.small, color: '#94a3b8' },
+    ] });
   }
   function stepRail(ts) {
     if (disposed) return;
@@ -481,11 +477,10 @@ export async function renderEmCosmosLab(view) {
       aur.particles = alive;
 
       // HUD
-      ctxAu.fillStyle = 'rgba(15,23,42,0.85)'; ctxAu.strokeStyle = '#243044';
-      ctxAu.beginPath(); ctxAu.roundRect(18, 16, 286, 68, 12); ctxAu.fill(); ctxAu.stroke();
-      ctxAu.fillStyle = '#7dd3fc'; ctxAu.font = '800 12.5px sans-serif'; ctxAu.fillText(`地磁场强度：${aur.B}%`, 32, 40);
-      ctxAu.fillStyle = aur.B === 0 ? '#f87171' : '#34d399'; ctxAu.font = '700 12px sans-serif';
-      ctxAu.fillText(aur.B === 0 ? '⚠️ 磁场消失！高能粒子直击赤道大气！' : '✨ 粒子沿磁感线汇入两极，点亮极光！', 32, 64);
+      canvasHud(ctxAu, { x: 14, y: 10, lh: 34, stroke: null, bg: 'rgba(15,23,42,0.86)', lines: [
+        { text: `地磁场强度 ${aur.B}%`, font: FS.hud, color: '#7dd3fc' },
+        { text: aur.B === 0 ? '⚠️ 磁场消失，粒子直击赤道' : '✨ 粒子汇入两极，点亮极光', font: FS.hudSub, color: aur.B === 0 ? '#f87171' : '#34d399' },
+      ] });
     }
     rafs.aur = requestAnimationFrame(stepAurora);
   mountLabBonus(root, '.em-tabs');

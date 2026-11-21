@@ -3,6 +3,7 @@
 import { el } from '../ui.js';
 import { navigate } from '../router.js';
 import { mountLabBonus } from '../lab-bonus.js';
+import { canvasHud, FS } from '../lab-canvas.js';
 
 const LAB_CSS = `
 .cqlab{display:flex;flex-direction:column;gap:12px}
@@ -306,11 +307,11 @@ export async function renderChaosQuantumLab(view) {
       };
       drawArm(k1, '#38bdf8'); drawArm(k2, '#fb7185');
       const sep = Math.hypot(k1.x2 - k2.x2, k1.y2 - k2.y2);
-      ctxCh.fillStyle = 'rgba(15,23,42,0.86)'; ctxCh.strokeStyle = '#243044'; ctxCh.beginPath(); ctxCh.roundRect(490, 18, 232, 84, 12); ctxCh.fill(); ctxCh.stroke();
-      ctxCh.fillStyle = '#7dd3fc'; ctxCh.font = '800 12.5px sans-serif'; ctxCh.fillText(`初始角度差 Δθ = ${cha.diff.toFixed(2)}°`, 506, 42);
-      ctxCh.fillStyle = sep > 55 ? '#fb7185' : '#34d399';
-      ctxCh.fillText(sep > 55 ? '🦋 混沌决裂！轨迹已完全不同' : `末端距离差：${sep.toFixed(1)} px`, 506, 66);
-      ctxCh.fillStyle = '#94a3b8'; ctxCh.font = '600 11.5px sans-serif'; ctxCh.fillText(`已运行 ${cha.t.toFixed(1)} s`, 506, 88);
+      canvasHud(ctxCh, { x: 728, y: 12, lh: 32, align: 'right', stroke: '#243044', lines: [
+        { text: `Δθ = ${cha.diff.toFixed(2)}°`, font: FS.hud, color: '#7dd3fc' },
+        { text: sep > 55 ? '🦋 混沌决裂！' : `末端差 ${sep.toFixed(0)} px`, font: FS.hudSub, color: sep > 55 ? '#fb7185' : '#34d399' },
+        { text: `已运行 ${cha.t.toFixed(1)} s`, font: FS.small, color: '#94a3b8' },
+      ] });
     }
 
     if (state.tab === 'slingshot') {
@@ -337,7 +338,7 @@ export async function renderChaosQuantumLab(view) {
       const jg = ctxSl.createRadialGradient(jx - 8, sli.jupY - 8, 4, jx, sli.jupY, jr);
       jg.addColorStop(0, '#fde68a'); jg.addColorStop(0.6, '#d97706'); jg.addColorStop(1, '#78350f');
       ctxSl.fillStyle = jg; ctxSl.beginPath(); ctxSl.arc(jx, sli.jupY, jr, 0, Math.PI * 2); ctxSl.fill();
-      ctxSl.fillStyle = '#fde68a'; ctxSl.font = '700 11.5px sans-serif'; ctxSl.fillText('木星 ↑', jx + 34, sli.jupY + 4);
+      ctxSl.fillStyle = '#fde68a'; ctxSl.font = FS.label; ctxSl.fillText('木星 ↑', jx + 34, sli.jupY + 6);
       if (sli.trail.length > 1) {
         ctxSl.strokeStyle = '#38bdf8'; ctxSl.lineWidth = 2.6; ctxSl.beginPath();
         sli.trail.forEach((p, i) => (i ? ctxSl.lineTo(p.x, p.y) : ctxSl.moveTo(p.x, p.y))); ctxSl.stroke();
@@ -345,10 +346,10 @@ export async function renderChaosQuantumLab(view) {
       ctxSl.fillStyle = '#34d399'; ctxSl.beginPath(); ctxSl.arc(sli.px, sli.py, 5.5, 0, Math.PI * 2); ctxSl.fill();
       const curV = sli.running ? Math.hypot(sli.pvx, sli.pvy) : sli.vInit;
       const gainPct = Math.round(((sli.vMax - sli.vInit) / sli.vInit) * 100);
-      ctxSl.fillStyle = 'rgba(15,23,42,0.86)'; ctxSl.strokeStyle = '#243044'; ctxSl.beginPath(); ctxSl.roundRect(18, 16, 268, 72, 12); ctxSl.fill(); ctxSl.stroke();
-      ctxSl.fillStyle = '#7dd3fc'; ctxSl.font = '800 12.5px sans-serif'; ctxSl.fillText(`当前速率：${(curV * 0.1).toFixed(1)} km/s（初速 14.5）`, 32, 40);
-      ctxSl.fillStyle = gainPct >= 25 ? '#34d399' : '#fbbf24';
-      ctxSl.fillText(gainPct >= 25 ? `🚀 引力弹弓成功！最高提速 +${gainPct}%` : '提示：瞄准木星下方绕后方擦过！', 32, 64);
+      canvasHud(ctxSl, { x: 14, y: 10, lh: 30, stroke: '#243044', lines: [
+        { text: `速率 ${(curV * 0.1).toFixed(1)} km/s · 初速 14.5`, font: FS.hud, color: '#7dd3fc' },
+        { text: gainPct >= 25 ? `🚀 弹弓成功 +${gainPct}%` : `提速 ${gainPct}%，瞄准木星下方擦过`, font: FS.hudSub, color: gainPct >= 25 ? '#34d399' : '#fbbf24' },
+      ] });
     }
 
     if (state.tab === 'photo') {
@@ -367,9 +368,9 @@ export async function renderChaosQuantumLab(view) {
       ctxPh.clearRect(0, 0, cPho.width, cPho.height); ctxPh.fillStyle = '#0b1120'; ctxPh.fillRect(0, 0, cPho.width, cPho.height);
       // Cathode metal plate & anode
       ctxPh.fillStyle = '#475569'; ctxPh.fillRect(260, 55, 18, 200);
-      ctxPh.fillStyle = '#94a3b8'; ctxPh.font = '700 11.5px sans-serif'; ctxPh.fillText('金属阴极 (W₀=2.6 eV)', 210, 276);
+      ctxPh.fillStyle = '#94a3b8'; ctxPh.font = FS.small; ctxPh.fillText('金属阴极 W₀=2.6eV', 200, 280);
       ctxPh.fillStyle = '#334155'; ctxPh.fillRect(580, 55, 14, 200);
-      ctxPh.fillText('阳极接收板', 555, 276);
+      ctxPh.fillText('阳极接收板', 545, 280);
 
       const nextPh = [];
       for (const p of pho.photons) {
@@ -394,10 +395,10 @@ export async function renderChaosQuantumLab(view) {
       }
       pho.electrons = nextEl;
 
-      ctxPh.fillStyle = 'rgba(15,23,42,0.88)'; ctxPh.strokeStyle = '#243044'; ctxPh.beginPath(); ctxPh.roundRect(320, 14, 245, 76, 12); ctxPh.fill(); ctxPh.stroke();
-      ctxPh.fillStyle = info.c; ctxPh.font = '800 12.5px sans-serif'; ctxPh.fillText(`单光子能量 E = ${ePhoton.toFixed(2)} eV`, 336, 38);
-      ctxPh.fillStyle = eject ? '#34d399' : '#f87171';
-      ctxPh.fillText(eject ? `✨ 超过逸出功！光电子喷射中` : '✗ 能量 < 2.6 eV，光再亮也是 0 电子', 336, 62);
+      canvasHud(ctxPh, { x: 726, y: 10, lh: 30, align: 'right', stroke: '#243044', lines: [
+        { text: `E = ${ePhoton.toFixed(2)} eV`, font: FS.hud, color: info.c },
+        { text: eject ? '✨ 超过逸出功，打出电子' : '✗ 小于 2.6 eV，0 电子', font: FS.hudSub, color: eject ? '#34d399' : '#f87171' },
+      ] });
     }
 
     rafId = requestAnimationFrame(loop);

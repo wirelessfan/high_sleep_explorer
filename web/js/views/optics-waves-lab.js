@@ -3,6 +3,7 @@
 import { el } from '../ui.js';
 import { navigate } from '../router.js';
 import { mountLabBonus } from '../lab-bonus.js';
+import { canvasHud, FS } from '../lab-canvas.js';
 
 const LAB_CSS = `
 .owlab{display:flex;flex-direction:column;gap:12px}
@@ -248,8 +249,8 @@ export async function renderOpticsWavesLab(view) {
       ctxFi.strokeStyle = 'rgba(248,113,113,0.85)'; ctxFi.lineWidth = 2.5;
       ctxFi.beginPath(); ctxFi.moveTo(hitX, topY); ctxFi.lineTo(hitX + Math.sin(refrRad) * 95, topY - Math.cos(refrRad) * 95); ctxFi.stroke();
       // 提示写在管壁下方，避免被左上角 HUD 盖住
-      ctxFi.fillStyle = '#f87171'; ctxFi.font = '800 13px sans-serif';
-      ctxFi.fillText('⚠️ 光从管壁漏出去了！', Math.min(hitX + 6, rightX - 150), botY + 34);
+      ctxFi.fillStyle = '#f87171'; ctxFi.font = FS.label;
+      ctxFi.fillText('⚠️ 光从管壁漏出去了！', Math.min(hitX + 6, rightX - 230), botY + 40);
     } else {
       x = firstX; y = topY; ctxFi.lineTo(x, y); dir = 1;
       let guard = 0;
@@ -271,13 +272,11 @@ export async function renderOpticsWavesLab(view) {
     ctxFi.shadowColor = isTotal ? '#34d399' : 'transparent'; ctxFi.shadowBlur = isTotal ? 16 : 0;
     ctxFi.beginPath(); ctxFi.roundRect(rightX + 4, topY + 12, 22, botY - topY - 24, 6); ctxFi.fill(); ctxFi.shadowBlur = 0;
 
-    // HUD
-    ctxFi.fillStyle = 'rgba(15,23,42,0.88)'; ctxFi.strokeStyle = '#243044';
-    ctxFi.beginPath(); ctxFi.roundRect(18, 16, 330, 68, 12); ctxFi.fill(); ctxFi.stroke();
-    ctxFi.fillStyle = '#7dd3fc'; ctxFi.font = '800 12.5px sans-serif';
-    ctxFi.fillText(`入射角 θ = ${fib.ang}° · 临界角 θc = ${crit.toFixed(1)}°`, 32, 40);
-    ctxFi.fillStyle = isTotal ? '#34d399' : '#f87171';
-    ctxFi.fillText(isTotal ? '✨ 全反射达成！100% 激光信号送达接收器' : '⚠️ 未达临界角，激光折射漏出光纤', 32, 64);
+    // HUD（宽度按文字自动撑开）
+    canvasHud(ctxFi, { x: 14, y: 10, lh: 30, stroke: '#243044', lines: [
+      { text: `入射角 ${fib.ang}° · 临界角 ${crit.toFixed(1)}°`, font: FS.hud, color: '#7dd3fc' },
+      { text: isTotal ? '✨ 全反射：信号 100% 送达' : '⚠️ 未达临界角，激光漏出', font: FS.hudSub, color: isTotal ? '#34d399' : '#f87171' },
+    ] });
   }
   $('[data-in="fibAng"]').addEventListener('input', (e) => { fib.ang = Number(e.target.value); $('[data-out="fibAng"]').textContent = `${fib.ang}°`; drawFiber(); });
   $('[data-in="fibN"]').addEventListener('input', (e) => { fib.n = Number(e.target.value); $('[data-out="fibN"]').textContent = fib.n.toFixed(2); drawFiber(); });
@@ -353,11 +352,14 @@ export async function renderOpticsWavesLab(view) {
       ctxSo.fillStyle = '#f8fafc'; ctxSo.beginPath();
       ctxSo.moveTo(son.x + 14, 165); ctxSo.lineTo(son.x - 10, 156); ctxSo.lineTo(son.x - 10, 174); ctxSo.closePath(); ctxSo.fill();
 
-      ctxSo.fillStyle = 'rgba(15,23,42,0.85)'; ctxSo.strokeStyle = '#243044';
-      ctxSo.beginPath(); ctxSo.roundRect(18, 16, 290, 62, 12); ctxSo.fill(); ctxSo.stroke();
-      ctxSo.fillStyle = '#7dd3fc'; ctxSo.font = '800 12.5px sans-serif'; ctxSo.fillText(`当前速度：${son.M.toFixed(1)} Mach`, 32, 38);
-      ctxSo.fillStyle = son.M >= 1.0 ? '#fbbf24' : '#34d399';
-      ctxSo.fillText(son.M > 1.0 ? `💥 超音速！马赫锥半角 ≈ ${(Math.asin(1 / son.M) * 180 / Math.PI).toFixed(0)}°` : (son.M === 1.0 ? '⚡ 音障临界！声波堆叠成墙' : '亚音速：前方波纹压缩，后方拉宽'), 32, 60);
+      canvasHud(ctxSo, { x: 14, y: 10, lh: 30, stroke: '#243044', lines: [
+        { text: `当前速度 ${son.M.toFixed(1)} Mach`, font: FS.hud, color: '#7dd3fc' },
+        {
+          text: son.M > 1.0 ? `💥 马赫锥半角 ≈ ${(Math.asin(1 / son.M) * 180 / Math.PI).toFixed(0)}°`
+            : (son.M === 1.0 ? '⚡ 音障临界！声波堆成墙' : '亚音速：前密后疏'),
+          font: FS.hudSub, color: son.M >= 1.0 ? '#fbbf24' : '#34d399',
+        },
+      ] });
     }
     if (state.tab === 'anc') {
       anc.phase += 0.08;
@@ -375,7 +377,7 @@ export async function renderOpticsWavesLab(view) {
           if (x === 30) ctxAn.moveTo(x, y); else ctxAn.lineTo(x, y);
         }
         ctxAn.stroke();
-        ctxAn.fillStyle = color; ctxAn.font = '700 12px sans-serif'; ctxAn.fillText(label, 34, y0 - 32);
+        ctxAn.fillStyle = color; ctxAn.font = FS.small; ctxAn.fillText(label, 34, y0 - 34);
       };
       drawW(68, (t) => Math.sin(t), '#f87171', '① 外界噪音波');
       drawW(154, (t) => Math.sin(t + phiRad), '#38bdf8', `② 耳机反向波（相位差 ${anc.phi}°）`);

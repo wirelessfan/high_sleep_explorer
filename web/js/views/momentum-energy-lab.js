@@ -3,6 +3,7 @@
 import { el } from '../ui.js';
 import { navigate } from '../router.js';
 import { mountLabBonus } from '../lab-bonus.js';
+import { canvasHud, FS } from '../lab-canvas.js';
 
 const LAB_CSS = `
 .melab{display:flex;flex-direction:column;gap:12px}
@@ -324,23 +325,26 @@ export async function renderMomentumEnergyLab(view) {
     const bw = 64 + bul.M * 10, bh = 54;
     ctxBu.fillStyle = bul.phase === 'embedded' ? '#d97706' : '#b45309';
     ctxBu.beginPath(); ctxBu.roundRect(bul.blockX, 210 - bh, bw, bh, 8); ctxBu.fill();
-    ctxBu.fillStyle = '#fff'; ctxBu.font = '800 13px sans-serif'; ctxBu.fillText(`M=${bul.M}kg`, bul.blockX + 8, 210 - bh / 2 + 5);
     ctxBu.fillStyle = '#2563eb'; ctxBu.beginPath(); ctxBu.roundRect(bul.bx, 180, 18, 7, 3); ctxBu.fill();
-    if (bul.phase === 'embedded') { ctxBu.fillStyle = '#dc2626'; ctxBu.font = '800 12px sans-serif'; ctxBu.fillText('🔥 剧烈摩擦生热！', bul.blockX, 146); }
+    ctxBu.fillStyle = '#fff'; ctxBu.font = FS.label; ctxBu.textAlign = 'right';
+    ctxBu.fillText(`${bul.M}kg`, bul.blockX + bw - 10, 210 - bh / 2 + 7); ctxBu.textAlign = 'left';
+    if (bul.phase === 'embedded') { ctxBu.fillStyle = '#dc2626'; ctxBu.font = FS.small; ctxBu.fillText('🔥 剧烈摩擦生热', Math.min(bul.blockX, 250), 132); }
     const p0 = bul.m * bul.v0, ek0 = 0.5 * bul.m * bul.v0 * bul.v0, vc = p0 / (bul.m + bul.M), ekA = 0.5 * (bul.m + bul.M) * vc * vc, heat = ek0 - ekA, hit = bul.phase === 'embedded';
-    ctxBu.fillStyle = '#fff'; ctxBu.strokeStyle = '#efe4d3'; ctxBu.beginPath(); ctxBu.roundRect(480, 18, 242, 268, 12); ctxBu.fill(); ctxBu.stroke();
-    ctxBu.fillStyle = '#2f2a26'; ctxBu.font = '800 13px sans-serif'; ctxBu.fillText('碰撞前后实时账本', 496, 42);
+    // 账本：面板保持原位置（480 起），行文字用 17px 保证「标签 + 数值」放得下
+    const bx0 = 480, bxw = 242, bxr = bx0 + bxw - 14;
+    ctxBu.fillStyle = '#fff'; ctxBu.strokeStyle = '#efe4d3'; ctxBu.beginPath(); ctxBu.roundRect(bx0, 18, bxw, 268, 12); ctxBu.fill(); ctxBu.stroke();
+    ctxBu.fillStyle = '#2f2a26'; ctxBu.font = FS.hud; ctxBu.fillText('碰撞账本', bx0 + 16, 54);
     const bar = (y, l, vt, r, c) => {
-      ctxBu.fillStyle = '#5b5049'; ctxBu.font = '700 12px sans-serif'; ctxBu.fillText(l, 496, y);
-      ctxBu.fillStyle = c; ctxBu.fillText(vt, 615, y);
-      ctxBu.fillStyle = '#f3ece1'; ctxBu.beginPath(); ctxBu.roundRect(496, y + 6, 210, 12, 6); ctxBu.fill();
-      ctxBu.fillStyle = c; ctxBu.beginPath(); ctxBu.roundRect(496, y + 6, Math.max(4, 210 * Math.min(1, r)), 12, 6); ctxBu.fill();
+      ctxBu.fillStyle = '#5b5049'; ctxBu.font = FS.small; ctxBu.fillText(l, bx0 + 16, y);
+      ctxBu.font = FS.small; ctxBu.textAlign = 'right'; ctxBu.fillStyle = c; ctxBu.fillText(vt, bxr, y); ctxBu.textAlign = 'left';
+      ctxBu.fillStyle = '#f3ece1'; ctxBu.beginPath(); ctxBu.roundRect(bx0 + 16, y + 9, bxw - 30, 13, 6); ctxBu.fill();
+      ctxBu.fillStyle = c; ctxBu.beginPath(); ctxBu.roundRect(bx0 + 16, y + 9, Math.max(4, (bxw - 30) * Math.min(1, r)), 13, 6); ctxBu.fill();
     };
-    bar(74, '总动量 p', `${p0.toFixed(1)} kg·m/s`, 1, '#2563eb');
-    bar(128, '系统动能 Eₖ', `${(hit ? ekA : ek0).toFixed(0)} J`, hit ? ekA / ek0 : 1, '#059669');
-    bar(182, '摩擦生热 Q', `${(hit ? heat : 0).toFixed(0)} J`, hit ? heat / ek0 : 0, '#dc2626');
-    ctxBu.fillStyle = '#8c7b70'; ctxBu.font = '700 11.5px sans-serif'; ctxBu.fillText(hit ? `共同速度 v共 = ${vc.toFixed(1)} m/s` : `子弹 m=0.05kg, v₀=${bul.v0}m/s`, 496, 236);
-    ctxBu.fillStyle = '#dc2626'; ctxBu.fillText(hit ? `动能损失率：${((heat / ek0) * 100).toFixed(1)}%` : '准备发射...', 496, 258);
+    bar(100, '总动量 p', `${p0.toFixed(0)}`, 1, '#2563eb');
+    bar(162, '系统动能 Eₖ', `${(hit ? ekA : ek0).toFixed(0)} J`, hit ? ekA / ek0 : 1, '#059669');
+    bar(224, '摩擦生热 Q', `${(hit ? heat : 0).toFixed(0)} J`, hit ? heat / ek0 : 0, '#dc2626');
+    ctxBu.fillStyle = '#8c7b70'; ctxBu.font = FS.small;
+    ctxBu.fillText(hit ? `v共 ${vc.toFixed(1)} m/s` : `子弹 0.05kg / v₀ ${bul.v0}`, bx0 + 16, 268);
   }
   function stepBullet(ts) {
     if (disposed) return;
@@ -377,14 +381,14 @@ export async function renderMomentumEnergyLab(view) {
     const tr = (pts, c) => { if (pts.length < 2) return; ctxBi.strokeStyle = c; ctxBi.lineWidth = 3; ctxBi.beginPath(); pts.forEach((p, i) => (i ? ctxBi.lineTo(p.x, p.y) : ctxBi.moveTo(p.x, p.y))); ctxBi.stroke(); };
     tr(bil.b1.tr, 'rgba(255,255,255,.75)'); tr(bil.b2.tr, 'rgba(250,204,21,.85)');
     ctxBi.fillStyle = '#fff'; ctxBi.beginPath(); ctxBi.arc(bil.b1.x, bil.b1.y, bil.r, 0, Math.PI * 2); ctxBi.fill();
-    ctxBi.fillStyle = '#1e293b'; ctxBi.font = '800 11px sans-serif'; ctxBi.fillText('白', bil.b1.x - 5.5, bil.b1.y + 4);
+    ctxBi.fillStyle = '#f8fafc'; ctxBi.font = FS.small; ctxBi.fillText('白球', bil.b1.x - 17, bil.b1.y - bil.r - 8);
     const r2 = bil.r * Math.pow(bil.ratio, 0.22);
     ctxBi.fillStyle = '#facc15'; ctxBi.beginPath(); ctxBi.arc(bil.b2.x, bil.b2.y, r2, 0, Math.PI * 2); ctxBi.fill();
-    ctxBi.fillStyle = '#78350f'; ctxBi.fillText(`${bil.ratio}m`, bil.b2.x - 12, bil.b2.y + 4);
-    ctxBi.fillStyle = 'rgba(15,23,42,.75)'; ctxBi.beginPath(); ctxBi.roundRect(24, 22, 276, 62, 10); ctxBi.fill();
-    ctxBi.fillStyle = '#f8fafc'; ctxBi.font = '700 12px sans-serif'; ctxBi.fillText(`偏心距：${bil.off === 0 ? '0（正碰）' : bil.off + 'px'} · 质量比 1:${bil.ratio}`, 36, 44);
-    ctxBi.fillStyle = '#fde047';
-    ctxBi.fillText(!bil.hit ? '点击「出杆击球」观察弹性碰撞' : (bil.off === 0 && bil.ratio === 1 ? '✨ 等质量正碰：白球原地定杆！' : bil.deg !== null ? `📐 两球分离夹角：${bil.deg.toFixed(1)}°` : '碰撞完成'), 36, 66);
+    ctxBi.fillStyle = '#fde047'; ctxBi.fillText(`${bil.ratio}m`, bil.b2.x - 12, bil.b2.y - r2 - 8);
+    canvasHud(ctxBi, { x: 20, y: 16, lh: 32, bg: 'rgba(15,23,42,.78)', lines: [
+      { text: `偏心 ${bil.off === 0 ? '0（正碰）' : bil.off + 'px'} · 质量 1:${bil.ratio}`, font: FS.small, color: '#f8fafc' },
+      { text: !bil.hit ? '点「出杆击球」看弹性碰撞' : (bil.off === 0 && bil.ratio === 1 ? '✨ 等质量正碰：定杆' : bil.deg !== null ? `📐 分离夹角 ${bil.deg.toFixed(0)}°` : '碰撞完成'), font: FS.small, color: '#fde047' },
+    ] });
   }
   function stepBil(ts) {
     if (disposed) return;
@@ -430,23 +434,24 @@ export async function renderMomentumEnergyLab(view) {
     const cy = 175, cx = 370;
     ctxEx.strokeStyle = '#facc15'; ctxEx.lineWidth = 1.8; ctxEx.setLineDash([4, 4]);
     ctxEx.beginPath(); ctxEx.moveTo(cx, 75); ctxEx.lineTo(cx, 270); ctxEx.stroke(); ctxEx.setLineDash([]);
-    ctxEx.fillStyle = '#facc15'; ctxEx.font = '800 12px sans-serif'; ctxEx.fillText('✦ 系统质心（纹丝不动）', cx - 66, 66);
+    ctxEx.fillStyle = '#facc15'; ctxEx.font = FS.small; ctxEx.fillText('✦ 系统质心，纹丝不动', cx - 96, 62);
     if (!exp.boom) {
       ctxEx.fillStyle = '#38bdf8'; ctxEx.beginPath(); ctxEx.roundRect(cx - 38, cy - 22, 34, 44, 8); ctxEx.fill();
       ctxEx.fillStyle = '#f97316'; ctxEx.beginPath(); ctxEx.roundRect(cx - 2, cy - 26, 48, 52, 8); ctxEx.fill();
-      ctxEx.fillStyle = '#fff'; ctxEx.fillText('1m', cx - 30, cy + 4); ctxEx.fillText(`${exp.ratio}m`, cx + 12, cy + 4);
+      ctxEx.fillStyle = '#fff'; ctxEx.fillText('1m', cx - 30, cy + 5); ctxEx.fillText(`${exp.ratio}m`, cx + 10, cy + 5);
     } else {
       ctxEx.fillStyle = '#38bdf8'; ctxEx.beginPath(); ctxEx.roundRect(exp.x1 - 18, cy - 20, 36, 40, 8); ctxEx.fill();
-      ctxEx.fillStyle = '#fff'; ctxEx.fillText('1m', exp.x1 - 9, cy + 4);
+      ctxEx.fillStyle = '#fff'; ctxEx.fillText('1m', exp.x1 - 11, cy + 5);
       const w2 = 36 + exp.ratio * 6;
       ctxEx.fillStyle = '#f97316'; ctxEx.beginPath(); ctxEx.roundRect(exp.x2 - w2 / 2, cy - 24, w2, 48, 8); ctxEx.fill();
-      ctxEx.fillStyle = '#fff'; ctxEx.fillText(`${exp.ratio}m`, exp.x2 - 10, cy + 4);
+      ctxEx.fillStyle = '#fff'; ctxEx.fillText(`${exp.ratio}m`, exp.x2 - 12, cy + 5);
     }
     const ek1 = 0.5 * 120 * 120, ek2 = 0.5 * exp.ratio * (120 / exp.ratio) ** 2;
-    ctxEx.fillStyle = 'rgba(15,23,42,.85)'; ctxEx.beginPath(); ctxEx.roundRect(20, 18, 248, 72, 10); ctxEx.fill();
-    ctxEx.fillStyle = '#e2e8f0'; ctxEx.font = '700 12px sans-serif'; ctxEx.fillText(`总动量 p₁+p₂ = ${exp.boom ? '(-120)+(+120)=0' : '0'}`, 32, 40);
-    ctxEx.fillStyle = '#38bdf8'; ctxEx.fillText(`轻块动能占比：${((ek1 / (ek1 + ek2)) * 100).toFixed(0)}%`, 32, 62);
-    ctxEx.fillStyle = '#fb923c'; ctxEx.fillText(`重块动能占比：${((ek2 / (ek1 + ek2)) * 100).toFixed(0)}%`, 32, 82);
+    canvasHud(ctxEx, { x: 16, y: 14, lh: 32, bg: 'rgba(15,23,42,.85)', lines: [
+      { text: exp.boom ? '总动量 (-120)+(+120)=0' : '总动量 = 0', font: FS.small, color: '#e2e8f0' },
+      { text: `轻块动能 ${((ek1 / (ek1 + ek2)) * 100).toFixed(0)}%`, font: FS.small, color: '#38bdf8' },
+      { text: `重块动能 ${((ek2 / (ek1 + ek2)) * 100).toFixed(0)}%`, font: FS.small, color: '#fb923c' },
+    ] });
   }
   function stepExp(ts) {
     if (disposed) return;
@@ -481,11 +486,11 @@ export async function renderMomentumEnergyLab(view) {
     const curH = Math.min(coa.h0, ty(coa.x)), curKe = Math.max(0, coa.maxE - curH - coa.heat);
     ctxCo.fillStyle = '#2563eb'; ctxCo.beginPath(); ctxCo.arc(mx(coa.x), my(curH) - 10, 10, 0, Math.PI * 2); ctxCo.fill();
     ctxCo.fillStyle = '#fff'; ctxCo.strokeStyle = '#efe4d3'; ctxCo.beginPath(); ctxCo.roundRect(485, 18, 236, 268, 12); ctxCo.fill(); ctxCo.stroke();
-    ctxCo.fillStyle = '#2f2a26'; ctxCo.font = '800 13px sans-serif'; ctxCo.fillText('实时能量守恒柱', 502, 42);
+    ctxCo.fillStyle = '#2f2a26'; ctxCo.font = FS.hud; ctxCo.fillText('能量守恒', 502, 52);
     [{ x: 510, v: curH, l: '势能', c: '#2563eb' }, { x: 562, v: curKe, l: '动能', c: '#059669' }, { x: 614, v: coa.heat, l: '热能', c: '#dc2626' }, { x: 666, v: coa.maxE, l: '总能', c: '#5a463a' }].forEach((b) => {
       const bh = (b.v / 10) * 165;
       ctxCo.fillStyle = b.c; ctxCo.beginPath(); ctxCo.roundRect(b.x, 248 - bh, 32, Math.max(2, bh), 6); ctxCo.fill();
-      ctxCo.fillStyle = '#5b5049'; ctxCo.font = '700 11px sans-serif'; ctxCo.fillText(b.l, b.x + 4, 266);
+      ctxCo.fillStyle = '#5b5049'; ctxCo.font = FS.small; ctxCo.fillText(b.l, b.x - 2, 272);
     });
   }
   function stepCoa(ts) {
@@ -524,22 +529,22 @@ export async function renderMomentumEnergyLab(view) {
     const cx = 210, toPy = (ym) => 26 + ym * 105, gY = toPy(2.45), tPy = toPy(spr.yT), eqPy = toPy(spr.yT + (spr.m * spr.g) / spr.k), bPy = toPy(spr.y);
     ctxSp.fillStyle = '#d6c2a8'; ctxSp.fillRect(110, gY, 200, 10);
     ctxSp.strokeStyle = 'rgba(140,123,112,.45)'; ctxSp.setLineDash([4, 4]); ctxSp.beginPath(); ctxSp.moveTo(80, tPy); ctxSp.lineTo(350, tPy); ctxSp.stroke();
-    ctxSp.fillStyle = '#8c7b70'; ctxSp.font = '700 11.5px sans-serif'; ctxSp.fillText('弹簧原长（接触点）', 250, tPy - 5);
+    ctxSp.fillStyle = '#8c7b70'; ctxSp.font = FS.small; ctxSp.fillText('弹簧原长', 250, tPy - 8);
     ctxSp.strokeStyle = '#059669'; ctxSp.beginPath(); ctxSp.moveTo(80, eqPy); ctxSp.lineTo(350, eqPy); ctxSp.stroke(); ctxSp.setLineDash([]);
-    ctxSp.fillStyle = '#059669'; ctxSp.fillText('kx = mg（速度最大点）', 250, eqPy + 14);
+    ctxSp.fillStyle = '#059669'; ctxSp.font = FS.small; ctxSp.fillText('kx = mg 速度最大', 250, eqPy + 20);
     const sTop = Math.max(tPy, bPy + 14), span = gY - sTop;
     ctxSp.strokeStyle = '#5a463a'; ctxSp.lineWidth = 3; ctxSp.beginPath(); ctxSp.moveTo(cx, sTop);
     for (let i = 1; i <= 9; i++) ctxSp.lineTo(cx + (i % 2 === 0 ? -18 : 18), sTop + (span * i) / 10);
     ctxSp.lineTo(cx, gY); ctxSp.stroke();
     ctxSp.fillStyle = '#2563eb'; ctxSp.beginPath(); ctxSp.arc(cx, bPy, 14, 0, Math.PI * 2); ctxSp.fill();
-    ctxSp.fillStyle = '#fff'; ctxSp.font = '800 11px sans-serif'; ctxSp.fillText('球', cx - 5.5, bPy + 4);
+    ctxSp.fillStyle = '#1e3a8a'; ctxSp.font = FS.small; ctxSp.fillText('小球', cx + 20, bPy + 6);
     const comp = Math.max(0, spr.y - spr.yT), eTot = spr.m * spr.g * (2.45 - 0.25), eg = Math.max(0, spr.m * spr.g * (2.45 - spr.y)), ee = 0.5 * spr.k * comp * comp, ek = Math.max(0, eTot - eg - ee);
     ctxSp.fillStyle = '#fff'; ctxSp.strokeStyle = '#efe4d3'; ctxSp.beginPath(); ctxSp.roundRect(455, 18, 265, 276, 12); ctxSp.fill(); ctxSp.stroke();
-    ctxSp.fillStyle = '#2f2a26'; ctxSp.font = '800 13px sans-serif'; ctxSp.fillText('三方机械能实时转化', 472, 42);
-    [{ x: 478, v: eg, l: '重力势能', c: '#2563eb' }, { x: 540, v: ek, l: '动能', c: '#059669' }, { x: 602, v: ee, l: '弹性势能', c: '#d97706' }, { x: 664, v: eTot, l: '总机械能', c: '#5a463a' }].forEach((b) => {
+    ctxSp.fillStyle = '#2f2a26'; ctxSp.font = FS.hud; ctxSp.fillText('机械能转化', 472, 52);
+    [{ x: 478, v: eg, l: '势能', c: '#2563eb' }, { x: 540, v: ek, l: '动能', c: '#059669' }, { x: 602, v: ee, l: '弹性', c: '#d97706' }, { x: 664, v: eTot, l: '总能', c: '#5a463a' }].forEach((b) => {
       const bh = (b.v / eTot) * 165;
       ctxSp.fillStyle = b.c; ctxSp.beginPath(); ctxSp.roundRect(b.x, 250 - bh, 36, Math.max(2, bh), 6); ctxSp.fill();
-      ctxSp.fillStyle = '#5b5049'; ctxSp.font = '700 10.5px sans-serif'; ctxSp.fillText(b.l, b.x - 2, 268);
+      ctxSp.fillStyle = '#5b5049'; ctxSp.font = FS.small; ctxSp.fillText(b.l, b.x + 2, 274);
     });
   }
   function stepSpr(ts) {
