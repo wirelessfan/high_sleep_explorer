@@ -9,22 +9,24 @@
 | 读取公开仓库文本文件 | ✅ 通过 raw URL | ✅ 直接读磁盘 |
 | 浏览未提交的本地改动 | ❌ 看不到 | ✅ |
 | 执行代码 / 跑 pytest / 构建 | ❌ | ✅ |
-| 接收整包 ZIP 批量改 | ❌ 不建议（452 文件、13MB 装不进上下文） | ✅ |
+| 接收整包 ZIP 批量改 | ❌ 不建议（470 文件、13MB 装不进上下文） | ✅ |
 | git commit / push / 部署 | ❌ 不要尝试，也不要给命令 | ✅ 统一由本地执行 |
 
 结论：**你出补丁（unified diff），本地审阅后 `git apply`。**
 
-## 2. 仓库与链接
+## 2. 仓库与链接（主用 GitHub）
 
-- 仓库：<https://gitee.com/matrix_python/learning_highschool>（公开）
-- 工作分支：`codex/discovery-understanding-review`
-- 页面链接模板：
-  `https://gitee.com/matrix_python/learning_highschool/blob/codex/discovery-understanding-review/<文件路径>`
-- 纯文本（推荐你读这个）：
-  `https://gitee.com/matrix_python/learning_highschool/raw/codex/discovery-understanding-review/<文件路径>`
+- 仓库（GitHub，公开）：<https://github.com/wirelessfan/high_sleep_explorer>
+- 默认分支：`main`（GitHub 上只有这一个分支，代码始终是最新）
+- **纯文本 raw（推荐你读这个）**：
+  `https://raw.githubusercontent.com/wirelessfan/high_sleep_explorer/main/<文件路径>`
+- 网页版（看 diff、看历史）：
+  `https://github.com/wirelessfan/high_sleep_explorer/blob/main/<文件路径>`
 
 示例：
-<https://gitee.com/matrix_python/learning_highschool/raw/codex/discovery-understanding-review/app/routers/wrongbook.py>
+<https://raw.githubusercontent.com/wirelessfan/high_sleep_explorer/main/app/routers/wrongbook.py>
+
+> 备份镜像在 Gitee（`gitee.com/matrix_python/learning_highschool`，分支 `codex/discovery-understanding-review`）；Gitee 访问不稳，**优先用上面的 GitHub 链接**。
 
 ## 3. 每次任务的标准流程
 
@@ -44,8 +46,9 @@
 
 ## 4. 项目约定（硬约束）
 
-- 后端：FastAPI + SQLite。路由在 `app/routers/`，业务逻辑在 `app/services/`，表结构在 `app/db.py`。
+- 后端：FastAPI + SQLite。路由在 `app/routers/`，业务逻辑在 `app/services/`，表结构在 `app/db.py`（加字段要写幂等迁移）。
 - 前端：**原生 ES Modules，无构建链、无框架、无 npm**。视图在 `web/js/views/`，接口封装统一走 `web/js/api.js`，样式在 `web/styles/app.css`。
+- 内容：题库在 `content/topics/*.json`，索引在 `content/catalog.json`；改完要能过 `python tools/check_content.py`。
 - 语言：注释、UI 文案一律中文；受众是高中生，措辞要直白。
 - 依赖：`requirements.txt` 之外**不得引入新依赖**；确有必要先在正文里说明理由并等确认。
 - 测试：`tests/test_*.py`（pytest）。任何后端行为改动必须同时给出对应测试的 diff。
@@ -60,24 +63,25 @@
 - 不建议改动 `deploy/deploy.sh` 中涉及服务器地址、密钥、证书的行。
 - 不确定的地方直说「需要看 X 文件」，不要编造函数名、字段名、接口路径。
 
-## 6. 关键文件直链（按需取用）
+## 6. 关键文件直链（把 `PREFIX` 换成 `https://raw.githubusercontent.com/wirelessfan/high_sleep_explorer/main`）
 
-| 文件 | raw 链接 |
+| 文件 | 链接 |
 |---|---|
-| `app/main.py` | `.../raw/codex/discovery-understanding-review/app/main.py` |
-| `app/db.py` | `.../raw/codex/discovery-understanding-review/app/db.py` |
-| `app/routers/wrongbook.py` | `.../raw/codex/discovery-understanding-review/app/routers/wrongbook.py` |
-| `app/routers/relax.py` | `.../raw/codex/discovery-understanding-review/app/routers/relax.py` |
-| `app/services/wrongbook.py` | `.../raw/codex/discovery-understanding-review/app/services/wrongbook.py` |
-| `app/services/grading.py` | `.../raw/codex/discovery-understanding-review/app/services/grading.py` |
-| `app/services/ai_client.py` | `.../raw/codex/discovery-understanding-review/app/services/ai_client.py` |
-| `web/js/api.js` | `.../raw/codex/discovery-understanding-review/web/js/api.js` |
-| `web/js/app.js` | `.../raw/codex/discovery-understanding-review/web/js/app.js` |
-| `web/js/views/wrongbook.js` | `.../raw/codex/discovery-understanding-review/web/js/views/wrongbook.js` |
-| `web/styles/app.css` | `.../raw/codex/discovery-understanding-review/web/styles/app.css` |
-| `content/wrongbook_taxonomy.json` | `.../raw/codex/discovery-understanding-review/content/wrongbook_taxonomy.json` |
+| `app/main.py` | `PREFIX/app/main.py` |
+| `app/db.py` | `PREFIX/app/db.py` |
+| `app/routers/wrongbook.py` | `PREFIX/app/routers/wrongbook.py` |
+| `app/routers/relax.py` | `PREFIX/app/routers/relax.py` |
+| `app/services/wrongbook.py` | `PREFIX/app/services/wrongbook.py` |
+| `app/services/grading.py` | `PREFIX/app/services/grading.py` |
+| `app/services/ai_client.py` | `PREFIX/app/services/ai_client.py` |
+| `web/js/api.js` | `PREFIX/web/js/api.js` |
+| `web/js/app.js` | `PREFIX/web/js/app.js` |
+| `web/js/views/wrongbook.js` | `PREFIX/web/js/views/wrongbook.js` |
+| `web/styles/app.css` | `PREFIX/web/styles/app.css` |
+| `content/wrongbook_taxonomy.json` | `PREFIX/content/wrongbook_taxonomy.json` |
 
-`...` 前缀 = `https://gitee.com/matrix_python/learning_highschool`
+中文文件名需 URL 编码，例如 `GEMINI协作说明.md` →
+`PREFIX/GEMINI%E5%8D%8F%E4%BD%9C%E8%AF%B4%E6%98%8E.md`
 
 ## 7. 一句话版本
 
