@@ -63,3 +63,6 @@ wrong_src/
 dist/
 build/
 *.spec
+
+# 部署时生成的构建信息（每台机器不同，不入库）
+BUILD_INFO.json

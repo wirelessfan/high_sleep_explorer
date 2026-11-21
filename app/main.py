@@ -18,7 +18,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from app import content_loader, db
+from app import build_info, content_loader, db
 from app.routers import question_feedback, exam_training, relax
 from app.routers import (achievements, admin, blindbox, bosses, cards, content,
                          progress, rewards, session, wishes, wrongbook)
@@ -62,7 +62,23 @@ async def content_handler(request: Request, exc: content_loader.ContentError):
 
 @app.get("/api/v1/healthz")
 async def healthz():
-    return {"ok": True, "version": app.version, "wrongbook_review_version": "gpt-import-review-1"}
+    info = build_info.snapshot()
+    return {
+        "ok": True,
+        "version": app.version,
+        "build": info["label"],
+        "commit": info["short"],
+        "wrongbook_review_version": "gpt-import-review-1",
+    }
+
+
+@app.get("/api/v1/version")
+async def version():
+    """构建信息（公开）：管理界面与运维用来核对线上跑的是哪一版。"""
+    info = build_info.snapshot()
+    info["schema_version"] = db.SCHEMA_VERSION
+    info["wrongbook_review_version"] = "gpt-import-review-1"
+    return info
 
 
 @app.middleware("http")

@@ -14,6 +14,7 @@ BACKUP_DIR=/var/backups/learning-highschool
 SERVICE=learning-highschool
 DOMAIN="${DOMAIN:-123-56-217-104.sslip.io, 123.56.217.104.sslip.io}"
 PORT="${PORT:-8090}"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 say() { printf '\n\033[1;36m== %s\033[0m\n' "$*"; }
 
@@ -27,7 +28,7 @@ EOF
 
 say "2/7 同步代码"
 # 本机可能没有 rsync（Windows Git Bash），用 tar over ssh 更稳
-tar -czf - -C "$(dirname "${BASH_SOURCE[0]}")/.." \
+tar -czf - -C "$ROOT" \
   --exclude='./.git' --exclude='./.venv' --exclude='__pycache__' \
   --exclude='./data' --exclude='./.pytest_cache' --exclude='./design' \
   --exclude='./build' --exclude='./dist' --exclude='*.spec' \
@@ -38,6 +39,18 @@ tar -czf - -C "$(dirname "${BASH_SOURCE[0]}")/.." \
 ssh "$HOST" "chown -R learn:learn $APP_DIR"
 # tar 是覆盖而非镜像：删掉已废弃的盲盒旧素材（bubu-*.svg 已被 labubu-*.png 取代）
 ssh "$HOST" "rm -f $APP_DIR/assets/blindbox/bubu-*.svg"
+
+# 部署包不含 .git，把版本信息落盘，管理界面/健康检查据此显示版本号
+BUILD_COMMIT="$(git -C "$ROOT" rev-parse HEAD 2>/dev/null || echo "")"
+BUILD_BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+BUILD_COMMIT_DATE="$(git -C "$ROOT" log -1 --format=%cI 2>/dev/null || echo "")"
+BUILD_DIRTY=false
+[ -n "$(git -C "$ROOT" status --porcelain 2>/dev/null | head -1)" ] && BUILD_DIRTY=true
+BUILT_AT="$(date -Iseconds)"
+ssh "$HOST" "cat > $APP_DIR/BUILD_INFO.json && chown learn:learn $APP_DIR/BUILD_INFO.json" <<JSON
+{"commit":"$BUILD_COMMIT","short":"${BUILD_COMMIT:0:7}","branch":"$BUILD_BRANCH","commit_date":"$BUILD_COMMIT_DATE","built_at":"$BUILT_AT","dirty":$BUILD_DIRTY}
+JSON
+printf '  版本: %s @ %s\n' "${BUILD_COMMIT:0:7}" "$BUILT_AT"
 
 say "3/7 安装依赖"
 ssh "$HOST" bash -s <<EOF

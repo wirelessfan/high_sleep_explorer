@@ -69,6 +69,11 @@ async function request(path, { method = 'GET', body, auth = true } = {}) {
   return data;
 }
 
+/* ---------- 系统 ---------- */
+
+/** 线上构建信息（版本号/提交/部署时间），公开接口，管理界面用来核对版本。 */
+export const getVersion = () => request('/version', { auth: false });
+
 /* ---------- 会话 ---------- */
 
 export async function ensureSession() {
