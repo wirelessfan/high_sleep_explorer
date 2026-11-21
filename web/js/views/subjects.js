@@ -56,6 +56,7 @@ export async function renderSubjects(view) {
   root.appendChild(el('button', { class: 'btn ghost', text: '🔥 热学与微观宇宙 · 布朗运动 / 麦克斯韦妖 / 绝热点火', onclick: () => navigate('#/thermal-micro') }));
   root.appendChild(el('button', { class: 'btn ghost', text: '🛫 风洞与流体奇观 · 机翼失速 / 香蕉球 / 安全线', onclick: () => navigate('#/fluid-windtunnel') }));
   root.appendChild(el('button', { class: 'btn ghost', text: '☢️ 相对论与核风暴 · 光钟 / 金箔散射 / 核裂变控制棒', onclick: () => navigate('#/relativity-nuclear') }));
+  root.appendChild(el('button', { class: 'btn ghost', text: '📐 数学直觉实验室 · 函数图像 / 值域扫描 / 三角推导', onclick: () => navigate('#/math-trig-lab') }));
   root.appendChild(el('button',{class:'btn ghost',text:'看图找规律 · 抽着奖把题做了 🙂',onclick:()=>navigate('#/exam-training')}));
 
   for (const subj of catalog.subjects) {

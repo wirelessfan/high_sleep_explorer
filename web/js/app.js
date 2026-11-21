@@ -29,6 +29,7 @@ import { renderChaosQuantumLab } from './views/chaos-quantum-lab.js';
 import { renderThermalMicroLab } from './views/thermal-micro-lab.js';
 import { renderFluidWindtunnelLab } from './views/fluid-windtunnel-lab.js';
 import { renderRelativityNuclearLab } from './views/relativity-nuclear-lab.js';
+import { renderMathTrigLab } from './views/math-trig-lab.js';
 
 function registerRoutes() {
   route('/', renderHome);
@@ -43,6 +44,7 @@ function registerRoutes() {
   route('/thermal-micro', renderThermalMicroLab);
   route('/fluid-windtunnel', renderFluidWindtunnelLab);
   route('/relativity-nuclear', renderRelativityNuclearLab);
+  route('/math-trig-lab', renderMathTrigLab);
   route('/topic/:id', renderTopic);
   route('/topic/:id/:sid', renderSection);
   route('/topic/:id/:sid/:tier', renderSection);
