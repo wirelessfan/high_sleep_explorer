@@ -24,6 +24,8 @@ import { renderAccounts } from './views/accounts.js';
 import { renderExperimentsLab } from './views/experiments-lab.js';
 import { renderMomentumEnergyLab } from './views/momentum-energy-lab.js';
 import { renderEmCosmosLab } from './views/em-cosmos-lab.js';
+import { renderOpticsWavesLab } from './views/optics-waves-lab.js';
+import { renderChaosQuantumLab } from './views/chaos-quantum-lab.js';
 
 function registerRoutes() {
   route('/', renderHome);
@@ -33,6 +35,8 @@ function registerRoutes() {
   route('/experiments', renderExperimentsLab);
   route('/momentum-energy', renderMomentumEnergyLab);
   route('/em-cosmos', renderEmCosmosLab);
+  route('/optics-waves', renderOpticsWavesLab);
+  route('/chaos-quantum', renderChaosQuantumLab);
   route('/topic/:id', renderTopic);
   route('/topic/:id/:sid', renderSection);
   route('/topic/:id/:sid/:tier', renderSection);
