@@ -50,6 +50,7 @@ export async function renderSubjects(view) {
 
   root.appendChild(el('button', { class: 'btn ghost', text: '🔭 物理学实验简史 · 5 场互动探索实验室', onclick: () => navigate('#/experiments') }));
   root.appendChild(el('button', { class: 'btn ghost', text: '💥 动量守恒 & 机械能守恒 · 5 场互动实验室', onclick: () => navigate('#/momentum-energy') }));
+  root.appendChild(el('button', { class: 'btn ghost', text: '⚡ 电磁宇宙加速器 · 回旋 / 轨道炮 / 极光实验室', onclick: () => navigate('#/em-cosmos') }));
   root.appendChild(el('button',{class:'btn ghost',text:'看图找规律 · 抽着奖把题做了 🙂',onclick:()=>navigate('#/exam-training')}));
 
   for (const subj of catalog.subjects) {

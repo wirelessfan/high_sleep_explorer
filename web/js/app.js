@@ -23,6 +23,7 @@ import { renderExamTraining } from './views/exam-training.js';
 import { renderAccounts } from './views/accounts.js';
 import { renderExperimentsLab } from './views/experiments-lab.js';
 import { renderMomentumEnergyLab } from './views/momentum-energy-lab.js';
+import { renderEmCosmosLab } from './views/em-cosmos-lab.js';
 
 function registerRoutes() {
   route('/', renderHome);
@@ -31,6 +32,7 @@ function registerRoutes() {
   route('/exam-training/:id', renderExamTraining);
   route('/experiments', renderExperimentsLab);
   route('/momentum-energy', renderMomentumEnergyLab);
+  route('/em-cosmos', renderEmCosmosLab);
   route('/topic/:id', renderTopic);
   route('/topic/:id/:sid', renderSection);
   route('/topic/:id/:sid/:tier', renderSection);
