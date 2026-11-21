@@ -108,11 +108,11 @@ def test_admin_config_defaults(client, admin_headers):
     r = client.get("/api/v1/admin/ai/config", headers=admin_headers)
     assert r.status_code == 200
     d = r.json()
-    assert set(d["channels"].keys()) == {"glm", "deepseek", "gpt"}
-    assert set(d["routing"].keys()) == {"analyze", "solve", "variants", "recognize"}
+    assert set(d["channels"].keys()) == {"glm", "deepseek", "gpt", "review91", "reviewugq"}
+    assert set(d["routing"].keys()) == {"analyze", "solve", "variants", "recognize", "review", "photo_confirm"}
     assert d["routing"]["analyze"] == "glm"
     assert d["routing"]["solve"] == "deepseek"
-    assert d["routing"]["recognize"] == "gpt"
+    assert d["routing"]["recognize"] == "glm"
     # 管理视角有 key 状态，但永不回传密钥本体
     for cid, ch in d["channels"].items():
         assert "key_ok" in ch and "key" not in ch and "api_key" not in ch

@@ -21,15 +21,19 @@ say "1/7 准备远端目录与用户"
 ssh "$HOST" bash -s <<EOF
 set -euo pipefail
 id -u learn >/dev/null 2>&1 || useradd --system --create-home --shell /usr/sbin/nologin learn
-mkdir -p $APP_DIR $DATA_DIR $LOG_DIR $BACKUP_DIR
+mkdir -p $APP_DIR $DATA_DIR $LOG_DIR $BACKUP_DIR $DATA_DIR/wrongbook-images
 chown -R learn:learn $DATA_DIR $LOG_DIR
 EOF
 
 say "2/7 同步代码"
 # 本机可能没有 rsync（Windows Git Bash），用 tar over ssh 更稳
-tar -czf - \
+tar -czf - -C "$(dirname "${BASH_SOURCE[0]}")/.." \
   --exclude='./.git' --exclude='./.venv' --exclude='__pycache__' \
   --exclude='./data' --exclude='./.pytest_cache' --exclude='./design' \
+  --exclude='./build' --exclude='./dist' --exclude='*.spec' \
+  --exclude='./错题本一键启动.exe' \
+  --exclude='./tools/wrongbook_tool/config.json' \
+  --exclude='./wrong_src' --exclude='./assets/wrongbook' \
   . | ssh "$HOST" "tar -xzf - -C $APP_DIR"
 ssh "$HOST" "chown -R learn:learn $APP_DIR"
 # tar 是覆盖而非镜像：删掉已废弃的盲盒旧素材（bubu-*.svg 已被 labubu-*.png 取代）
@@ -57,6 +61,7 @@ User=learn
 Group=learn
 WorkingDirectory=/opt/learning_highschool
 Environment=LEARN_DB=/var/lib/learning-highschool/app.db
+Environment=LEARN_WB_IMAGES=/var/lib/learning-highschool/wrongbook-images
 EnvironmentFile=-/etc/learning-highschool/ai.env
 # Production must never publish placeholder AI as a real analysis.
 UnsetEnvironment=LEARN_AI_STUB

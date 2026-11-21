@@ -66,8 +66,10 @@ def dashboard(conn: sqlite3.Connection, user) -> dict | None:
         return None
     done = {(r['topic_id'], r['section_id'], r['tier']) for r in conn.execute(
         "SELECT topic_id,section_id,tier FROM progress WHERE user_id=? AND status='done'", (user['id'],))}
+    from app.services import wrongbook as _wb
     wrong = {(r['topic_id'], r['section_id'], r['tier']) for r in conn.execute(
-        "SELECT DISTINCT topic_id,section_id,tier FROM wrong_questions WHERE user_id=? AND status='open'", (user['id'],))}
+        "SELECT DISTINCT topic_id,section_id,tier FROM wrong_questions WHERE user_id=? AND status='open' AND review_status='ready'",
+        (_wb.book_owner(user['id']),))}
     cat = {t['id']: t for t in content_loader.catalog()['topics']}
     units = [(tid, sid, tier) for tid in content_loader.study_plan()['topics'] for sid, tier in pairs(tid)]
     subject_order = ['math', 'physics', 'chemistry']

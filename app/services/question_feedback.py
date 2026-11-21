@@ -33,8 +33,9 @@ def resolve_question(conn, user_id, body):
             raise FeedbackError('专项题目定位不存在',404)
         return question
     if body.get('wrong_question_id'):
+        from app.services import wrongbook as _wb
         row = conn.execute("SELECT * FROM wrong_questions WHERE id=? AND user_id=? AND source='practice'",
-                           (body['wrong_question_id'], user_id)).fetchone()
+                           (body['wrong_question_id'], _wb.book_owner(user_id))).fetchone()
         if not row:
             raise FeedbackError('错题记录不存在', 404)
         if (body['topic_id'], body['section_id'], body['tier'], body['question_id']) != (row['topic_id'],row['section_id'],row['tier'],row['question_id']):

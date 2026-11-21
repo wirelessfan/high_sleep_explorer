@@ -113,6 +113,26 @@ export async function renderHome(view) {
   ]);
   root.appendChild(checkinPanel);
 
+  /* ---- 放松抽卡入口 ---- */
+  root.appendChild(el('section', { class: 'panel', style: 'padding:13px;margin-top:10px' }, [
+    el('div', { class: 'row-between' }, [
+      el('div', { class: 'row', style: 'gap:10px;min-width:0' }, [
+        el('div', {
+          style: 'width:36px;height:36px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;display:grid;place-items:center;font-size:17px;flex:0 0 auto',
+          text: '🎁',
+        }),
+        el('div', { style: 'min-width:0' }, [
+          el('div', { style: 'font-size:13px;font-weight:800', text: '学累了？去休闲游戏广场放松' }),
+          el('div', { style: 'font-size:11px;color:#a3928a;margin-top:2px', text: '砸金蛋、转盘、扑克对决，想玩就玩' }),
+        ]),
+      ]),
+      el('button', {
+        class: 'btn sm', text: '去玩',
+        onclick: () => navigate('#/games'),
+      }),
+    ]),
+  ]));
+
   /* ---- 历史上的今天 ---- */
   if (history && history.entry) root.appendChild(renderHistory(history));
 

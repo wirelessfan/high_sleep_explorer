@@ -53,3 +53,13 @@ design/review/
 .tmp_*/
 .tmp_*
 tmp_*/
+
+# 题库/错题图片素材（含教材题照与学生手写，不入公开仓库）
+assets/wrongbook/
+wrong_src/
+
+# PyInstaller 构建产物（可由 tools/wrongbook_tool/launcher.py 重新打包）
+/错题本一键启动.exe
+dist/
+build/
+*.spec

@@ -33,6 +33,24 @@ export async function renderFeedback(view, { review = false } = {}) {
     item.question.options.forEach((text, i) => card.appendChild(el('div', { style: 'font-size:12px;line-height:1.6', text: `${String.fromCharCode(65+i)}. ${text}` })));
     if (review) card.appendChild(el('div', { style: 'font-size:12px;background:#f0fdf4;padding:9px;border-radius:9px', text: `标准答案 ${String.fromCharCode(65+item.question.answer)} · ${item.question.explain || ''}` }));
     card.appendChild(el('div', { style: 'white-space:pre-wrap;font-size:13px;line-height:1.7', text: `${data.categories[item.category] || item.category}：${item.detail}` }));
+    if (review) {
+      const result = el('div', { class: 'hint', style: 'white-space:pre-wrap;line-height:1.7' });
+      card.appendChild(el('button', { class: 'btn soft sm', text: 'AI 审校此题', onclick: async (event) => {
+        const button = event.currentTarget;
+        button.disabled = true; button.textContent = '审校中…'; result.textContent = '';
+        try {
+          const checked = await api.adminAiReview({
+            stem: item.question.stem,
+            options: item.question.options,
+            answer: `${String.fromCharCode(65 + item.question.answer)}. ${item.question.options[item.question.answer]}`,
+            explain: item.question.explain || '',
+          });
+          result.textContent = `审校建议（${checked.channel} · ${checked.model}）\\n正确性：${checked.correctness}\\n推导：${checked.reasoning}\\n问题：${checked.issues.join('；') || '未发现'}\\n修改建议：${checked.revision_suggestions.join('；') || '无'}\\n仅供参考，不会自动修改题库。`;
+        } catch (err) { result.textContent = err.message || '审校失败'; }
+        button.disabled = false; button.textContent = 'AI 审校此题';
+      } }));
+      card.appendChild(result);
+    }
     card.appendChild(el('a', { href: `#/topic/${encodeURIComponent(item.topic_id)}/${encodeURIComponent(item.section_id)}/${item.tier}`, text: '打开当前题目所在版块', style: 'font-size:12px' }));
     if (item.review_note) card.appendChild(el('div', { style: 'font-size:12px;color:#0f766e;white-space:pre-wrap', text: `审核回复：${item.review_note}` }));
     if (review && item.status === 'pending') {

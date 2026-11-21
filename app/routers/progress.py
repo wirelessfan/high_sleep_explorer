@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StrictInt
 
 from app import content_loader, db
 from app.routers.session import current_user
@@ -15,7 +15,8 @@ router = APIRouter(tags=["progress"])
 
 
 class SubmitIn(BaseModel):
-    answers: dict[str, int] = Field(default_factory=dict)
+    answers: dict[str, StrictInt] = Field(default_factory=dict)
+    multi_answers: dict[str, list[StrictInt]] = Field(default_factory=dict)
 
 
 class ReadIn(BaseModel):
@@ -46,10 +47,10 @@ def submit(topic_id: str, section_id: str, body: SubmitIn, tier: str = "basic",
         raise HTTPException(status_code=400, detail="难度档位不存在")
     # 空提交既不该判分，也不该触发答案/解析下发。
     # 注意：levels 是逐关提交的，这里只要求「非空」，全量校验由各版块渲染器保证。
-    if not body.answers:
+    if not body.answers and not body.multi_answers:
         raise HTTPException(status_code=400, detail="请先作答后再提交")
 
-    result = grading.grade_section(content, body.answers)
+    result = grading.grade_section(content, body.answers, body.multi_answers)
     passed = _is_passed(sec, result)
 
     with db.tx() as conn:
@@ -100,7 +101,7 @@ def submit(topic_id: str, section_id: str, body: SubmitIn, tier: str = "basic",
 
         # 答错的题写入错题本（重复答错累加次数；正常重做版块不清错，
         # 清零只能走错题本的重做流程，保证清零奖励不被刷）
-        wrongbook.record_wrong(conn, user["id"], topic_id, section_id, tier,
+        wrongbook.record_wrong(conn, wrongbook.book_owner(user["id"]), topic_id, section_id, tier,
                                grading.flatten_details(result),
                                wrongbook.questions_of(content))
         reflections.record_bank(conn,user['id'],topic_id,section_id,tier,

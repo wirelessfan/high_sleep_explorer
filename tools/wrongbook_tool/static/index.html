@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>错题录入工具 · Sunny 学习站</title>
+<style>
+:root{--ink:#3b2f2a;--sub:#a3928a;--line:#f0e4d5;--bg:#fdf8f0;--card:#fff;--accent:#2563eb;--ok:#047857;--warn:#b45309}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--card);border-bottom:1px solid var(--line);padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:5}
+header h1{font-size:16px;margin:0}
+header .grow{flex:1}
+button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:7px 13px}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}
+button.ok{background:var(--ok);color:#fff;border-color:var(--ok);font-weight:700}
+button:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:#fff;color:var(--ink);width:100%}
+textarea{resize:vertical;line-height:1.6}
+main{max-width:1080px;margin:0 auto;padding:16px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.thumb{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;cursor:pointer;aspect-ratio:4/3}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .done{position:absolute;top:6px;left:6px;background:var(--ok);color:#fff;font-size:10px;font-weight:800;border-radius:7px;padding:2px 7px}
+.thumb .auto-btn{position:absolute;top:6px;right:6px;background:rgba(37,99,235,.92);color:#fff;border:none;border-radius:8px;font-size:12px;padding:3px 7px;cursor:pointer}
+.thumb .auto-btn:hover{background:#1d4ed8}
+.meta{font-size:11px;color:var(--sub);margin-top:4px;word-break:break-all}
+label{font-size:12px;font-weight:700;display:block;margin:9px 0 4px}
+.hint{font-size:12px;color:var(--sub);line-height:1.7}
+.chip{font-size:11px;font-weight:800;border-radius:8px;padding:3px 9px;background:#eef2ff;color:#4338ca}
+#overlay{position:fixed;inset:0;background:rgba(30,20,10,.45);z-index:20;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:24px}
+#overlay[hidden]{display:none}
+.sheet{background:var(--card);border-radius:16px;max-width:760px;width:100%;padding:18px}
+#cropWrap{position:relative;user-select:none;touch-action:none}
+#cropCanvas{max-width:100%;display:block;border:1px solid var(--line);border-radius:10px}
+#cropBox{position:absolute;border:2px solid #f59e0b;background:rgba(245,158,11,.12);pointer-events:none}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;border-radius:10px;padding:9px 16px;font-size:13px;z-index:40}
+.qitem{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
+.qitem .stem{font-size:13px;font-weight:700}
+.tag{font-size:10.5px;color:var(--sub)}
+</style>
+</head>
+<body>
+<header>
+  <h1>📥 错题录入工具</h1>
+  <span id="connState" class="tag">未连接</span>
+  <div class="grow"></div>
+  <button id="btnSettings">⚙️ 连接设置</button>
+</header>
+<main>
+  <section class="panel">
+    <div class="row">
+      <b>1 · 扫描文件夹</b>
+      <span class="hint">手机/PAD/电脑截图放到同一个文件夹（支持子文件夹递归，自动按内容去重）</span>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <input id="folder" style="flex:1;min-width:260px" placeholder="例如 D:\screenshots\错题">
+      <button class="primary" id="btnScan">扫描</button>
+      <span id="scanInfo" class="tag"></span>
+    </div>
+  </section>
+
+  <section class="panel" id="mobilePanel" style="display:none">
+    <div class="row"><b>📱 手机拍照上传</b>
+      <span class="hint">同一 WiFi 下，手机扫码或输入地址，拍完即出现在下面，免微信传文件</span></div>
+    <div class="row" style="margin-top:8px;align-items:flex-start">
+      <img id="qrImg" style="width:112px;height:112px;border:1px solid var(--line);border-radius:10px;display:none" alt="二维码">
+      <div style="flex:1;min-width:200px">
+        <div id="lanUrl" style="font-size:15px;font-weight:800;color:#2563eb;word-break:break-all"></div>
+        <div class="hint" style="margin-top:2px">手机打开此地址拍照上传（也可直接访问 <b>/m</b>）</div>
+        <div class="row" style="margin-top:8px">
+          <button id="btnMobileRefresh">🔄 刷新手机上传</button>
+          <label style="display:flex;align-items:center;gap:6px;margin:0;font-weight:600;font-size:12px">
+            <input type="checkbox" id="autoAfterUpload" style="width:auto" checked> 上传后自动识别整理
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="grid" id="mobileGrid" style="margin-top:10px"></div>
+  </section>
+
+  <section class="panel" id="gridPanel" style="display:none">
+    <div class="row">
+      <b>2 · 选择截图，裁剪题目</b>
+      <div class="grow"></div>
+      <button class="ok" id="btnAutoAll">⚡ 全自动处理全部（AI 切题+解析）</button>
+      <span id="autoInfo" class="tag"></span>
+    </div>
+    <div class="hint" style="margin:4px 0 6px">全自动：AI 自动找出每道题、裁剪、解题、写推导与错因，然后自动同步到网站错题本；也可点缩略图手动框选微调。</div>
+    <label class="hint" style="display:flex;align-items:center;gap:6px;margin:0 0 10px;cursor:pointer">
+      <input type="checkbox" id="chkAutoImport" checked style="width:15px;height:15px">
+      处理完自动入库（关掉则先攒在清单里，手动点「批量导入」）
+    </label>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="panel" id="queuePanel" style="display:none">
+    <div class="row">
+      <b>3 · 待导入清单</b>
+      <span id="queueCount" class="chip">0 题</span>
+      <div class="grow"></div>
+      <button class="ok" id="btnImport">批量导入到网站错题本</button>
+    </div>
+    <div id="queue"></div>
+    <div id="importResult" class="hint"></div>
+  </section>
+</main>
+
+<div id="overlay" hidden><div class="sheet" id="sheet"></div></div>
+<script src="app.js"></script>
+</body>
+</html>

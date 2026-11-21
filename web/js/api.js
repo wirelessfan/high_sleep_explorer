@@ -154,9 +154,9 @@ export const getHistory = (day) => request(day ? `/history?date=${encodeURICompo
 export const getTopic = (id) => request(`/topics/${id}`);
 export const getSection = (id, sid, tier = 'basic') =>
   request(`/topics/${id}/sections/${sid}?tier=${encodeURIComponent(tier)}`);
-export const submitSection = (id, sid, answers, tier = 'basic') =>
+export const submitSection = (id, sid, answers, tier = 'basic', multiAnswers = {}) =>
   request(`/topics/${id}/sections/${sid}/submit?tier=${encodeURIComponent(tier)}`,
-    { method: 'POST', body: { answers } });
+    { method: 'POST', body: { answers, multi_answers: multiAnswers } });
 export const markRead = (id, sid, tier = 'basic') =>
   request(`/topics/${id}/sections/${sid}/read?tier=${encodeURIComponent(tier)}`,
     { method: 'POST', body: { confirmed: true } });
@@ -166,6 +166,34 @@ export const getProgress = () => request('/progress');
 
 export const getCheckin = () => request('/checkin');
 export const doCheckin = () => request('/checkin', { method: 'POST' });
+
+/* ---------- 休闲广场每日额度 ---------- */
+
+export const getQuota = () => request('/relax/quota');
+export const consumeQuota = (count = 1, key) =>
+  request('/relax/quota/consume', {
+    method: 'POST',
+    body: { count, ...(key ? { idempotency_key: key } : {}) },
+  });
+export const consumePrizeQuota = (key) =>
+  request('/relax/prize/consume', {
+    method: 'POST',
+    body: key ? { idempotency_key: key } : {},
+  });
+export const getGachaState = () => request('/relax/gacha/state');
+export const putGachaState = (data) =>
+  request('/relax/gacha/state', { method: 'PUT', body: { data } });
+export const postPrizeLedger = (entries) =>
+  request('/relax/ledger', { method: 'POST', body: { entries } });
+export const getMyLedger = () => request('/relax/ledger');
+export const adminPrizeLedger = () => request('/relax/ledger/all');
+export const adminRedeemPrize = (ledgerId) =>
+  request('/relax/ledger/redeem', { method: 'POST', body: { ledger_id: ledgerId } });
+/** 管理员赠送抽奖次数（写入跨天赠送池，默认 7 天有效，用完即止）。 */
+export const adminGrantQuota = (payload) =>
+  request('/relax/quota/grant', { method: 'POST', body: payload });
+export const exchangePrize = (target, prizeId, keys) =>
+  request('/relax/ledger/exchange', { method: 'POST', body: { target, prize_id: prizeId, keys } });
 
 /* ---------- 卡册 ---------- */
 
@@ -200,8 +228,8 @@ export const getVerifyPermission = () => request('/achievements/verify-permissio
 
 export const getWrongbook = () => request('/wrongbook');
 export const getWrongTopic = (tid) => request(`/wrongbook/${tid}`);
-export const redoWrongbook = (tid, answers) =>
-  request(`/wrongbook/${tid}/redo`, { method: 'POST', body: { answers } });
+export const redoWrongbook = (tid, answers, fillAnswers = {}, multiAnswers = {}) =>
+  request(`/wrongbook/${tid}/redo`, { method: 'POST', body: { answers, fill_answers: fillAnswers, multi_answers: multiAnswers } });
 export const analyzeWrong = (ids) =>
   request('/wrongbook/ai', { method: 'POST', body: { ids } });
 export const solveWrong = (ids) =>
@@ -217,6 +245,8 @@ export const putAdminAiConfig = (patch) =>
 export const resetAdminAi = () => request('/admin/ai/reset', { method: 'POST' });
 export const adminAiTest = (task) =>
   request('/admin/ai/test', { method: 'POST', body: { task } });
+export const adminAiReview = (question) =>
+  request('/admin/ai/review', { method: 'POST', body: question });
 export const adminAiUsage = (days = 1) => request(`/admin/ai/usage?days=${days}`);
 export const adminUsers = () => request('/admin/users');
 
@@ -246,6 +276,8 @@ export const photoAnalyze = (stem, options, picked) =>
   request('/wrongbook/photo/analyze', { method: 'POST', body: { stem, options, picked } });
 export const photoSave = (payload) =>
   request('/wrongbook/photo/save', { method: 'POST', body: payload });
+export const photoSaveBatch = (items) =>
+  request('/wrongbook/photo/save-batch', { method: 'POST', body: { items } });
 
 /* ---------- 题目问题反馈 ---------- */
 export const postQuestionFeedback = (payload) => request('/question-feedback', { method: 'POST', body: payload });

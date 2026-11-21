@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>手机拍照上传 · 错题录入</title>
+<style>
+body{margin:0;font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#fdf8f0;color:#3b2f2a;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border:1px solid #f0e4d5;border-radius:18px;padding:24px 20px;max-width:420px;width:100%;text-align:center}
+h1{font-size:18px;margin:0 0 4px}
+.hint{font-size:12.5px;color:#a3928a;line-height:1.8}
+#pick{display:none}
+.btn{display:block;width:100%;font:inherit;font-weight:800;font-size:15px;padding:13px;border-radius:12px;border:none;cursor:pointer;margin-top:14px}
+.cam{background:#2563eb;color:#fff}
+.album{background:#fff;color:#2563eb;border:1px solid #c7dbff}
+#preview{max-width:100%;border-radius:12px;border:1px solid #f0e4d5;margin-top:14px;display:none}
+#status{font-size:13px;font-weight:700;margin-top:12px;min-height:20px}
+.done{color:#047857}.err{color:#b91c1c}
+.count{font-size:13px;color:#6b5b52;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>📱 拍照上传错题</h1>
+  <div class="hint">拍下错题（一页一拍，尽量清晰平整）→ 上传后到<b>电脑录入工具</b>里裁剪识别。<br>可连续上传多张。</div>
+  <input type="file" id="pick" accept="image/*" capture="environment">
+  <button class="btn cam" onclick="pick.setAttribute('capture','environment');pick.click()">📷 打开相机拍照</button>
+  <button class="btn album" onclick="pick.removeAttribute('capture');pick.click()">🖼 从相册选择</button>
+  <img id="preview" alt="预览">
+  <div id="status"></div>
+  <div class="count" id="count"></div>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+let current = null;
+$("pick").addEventListener("change", async () => {
+  const f = $("pick").files[0];
+  if (!f) return;
+  current = await compress(f);
+  $("preview").src = current;
+  $("preview").style.display = "block";
+  $("status").textContent = "";
+  upload();
+});
+function compress(file) {
+  // 相机原图几 MB，压缩到 ~1600px 长边，上传更快
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 1600;
+      const k = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.naturalWidth * k);
+      c.height = Math.round(img.naturalHeight * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      resolve(c.toDataURL("image/jpeg", 0.85));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+async function upload() {
+  const st = $("status");
+  st.className = ""; st.textContent = "上传中…";
+  try {
+    const r = await fetch("/api/mobile/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ image: current }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.detail || "HTTP " + r.status);
+    st.className = "done";
+    st.textContent = "✓ 上传成功！回到电脑录入工具，点「手机上传」里的图片开始处理。";
+    $("count").textContent = "已累计上传 " + d.count + " 张";
+  } catch (err) {
+    st.className = "err";
+    st.textContent = "上传失败：" + (err.message || err);
+  }
+}
+</script>
+</body>
+</html>

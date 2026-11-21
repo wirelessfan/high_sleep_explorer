@@ -14,23 +14,31 @@ import sqlite3
 
 # 任务清单：analyze=错因分析（现有）solve=AI 解题 variants=举一反三
 # recognize=拍照识别（通道与协议已就位，调用方随拍照流程接入）
-TASKS = ("analyze", "solve", "variants", "recognize")
+TASKS = ("analyze", "solve", "variants", "recognize", "review", "photo_confirm")
+LEGACY_TASKS = ("analyze", "solve", "variants", "recognize")
+REVIEW_CHANNEL_ORDER = ("review91", "reviewugq")
 
 TASK_LABELS = {
     "analyze": "错因分析",
     "solve": "AI 解题",
     "variants": "举一反三",
     "recognize": "拍照识别",
+    "review": "题库审校",
+    "photo_confirm": "原图转录确认",
 }
 
 # 通道 id；按能力/价格升序（glm 最便宜，gpt 最强最贵），也是回退链的顺序
 CHANNEL_ORDER = ("glm", "deepseek", "gpt")
+ALL_CHANNELS = CHANNEL_ORDER + REVIEW_CHANNEL_ORDER
 
 DEFAULT_ROUTING = {
     "analyze": "glm",
     "solve": "deepseek",
     "variants": "glm",
-    "recognize": "gpt",
+    # 识图专用通道：部署前必须用真实图片验证并显式打开 vision 标记。
+    "recognize": "glm",
+    "photo_confirm": "review91",
+    "review": "review91",
 }
 
 DEFAULT_LIMITS = {
@@ -38,6 +46,8 @@ DEFAULT_LIMITS = {
     "solve": 10,
     "variants": 5,
     "recognize": 10,
+    "review": 10,
+    "photo_confirm": 10,
 }
 
 
@@ -53,9 +63,10 @@ def load(conn: sqlite3.Connection) -> dict:
         if not isinstance(saved, dict):
             saved = {}
 
-    routing = {t: DEFAULT_ROUTING[t] for t in TASKS}
+    routing = dict(DEFAULT_ROUTING)
     for t, cid in _object(saved.get("routing")).items():
-        if t in TASKS and cid in CHANNEL_ORDER:
+        allowed = REVIEW_CHANNEL_ORDER if t in ("review", "photo_confirm") else CHANNEL_ORDER
+        if t in TASKS and cid in allowed:
             routing[t] = cid
 
     limits = {t: DEFAULT_LIMITS[t] for t in TASKS}
@@ -64,7 +75,7 @@ def load(conn: sqlite3.Connection) -> dict:
             limits[t] = n
 
     channels: dict[str, dict] = {}
-    for cid in CHANNEL_ORDER:
+    for cid in ALL_CHANNELS:
         over = _object(_object(saved.get("channels")).get(cid))
         channels[cid] = {
             "enabled": over.get("enabled") if type(over.get("enabled")) is bool else True,
@@ -97,7 +108,8 @@ def save(conn: sqlite3.Connection, patch: dict, by_user_id: str) -> dict:
         for t, cid in routing_in.items():
             if t not in TASKS:
                 raise ValueError(f"未知任务：{t}")
-            if cid not in CHANNEL_ORDER:
+            allowed = REVIEW_CHANNEL_ORDER if t in ("review", "photo_confirm") else CHANNEL_ORDER
+            if cid not in allowed:
                 raise ValueError(f"未知通道：{cid}")
             routing[t] = cid
         if routing:
@@ -123,7 +135,7 @@ def save(conn: sqlite3.Connection, patch: dict, by_user_id: str) -> dict:
             raise ValueError("channels 必须是对象")
         channels = {}
         for cid, over in channels_in.items():
-            if cid not in CHANNEL_ORDER:
+            if cid not in ALL_CHANNELS:
                 raise ValueError(f"未知通道：{cid}")
             if not isinstance(over, dict):
                 raise ValueError(f"通道配置格式不正确：{cid}")

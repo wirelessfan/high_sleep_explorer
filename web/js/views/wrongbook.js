@@ -9,6 +9,46 @@ import { feedbackButton } from '../question-feedback.js';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
+/* 导入错题的学科/章节友好标签（SUBJECT_LABEL 未覆盖的补齐） */
+const SUBJECT_FALLBACK = { biology: '生物', geography: '地理', cross: '跨学科' };
+function subjectLabel(s) {
+  return SUBJECT_LABEL[s] || SUBJECT_FALLBACK[s] || s || '未分类';
+}
+function imageList(it) {
+  return (it.images || []).map((p) => {
+    const privatePhoto = p.startsWith('/api/v1/wrongbook/photo/image/');
+    const img = el('img', {
+      ...(privatePhoto ? {} : { src: p }),
+      alt: '题目配图',
+      style: 'max-width:100%;border-radius:10px;border:1px solid #f0e4d5;margin-top:8px;display:block',
+      loading: 'lazy',
+    });
+    if (privatePhoto) {
+      fetch(p, { headers: { Authorization: `Bearer ${api.getToken()}` } })
+        .then(r => { if (!r.ok) throw new Error('图片读取失败'); return r.blob(); })
+        .then(blob => { const url = URL.createObjectURL(blob); img.onload = () => URL.revokeObjectURL(url); img.src = url; })
+        .catch(() => { img.alt = '图片读取失败，请重新登录后重试'; });
+    }
+    return img;
+  });
+}
+function reasonBlock(it) {
+  const frag = [];
+  if (it.wrong_reason) {
+    frag.push(el('div', {
+      style: 'font-size:12px;color:#b45309;background:#fffbeb;border-radius:9px;padding:8px 10px;margin-top:8px;line-height:1.7',
+      text: `🎯 我的错因：${it.wrong_reason}`,
+    }));
+  }
+  if (it.derivation) {
+    frag.push(el('div', {
+      style: 'font-size:12px;color:#1e3a5f;background:#f0f6ff;border-radius:9px;padding:9px 11px;margin-top:7px;line-height:1.8;white-space:pre-line',
+      text: `✍️ 正确推导：${it.derivation}`,
+    }));
+  }
+  return frag;
+}
+
 
 function paintAi(holder, value) {
   holder.innerHTML = '';
@@ -55,8 +95,9 @@ function aiTaskButton(label, task) {
 function paintSolve(holder, value, it) {
   holder.innerHTML = '';
   const aiLetter = value.answer_letter || '?';
-  const stdLetter = LETTERS[it.answer] ?? '?';
-  const agree = aiLetter === stdLetter;
+    const stdLetter = it.qtype === 'multi_choice'
+      ? (it.answer_indices || []).map(i => LETTERS[i]).join('、') : (LETTERS[it.answer] ?? '?');
+    const agree = aiLetter === stdLetter;
   holder.appendChild(el('div', { style: 'display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap' }, [
     el('span', { style: 'font-size:10px;font-weight:800;color:#1d4ed8;background:#eff6ff;border-radius:8px;padding:3px 8px',
       text: `🧠 AI 解答 ${aiLetter}` }),
@@ -126,8 +167,18 @@ export async function renderWrongbook(view) {
     el('button', { class: 'back', text: '‹', onclick: () => { location.hash = '#/me'; } }),
     el('div', { style: 'flex:1' }, [
       el('h1', { text: '错题本' }),
-      el('div', { class: 'sub', text: '做错的题会自动收进来，重做清零有奖励' }),
+      el('div', { class: 'sub', text: '全家共用一本错题账本 · 重做清零有奖励' }),
     ]),
+  ]));
+
+  /* ---- 家庭共享说明（所有账号看到的是同一本错题本） ---- */
+  root.appendChild(el('section', {
+    class: 'panel',
+    style: 'padding:11px 13px;background:#f5f9ff;border:1px solid #e2edfb',
+  }, [
+    el('div', { style: 'font-size:12px;color:#1e3a5f;line-height:1.75' },
+      [el('b', { text: '👨‍👩‍👧 家庭共享：' }),
+       el('span', { text: '家庭题库按原规则共享；个人拍照题保留录入者归属，明确共享的照片供其他站内用户只读查看，重做及修改仅限所有者。' })]),
   ]));
 
   /* ---- 拍照录入入口（演示页） ---- */
@@ -141,7 +192,7 @@ export async function renderWrongbook(view) {
     root.appendChild(el('section', { class: 'panel', style: 'text-align:center;padding:34px 18px' }, [
       el('div', { style: 'font-size:40px', text: '🎉' }),
       el('div', { style: 'font-size:15px;font-weight:800;margin-top:10px', text: '错题本是空的' }),
-      el('div', { style: 'font-size:12.5px;color:#a3928a;margin-top:6px;line-height:1.8', text: '做错的选择题会自动收进这里。' }),
+      el('div', { style: 'font-size:12.5px;color:#a3928a;margin-top:6px;line-height:1.8', text: '做错的选择题会自动收进这里；用电脑上的「错题本一键启动」录入，或点上面拍照录入。' }),
     ]));
     view.innerHTML = '';
     view.appendChild(root);
@@ -174,7 +225,8 @@ export async function renderWrongbook(view) {
   const byTopic = {};
   data.items.forEach((it) => {
     const key = it.topic_id;
-    (byTopic[key] = byTopic[key] || { title: it.topic_title, subject: it.subject, items: [] }).items.push(it);
+    const group = byTopic[key] = byTopic[key] || { title: it.topic_title, subject: it.subject, items: [], pending: [] };
+    (it.review_status === 'ready' ? group.items : group.pending).push(it);
   });
 
   function updateUsage(task, result) {
@@ -196,14 +248,15 @@ export async function renderWrongbook(view) {
 
   for (const [tid, group] of Object.entries(byTopic)) {
     const items = group.items;
+    const pendingItems = group.pending;
     const card = el('section', { class: 'panel', style: 'padding:14px' });
 
     card.appendChild(el('div', { class: 'row-between', style: 'margin-bottom:10px' }, [
       el('div', { class: 'row', style: 'gap:8px' }, [
-        el('span', { class: `chip ${SUBJECT_CLASS[group.subject] || ''}`, text: SUBJECT_LABEL[group.subject] || group.subject }),
+        el('span', { class: `chip ${SUBJECT_CLASS[group.subject] || ''}`, text: subjectLabel(group.subject) }),
         el('span', { style: 'font-size:13px;font-weight:800', text: group.title }),
       ]),
-      el('span', { style: 'font-size:12px;font-weight:800;color:#b45309', text: `${items.length} 题待清` }),
+      el('span', { style: 'font-size:12px;font-weight:800;color:#b45309', text: `${items.length} 题待清${pendingItems.length ? ` · ${pendingItems.length} 题待补录` : ''}` }),
     ]));
 
     const preview = el('div', { class: 'stack', style: 'gap:7px' });
@@ -211,7 +264,7 @@ export async function renderWrongbook(view) {
       preview.appendChild(el('div', {
         style: 'font-size:11.5px;color:#6b5b52;background:#fdf8f0;border-radius:9px;padding:8px 10px;' +
           'overflow:hidden;text-overflow:ellipsis;white-space:nowrap',
-        text: `${it.skill || '未分类'} · ${questionText(it.stem).slice(0, 40)}`,
+        text: `${it.review_status === 'ready' ? it.skill || '未分类' : '待补录'} · ${questionText(it.stem).slice(0, 40)}`,
       }));
     });
     if (items.length > 3) {
@@ -219,26 +272,35 @@ export async function renderWrongbook(view) {
     }
     card.appendChild(preview);
 
-    card.appendChild(el('button', {
+    const editable = items.filter(it => it.can_edit !== false);
+    if (editable.length) card.appendChild(el('button', {
       class: 'btn full', style: 'margin-top:12px',
-      text: `重做这 ${items.length} 题`,
-      onclick: () => renderRedo(view, tid, group.title, items),
+      text: `重做这 ${editable.length} 题`,
+      onclick: () => renderRedo(view, tid, group.title, editable),
     }));
 
-    card.appendChild(el('button', {
+    if (items.length) card.appendChild(el('button', {
       class: 'btn ghost full', style: 'margin-top:8px',
       text: '逐题查看 · AI 分析',
       onclick: () => showTopicSheet(tid, group.title, items, ai, updateUsage),
     }));
+    pendingItems.forEach((it) => {
+      card.appendChild(el('div', { style: 'margin-top:9px;padding:9px 10px;border-left:3px solid #d97706;background:#fffbeb;font-size:12px;line-height:1.65' }, [
+        el('strong', { text: `待补录 · ${it.review_reason || '原题信息待核对'}` }),
+        el('div', { style: 'margin-top:4px;white-space:pre-line', text: questionText(it.stem) }),
+        ...imageList(it),
+      ]));
+    });
 
     root.appendChild(card);
   }
 
   /* ---- 已清零统计 ---- */
-  if (summary.total_count > summary.open_total) {
+  const clearedCount = summary.total_count - summary.open_total - (summary.pending_total || 0);
+  if (clearedCount > 0) {
     root.appendChild(el('div', {
       style: 'text-align:center;font-size:11.5px;color:#a3928a;padding:10px',
-      text: `已清零 ${summary.total_count - summary.open_total} 题 · 累计 ${summary.total_count} 题入本`,
+      text: `已清零 ${clearedCount} 题 · 累计 ${summary.total_count} 题入本`,
     }));
   }
 
@@ -250,6 +312,8 @@ export async function renderWrongbook(view) {
 
 async function renderRedo(view, topicId, title, items) {
   const answers = {};
+  const multiAnswers = {};
+  const fillAnswers = {};
   let idx = 0;
   let busy = false;
   const returnToList = () => renderWrongbook(view).catch((err) => toast(err.message || '刷新失败'));
@@ -270,24 +334,45 @@ async function renderRedo(view, topicId, title, items) {
 
   function paint() {
     const it = items[idx];
+    const isChoice = ['choice', 'multi_choice'].includes(it.qtype || 'choice');
+    const answered = isChoice
+      ? (it.qtype === 'multi_choice' ? (multiAnswers[it.id] || []).length > 0 : answers[it.id] !== undefined)
+      : (fillAnswers[it.id] || '').trim() !== '';
     body.innerHTML = '';
 
-    body.appendChild(el('div', { style: 'font-size:11.5px;color:#a3928a', text: `第 ${idx + 1} / ${items.length} 题 · 曾错 ${it.wrong_count} 次` }));
+    body.appendChild(el('div', { style: 'font-size:11.5px;color:#a3928a', text: `第 ${idx + 1} / ${items.length} 题 · 曾错 ${it.wrong_count} 次 · ${it.qtype === 'multi_choice' ? '多选题 · 全部选对才清零' : (isChoice ? '选择题' : (it.qtype === 'solution' ? '解答题' : '填空题'))}` }));
     body.appendChild(el('section', { class: 'panel' }, [
       el('div', { class: 'q-stem', text: questionText(it.stem), style: 'white-space:pre-line' }),
-      el('div', { class: 'q-options' }, it.options.map((o, oi) =>
-        el('button', {
-          class: `opt ${answers[it.id] === oi ? 'sel' : ''}`,
-          type: 'button',
-          onclick: () => {
-            answers[it.id] = oi;
-            paint();
-          },
-        }, [
-          el('span', { class: 'key', text: LETTERS[oi] }),
-          el('span', { class: 'txt', text: o }),
-        ])
-      )),
+      ...imageList(it),
+      isChoice
+        ? el('div', { class: 'q-options' }, it.options.map((o, oi) =>
+          el('button', {
+            class: `opt ${(it.qtype === 'multi_choice' ? (multiAnswers[it.id] || []).includes(oi) : answers[it.id] === oi) ? 'sel' : ''}`,
+            type: 'button',
+            onclick: () => {
+              if (it.qtype === 'multi_choice') {
+                const selected = new Set(multiAnswers[it.id] || []);
+                selected.has(oi) ? selected.delete(oi) : selected.add(oi);
+                multiAnswers[it.id] = [...selected].sort((a, b) => a - b);
+              } else answers[it.id] = oi;
+              paint();
+            },
+          }, [
+            el('span', { class: 'key', text: LETTERS[oi] }),
+            el('span', { class: 'txt', text: o }),
+          ])
+        ))
+        : el('div', { style: 'margin-top:10px' }, [
+          el('div', { style: 'font-size:11.5px;color:#a3928a;margin-bottom:6px', text: '把你的答案写在下面（与正确答案比对后自动判分）' }),
+          el('input', {
+            type: 'text',
+            value: fillAnswers[it.id] || '',
+            placeholder: '例如：2 或 (−∞,3−2√2]',
+            style: 'width:100%;font:inherit;font-size:13px;padding:10px 12px;border:1px solid #eadfd3;border-radius:10px;background:#fffdf9',
+            oninput: (e) => { fillAnswers[it.id] = e.target.value; },
+            onchange: () => paint(),
+          }),
+        ]),
     ]));
 
     if (it.source === 'practice') body.appendChild(feedbackButton({ topic_id: it.topic_id, section_id: it.section_id, tier: it.tier, question_id: it.question_id, wrong_question_id: it.id }, it));
@@ -295,7 +380,7 @@ async function renderRedo(view, topicId, title, items) {
       class: 'btn full',
       style: 'margin-top:14px',
       text: idx < items.length - 1 ? '下一题' : '提交清零',
-      disabled: busy || answers[it.id] === undefined,
+      disabled: busy || !answered,
       onclick: () => { if (idx < items.length - 1) { idx += 1; paint(); } else { submit(); } },
     }));
   }
@@ -305,7 +390,7 @@ async function renderRedo(view, topicId, title, items) {
     busy = true;
     paint();
     try {
-      const res = await api.redoWrongbook(topicId, answers);
+      const res = await api.redoWrongbook(topicId, answers, fillAnswers, multiAnswers);
       await returnToList();
       showRedoResult(res, returnToList);
     } catch (err) {
@@ -343,6 +428,9 @@ function showRedoResult(res, onClose) {
       el('div', { style: 'font-size:12px;line-height:1.6;color:#334155', text: r.stem.slice(0, 60) + (r.stem.length > 60 ? '…' : '') }),
       el('div', { style: `font-size:11px;font-weight:800;margin-top:4px;color:${r.correct ? '#047857' : '#b91c1c'}`,
         text: r.skipped ? '未作答' : (r.correct ? '✓ 答对，已清零' : '✗ 又错了，答对再清') }),
+      r.answer_text || r.qtype === 'multi_choice'
+        ? el('div', { style: 'font-size:11.5px;color:#1e3a5f;margin-top:3px', text: `正确答案：${r.answer_text || (r.answer_indices || []).map(i => LETTERS[i]).join('、')}` })
+        : null,
     ]);
     mountReflection(item,r.reflection);
     box.appendChild(item);
@@ -369,17 +457,35 @@ function showTopicSheet(topicId, title, items, ai, onUsage) {
         el('span', { style: 'font-size:10px;color:#a3928a', text: `曾错 ${it.wrong_count} 次` }),
       ]),
       el('div', { style: 'font-size:13px;line-height:1.65;color:#3b2f2a;margin-top:8px;white-space:pre-line', text: questionText(it.stem) }),
-      el('div', { style: 'margin-top:8px;display:flex;flex-direction:column;gap:4px' },
-        it.options.map((o, oi) => el('div', {
-          style: `font-size:12px;padding:5px 9px;border-radius:8px;${
-            oi === it.answer ? 'background:#f0fdf4;color:#047857;font-weight:700'
-            : oi === it.picked ? 'background:#fef2f2;color:#b91c1c' : 'color:#6b5b52'}`,
-          text: `${LETTERS[oi]}. ${o}${oi === it.picked ? ' ← 你的选择' : ''}${oi === it.answer ? ' ✓' : ''}`,
-        }))),
+      ...imageList(it),
+      ...((it.qtype && !['choice', 'multi_choice'].includes(it.qtype))
+        ? [el('div', {
+            style: 'margin-top:8px;font-size:12px;line-height:1.7;background:#f0f6ff;color:#1e3a5f;border-radius:9px;padding:8px 10px',
+            text: it.answer_text ? `✅ 正确答案：${it.answer_text}` : '（这道题还没有填写正确答案）',
+          })]
+        : [el('div', { style: 'margin-top:8px;display:flex;flex-direction:column;gap:4px' },
+          it.options.map((o, oi) => {
+            const answers = it.qtype === 'multi_choice' ? (it.answer_indices || []) : [it.answer];
+            const picks = it.qtype === 'multi_choice' ? (it.picked_indices || []) : [it.picked];
+            return el('div', {
+              style: `font-size:12px;padding:5px 9px;border-radius:8px;${
+                answers.includes(oi) ? 'background:#f0fdf4;color:#047857;font-weight:700'
+                : picks.includes(oi) ? 'background:#fef2f2;color:#b91c1c' : 'color:#6b5b52'}`,
+              text: `${LETTERS[oi]}. ${o}${picks.includes(oi) ? ' ← 你的选择' : ''}${answers.includes(oi) ? ' ✓' : ''}`,
+            });
+          }))]),
+      it.qtype === 'multi_choice' ? el('div', { class: 'hint', style: 'margin-top:6px', text: `正确答案：${(it.answer_indices || []).map(i => LETTERS[i]).join('、') || '待补录'}` }) : null,
       el('div', { style: 'font-size:11.5px;color:#6b5b52;line-height:1.7;margin-top:7px', text: it.explain }),
+      ...reasonBlock(it),
       el('div', { class: 'ai-slot', style: 'margin-top:8px' }),
     ]);
 
+    if (it.can_edit === false) {
+      block.appendChild(el('div', { class: 'hint', text: `${it.owner_name || '其他用户'} 的个人错题 · 共享只读` }));
+      if (it.ai) paintAi(block.querySelector('.ai-slot'), it.ai);
+      holder.appendChild(block);
+      return;
+    }
     if (it.source === 'practice') block.appendChild(feedbackButton({ topic_id: it.topic_id, section_id: it.section_id, tier: it.tier, question_id: it.question_id, wrong_question_id: it.id }, it));
     if (it.ai) paintAi(block.querySelector('.ai-slot'), it.ai);
     else {

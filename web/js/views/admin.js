@@ -107,7 +107,7 @@ async function renderAdmin(view) {
     for (const t of cfg.tasks) {
       const sel = el('select', {
         style: 'font-size:12px;padding:7px 9px;border:1px solid #eaddc9;border-radius:9px;background:#fffdf9;color:#3b2f2a;max-width:46%',
-      }, Object.keys(cfg.channels).map((cid) => {
+      }, Object.keys(cfg.channels).filter((cid) => ['review', 'photo_confirm'].includes(t.id) ? cid.startsWith('review') : (t.id === 'recognize' ? cid === 'glm' : !cid.startsWith('review'))).map((cid) => {
         const ch = cfg.channels[cid];
         return el('option', {
           value: cid,
@@ -268,6 +268,71 @@ async function renderAdmin(view) {
       el('a', { href: '#/admin/accounts', class: 'btn ghost', text: '进入账号管理' }),
     ]));
 
+    /* ---- 休闲广场赠送次数（仅管理员；写入服务端 7 天赠送池） ---- */
+    root.appendChild(el('div', { class: 'section-head' }, [
+      el('h3', { text: '休闲广场 · 赠送抽奖次数' }),
+      el('span', { class: 'hint', text: '仅 dad 可用 · 7 天内有效、用完即止' }),
+    ]));
+    const grantPanel = el('section', { class: 'panel stack', style: 'padding:13px' });
+    const grantAccount = el('select', {
+      style: 'font-size:12px;padding:8px 9px;border:1px solid #eaddc9;border-radius:9px;background:#fffdf9;color:#3b2f2a',
+    }, (users.users || []).map((u) => el('option', {
+      value: u.id,
+      ...(u.username === 'sunny' ? { selected: true } : {}),
+      text: `${u.nickname || u.username} @${u.username || u.id}`,
+    })));
+    const grantRegular = el('input', {
+      type: 'number', min: 0, max: 1000, value: '20', 'aria-label': '赠送普通抽奖次数',
+      style: 'width:76px;font-size:12px;padding:8px 6px;border:1px solid #eaddc9;border-radius:9px;background:#fffdf9;color:#3b2f2a;text-align:center',
+    });
+    const grantPrize = el('input', {
+      type: 'number', min: 0, max: 1000, value: '2', 'aria-label': '赠送实体奖次数',
+      style: 'width:76px;font-size:12px;padding:8px 6px;border:1px solid #eaddc9;border-radius:9px;background:#fffdf9;color:#3b2f2a;text-align:center',
+    });
+    const grantDays = el('input', {
+      type: 'number', min: 1, max: 90, value: '7', 'aria-label': '有效天数',
+      style: 'width:76px;font-size:12px;padding:8px 6px;border:1px solid #eaddc9;border-radius:9px;background:#fffdf9;color:#3b2f2a;text-align:center',
+    });
+    const grantResult = el('div', { class: 'hint', style: 'min-height:16px;line-height:1.6' });
+    const grantField = (label, input, note) => el('div', { class: 'row-between', style: 'gap:8px;padding:5px 0' }, [
+      el('span', { style: 'font-size:12px;color:#5c4b42', text: label }),
+      el('span', { class: 'row', style: 'gap:6px;align-items:center' }, [
+        input,
+        note ? el('span', { style: 'font-size:10.5px;color:#a3928a', text: note }) : null,
+      ]),
+    ]);
+    grantPanel.appendChild(grantField('赠送给', grantAccount));
+    grantPanel.appendChild(grantField('普通抽奖（次）', grantRegular));
+    grantPanel.appendChild(grantField('实体奖（次）', grantPrize));
+    grantPanel.appendChild(grantField('有效期（天）', grantDays));
+    grantPanel.appendChild(el('button', {
+      class: 'btn full', style: 'margin-top:6px', text: '🎁 确认赠送',
+      onclick: async (e) => {
+        const btn = e.currentTarget;
+        const uid = grantAccount.value;
+        const regular = Number(grantRegular.value) || 0;
+        const prize = Number(grantPrize.value) || 0;
+        const days = Number(grantDays.value) || 7;
+        if (!uid) { toast('没有可赠送的账号'); return; }
+        if (!regular && !prize) { toast('请至少填写一种赠送次数'); return; }
+        const target = (users.users || []).find((u) => u.id === uid);
+        const label = target ? `${target.nickname || ''} @${target.username || ''}` : '该账号';
+        if (!window.confirm(`确认给 ${label} 赠送：普通 ${regular} 次、实体奖 ${prize} 次，${days} 天内有效？`)) return;
+        btn.disabled = true; btn.textContent = '赠送中…';
+        try {
+          const q = await api.adminGrantQuota({ user_id: uid, regular, prize, days });
+          toast('已赠送，立即生效');
+          grantResult.textContent = `✅ ${label} 当前可用 ${q.remaining} 次（当日 ${q.day_total} + 赠送池 ${q.granted}）· 实体奖 ${q.prize.remaining} 次 · 赠送有效期至 ${q.grant_end}`;
+        } catch (err) {
+          toast(err.message || '赠送失败');
+        } finally {
+          btn.disabled = false; btn.textContent = '🎁 确认赠送';
+        }
+      },
+    }));
+    grantPanel.appendChild(grantResult);
+    root.appendChild(grantPanel);
+
     /* ---- 许愿墙管理 ---- */
     root.appendChild(el('div', { class: 'section-head' }, [
       el('h3', { text: '许愿墙' }),
@@ -275,6 +340,14 @@ async function renderAdmin(view) {
     ]));
     const wishPanel = el('section', { class: 'panel', style: 'padding:13px' });
     root.appendChild(wishPanel);
+
+    /* ---- 实体券台账（核销） ---- */
+    root.appendChild(el('div', { class: 'section-head' }, [
+      el('h3', { text: '实体券台账' }),
+      el('span', { class: 'hint', text: '抽卡站同步 · 核销后 Sunny 那边显示「已兑现」' }),
+    ]));
+    const prizePanel = el('section', { class: 'panel', style: 'padding:6px 13px' });
+    root.appendChild(prizePanel);
 
     view.innerHTML = '';
     view.appendChild(root);
@@ -323,6 +396,50 @@ async function renderAdmin(view) {
     } catch (err) {
       wishPanel.innerHTML = '';
       wishPanel.appendChild(el('div', { style: 'font-size:12px;color:#b91c1c', text: err.message || '加载许愿墙失败' }));
+    }
+
+    try {
+      const res = await api.adminPrizeLedger();
+      prizePanel.innerHTML = '';
+      const items = res?.items || [];
+      if (!items.length) {
+        prizePanel.appendChild(el('div', { style: 'font-size:12px;color:#a3928a;padding:10px 0',
+          text: '还没有实体券记录。Sunny 在抽卡站抽到券后会自动记到这里。' }));
+      }
+      items.forEach((t) => {
+        const time = (t.created_at || '').slice(5, 16).replace('T', ' ');
+        const who = [t.nickname, t.username ? `@${t.username}` : ''].filter(Boolean).join(' ');
+        const held = t.status === 'held';
+        prizePanel.appendChild(el('div', { style: 'padding:9px 0;border-top:1px solid #f6ede0' }, [
+          el('div', { class: 'row-between', style: 'gap:8px;align-items:center' }, [
+            el('span', { style: 'font-size:12px;min-width:0', text: `${t.emoji} ${t.name} · ${t.rarity}` }),
+            held ? el('button', {
+              class: 'btn soft sm', text: '标记已兑现',
+              onclick: async (e) => {
+                const b = e.currentTarget;
+                b.disabled = true; b.textContent = '…';
+                try {
+                  await api.adminRedeemPrize(t.id);
+                  toast('已核销');
+                  b.textContent = '已兑现 ✓';
+                } catch (err2) {
+                  toast(err2.message || '核销失败');
+                  b.disabled = false; b.textContent = '标记已兑现';
+                }
+              },
+            }) : el('span', {
+              style: `font-size:10.5px;font-weight:800;color:${t.status === 'redeemed' ? '#059669' : '#a3928a'}`,
+              text: t.status === 'redeemed' ? '已兑现 ✓' : '已合成',
+            }),
+          ]),
+          el('div', { style: 'font-size:10px;color:#b6a498;margin-top:3px',
+            text: `${who} · ${time}` }),
+        ]));
+      });
+    } catch (err) {
+      prizePanel.innerHTML = '';
+      prizePanel.appendChild(el('div', { style: 'font-size:12px;color:#b91c1c;padding:10px 0',
+        text: err.message || '加载实体券台账失败' }));
     }
 }
 

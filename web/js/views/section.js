@@ -115,7 +115,7 @@ function tierSwitcher(tiers, active, topicId, sid) {
 
 /* ---------- 通用：选项组 ---------- */
 
-function optionsBlock(questions, getSelection, onChange, { disabled = false, showResult = null, feedback = null, summaries = {} } = {}) {
+function optionsBlock(questions, getSelection, onChange, { disabled = false, showResult = null, feedback = null, summaries = {}, multiAnswers = null } = {}) {
   const wrap = el('div', { class: 'stack', style: 'gap:18px' });
 
   questions.forEach((q, qi) => {
@@ -123,6 +123,7 @@ function optionsBlock(questions, getSelection, onChange, { disabled = false, sho
     block.appendChild(el('div', { class: 'q-stem' }, [
       el('span', { style: 'color:#a3928a;font-weight:800;margin-right:6px', text: `${qi + 1}.` }),
       questionContent(q.stem),
+      q.qtype === 'multi_choice' ? el('span', { class: 'hint', style: 'margin-left:8px', text: '多选' }) : null,
     ]));
 
     const opts = el('div', { class: 'q-options' });
@@ -133,9 +134,14 @@ function optionsBlock(questions, getSelection, onChange, { disabled = false, sho
         onclick: () => {
           if (disabled) return;
           if (showResult && showResult.locked) return;
-          getSelection()[q.id] = oi;
+          if (q.qtype === 'multi_choice' && multiAnswers) {
+            const selected = new Set(multiAnswers[q.id] || []);
+            selected.has(oi) ? selected.delete(oi) : selected.add(oi);
+            multiAnswers[q.id] = [...selected].sort((a, b) => a - b);
+          } else getSelection()[q.id] = oi;
           opts.querySelectorAll('.opt').forEach((b, bi) => {
-            b.classList.toggle('sel', bi === oi);
+            b.classList.toggle('sel', q.qtype === 'multi_choice' && multiAnswers
+              ? (multiAnswers[q.id] || []).includes(bi) : bi === oi);
           });
           onChange?.();
         },
@@ -149,6 +155,7 @@ function optionsBlock(questions, getSelection, onChange, { disabled = false, sho
     });
     block.appendChild(opts);
     if (summaries[q.id]) mountReflection(block, summaries[q.id]);
+    if (q.qtype === 'multi_choice') block.querySelector('.q-stem').appendChild(el('span', { class: 'hint', style: 'margin-left:8px', text: '多选' }));
     if (feedback) block.appendChild(feedbackButton({ ...feedback, question_id: q.id }, q));
     wrap.appendChild(block);
   });
@@ -171,14 +178,14 @@ function applyResults(wrapEl, details) {
       const oi = Number(btn.dataset.oi);
       btn.disabled = true;
       btn.classList.remove('sel');
-      if (oi === d.answer) btn.classList.add('right');
-      else if (oi === d.picked) btn.classList.add('wrong');
+      if ((d.answer_indices || []).includes(oi) || oi === d.answer) btn.classList.add('right');
+      if ((d.picked_indices || []).includes(oi) || oi === d.picked) btn.classList.add('wrong');
     });
 
     if (d.explain) {
       const ok = d.correct;
       block.appendChild(el('div', { class: `explain ${ok ? 'ok' : 'bad'}` }, [
-        el('span', { class: 'tag', text: ok ? '答对了' : `正确答案 ${LETTERS[d.answer]}` }),
+        el('span', { class: 'tag', text: d.review_status && d.review_status !== 'ready' ? '待补录，未判分' : ok ? '答对了' : `正确答案 ${(d.answer_indices || [d.answer]).map(i => LETTERS[i]).filter(Boolean).join('、')}` }),
         el('div', { text: d.explain }),
       ]));
     }
@@ -243,14 +250,16 @@ function rewardPills(res) {
 
 async function renderQuiz(body, topicId, sectionId, sec) {
   const answers = {};
+  const multiAnswers = {};
   const questions = sec.questions;
   let submitted = false;
 
   const optWrap = optionsBlock(questions, () => answers, () => {
-    const filled = questions.every((q) => answers[q.id] !== undefined);
+    const filled = questions.every((q) => q.qtype === 'multi_choice'
+      ? (multiAnswers[q.id] || []).length > 0 : answers[q.id] !== undefined);
     submit.btn.disabled = !filled;
-    submit.wrap.querySelector('.btn').textContent = filled ? '提交答案' : `还有 ${questions.filter(q=>answers[q.id]===undefined).length} 题未答`;
-  }, { feedback: { topic_id: topicId, section_id: sectionId, tier: ACTIVE_TIER }, summaries: sec.summary_context });
+    submit.wrap.querySelector('.btn').textContent = filled ? '提交答案' : `还有 ${questions.filter(q => q.qtype === 'multi_choice' ? !(multiAnswers[q.id] || []).length : answers[q.id] === undefined).length} 题未答`;
+  }, { feedback: { topic_id: topicId, section_id: sectionId, tier: ACTIVE_TIER }, summaries: sec.summary_context, multiAnswers });
 
   body.appendChild(el('section', { class: 'panel' }, [optWrap]));
 
@@ -258,7 +267,7 @@ async function renderQuiz(body, topicId, sectionId, sec) {
     submit.btn.disabled = true;
     submit.btn.textContent = '判分中…';
     try {
-      const res = await api.submitSection(topicId, sectionId, answers, ACTIVE_TIER);
+      const res = await api.submitSection(topicId, sectionId, answers, ACTIVE_TIER, multiAnswers);
       submitted = true;
       applyResults(optWrap, res.details);
 
@@ -686,6 +695,7 @@ async function renderSteps(body, topicId, sectionId, sec) {
 
 async function renderBoss(body, topicId, sectionId, sec) {
   const answers = {};
+  const multiAnswers = {};
   const questions = sec.questions;
 
   body.appendChild(el('section', { class: 'panel', style: 'background:linear-gradient(150deg,#4a3b33,#3b2f2a);border-color:#4a3b33' }, [
@@ -695,10 +705,11 @@ async function renderBoss(body, topicId, sectionId, sec) {
   ]));
 
   const optWrap = optionsBlock(questions, () => answers, () => {
-    const filled = questions.every((q) => answers[q.id] !== undefined);
+    const filled = questions.every((q) => q.qtype === 'multi_choice'
+      ? (multiAnswers[q.id] || []).length > 0 : answers[q.id] !== undefined);
     submit.btn.disabled = !filled;
     submit.btn.textContent = filled ? '提交答案' : '请先作答';
-  }, { feedback: { topic_id: topicId, section_id: sectionId, tier: ACTIVE_TIER }, summaries: sec.summary_context });
+  }, { feedback: { topic_id: topicId, section_id: sectionId, tier: ACTIVE_TIER }, summaries: sec.summary_context, multiAnswers });
 
   body.appendChild(el('section', { class: 'panel' }, [optWrap]));
 
@@ -706,7 +717,7 @@ async function renderBoss(body, topicId, sectionId, sec) {
     submit.btn.disabled = true;
     submit.btn.textContent = '判分中…';
     try {
-      const res = await api.submitSection(topicId, sectionId, answers, ACTIVE_TIER);
+      const res = await api.submitSection(topicId, sectionId, answers, ACTIVE_TIER, multiAnswers);
       applyResults(optWrap, res.details);
 
       const hero = resultHero({

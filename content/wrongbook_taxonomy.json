@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "comment": "错题本学科/章节分类体系。录入工具与网站共用；章节可按需扩充，id 保持稳定勿改。",
+  "subjects": [
+    {
+      "id": "math",
+      "label": "数学",
+      "chapters": [
+        {"id": "sets-logic", "label": "集合与逻辑"},
+        {"id": "functions", "label": "函数"},
+        {"id": "trigonometry", "label": "三角函数"},
+        {"id": "sequences", "label": "数列"},
+        {"id": "inequalities", "label": "不等式"},
+        {"id": "solid-geometry", "label": "立体几何"},
+        {"id": "analytic-geometry", "label": "解析几何"},
+        {"id": "vectors", "label": "平面向量"},
+        {"id": "probability", "label": "概率统计"},
+        {"id": "derivatives", "label": "导数"},
+        {"id": "complex-numbers", "label": "复数"},
+        {"id": "other", "label": "其他"}
+      ]
+    },
+    {
+      "id": "physics",
+      "label": "物理",
+      "chapters": [
+        {"id": "kinematics", "label": "运动的描述与匀变速直线运动"},
+        {"id": "interactions", "label": "相互作用（力）"},
+        {"id": "newton-laws", "label": "牛顿运动定律"},
+        {"id": "curved-motion", "label": "曲线运动与万有引力"},
+        {"id": "momentum", "label": "动量守恒定律"},
+        {"id": "mechanical-energy", "label": "机械能与能量守恒"},
+        {"id": "electrostatics", "label": "静电场"},
+        {"id": "circuits", "label": "恒定电流与电路"},
+        {"id": "magnetism", "label": "磁场与电磁感应"},
+        {"id": "alternating-current", "label": "交变电流"},
+        {"id": "thermodynamics", "label": "热学与热力学"},
+        {"id": "mechanical-waves", "label": "机械波与光学"},
+        {"id": "modern-physics", "label": "近代物理"},
+        {"id": "other", "label": "其他"}
+      ]
+    },
+    {
+      "id": "chemistry",
+      "label": "化学",
+      "chapters": [
+        {"id": "matter-structure", "label": "物质结构与元素周期律"},
+        {"id": "chemical-bonds", "label": "化学键与晶体"},
+        {"id": "redox", "label": "氧化还原反应"},
+        {"id": "ionic-reactions", "label": "离子反应"},
+        {"id": "stoichiometry", "label": "化学计量与计算"},
+        {"id": "metals-nonmetals", "label": "金属与非金属及其化合物"},
+        {"id": "organic", "label": "有机化学基础"},
+        {"id": "electrochemistry", "label": "电化学"},
+        {"id": "equilibrium", "label": "化学反应速率与平衡"},
+        {"id": "aqueous-solutions", "label": "水溶液中的离子平衡"},
+        {"id": "experiments", "label": "化学实验"},
+        {"id": "other", "label": "其他"}
+      ]
+    },
+    {
+      "id": "biology",
+      "label": "生物",
+      "chapters": [
+        {"id": "cells", "label": "细胞的结构与代谢"},
+        {"id": "photosynthesis", "label": "光合作用与呼吸作用"},
+        {"id": "cell-division", "label": "细胞增殖与遗传基础"},
+        {"id": "heredity", "label": "遗传定律与变异"},
+        {"id": "evolution", "label": "生物进化"},
+        {"id": "homeostasis", "label": "稳态与调节"},
+        {"id": "ecology", "label": "生物与环境"},
+        {"id": "biotech", "label": "生物技术与工程"},
+        {"id": "experiments", "label": "实验与探究"},
+        {"id": "other", "label": "其他"}
+      ]
+    },
+    {
+      "id": "geography",
+      "label": "地理",
+      "chapters": [
+        {"id": "earth-motion", "label": "地球运动"},
+        {"id": "atmosphere", "label": "大气与气候"},
+        {"id": "hydrology", "label": "水循环与河流"},
+        {"id": "landform", "label": "地表形态"},
+        {"id": "natural-env", "label": "自然环境的整体性与差异性"},
+        {"id": "population-city", "label": "人口与城市"},
+        {"id": "agriculture-industry", "label": "农业与工业区位"},
+        {"id": "transport", "label": "交通与可持续发展"},
+        {"id": "regional-dev", "label": "区域发展与国土整治"},
+        {"id": "other", "label": "其他"}
+      ]
+    },
+    {
+      "id": "cross",
+      "label": "跨学科",
+      "chapters": [
+        {"id": "interdisciplinary", "label": "跨学科综合"},
+        {"id": "data-analysis", "label": "数据分析与图表"},
+        {"id": "estimation", "label": "估算与量纲"},
+        {"id": "other", "label": "其他"}
+      ]
+    }
+  ]
+}

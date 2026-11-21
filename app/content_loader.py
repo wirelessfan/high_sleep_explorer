@@ -98,6 +98,12 @@ def history() -> dict:
     return _read_json(CONTENT_DIR / "history.json")
 
 
+@lru_cache(maxsize=1)
+def wrongbook_taxonomy() -> dict:
+    """错题本学科/章节分类体系（与录入工具共用）。"""
+    return _read_json(CONTENT_DIR / "wrongbook_taxonomy.json")
+
+
 def history_for(day: date) -> dict:
     """取当天的科学史上事件。
 

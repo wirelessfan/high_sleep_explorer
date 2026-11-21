@@ -14,6 +14,8 @@ import { renderAchievements } from './views/achievements.js';
 import { renderWrongbook } from './views/wrongbook.js';
 import { renderAdmin } from './views/admin.js';
 import { renderBlindbox } from './views/blindbox.js';
+import { renderRelaxGacha } from './views/relax-gacha.js';
+import { renderMiniGames } from './views/mini-games.js';
 import { renderWishes } from './views/wishes.js';
 import { renderLogin } from './views/login.js';
 import { renderFeedback } from './views/feedback.js';
@@ -33,6 +35,8 @@ function registerRoutes() {
   route('/achievements', renderAchievements);
   route('/wrongbook', renderWrongbook);
   route('/blindbox', renderBlindbox);
+  route('/relax', renderRelaxGacha);
+  route('/games', renderMiniGames);
   route('/wishes', renderWishes);
   route('/admin', renderAdmin);
   route('/admin/accounts', renderAccounts);

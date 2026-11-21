@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import sqlite3
+import uuid
 from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictInt
 
 from app import db
 from app.routers.session import require_admin
-from app.services import accounts, ai_client, ai_config, ratelimit, wishes
+from app.services import accounts, ai_client, ai_config, events, ratelimit, wishes
 
 router = APIRouter(prefix="/admin", tags=["admin"])
 
@@ -32,6 +33,13 @@ class AiTestIn(BaseModel):
     task: str = Field(min_length=1, max_length=32)
 
 
+class AiReviewIn(BaseModel):
+    stem: str = Field(min_length=1, max_length=4000)
+    options: list[str] = Field(min_length=2, max_length=6)
+    answer: str = Field(min_length=1, max_length=500)
+    explain: str = Field(min_length=1, max_length=4000)
+
+
 class StudentIn(BaseModel):
     model_config = ConfigDict(extra='forbid')
     username: str = Field(min_length=3,max_length=32)
@@ -43,7 +51,7 @@ class StudentIn(BaseModel):
 def _channel_admin_view(cfg: dict) -> dict:
     """通道的管理视角：策略覆盖 + 环境侧事实（密钥只给配置状态）。"""
     out = {}
-    for cid in ai_config.CHANNEL_ORDER:
+    for cid in ai_config.ALL_CHANNELS:
         ch = ai_client.CHANNELS.get(cid)
         if not ch:
             continue
@@ -70,7 +78,7 @@ def _full_config(conn: sqlite3.Connection) -> dict:
         "channels": _channel_admin_view(cfg),
         "tasks": [{"id": t, "label": ai_config.TASK_LABELS[t]} for t in ai_config.TASKS],
         "task_labels": ai_config.TASK_LABELS,
-        "channel_order": list(ai_config.CHANNEL_ORDER),
+        "channel_order": list(ai_config.ALL_CHANNELS),
         "stub": ai_client._stub_on(),
         "updated_at": row["updated_at"] if row else None,
         "updated_by": row["updated_by"] if row else None,
@@ -125,6 +133,29 @@ def test_ai(body: AiTestIn, user: sqlite3.Row = Depends(require_admin)):
     except RuntimeError as exc:
         latency = int((time.monotonic() - start) * 1000)
         return {"ok": False, "error": str(exc), "latency_ms": latency}
+
+
+@router.post("/ai/review")
+def review_question(body: AiReviewIn, user: sqlite3.Row = Depends(require_admin)):
+    """对管理员提交的题目快照做审校建议，不写入题库。"""
+    if not ratelimit.allow(f"ai-review:{user['id']}", limit=10, window_seconds=86400):
+        raise HTTPException(status_code=429, detail="今日审校次数已达上限（10 次）")
+    if any(not isinstance(option, str) or not option.strip() or len(option) > 500
+           for option in body.options):
+        raise HTTPException(status_code=422, detail="选项必须为 1–500 字文本")
+    question = body.model_dump()
+    question["options"] = [option.strip() for option in body.options]
+    question["answer"] = body.answer.strip()
+    question["stem"] = body.stem.strip()
+    question["explain"] = body.explain.strip()
+    try:
+        result = ai_client.review(question)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from None
+    with db.tx() as conn:
+        events.log(conn, user["id"], f"ai-review:{uuid.uuid4().hex}", "ai",
+                   {"task": "review", "channel": result["channel"], "model": result["model"]})
+    return result
 
 
 @router.get("/ai/usage")

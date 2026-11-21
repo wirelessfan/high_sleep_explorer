@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import content_loader, db
-from app.routers import question_feedback, exam_training
+from app.routers import question_feedback, exam_training, relax
 from app.routers import (achievements, admin, blindbox, bosses, cards, content,
                          progress, rewards, session, wishes, wrongbook)
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -98,10 +98,19 @@ app.include_router(wishes.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
 app.include_router(question_feedback.router, prefix="/api/v1")
 app.include_router(exam_training.router, prefix="/api/v1")
+app.include_router(relax.router, prefix="/api/v1")
 
 # 静态资源：卡片图、示意图
 if ASSETS_DIR.exists():
     app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+
+# 错题本配图：线上 ProtectSystem=strict 下 /opt 只读，
+# 用 LEARN_WB_IMAGES 指到可写目录（如 /var/lib/learning-highschool/wrongbook-images）。
+# 设置了该环境变量时，导入图片的 web 路径走 /wb-images 前缀（见 routers/wrongbook.py）。
+_WB_IMAGES_DIR = os.environ.get("LEARN_WB_IMAGES")
+if _WB_IMAGES_DIR:
+    Path(_WB_IMAGES_DIR).mkdir(parents=True, exist_ok=True)
+    app.mount("/wb-images", StaticFiles(directory=_WB_IMAGES_DIR), name="wb-images")
 
 # 前端 SPA：放在最后，兜底所有非 API 路径
 if WEB_DIR.exists():
