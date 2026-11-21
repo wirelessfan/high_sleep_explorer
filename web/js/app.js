@@ -26,6 +26,9 @@ import { renderMomentumEnergyLab } from './views/momentum-energy-lab.js';
 import { renderEmCosmosLab } from './views/em-cosmos-lab.js';
 import { renderOpticsWavesLab } from './views/optics-waves-lab.js';
 import { renderChaosQuantumLab } from './views/chaos-quantum-lab.js';
+import { renderThermalMicroLab } from './views/thermal-micro-lab.js';
+import { renderFluidWindtunnelLab } from './views/fluid-windtunnel-lab.js';
+import { renderRelativityNuclearLab } from './views/relativity-nuclear-lab.js';
 
 function registerRoutes() {
   route('/', renderHome);
@@ -37,6 +40,9 @@ function registerRoutes() {
   route('/em-cosmos', renderEmCosmosLab);
   route('/optics-waves', renderOpticsWavesLab);
   route('/chaos-quantum', renderChaosQuantumLab);
+  route('/thermal-micro', renderThermalMicroLab);
+  route('/fluid-windtunnel', renderFluidWindtunnelLab);
+  route('/relativity-nuclear', renderRelativityNuclearLab);
   route('/topic/:id', renderTopic);
   route('/topic/:id/:sid', renderSection);
   route('/topic/:id/:sid/:tier', renderSection);

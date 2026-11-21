@@ -53,6 +53,9 @@ export async function renderSubjects(view) {
   root.appendChild(el('button', { class: 'btn ghost', text: '⚡ 电磁宇宙加速器 · 回旋 / 轨道炮 / 极光实验室', onclick: () => navigate('#/em-cosmos') }));
   root.appendChild(el('button', { class: 'btn ghost', text: '🔦 光与波的魔法 · 激光光纤 / 音爆 / 降噪实验室', onclick: () => navigate('#/optics-waves') }));
   root.appendChild(el('button', { class: 'btn ghost', text: '🦋 混沌与量子脑洞 · 双摆 / 引力弹弓 / 光电效应', onclick: () => navigate('#/chaos-quantum') }));
+  root.appendChild(el('button', { class: 'btn ghost', text: '🔥 热学与微观宇宙 · 布朗运动 / 麦克斯韦妖 / 绝热点火', onclick: () => navigate('#/thermal-micro') }));
+  root.appendChild(el('button', { class: 'btn ghost', text: '🛫 风洞与流体奇观 · 机翼失速 / 香蕉球 / 安全线', onclick: () => navigate('#/fluid-windtunnel') }));
+  root.appendChild(el('button', { class: 'btn ghost', text: '☢️ 相对论与核风暴 · 光钟 / 金箔散射 / 核裂变控制棒', onclick: () => navigate('#/relativity-nuclear') }));
   root.appendChild(el('button',{class:'btn ghost',text:'看图找规律 · 抽着奖把题做了 🙂',onclick:()=>navigate('#/exam-training')}));
 
   for (const subj of catalog.subjects) {
