@@ -85,7 +85,7 @@ async function renderAdmin(view) {
       if (!ch) continue;
       const enabled = el('input', {
         type: 'checkbox', ...(ch.enabled ? { checked: true } : {}),
-        style: 'width:18px;height:18px',
+        style: 'width:18px;height:18px;margin-top:2px;flex:0 0 auto',
       });
       const model = el('input', {
         type: 'text',
@@ -95,21 +95,50 @@ async function renderAdmin(view) {
       });
       channelInputs[cid] = { enabled, model };
 
+      /* 默认只看「通道名 + 状态 + 当前模型」，URL / 通道 ID / 自定义模型收进高级配置 */
+      const modelNow = el('div', { style: 'font-size:11px;color:#6b5b52;margin-top:3px' });
+      const syncModelNow = () => {
+        const custom = model.value.trim();
+        modelNow.textContent = `当前模型：${custom || ch.default_model}${custom ? '（自定义）' : ''}`;
+      };
+      model.addEventListener('input', syncModelNow);
+      syncModelNow();
+
+      const advanced = el('div', {
+        hidden: true,
+        style: 'margin-top:9px;padding-top:8px;border-top:1px dashed #f0e4d4',
+      }, [
+        el('div', { style: 'font-size:10.5px;color:#a3928a;line-height:1.75', text: `通道 ID：${cid}` }),
+        el('div', { style: 'font-size:10.5px;color:#a3928a;line-height:1.75;word-break:break-all',
+          text: `接口 URL：${ch.base_url}` }),
+        el('div', { class: 'row', style: 'gap:8px;margin-top:8px;align-items:center' }, [
+          el('span', { style: 'font-size:11px;font-weight:700;color:#8a7a70;flex:0 0 auto', text: '自定义模型' }),
+          model,
+        ]),
+      ]);
+      const advBtn = el('button', {
+        class: 'btn ghost sm', style: 'margin-top:8px', text: '展开高级配置 ▾',
+        onclick: () => {
+          advanced.hidden = !advanced.hidden;
+          advBtn.textContent = advanced.hidden ? '展开高级配置 ▾' : '收起高级配置 ▴';
+        },
+      });
+
       channelPanel.appendChild(el('div', {
-        style: 'display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #f6ede0',
+        style: 'display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-top:1px solid #f6ede0',
       }, [
         enabled,
         el('div', { style: 'flex:1;min-width:0' }, [
           el('div', { style: 'display:flex;gap:6px;align-items:center;flex-wrap:wrap' }, [
-            el('span', { style: 'font-size:13px;font-weight:800', text: `${ch.name} · ${cid}` }),
+            el('span', { style: 'font-size:13px;font-weight:800', text: ch.name }),
             keyBadge(ch.key_ok),
             ch.vision ? badge('视觉') : null,
             ch.enabled ? null : badge('已停用'),
           ]),
-          el('div', { style: 'font-size:10.5px;color:#a3928a;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap',
-            text: ch.base_url }),
+          modelNow,
+          advBtn,
+          advanced,
         ]),
-        model,
       ]));
     }
     if (!Object.keys(channelInputs).length) {

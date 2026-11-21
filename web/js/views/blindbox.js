@@ -1,4 +1,4 @@
-/* 盲盒：独立盲盒券抽盒、图鉴、积分换券、实物兑换 */
+/* 盲盒：独立盲盒券抽盒、收藏册、积分换券、实物兑换 */
 
 import * as api from '../api.js';
 import { el, toast, openSheet, rarityClass } from '../ui.js';
@@ -22,6 +22,12 @@ export async function renderBlindbox(view) {
       el('div', { class: 'sub', text: '开出拉布布小伙伴 · 集齐可兑实物' }),
     ]),
   ]));
+
+  /* 盲盒券与首页「卡包」是两套券，最上面先讲清楚，免得混着算 */
+  root.appendChild(el('div', {
+    style: 'font-size:11.5px;color:#a3928a;line-height:1.7;margin:-2px 2px 0',
+    text: '这里的盲盒券只用于拉布布盲盒，和首页「卡包」分开计算，互不通用。',
+  }));
 
   /* ---- 顶部：盲盒主体 + 开盒按钮 ---- */
   const boxImg = el('img', {
@@ -68,10 +74,10 @@ export async function renderBlindbox(view) {
     maxExchange < 1 ? el('div', { class: 'hint', style: 'margin-top:8px', text: data.exchange.remaining_today < 1 ? '今天的兑换额度已用完，明天再来。' : '积分不足，做题积累积分后即可兑换。' }) : null,
   ]));
 
-  /* ---- 图鉴 ---- */
+  /* ---- 盲盒收藏册 ---- */
   root.appendChild(el('div', { class: 'section-head' }, [
-    el('h3', { text: '图鉴' }),
-    el('span', { class: 'hint', text: '开出过的角色永久留在图鉴里' }),
+    el('h3', { text: '盲盒收藏册' }),
+    el('span', { class: 'hint', text: '开出过的角色永久留在收藏册里' }),
   ]));
 
   const grid = el('div', { class: 'bb-grid' });
@@ -81,7 +87,7 @@ export async function renderBlindbox(view) {
       src: c.image, alt: c.name, loading: 'lazy',
       style: c.unlocked ? '' : 'filter:grayscale(1) brightness(.72);opacity:.42',
     }));
-    // SVG 内已自带名字：图鉴格子只补稀有度与副本数，避免重复
+    // SVG 内已自带名字：收藏册格子只补稀有度与副本数，避免重复
     if (c.unlocked) {
       card.appendChild(el('div', { class: `bb-rar ${rarityClass(c.rarity)}`, text: RARITY_LABEL[c.rarity] }));
       if (c.count > 0) card.appendChild(el('div', { class: 'bb-cnt', text: `副本 ×${c.count}` }));
@@ -174,7 +180,7 @@ export async function renderBlindbox(view) {
   async function doRedeem(c) {
     openSheet(el('div', {}, [
       el('div', { style: 'font-size:12.5px;color:#5c4b42;line-height:1.8',
-        text: `用 1 个「${c.name}」副本兑换 ¥${c.value_cny} 实物奖励？兑换后副本减少，图鉴仍保留。` }),
+        text: `用 1 个「${c.name}」副本兑换 ¥${c.value_cny} 实物奖励？兑换后副本减少，收藏册仍保留。` }),
       el('button', { class: 'btn full', style: 'margin-top:14px', text: '确认兑换',
         onclick: async () => {
           try {
@@ -232,7 +238,7 @@ function showDrawResult(res, onClose) {
   const actions = el('div', { class: 'row', style: 'gap:8px;margin-top:15px' }, [
     el('button', { class: 'btn', style: 'flex:1', text: '再开一次',
       onclick: () => { document.getElementById('overlay').hidden = true; onClose?.(); } }),
-    el('button', { class: 'btn ghost', style: 'flex:1', text: '看图鉴',
+    el('button', { class: 'btn ghost', style: 'flex:1', text: '看收藏册',
       onclick: () => { document.getElementById('overlay').hidden = true; onClose?.(); } }),
   ]);
 
