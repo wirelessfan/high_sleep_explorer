@@ -10,6 +10,9 @@ import { bossBanner, bindBossProgress } from '../boss.js';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
+/* 这几类版块是「边做边看 HP」的，横幅吸顶；reading / myths / steps 不吸顶 */
+const STICKY_BOSS_TYPES = new Set(['quiz', 'levels', 'boss']);
+
 let ACTIVE_TIER = 'basic';
 
 export async function renderSection(view, { id, sid, tier }) {
@@ -59,8 +62,12 @@ export async function renderSection(view, { id, sid, tier }) {
   root.appendChild(tierSwitcher(data.tiers || [], ACTIVE_TIER, id, sid));
 
   // 守关者横幅：每个版块一只小 boss，boss 版块是科学家大 boss
+  // 只有答题类版块让横幅吸顶（滚动时能看到 HP）；阅读/步骤类保持原样，不占屏
   const banner = bossBanner(data.boss, { status: data.status });
-  if (banner) root.appendChild(banner);
+  if (banner) {
+    if (STICKY_BOSS_TYPES.has(sec.type)) banner.classList.add('sticky');
+    root.appendChild(banner);
+  }
 
   const body = el('div', { class: 'stack' });
   root.appendChild(body);

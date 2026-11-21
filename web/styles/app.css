@@ -437,6 +437,24 @@ a{color:inherit;text-decoration:none}
 .boss-banner.compact .boss-say{font-size:11px}
 .boss-banner.compact .boss-hp{display:none}
 
+/* 答题类版块（quiz / levels / boss）的血条横幅吸顶：滚动做题时随时能看到剩余 HP。
+   阅读、步骤类版块不加 .sticky，保持原样不占屏。 */
+.boss-banner.sticky{
+  position:sticky;top:0;z-index:26;
+  border-radius:0 0 15px 15px;
+  box-shadow:0 10px 22px -16px rgba(120,80,30,.55);
+}
+/* 吸顶时压扁一点，别把题目顶出屏幕 */
+.boss-banner.sticky .boss-art{flex-basis:54px;height:62px}
+.boss-banner.sticky .boss-kicker{display:none}
+.boss-banner.sticky .boss-name{font-size:14px}
+.boss-banner.sticky .boss-say{
+  margin-top:4px;
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.boss-banner.sticky .boss-hp{margin-top:5px}
+
 /* 版块列表里的小 boss 头像 */
 .boss-ico{position:relative;background:#fdf7ee;overflow:visible}
 .boss-ico img{width:34px;height:34px;object-fit:contain}
@@ -484,6 +502,8 @@ a{color:inherit;text-decoration:none}
 .login-hero .lh-title{font-size:17px;font-weight:800;letter-spacing:-.01em;color:#3b2f2a}
 .login-hero .lh-sub{font-size:11.5px;color:#a3928a;margin-top:3px}
 .login-card{padding:16px}
+/* 「进入」按钮下方的说明文字，和按钮拉开 14px，避免紧贴 */
+.login-card .hint{margin:14px 0 0}
 .login-users{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .login-user{
   display:flex;flex-direction:column;align-items:center;gap:4px;
@@ -986,7 +1006,7 @@ a{color:inherit;text-decoration:none}
   padding: 7px 11px; border-radius: 999px; font-size: 11.5px; font-weight: 700;
   background: #fff; border: 1px solid var(--line); color: var(--ink-2);
 }
-.mg-tab.active { background: #ede9fe; border-color: #c4b5fd; color: #6d28d9; }
+.mg-tab.active { background: #6b4a33; border-color: #5b3f2c; color: #fdf7ee; }
 .mg-tab.link { background: #fff7ed; border-color: #fed7aa; color: #b45309; }
 
 .mg-egg-row { display: flex; justify-content: center; gap: 16px; margin: 20px 0 8px; }

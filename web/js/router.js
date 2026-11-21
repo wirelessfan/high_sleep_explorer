@@ -78,7 +78,9 @@ export async function render() {
         }),
       ]));
     }
-    view.replaceChildren(...stage.childNodes);
+    // stage 直接挂进去（display:contents 不产生额外盒子），而不是搬它的子节点：
+    // 视图持有的是这个 stage 引用，切页后它们自己再 paint()/replaceChildren 才不会写到游离节点上
+    view.replaceChildren(stage);
     renderedPath = path;
     view.classList.remove('is-loading');
     updateTabs(path);
