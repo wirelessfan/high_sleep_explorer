@@ -340,7 +340,7 @@ export async function renderMomentumEnergyLab(view) {
       ctxBu.fillStyle = '#f3ece1'; ctxBu.beginPath(); ctxBu.roundRect(bx0 + 16, y + 9, bxw - 30, 13, 6); ctxBu.fill();
       ctxBu.fillStyle = c; ctxBu.beginPath(); ctxBu.roundRect(bx0 + 16, y + 9, Math.max(4, (bxw - 30) * Math.min(1, r)), 13, 6); ctxBu.fill();
     };
-    bar(100, '总动量 p', `${p0.toFixed(0)}`, 1, '#2563eb');
+    bar(100, '总动量 p', `${p0.toFixed(0)} kg·m/s`, 1, '#2563eb');
     bar(162, '系统动能 Eₖ', `${(hit ? ekA : ek0).toFixed(0)} J`, hit ? ekA / ek0 : 1, '#059669');
     bar(224, '摩擦生热 Q', `${(hit ? heat : 0).toFixed(0)} J`, hit ? heat / ek0 : 0, '#dc2626');
     ctxBu.fillStyle = '#8c7b70'; ctxBu.font = FS.small;
