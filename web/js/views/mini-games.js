@@ -14,8 +14,8 @@ const RARITY_WEIGHT = { N: 70, R: 28, SR: 2 };
 const POKER_VALUES = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 const POKER_SUITS = ['♠', '♥', '♣', '♦'];
 const RANK_TEXT = { 11: 'J', 12: 'Q', 13: 'K', 14: 'A' };
-const HAND_NAMES = ['单个', '对子', '顺子', '同花', '豹子'];
-const HAND_POINTS = [10, 20, 100, 180, 300];  // 赢到的「开心积分」，与学习积分无关
+const HAND_NAMES = ['单个', '对子', '顺子', '同花', '同花顺', '豹子'];
+const HAND_POINTS = [10, 20, 100, 180, 260, 300];  // 赢到的「开心积分」，与学习积分无关
 
 /* 砸金蛋的小鸡：普通/银色/金色三档，5 进制进位。
  * 5 普通 → 1 银色；5 银色 → 1 金色。金色每次出现（直接砸出或进位得到）都送一次实体奖券抽奖。
@@ -84,9 +84,9 @@ function pickReward(boost = false, srWeight = RARITY_WEIGHT.SR) {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-/* ---- 扑克牌牌型：豹子 > 同花 > 顺子 > 对子 > 单个 ----
- * 同花顺（同一花色且连号）按「同花」算，不再单列一档；
- * 双方同为同花时，比最大的一张，再依次比后面两张。 */
+/* ---- 扑克牌牌型：豹子 > 同花顺 > 同花 > 顺子 > 对子 > 单个 ----
+ * 同花顺 = 三张同花色且连号（含 A-2-3 同花），比同花、顺子都大，但仍小于豹子；
+ * 同为同花 / 同花顺时，比最大的一张，再依次比后面两张。 */
 function randomCard() {
   const value = POKER_VALUES[Math.floor(Math.random() * POKER_VALUES.length)];
   const suit = POKER_SUITS[Math.floor(Math.random() * POKER_SUITS.length)];
@@ -123,8 +123,10 @@ function handInfo(cards) {
   let category = 0;
   let key = [...values].sort((a, b) => b - a);
   if (triple) {
-    category = 4; key = [triple];
-  } else if (flush) {  // 同花优先于顺子：同花顺也算同花
+    category = 5; key = [triple];
+  } else if (flush && isStraight(values)) {  // 同花顺：同花 + 连号
+    category = 4; key = [(values[0] === 2 && values[2] === 14) ? 3 : values[2]];
+  } else if (flush) {  // 同花优先于顺子
     category = 3; key = [...values].sort((a, b) => b - a);
   } else if (isStraight(values)) {
     // A-2-3 算最小的顺子（3 高）；其余顺子比最大的一张。
@@ -465,7 +467,7 @@ export async function renderMiniGames(view) {
     const children = [
       pokerHandRow('🙂 我', myCards, myInfo, win),
       pokerHandRow('🤖 AI 小助手', aiCards, aiInfo, outcome === 'lose'),
-      el('div', { style: 'font-size:10.5px;color:#a3928a;margin-top:9px', text: '牌型大小：豹子 > 同花 > 顺子 > 对子 > 单个' }),
+      el('div', { style: 'font-size:10.5px;color:#a3928a;margin-top:9px', text: '牌型大小：豹子 > 同花顺 > 同花 > 顺子 > 对子 > 单个' }),
       el('div', { style: 'font-size:12px;font-weight:800;color:#7c2d12;margin-top:7px',
         text: win
           ? `你赢了！开心积分 +${gained}（当前 ${points}）`
@@ -495,7 +497,7 @@ export async function renderMiniGames(view) {
     });
     const pointChip = el('span', { class: 'hint', text: `开心积分 ${state.points || 0}` });
     const hint = el('div', { style: 'font-size:11px;color:#b6a498;margin-top:10px;line-height:1.7',
-      text: '每次开牌消耗 1 次今日额度；你和 AI 同时亮牌，豹子 > 同花 > 顺子 > 对子 > 单个。三张同花色就是同花（同花顺按同花算）。赢到顺子及以上，开心积分大增并立即抽一张实体奖券。' });
+      text: '每次开牌消耗 1 次今日额度；你和 AI 同时亮牌，豹子 > 同花顺 > 同花 > 顺子 > 对子 > 单个。三张同花色就是同花，同花色又连号是同花顺。赢到顺子及以上，开心积分大增并立即抽一张实体奖券。' });
 
     async function spin() {
       if (spinBtn.disabled) return;
@@ -544,11 +546,11 @@ export async function renderMiniGames(view) {
         if (outcome === 'win') {
           gained = HAND_POINTS[myInfo.category];
           state.points = (state.points || 0) + gained;
-          // 顺子 / 同花 / 豹子赢：积分大增 + 直接实体抽奖（中性记录，不消耗额度）。
+          // 顺子及以上（含同花、同花顺）/ 豹子赢：积分大增 + 直接实体抽奖（中性记录，不消耗额度）。
           if (myInfo.category >= 2) prize = awardPhysicalPrize(who, pickPhysicalPrize());
         }
         state.plays.slot = (state.plays.slot || 0) + 1;
-        const card = pickReward(myInfo.category === 4, srWeight);
+        const card = pickReward(myInfo.category === 5, srWeight);
         reward(card, null);
         showPokerResult({ myCards, aiCards, myInfo, aiInfo, outcome, gained, card, prize, points: state.points });
         later(() => paint('slot'), prize ? 2600 : 1800);
@@ -561,9 +563,10 @@ export async function renderMiniGames(view) {
         el('span', { class: 'chip', text: '🃏 扑克对决' }),
         pointChip,
       ]),
-      el('div', { style: 'font-size:11px;color:#a3928a;margin-top:4px', text: `已玩 ${state.plays.slot || 0} 次 · 豹子 > 同花 > 顺子 > 对子 > 单个` }),
+      el('div', { style: 'font-size:11px;color:#a3928a;margin-top:4px', text: `已玩 ${state.plays.slot || 0} 次 · 6 种牌型` }),
       el('div', { style: 'font-size:19px;font-weight:800;margin:14px 0 2px', text: '你和 AI 同时亮三张牌！' }),
-      el('div', { style: 'font-size:11.5px;color:#d97706;font-weight:700', text: '顺子 / 同花 / 豹子 赢 → 积分大增 + 实体奖券' }),
+      el('div', { style: 'font-size:10.5px;color:#7c2d12;font-weight:800;margin-top:2px', text: '豹子 > 同花顺 > 同花 > 顺子 > 对子 > 单个' }),
+      el('div', { style: 'font-size:11.5px;color:#d97706;font-weight:700;margin-top:3px', text: '顺子及以上赢 → 积分大增 + 实体奖券' }),
       el('div', { style: 'font-size:11.5px;font-weight:800;margin-top:12px', text: '🙂 我' }),
       el('div', { class: 'mg-reels', style: 'margin-top:5px' }, myReels),
       el('div', { style: 'font-size:11.5px;font-weight:800;margin-top:10px', text: '🤖 AI 小助手（同时开牌）' }),
@@ -617,7 +620,7 @@ export async function renderMiniGames(view) {
       el('div', { class: 'hint', style: 'line-height:1.8;margin-top:4px',
         text: '每次玩消耗 1 次抽奖额度，与动物抽卡共用；平日 10 次，疯狂星期六、周日和节假日 20 次，当日学习积分每 10 分再送 1 次。次数由服务端记录，清缓存不会重置。' }),
       el('div', { class: 'hint', style: 'line-height:1.8;margin-top:4px',
-        text: '砸金蛋出小鸡；幸运转盘 16 格穿插四档小老虎（普通 1 分 / 铜 2 分 / 银 5 分 / 金 20 分），5 普通→银、5 银→金；金色每次出现都附赠实体奖券。扑克对决和 AI 同时亮牌，按豹子 > 同花 > 顺子 > 对子 > 单个比较（三张同花色即同花，同花顺按同花算），顺子及以上赢时开心积分大增并立即抽实体奖券。开心积分只存本机；实体奖券记在「动物抽卡站」，真实奖品由爸爸妈妈决定兑现。' }),
+        text: '砸金蛋出小鸡；幸运转盘 16 格穿插四档小老虎（普通 1 分 / 铜 2 分 / 银 5 分 / 金 20 分），5 普通→银、5 银→金；金色每次出现都附赠实体奖券。扑克对决和 AI 同时亮牌，按豹子 > 同花顺 > 同花 > 顺子 > 对子 > 单个比较（三张同花色即同花，同花色又连号是同花顺），顺子及以上赢时开心积分大增并立即抽实体奖券。开心积分只存本机；实体奖券记在「动物抽卡站」，真实奖品由爸爸妈妈决定兑现。' }),
     ]));
 
     view.innerHTML = '';
