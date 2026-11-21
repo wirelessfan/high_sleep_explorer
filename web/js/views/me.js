@@ -94,8 +94,10 @@ export async function renderMe(view) {
   }
   checkin.days.forEach((d) => {
     const n = Number(d.day.slice(-2));
+    const isToday = d.day === checkin.today;
+    const checked = isToday ? checkin.checked_today : d.checked;
     cal.appendChild(el('div', {
-      class: `d ${d.checked ? 'checked' : ''} ${d.is_today ? 'today' : ''} ${d.future ? 'future' : ''}`,
+      class: `d ${checked ? 'checked' : ''} ${isToday ? 'today' : ''} ${d.future ? 'future' : ''}`,
       text: String(n),
     }));
   });

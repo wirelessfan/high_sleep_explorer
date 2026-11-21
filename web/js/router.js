@@ -4,6 +4,11 @@ import { el, spinner } from './ui.js';
 
 const routes = [];
 let currentCleanup = null;
+let renderToken = 0;
+let renderedPath = null;
+const scrollMemo = new Map();
+
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 export function route(pattern, handler) {
   const keys = [];
@@ -27,6 +32,7 @@ export function currentPath() {
 export async function render() {
   const path = currentPath();
   const view = document.getElementById('view');
+  const token = ++renderToken;
 
   for (const r of routes) {
     const m = path.match(r.re);
@@ -38,16 +44,32 @@ export async function render() {
       try { currentCleanup(); } catch { /* ignore */ }
       currentCleanup = null;
     }
+    if (renderedPath !== null && renderedPath !== path) {
+      scrollMemo.set(renderedPath, window.scrollY);
+    }
 
-    view.innerHTML = '';
-    view.appendChild(spinner());
+    // 渲染到游离 stage：旧内容保留到新内容就绪，不整屏白闪；过期结果整块丢弃，防串页
+    const stage = el('div', { class: 'stack-render' });
+    view.classList.add('is-loading');
+    const placeholder = setTimeout(() => {
+      if (token !== renderToken) return;
+      view.replaceChildren(spinner());
+    }, 180);
+
     try {
-      const cleanup = await r.handler(view, params);
+      const cleanup = await r.handler(stage, params);
+      clearTimeout(placeholder);
+      if (token !== renderToken) {
+        // 已被更新的路由取代：丢弃本次结果
+        if (typeof cleanup === 'function') { try { cleanup(); } catch { /* ignore */ } }
+        return;
+      }
       currentCleanup = typeof cleanup === 'function' ? cleanup : null;
     } catch (err) {
+      clearTimeout(placeholder);
+      if (token !== renderToken) return;
       console.error(err);
-      view.innerHTML = '';
-      view.appendChild(el('div', { class: 'panel' }, [
+      stage.replaceChildren(el('div', { class: 'panel' }, [
         el('div', { style: 'font-size:15px;font-weight:800;margin-bottom:6px', text: '页面加载失败' }),
         el('div', { style: 'font-size:13px;color:#8a7a70', text: err?.message || '未知错误' }),
         el('button', {
@@ -56,11 +78,16 @@ export async function render() {
         }),
       ]));
     }
+    view.replaceChildren(...stage.childNodes);
+    renderedPath = path;
+    view.classList.remove('is-loading');
     updateTabs(path);
-    window.scrollTo(0, 0);
+    window.scrollTo(0, scrollMemo.get(path) ?? 0);
     return;
   }
 
+  if (token !== renderToken) return;
+  view.classList.remove('is-loading');
   view.innerHTML = '';
   view.appendChild(el('div', { class: 'empty' }, [
     el('div', { class: 'ico', text: '🧭' }),

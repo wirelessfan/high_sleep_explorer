@@ -301,8 +301,19 @@ a{color:inherit;text-decoration:none}
 }
 .cal .d.checked{background:#e9fbf3;border-color:#a7f3d0;color:#065f46}
 .cal .d.today{border-color:#3b82f6;border-width:2px;color:#1d4ed8}
+/* 今日已签：绿底绿框压过 .today 的蓝色，避免「签到了还显示蓝框」 */
+.cal .d.today.checked{
+  background:#e9fbf3;border-color:#34d399;border-width:2px;color:#047857;
+  box-shadow:0 0 0 2px rgba(52,211,153,.18);
+}
 .cal .d.future{opacity:.34}
 .cal .head{font-size:10px;color:var(--ink-3);text-align:center;font-weight:700;padding-bottom:2px}
+
+/* ---------- 路由切换 ---------- */
+/* 切换期间旧内容半透明，避免整屏白闪 */
+#view.is-loading{opacity:.6;transition:opacity .12s ease}
+/* 渲染暂存容器：不参与布局，换页时整块替换 */
+.stack-render{display:contents}
 
 /* ---------- Toast / Overlay ---------- */
 .toast{
