@@ -171,8 +171,10 @@ def test_photo_save_appears_in_wrongbook_with_friendly_title(client, auth):
     assert "拍照错题" in photo["title"]
     assert "化学" in photo["title"]
     assert photo["subject"] == "chemistry"
-    assert photo["open"] == 1
+    assert photo["open"] == 0
+    assert photo["pending"] == 1
     assert wb["items"][0]["source"] == "photo"
+    assert wb["items"][0]["review_status"] == "needs_review"
 
 
 def test_photo_save_misc_subject_fallback(client, auth):
@@ -200,8 +202,8 @@ def test_photo_save_validates_options(client, auth):
     assert "超出范围" in r2.json()["detail"] or "参数" in str(r2.json())
 
 
-def test_photo_saved_question_can_be_redone(client, auth):
-    """拍照题进错题本后，走正常重做流程可以清零。"""
+def test_photo_saved_without_strong_review_cannot_be_redone(client, auth):
+    """人工录入只能进入待审核区，不能绕过GPT直接重做清零。"""
     d = client.post("/api/v1/wrongbook/photo/save", json={
         "stem": "拍照录入的重做题", "options": ["甲", "乙", "丙"], "picked": 0,
         "answer": 2, "subject": "math",
@@ -209,9 +211,10 @@ def test_photo_saved_question_can_be_redone(client, auth):
 
     r = client.post("/api/v1/wrongbook/photo-math/redo",
                     json={"answers": {d["id"]: 2}}, headers=auth)
-    assert r.status_code == 200
-    assert r.json()["cleared"] == 1
-    assert r.json()["remaining"] == 0
+    assert r.status_code == 400
+    with db.ro() as conn:
+        row = conn.execute("SELECT status, review_status FROM wrong_questions WHERE id=?", (d["id"],)).fetchone()
+    assert tuple(row) == ("open", "needs_review")
 
 
 def test_photo_endpoints_require_auth(client):
@@ -414,8 +417,11 @@ def test_unanswered_transcription_is_not_graded_or_cleared(client, auth, monkeyp
     out = client.post('/api/v1/wrongbook/photo/recognize', json={'image':TINY_JPEG}, headers=auth).json()['result']
     item = out['save_results'][0]
     r = client.post('/api/v1/wrongbook/'+item['topic_id']+'/redo',
-                    json={'fill_answers':{item['id']:'随意作答'}},headers=auth).json()
-    assert r['results'][0]['skipped'] and r['cleared']==0 and r['re_wrong']==0
+                    json={'fill_answers':{item['id']:'随意作答'}},headers=auth)
+    assert r.status_code == 400
+    with db.ro() as conn:
+        row = conn.execute('SELECT status,wrong_count,review_status FROM wrong_questions WHERE id=?', (item['id'],)).fetchone()
+    assert tuple(row) == ('open', 1, 'needs_review')
 
 
 def test_active_job_rejects_competing_retry(client, auth, monkeypatch):

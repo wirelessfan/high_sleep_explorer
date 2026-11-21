@@ -62,7 +62,7 @@ async def content_handler(request: Request, exc: content_loader.ContentError):
 
 @app.get("/api/v1/healthz")
 async def healthz():
-    return {"ok": True, "version": app.version}
+    return {"ok": True, "version": app.version, "wrongbook_review_version": "gpt-import-review-1"}
 
 
 @app.middleware("http")

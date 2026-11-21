@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field, StrictInt
 from app.services import reflections
 from app import content_loader, db
 from app.routers.session import current_user
-from app.services import ai_client, ai_config, events, wrongbook
+from app.services import ai_client, ai_config, events, wrongbook, wrongbook_review
 
 router = APIRouter(tags=["wrongbook"])
 
@@ -134,6 +134,9 @@ def import_image(body: ImportImageIn, user: sqlite3.Row = Depends(current_user))
 
 
 class ImportItem(BaseModel):
+    review_id: str = Field(default="", max_length=64)
+    question_no: str = Field(default="", max_length=32)
+    bbox: list[float] | None = None
     stem: str = Field(min_length=1, max_length=20000)
     qtype: str = Field(default="choice", max_length=16)
     answer_indices: list[StrictInt] = Field(default_factory=list, max_length=8)
@@ -158,14 +161,82 @@ class ImportIn(BaseModel):
     overwrite: bool = False
 
 
+class ImportReviewIn(BaseModel):
+    item: ImportItem
+    source_image: str = Field(min_length=32, max_length=MAX_IMAGE_B64)
+    crop_image: str = Field(min_length=32, max_length=MAX_IMAGE_B64)
+    parent_review_id: str = Field(default="", max_length=64)
+    confirm_revision: bool = False
+
+
+def _check_review_image(user_id: str, item: dict, crop_hash: str) -> None:
+    path = _owned_image_path(user_id, item["image_path"])
+    if not path:
+        raise HTTPException(status_code=400, detail="必须先上传本题裁图")
+    image = _IMAGES_DIR / user_id / path.rsplit("/", 1)[-1]
+    if not image.is_file() or hashlib.sha256(image.read_bytes()).hexdigest() != crop_hash:
+        raise HTTPException(status_code=409, detail="上传配图与GPT审核裁图不一致，请重新上传审核")
+
+
+@router.post("/wrongbook/import/review")
+def review_import(body: ImportReviewIn, user: sqlite3.Row = Depends(current_user)):
+    """服务器托管真实GPT审核，不接收客户端自签通过结果；本地工具发起。"""
+    item = wrongbook_review.canonical(body.item.model_dump())
+    try:
+        source, source_hash = wrongbook_review.image_data(body.source_image)
+        crop, crop_hash = wrongbook_review.image_data(body.crop_image)
+        content_hash = wrongbook_review.digest(item, source_hash, crop_hash)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    _check_review_image(user["id"], item, crop_hash)
+    with db.ro() as conn:
+        parent = None
+        if body.parent_review_id:
+            parent = conn.execute("SELECT * FROM wrongbook_import_reviews WHERE id=? AND user_id=?",
+                                  (body.parent_review_id, user["id"])).fetchone()
+            if not parent or parent["status"] != "revised" or not body.confirm_revision:
+                raise HTTPException(status_code=409, detail="请明确确认GPT修订后再发起最终复核")
+            proposed = json.loads(parent["evidence_json"])["item"]
+            if item != proposed or source_hash != parent["source_hash"] or crop_hash != parent["crop_hash"]:
+                raise HTTPException(status_code=409, detail="修订内容或图片发生变化，请重新发起审核")
+        cached = conn.execute("SELECT * FROM wrongbook_import_reviews WHERE user_id=? AND content_hash=? AND status='passed' ORDER BY rowid DESC LIMIT 1",
+                              (user["id"], content_hash)).fetchone()
+        if cached:
+            return {"review_id": cached["id"], "review": json.loads(cached["evidence_json"]), "cached": True}
+        # 已提议的修订不得另起请求跳过明确确认。
+        if not parent:
+            proposals = conn.execute("SELECT evidence_json FROM wrongbook_import_reviews WHERE user_id=? AND source_hash=? AND crop_hash=? AND status='revised'",
+                                     (user["id"], source_hash, crop_hash)).fetchall()
+            if any(json.loads(r["evidence_json"]).get("item") == item for r in proposals):
+                raise HTTPException(status_code=409, detail="该版本是GPT修订稿，必须人工确认后最终复核")
+    try:
+        review = wrongbook_review.audit(item, source, crop)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    review_id = "wbr_" + uuid.uuid4().hex
+    with db.tx() as conn:
+        conn.execute("INSERT INTO wrongbook_import_reviews(id,user_id,content_hash,source_hash,crop_hash,payload_json,evidence_json,status,model,created_at,parent_id,confirmed_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                     (review_id, user["id"], content_hash, source_hash, crop_hash,
+                      json.dumps(item, ensure_ascii=False), json.dumps(review, ensure_ascii=False), review["status"],
+                      review["model"], review["reviewed_at"], body.parent_review_id or None,
+                      review["reviewed_at"] if parent else None))
+    return {"review_id": review_id, "review": review, "cached": False}
+
+
 @router.post("/wrongbook/import")
 def import_wrongbook(body: ImportIn, user: sqlite3.Row = Depends(current_user)):
     """批量导入错题（录入工具 / WorkBuddy 共用），同一题干自动去重。"""
     with db.tx() as conn:
+        items = [it.model_dump() for it in body.items]
+        try:
+            for item in items:
+                record = wrongbook_review.require_receipt(conn, user["id"], item)
+                _check_review_image(user["id"], item, record["crop_hash"])
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc))
         result = wrongbook.import_items(
-            conn, wrongbook.book_owner(user["id"]),
-            [it.model_dump() for it in body.items],
-            overwrite=body.overwrite,
+            conn, wrongbook.book_owner(user["id"]), items,
+            overwrite=body.overwrite, review_user_id=user["id"],
         )
         summary = wrongbook.summary(conn, wrongbook.book_owner(user["id"]))
     return {**result, "summary": summary,
@@ -331,6 +402,7 @@ def variants(body: VariantsIn, user: sqlite3.Row = Depends(current_user)):
 # ---------------------------------------------------------------- 拍照录入
 
 class PhotoIn(BaseModel):
+    draft_only: bool = False
     image: str = Field(min_length=32, max_length=MAX_IMAGE_B64)
     retry: bool = False
     subject: str = Field(default="", max_length=16)
@@ -462,6 +534,17 @@ def photo_retry(job_id: str, user: sqlite3.Row = Depends(current_user)):
 @router.post("/wrongbook/photo/recognize")
 def photo_recognize(body: PhotoIn, user: sqlite3.Row = Depends(current_user)):
     """服务器独占审核与自动保存；同账号同图片稳定幂等，失败保留供恢复。"""
+    if body.draft_only:
+        # 本地工具只取识别草稿，不触发旧拍照链的确认或保存副作用。
+        with db.ro() as conn:
+            _photo_quota(conn, user["id"], "recognize")
+        try:
+            image, _ = wrongbook_review.image_data(body.image)
+            return {"result": ai_client.recognize(image)}
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+        except RuntimeError as exc:
+            raise HTTPException(status_code=503, detail=str(exc))
     image = _clean_b64(body.image)
     try:
         data = base64.b64decode(image, validate=True)
@@ -692,8 +775,12 @@ def _photo_save_items(items: list[PhotoSaveIn], user: sqlite3.Row, automatic: bo
                      item.subject if item.subject in ("physics", "chemistry", "math", "biology", "geography", "cross") else "",
                      qtype, answer_text, now, now, chapter),
                 )
+                # 旧拍照确认仅核对转录，不包含独立解题，不得成为正式答案审核凭据。
+                conn.execute("UPDATE wrong_questions SET review_status='needs_review', review_reason=? WHERE id=?",
+                             ("仅转录/人工确认，尚未完成GPT原图及独立解题强审核，请在新版本地工具审核后导入", wq_id))
                 results.append({"question_no": item.question_no, "status": "saved", "id": wq_id,
-                                "topic_id": topic_id, "answer": answer, "qtype": qtype})
+                                "topic_id": topic_id, "answer": answer, "qtype": qtype,
+                                "review_status": "needs_review"})
             except HTTPException as exc:
                 if automatic:
                     raise

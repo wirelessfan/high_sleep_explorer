@@ -88,10 +88,10 @@ label{font-size:12px;font-weight:700;display:block;margin:9px 0 4px}
       <button class="ok" id="btnAutoAll">⚡ 全自动处理全部（AI 切题+解析）</button>
       <span id="autoInfo" class="tag"></span>
     </div>
-    <div class="hint" style="margin:4px 0 6px">全自动：AI 自动找出每道题、裁剪、解题、写推导与错因，然后自动同步到网站错题本；也可点缩略图手动框选微调。</div>
+    <div class="hint" style="margin:4px 0 6px">识别后逐题发起GPT强审核：对照整页原图和裁图、核对公式选项，并独立解题核验答案解析。91token优先、UGQ保底，绝不降级弱模型放行。修订须人工确认后再GPT最终复核；失败与待补录题保留本机。</div>
     <label class="hint" style="display:flex;align-items:center;gap:6px;margin:0 0 10px;cursor:pointer">
       <input type="checkbox" id="chkAutoImport" checked style="width:15px;height:15px">
-      处理完自动入库（关掉则先攒在清单里，手动点「批量导入」）
+      仅自动上传GPT审核通过题（修订/待补录/失败题绝不上传；关闭则手动确认上传）
     </label>
     <div class="grid" id="grid"></div>
   </section>
@@ -101,7 +101,8 @@ label{font-size:12px;font-weight:700;display:block;margin:9px 0 4px}
       <b>3 · 待导入清单</b>
       <span id="queueCount" class="chip">0 题</span>
       <div class="grow"></div>
-      <button class="ok" id="btnImport">批量导入到网站错题本</button>
+      <button id="btnReviewAll">逐题GPT审核 / 重试未通过题</button>
+      <button class="ok" id="btnImport" disabled>仅上传GPT审核通过题</button>
     </div>
     <div id="queue"></div>
     <div id="importResult" class="hint"></div>

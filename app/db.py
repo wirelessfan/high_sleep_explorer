@@ -226,6 +226,22 @@ CREATE TABLE IF NOT EXISTS wrong_questions (
 
 CREATE INDEX IF NOT EXISTS idx_wq_user ON wrong_questions(user_id, topic_id, status);
 
+CREATE TABLE IF NOT EXISTS wrongbook_import_reviews (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    content_hash TEXT NOT NULL,
+    source_hash TEXT NOT NULL,
+    crop_hash TEXT NOT NULL,
+    payload_json TEXT NOT NULL,
+    evidence_json TEXT NOT NULL,
+    status TEXT NOT NULL,
+    model TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    parent_id TEXT,
+    confirmed_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_wb_review_hash ON wrongbook_import_reviews(user_id, content_hash);
+
 CREATE TABLE IF NOT EXISTS photo_jobs (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL REFERENCES users(id),

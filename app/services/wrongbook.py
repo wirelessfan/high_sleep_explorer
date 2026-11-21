@@ -211,13 +211,16 @@ def answer_matches(given: str, expected: str) -> bool:
 
 
 def import_items(conn: sqlite3.Connection, user_id: str, items: list[dict],
-                 overwrite: bool = False) -> dict:
+                 overwrite: bool = False, review_user_id: str | None = None) -> dict:
     """批量导入错题（录入工具/WorkBuddy 均走这里），返回导入结果明细。
 
     item 字段：stem(必填)、options、picked、answer、skill、explain、
     subject、chapter、image_path、wrong_reason、derivation。
     同一 (user, topic, stem指纹) 已存在时：overwrite=True 更新，否则跳过去重。
     """
+    from app.services import wrongbook_review
+    for item in items:
+        wrongbook_review.require_receipt(conn, review_user_id or user_id, item)
     tax = _taxonomy()
     valid_subjects = set(tax) | {""}
     now = today_str()

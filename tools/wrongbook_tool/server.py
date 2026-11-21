@@ -78,6 +78,7 @@ def save_config(cfg: dict) -> None:
 
 app = FastAPI(title="错题录入工具", docs_url=None, redoc_url=None)
 PORT = 8021
+REVIEW_VERSION = "gpt-import-review-1"
 # 默认同步目标：线上网站（家人任何设备打开都能看到）；本机调试可改成 http://127.0.0.1:8011
 DEFAULT_SITE = os.environ.get("WB_SITE", "https://123-56-217-104.sslip.io:8090")
 
@@ -214,6 +215,8 @@ def _recognize_custom(image_b64: str, cfg: dict) -> dict:
 def state():
     cfg = load_config()
     return {
+        "review_version": REVIEW_VERSION,
+        "review_mode": "server-gpt-6.1-sol-91token-ugq",
         "site_url": cfg.get("site_url", ""),
         "effective_site": _site(cfg),
         "default_site": DEFAULT_SITE,
@@ -421,7 +424,7 @@ def recognize(body: ImageIn):
             result = _recognize_custom(s, cfg)
         else:
             r = httpx.post(f"{_site(cfg)}/api/v1/wrongbook/photo/recognize",
-                           headers=_site_headers(cfg), json={"image": s}, timeout=120)
+                           headers=_site_headers(cfg), json={"image": s, "draft_only": True}, timeout=120)
             if r.status_code >= 400:
                 raise HTTPException(status_code=r.status_code,
                                     detail=r.json().get("detail", "识别失败"))
@@ -625,8 +628,7 @@ def _normalize_auto_items(parsed: dict, tax: dict) -> list[dict]:
         qtype = str(raw.get("qtype", "")).strip().lower()
         if qtype not in ("choice", "multi_choice", "fill", "solution"):
             qtype = "choice" if len(options) >= 2 else "fill"
-        if qtype in ("choice", "multi_choice") and len(options) < 2:
-            qtype = "fill"
+        # 选择题缺选项必须保留缺陷，不能偷偷降级为填空后放行。
         answer_indices = []
         picked_indices = []
         if qtype not in ("choice", "multi_choice"):
@@ -647,10 +649,8 @@ def _normalize_auto_items(parsed: dict, tax: dict) -> list[dict]:
                 except (TypeError, ValueError):
                     return default
                 return v if 0 <= v < len(options) else default
-            answer = idx(raw.get("answer"), 0)
-            picked = idx(raw.get("picked"), (answer + 1) % len(options))
-            if picked == answer:
-                picked = (answer + 1) % len(options)
+            answer = idx(raw.get("answer"), -1)
+            picked = idx(raw.get("picked"), -1)
         answer_text = str(raw.get("answer_text", "")).strip()[:500] if qtype != "choice" else ""
         subject = str(raw.get("subject", "")).strip()
         if subject not in tax:
@@ -736,15 +736,16 @@ def ai_auto(body: AutoIn):
     # 3) 网站 AI 兜底（单题：识别 → 解题/分析）
     try:
         r = httpx.post(f"{_site(cfg)}/api/v1/wrongbook/photo/recognize",
-                       headers=_site_headers(cfg), json={"image": s}, timeout=120)
+                       headers=_site_headers(cfg), json={"image": s, "draft_only": True}, timeout=120)
         if r.status_code >= 400:
             raise RuntimeError(r.json().get("detail", f"HTTP {r.status_code}"))
         recog = r.json().get("result", {})
         stem = recog.get("stem", "")
         if not stem:
             raise RuntimeError("网站 AI 没识别出题干")
-        options = recog.get("options") or ["（非选择题）", "（非选择题）"]
-        item = {"stem": stem, "options": options, "picked": 0, "answer": 0,
+        options = recog.get("options") or []
+        item = {"stem": stem, "options": options, "picked": -1, "answer": -1,
+                "qtype": recog.get("qtype") or ("choice" if options else "fill"),
                 "subject": recog.get("subject", ""), "chapter": "", "skill": "",
                 "explain": "", "wrong_reason": "", "derivation": "", "bbox": None}
         try:
@@ -789,9 +790,30 @@ def taxonomy():
     return _proxy_resp(_site_get(cfg, "/api/v1/wrongbook/taxonomy", timeout=20))
 
 
+class ReviewIn(BaseModel):
+    item: dict
+    source_image: str = Field(min_length=32, max_length=6 * 1024 * 1024)
+    crop_image: str = Field(min_length=32, max_length=6 * 1024 * 1024)
+    parent_review_id: str = Field(default="", max_length=64)
+    confirm_revision: bool = False
+
+
+@app.post("/api/review")
+def review_item(body: ReviewIn):
+    # 审核由本机工具发起，托管鉴权和不可伪造审核凭据由网站负责。
+    cfg = load_config()
+    try:
+        response = _site_post(cfg, "/api/v1/wrongbook/import/review", body.model_dump(), timeout=300)
+    except httpx.HTTPError:
+        raise HTTPException(status_code=503, detail="GPT审核连接失败；草稿保留，禁止入库") from None
+    return _proxy_resp(response)
+
+
 @app.post("/api/import")
 def import_batch(body: ImportIn):
     cfg = load_config()
+    if any(not it.get("review_id") for it in body.items):
+        raise HTTPException(status_code=409, detail="清单含未完成GPT审核的题目，禁止批量绕过审核")
     # overwrite=False：同一题重复录入时网站按题干去重跳过，不会重复累加「又错一次」
     r = _site_post(cfg, "/api/v1/wrongbook/import",
                    {"items": body.items, "overwrite": False}, timeout=60)

@@ -30,6 +30,52 @@ const state = {
   queue: [],               // 待导入条目
 };
 
+/* 草稿持久化仅在本机，含原图；失败和未通过题不会被自动清空。 */
+const draftDb = new Promise((resolve, reject) => {
+  const req = indexedDB.open("wrongbook-gpt-drafts", 1);
+  req.onupgradeneeded = () => req.result.createObjectStore("drafts");
+  req.onsuccess = () => resolve(req.result);
+  req.onerror = () => reject(new Error("本机草稿存储不可用"));
+});
+async function saveDrafts() {
+  const db = await draftDb;
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction("drafts", "readwrite");
+    tx.objectStore("drafts").put(state.queue, "queue");
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(new Error("草稿保存失败，请勿关闭页面"));
+  });
+}
+function businessItem(it) {
+  return Object.fromEntries(Object.entries(it).filter(([k]) => !k.startsWith("__")));
+}
+const REVIEW_LABELS = { identified: "已识别", waiting: "待GPT审核", reviewing: "审核中", passed: "通过", revised: "需修订", pending: "待补录", rejected: "拒绝", failed: "失败" };
+async function reviewItem(it, confirmRevision = false) {
+  it.__status = "reviewing";
+  renderQueue();
+  try {
+    if (!it.__source || !it.__crop) throw new Error("缺原图或裁图，待补录，不允许正式入库");
+    if (!it.image_path) it.image_path = (await api("/api/import-image", { image: it.__crop })).path;
+    const response = await api("/api/review", {
+      item: businessItem(it), source_image: it.__source, crop_image: it.__crop,
+      parent_review_id: confirmRevision ? it.__reviewId : "",
+      confirm_revision: confirmRevision,
+    });
+    it.__reviewId = response.review_id;
+    it.__review = response.review;
+    it.__status = response.review.status;
+    it.__reason = response.review.reasons.join("；") || response.review.evidence;
+    if (it.__status === "passed") it.review_id = response.review_id;
+    else delete it.review_id;
+  } catch (err) {
+    delete it.review_id;
+    it.__status = "failed";
+    it.__reason = err.message || String(err);
+  }
+  await saveDrafts();
+  renderQueue();
+}
+
 /* ---------------- 连接状态 ---------------- */
 async function refreshState() {
   try {
@@ -275,6 +321,7 @@ function subjectOptions(sel) {
 }
 
 function openEditor(file, recog) {
+  const originalCrop = window.__cropToB64 ? window.__cropToB64() : "";
   const sheet = $("sheet");
   const subjects = state.taxonomy || {};
   const subjId = recog.subject && subjects[recog.subject] ? recog.subject : "";
@@ -399,14 +446,14 @@ function openEditor(file, recog) {
     btn.disabled = false; btn.textContent = "🤖 本地 AI 补全解析";
   };
   $("btnEditorClose").onclick = () => openCrop(file);
-  $("btnQueue").onclick = () => {
+  $("btnQueue").onclick = async () => {
     const stem = $("fStem").value.trim();
     if (!stem) { toast("题干不能为空"); return; }
     const opts = optsText.value.split("\n").map((s) => s.trim()).filter(Boolean);
     const qtype = qtypeSel.value;
     const ansText = ($("fAnsText")?.value || "").trim();
     if (["choice", "multi_choice"].includes(qtype) && opts.length < 2) { toast("选择题至少两个选项"); return; }
-    if (!(["choice", "multi_choice"].includes(qtype)) && !ansText) { toast("填空题请填写正确答案（可点「AI 补全解析」）"); return; }
+    // 缺答案可保留草稿，由GPT独立解题提议；不能据此直接入库。
     const checked = (name) => [...document.querySelectorAll(`#choiceBox input[data-set="${name}"]:checked`)].map(x => Number(x.value));
     const answerIndices = qtype === "multi_choice" ? checked("answer") : [];
     const pickedIndices = qtype === "multi_choice" ? checked("picked") : [];
@@ -418,8 +465,10 @@ function openEditor(file, recog) {
       options: ["choice", "multi_choice"].includes(qtype) ? opts : [],
       answer_indices: answerIndices,
       picked_indices: pickedIndices,
-      review_status: qtype === "multi_choice" && !answerIndices.length || qtype === "choice" && singleAnswer < 0 ? "needs_transcription" : "ready",
-      review_reason: "标准答案待核对",
+      review_status: "ready",
+      review_reason: "",
+      question_no: recog.question_no || recog.no || "",
+      bbox: null,
       picked: qtype === "multi_choice" ? (pickedIndices[0] ?? -1) : qtype === "choice" ? parseInt($("fPicked").value, 10) : -1,
       answer: singleAnswer,
       subject: $("fSubject").value,
@@ -429,7 +478,11 @@ function openEditor(file, recog) {
       wrong_reason: $("fReason").value.trim(),
       derivation: $("fDerivation").value.trim(),
       __src: file.path,
+      __crop: originalCrop,
+      __source: toB64(await loadImg(`/api/image?path=${encodeURIComponent(file.path)}`), 3000, 0.95),
+      __status: "waiting",
     });
+    await saveDrafts();
     state.done.add(file.path);
     toast("已加入待导入清单");
     renderGrid(); renderQueue();
@@ -441,7 +494,10 @@ function openEditor(file, recog) {
 /* ---------------- 待导入清单 ---------------- */
 function renderQueue() {
   $("queuePanel").style.display = state.queue.length ? "" : "none";
-  $("queueCount").textContent = `${state.queue.length} 题`;
+  const covered = state.queue.filter(it => it.__review).length;
+  const passed = state.queue.filter(it => it.__status === "passed" && it.review_id).length;
+  $("queueCount").textContent = `${state.queue.length} 题 · GPT覆盖 ${covered}/${state.queue.length} · 通过 ${passed}`;
+  $("btnImport").disabled = !passed;
   const q = $("queue");
   q.innerHTML = "";
   state.queue.forEach((it, i) => {
@@ -449,16 +505,40 @@ function renderQueue() {
     div.className = "qitem";
     const subj = state.taxonomy?.[it.subject]?.label || SUBJECTS[it.subject] || "未分类";
     const chap = state.taxonomy?.[it.subject]?.chapters?.find(([id]) => id === it.chapter)?.[1] || "";
-    const typeLabel = { choice: "选择", fill: "填空", solution: "解答" }[it.qtype || "choice"] || "选择";
-    const ansLabel = (it.qtype || "choice") === "choice"
-      ? `答案 ${LETTERS[it.answer] ?? "?"} / 错选 ${LETTERS[it.picked] ?? "?"}`
-      : `答案：${it.answer_text || "（缺）"}`;
-    div.innerHTML = `<div class="stem">${ansLabel} · ${it.stem.slice(0, 50)}…</div>
-      <div class="tag">${typeLabel} · ${subj}${chap ? " · " + chap : ""} ${it.wrong_reason ? "· 错因已记" : "· ⚠️ 缺错因"}</div>
-      <div class="row" style="margin-top:6px"><button data-i="${i}" class="btn-del">移除</button></div>`;
+    const typeLabel = { choice: "单选", multi_choice: "多选", fill: "填空", solution: "解答" }[it.qtype] || "未知";
+    const ansLabel = it.qtype === "multi_choice" ? `答案 ${(it.answer_indices || []).map(a => LETTERS[a]).join("、") || "待确认"}`
+      : it.qtype === "choice" ? `答案 ${LETTERS[it.answer] ?? "待确认"}` : `答案 ${it.answer_text || "待确认"}`;
+    div.innerHTML = `<div class="stem"></div><div class="tag"></div><div class="review-reason"></div>
+      <div class="row" style="margin-top:6px"><button class="btn-review">GPT审核 / 重试</button><button class="btn-revise">查看并确认修订</button><button class="btn-del">移除</button></div>`;
+    div.querySelector(".stem").textContent = `${ansLabel} · ${it.stem.slice(0, 100)}`;
+    div.querySelector(".tag").textContent = `${typeLabel} · ${subj} ${chap} · ${REVIEW_LABELS[it.__status] || "待GPT审核"}`;
+    div.querySelector(".review-reason").textContent = it.__reason || "尚未完成GPT原图核对与独立解题";
+    div.querySelector(".btn-review").disabled = it.__status === "reviewing";
+    div.querySelector(".btn-review").onclick = () => reviewItem(it);
+    const reviseButton = div.querySelector(".btn-revise");
+    reviseButton.hidden = it.__status !== "revised";
+    reviseButton.onclick = () => {
+      const panel = $("sheet");
+      panel.replaceChildren();
+      const title = document.createElement("h3"); title.textContent = "GPT修订稿（AI来源；确认后仍须最终GPT复核）";
+      const before = document.createElement("pre"); before.textContent = "原稿\n" + JSON.stringify(businessItem(it), null, 2);
+      const after = document.createElement("pre"); after.textContent = "修订稿\n" + JSON.stringify(it.__review.item, null, 2);
+      const confirm = document.createElement("button"); confirm.textContent = "我已核对修订，发起最终GPT复核";
+      const cancel = document.createElement("button"); cancel.textContent = "暂不确认";
+      confirm.onclick = async () => {
+        Object.assign(it, it.__review.item);
+        delete it.review_id;
+        $("overlay").hidden = true;
+        await reviewItem(it, true);
+      };
+      cancel.onclick = () => { $("overlay").hidden = true; };
+      panel.append(title, before, after, confirm, cancel);
+      $("overlay").hidden = false;
+    };
     div.querySelector(".btn-del").onclick = () => {
       state.done.delete(it.__src);
       state.queue.splice(i, 1);
+      saveDrafts().catch(toastErr);
       renderQueue(); renderGrid();
     };
     q.appendChild(div);
@@ -473,15 +553,19 @@ async function importQueue(opts = {}) {
   const btn = $("btnImport");
   if (btn) { btn.disabled = true; btn.textContent = "同步中…"; }
   try {
-    // 只传业务字段；overwrite=false 让网站按题干去重（重复录入不会重复累加）
-    const items = state.queue.map(({ __src, ...rest }) => rest);
+    const approved = state.queue.filter(it => it.__status === "passed" && it.review_id);
+    if (!approved.length) throw new Error("没有GPT审核通过的题目；未通过题已保留在本机");
+    if (!opts.silent && !confirm(`仅上传GPT审核通过的 ${approved.length} 题，其他 ${state.queue.length - approved.length} 题保留本机，是否继续？`)) return false;
+    const items = approved.map(businessItem);
     const r = await api("/api/import", { items });
     const n = (r.imported || []).length, u = (r.updated || []).length, s = (r.skipped || []).length;
     const site = r.site_url || (state.info && (state.info.effective_site || state.info.site_url)) || "";
     $("importResult").textContent = n + u
       ? `✅ 已同步 ${n + u} 题到 ${site}（新增 ${n} · 更新 ${u} · 重复跳过 ${s}），打开网站「错题本」全家可见。`
       : `没有新题：${s} 题与网站上已有的重复（可到网站错题本查看）。`;
-    state.queue = [];
+    const completed = new Set([...(r.imported || []), ...(r.updated || []), ...(r.skipped || []).filter(x => x.id)].map(x => approved[x.index]));
+    state.queue = state.queue.filter(it => !completed.has(it));
+    await saveDrafts();
     renderQueue(); refreshState();
     return true;
   } catch (err) {
@@ -533,19 +617,22 @@ function cropB64(img, bbox) {
 }
 
 function normalizeItem(it) {
-  const options = (it.options || []).filter((o) => String(o).trim());
-  let qtype = String(it.qtype || "").toLowerCase();
-  if (!["choice", "fill", "solution"].includes(qtype)) qtype = options.length >= 2 ? "choice" : "fill";
-  if (qtype === "choice" && options.length < 2) qtype = "fill";
-  const n = Math.max(options.length, 2);
-  const clamp = (v, d) => (qtype === "choice" && Number.isInteger(v) && v >= 0 && v < n ? v : d);
+  const options = (it.options || []).map(o => String(o));
+  const qtype = ["choice", "multi_choice", "fill", "solution"].includes(it.qtype) ? it.qtype : "fill";
+  const choice = ["choice", "multi_choice"].includes(qtype);
   return {
     stem: it.stem,
     qtype,
-    answer_text: qtype === "choice" ? "" : (it.answer_text || ""),
-    options: qtype === "choice" ? options : [],
-    picked: qtype === "choice" ? clamp(it.picked, 0) : -1,
-    answer: qtype === "choice" ? clamp(it.answer, 0) : -1,
+    question_no: it.no || it.question_no || "",
+    bbox: it.bbox || null,
+    review_status: "ready",
+    review_reason: "",
+    answer_text: choice ? "" : (it.answer_text || ""),
+    options: choice ? options : [],
+    answer_indices: qtype === "multi_choice" ? (it.answer_indices || []) : [],
+    picked_indices: qtype === "multi_choice" ? (it.picked_indices || []) : [],
+    picked: qtype === "choice" && Number.isInteger(it.picked) ? it.picked : -1,
+    answer: qtype === "choice" && Number.isInteger(it.answer) ? it.answer : -1,
     subject: it.subject || "",
     chapter: it.chapter || "",
     skill: it.skill || "",
@@ -566,27 +653,21 @@ async function autoProcess(files) {
   for (let i = 0; i < files.length; i += 1) {
     const f = files[i];
     if (state.done.has(f.path)) continue;
-    info.textContent = `处理中 ${i + 1}/${files.length}…（约每题 10–30 秒）`;
+    info.textContent = `识别中 ${i + 1}/${files.length}，随后逐题GPT强审核`;
     try {
       const img = await loadImg(`/api/image?path=${encodeURIComponent(f.path)}`);
-      const full = toB64(img);
+      const full = toB64(img, 3000, 0.95);
       const r = await api("/api/ai/auto", { image: full });
       usedChannel = r.channel || usedChannel;
       const items = r.items || [];
       if (!items.length) { toast("这张图没找到题目"); continue; }
       for (const raw of items) {
         const it = normalizeItem(raw);
-        let crop = raw.bbox ? cropB64(img, raw.bbox) : null;
-        let imagePath = "";
-        try {
-          imagePath = (await api("/api/import-image", { image: crop || full })).path;
-        } catch (err) {
-          // 未登录网站时不阻塞：先入清单，导入时仍可只存文字
-          imagePath = "";
-          imgFail += 1;
-        }
-        it.image_path = imagePath;
-        state.queue.push({ ...it, __src: f.path });
+        const crop = raw.bbox ? cropB64(img, raw.bbox) : null;
+        const draft = { ...it, __src: f.path, __source: full, __crop: crop || "", __status: "waiting" };
+        state.queue.push(draft);
+        await saveDrafts();
+        await reviewItem(draft);
         total += 1;
       }
       state.done.add(f.path);
@@ -599,7 +680,8 @@ async function autoProcess(files) {
   const chLabel = { "workbuddy-local": "WorkBuddy 本地 AI", "local-custom": "本地自定义 AI", site: "网站 AI（兜底）" }[usedChannel] || usedChannel;
   info.textContent = total ? `✓ ${imgCount} 张图 → ${total} 题（${chLabel}）` : "未识别到题目";
   if (total) toast(`已自动整理 ${total} 题，检查后点「批量导入」`);
-  if (imgFail) toast(`有 ${imgFail} 题配图上传失败（可能未登录网站），文字部分仍可导入`);
+  const blocked = state.queue.filter(it => it.__status !== "passed").length;
+  if (blocked) toast(`${blocked} 题尚未通过GPT审核，已保留本地，不能入库`);
   autoBusy = false;
 
   // 处理完自动同步：否则会出现「AI 整理完了，网站错题本还是空的」
@@ -698,6 +780,21 @@ new MutationObserver(() => {
 const _openCrop = openCrop;
 openCrop = function (file) { state.__currentFile = file; _openCrop(file); };
 
+draftDb.then(db => new Promise((resolve, reject) => {
+  const req = db.transaction("drafts").objectStore("drafts").get("queue");
+  req.onsuccess = () => resolve(req.result || []);
+  req.onerror = reject;
+})).then(items => {
+  state.queue = items;
+  for (const it of items) { state.done.add(it.__src); if (it.__status === "reviewing") it.__status = "waiting"; }
+  renderQueue();
+}).catch(toastErr);
+$("btnReviewAll").onclick = async () => {
+  const button = $("btnReviewAll"); button.disabled = true;
+  try {
+    for (const it of state.queue) if (it.__status !== "passed" && it.__status !== "revised") await reviewItem(it);
+  } finally { button.disabled = false; }
+};
 refreshState();
 loadTaxonomy();
 loadLanInfo();
