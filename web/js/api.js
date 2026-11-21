@@ -185,6 +185,8 @@ export const consumePrizeQuota = (key) =>
     method: 'POST',
     body: key ? { idempotency_key: key } : {},
   });
+/** 首次点开物理实验板块：领取 20 次抽奖（幂等，每账号一次）。 */
+export const claimLabBonus = () => request('/relax/lab-bonus', { method: 'POST' });
 export const getGachaState = () => request('/relax/gacha/state');
 export const putGachaState = (data) =>
   request('/relax/gacha/state', { method: 'PUT', body: { data } });

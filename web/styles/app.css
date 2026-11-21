@@ -1145,3 +1145,14 @@ input[type="checkbox"],input[type="radio"]{accent-color:#b45309}
   .tab{flex:0 1 128px}
   .sheet{max-width:680px}
 }
+
+/* ---------- 实验板块见面礼横幅（首次进入赠送抽奖次数） ---------- */
+.lab-bonus{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:11px 12px;border-radius:14px;
+  background:linear-gradient(135deg,#ecfdf5 0%,#eff6ff 100%);
+  border:1px solid #bbf7d0;
+}
+.lab-bonus-ico{font-size:20px;line-height:1.1;flex:0 0 auto}
+.lab-bonus-t{font-size:13px;font-weight:900;color:#065f46;line-height:1.4}
+.lab-bonus-d{font-size:11px;color:#4b7d6b;line-height:1.6;margin-top:2px}

@@ -313,6 +313,36 @@ def grant_quota(body: GrantIn, _admin: sqlite3.Row = Depends(require_admin)):
         return quota_for(conn, body.user_id, day)
 
 
+LAB_BONUS_AMOUNT = 20      # 首次进入「物理实验」板块赠送的抽奖次数
+LAB_BONUS_DAYS = 30        # 赠送池有效期：30 天，够孩子慢慢用
+LAB_BONUS_KEY = "lab_bonus:v1"   # 每账号一次性；改版本号可再发一次
+
+
+@router.post("/relax/lab-bonus")
+def claim_lab_bonus(user: sqlite3.Row = Depends(current_user)):
+    """首次点开物理实验板块（简史 / 动量机械能）赠送 20 次抽奖。
+
+    幂等：靠 events 唯一键，一次领取后重复调用只会返回 granted_now = 0，
+    不会叠加；前端两个实验页都调这里，所以两个板块合计仍只发 20 次。
+    """
+    day = _today()
+    with db.tx() as conn:
+        first = events.log(conn, user["id"], LAB_BONUS_KEY, "relax_bonus",
+                           {"amount": LAB_BONUS_AMOUNT, "days": LAB_BONUS_DAYS})
+        if first:
+            end_day = (date.fromisoformat(day) + timedelta(days=LAB_BONUS_DAYS - 1)).isoformat()
+            conn.execute(
+                "INSERT INTO relax_grant(user_id,kind,amount,used,start_day,end_day,created_at) "
+                "VALUES(?,?,?,0,?,?,?)",
+                (user["id"], "regular", LAB_BONUS_AMOUNT, day, end_day,
+                 datetime.now().isoformat(timespec="seconds")),
+            )
+        q = quota_for(conn, user["id"], day)
+        q["granted_now"] = LAB_BONUS_AMOUNT if first else 0
+        q["bonus_amount"] = LAB_BONUS_AMOUNT
+        return q
+
+
 # ---------- 抽卡存档备份 + 实体券台账（家长核销 / 合成阶梯） ----------
 
 # 服务端持有的实体奖品注册表：台账内容以这里为准，不信任客户端字符串。
