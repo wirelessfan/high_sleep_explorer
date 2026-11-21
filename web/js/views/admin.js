@@ -87,7 +87,7 @@ async function renderAdmin(view) {
             build.dirty ? badge('含未提交改动') : badge('已发布', 'solid'),
           ]),
           el('div', { style: 'font-size:10.5px;color:#a3928a;margin-top:2px',
-            text: `部署于 ${fmtTime(build.built_at)} · ${build.branch || 'unknown'}` }),
+            text: `部署于 ${fmtTime(build.built_at)}` }),
         ]),
         el('button', { class: 'btn ghost sm', text: '详情', onclick: openDetail }),
       ]));
