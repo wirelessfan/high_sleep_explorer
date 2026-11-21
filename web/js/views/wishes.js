@@ -101,7 +101,7 @@ export async function renderWishes(view) {
       ]));
     }
 
-    /* ---- 管理员：就在墙上回复 / 改状态 ---- */
+    /* ---- 管理员：就在墙上回复 / 改状态（默认折叠，点开再写） ---- */
     if (data.is_admin) {
       const replyInput = el('textarea', {
         rows: '2', placeholder: '写一条官方回复…',
@@ -136,11 +136,7 @@ export async function renderWishes(view) {
         },
       });
 
-      card.appendChild(el('div', {
-        style: 'margin-top:9px;padding-top:9px;border-top:1px dashed #cfe9e4',
-      }, [
-        el('div', { style: 'font-size:10px;font-weight:800;color:#0f766e;margin-bottom:5px',
-          text: '👨‍👦 管理员回复' }),
+      const editor = el('div', { style: 'margin-top:8px' }, [
         replyInput,
         el('div', { class: 'row', style: 'gap:7px;margin-top:6px;align-items:center' }, [
           statusSel,
@@ -148,6 +144,30 @@ export async function renderWishes(view) {
           w.mine ? null : el('span', { style: 'font-size:10px;color:#b6a498',
             text: `提交者：${w.nickname}` }),
         ]),
+      ]);
+      editor.hidden = true;
+
+      const toggle = el('button', {
+        class: 'btn ghost sm',
+        text: w.reply ? '修改回复' : '回复 / 处理',
+        style: 'font-size:11px;padding:4px 10px',
+        onclick: () => {
+          const opening = editor.hidden;
+          editor.hidden = !opening;
+          toggle.textContent = opening ? '收起' : (w.reply ? '修改回复' : '回复 / 处理');
+          if (opening) setTimeout(() => replyInput.focus(), 60);
+        },
+      });
+
+      card.appendChild(el('div', {
+        style: 'margin-top:9px;padding-top:9px;border-top:1px dashed #cfe9e4',
+      }, [
+        el('div', { class: 'row-between', style: 'gap:8px;align-items:center' }, [
+          el('div', { style: 'font-size:10px;font-weight:800;color:#0f766e',
+            text: '👨‍👦 管理员回复' }),
+          toggle,
+        ]),
+        editor,
       ]));
     }
 

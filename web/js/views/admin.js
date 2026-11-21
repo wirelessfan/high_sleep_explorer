@@ -85,7 +85,7 @@ async function renderAdmin(view) {
       if (!ch) continue;
       const enabled = el('input', {
         type: 'checkbox', ...(ch.enabled ? { checked: true } : {}),
-        style: 'width:18px;height:18px;accent-color:#14b8a6',
+        style: 'width:18px;height:18px',
       });
       const model = el('input', {
         type: 'text',

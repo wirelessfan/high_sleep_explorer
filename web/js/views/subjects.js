@@ -27,6 +27,25 @@ export async function renderSubjects(view) {
     el('div', { style: 'font-size:12px;color:#a3928a;margin-top:3px', text: '每科一条线，挑你想走的那条' }),
   ]));
 
+  /* ---- 吸顶学科跳转条：长页面里少滚几次 ---- */
+  if (catalog.subjects.length) {
+    const bar = el('div', { class: 'subject-jump', role: 'navigation', 'aria-label': '学科快捷跳转' });
+    catalog.subjects.forEach((subj) => {
+      bar.appendChild(el('button', {
+        class: 'jump-chip',
+        style: `--sc:${SUBJECT_COLOR[subj.id]}`,
+        onclick: () => {
+          const target = root.querySelector(`[data-subject="${subj.id}"]`);
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
+      }, [
+        el('span', { class: 'dot' }),
+        el('span', { text: subj.name }),
+      ]));
+    });
+    root.appendChild(bar);
+  }
+
   if (catalog.study_plan) root.appendChild(studyPlanCard(catalog.study_plan, true));
 
   root.appendChild(el('button',{class:'btn ghost',text:'看图找规律 · 抽着奖把题做了 🙂',onclick:()=>navigate('#/exam-training')}));
@@ -38,6 +57,7 @@ export async function renderSubjects(view) {
     /* ---- 科目横幅 ---- */
     root.appendChild(el('section', {
       class: 'panel subject-banner',
+      'data-subject': subj.id,
       style: `--sc:${SUBJECT_COLOR[subj.id]}`,
     }, [
       el('div', { class: 'sb-art' }, [
