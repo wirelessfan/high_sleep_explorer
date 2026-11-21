@@ -66,6 +66,9 @@ def spawn(args: list[str], cwd: Path) -> subprocess.Popen:
 
 
 def main() -> None:
+    if "--version" in sys.argv:
+        print(REVIEW_VERSION)
+        return
     # Windows GBK 控制台：输出改 UTF-8 且不容错崩溃
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")

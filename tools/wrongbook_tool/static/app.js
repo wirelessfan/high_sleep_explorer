@@ -64,7 +64,7 @@ async function reviewItem(it, confirmRevision = false) {
     it.__reviewId = response.review_id;
     it.__review = response.review;
     it.__status = response.review.status;
-    it.__reason = response.review.reasons.join("；") || response.review.evidence;
+    it.__reason = `${response.review.reasons.join("；") || response.review.evidence} · 答案来源：${response.review.answer_source === "AI" ? "AI生成并独立核验" : "原稿答案经GPT独立核验"} · ${response.review.model}`;
     if (it.__status === "passed") it.review_id = response.review_id;
     else delete it.review_id;
   } catch (err) {
@@ -204,6 +204,7 @@ function renderGrid() {
 
 /* ---------------- 裁剪 ---------------- */
 function openCrop(file) {
+  window.__cropToB64 = null;
   const sheet = $("sheet");
   sheet.innerHTML = `
     <div class="tag" style="word-break:break-all">${file.path}</div>
@@ -430,11 +431,12 @@ function openEditor(file, recog) {
       const r = await api("/api/ai/complete", {
         image, stem,
         qtype: qtypeSel.value,
-        options: qtypeSel.value === "choice"
+        options: ["choice", "multi_choice"].includes(qtypeSel.value)
           ? optsText.value.split("\n").map((s) => s.trim()).filter(Boolean) : [],
       });
-      if (r.answer_index >= 0) $("fAnswer").value = String(r.answer_index);
-      if (qtypeSel.value !== "choice" && r.answer_text) $("fAnsText").value = r.answer_text;
+      if (qtypeSel.value === "choice" && r.answer_index >= 0) $("fAnswer").value = String(r.answer_index);
+      if (qtypeSel.value === "multi_choice") for (const input of document.querySelectorAll('#fAnswerMulti input')) input.checked = (r.answer_indices || []).includes(Number(input.value));
+      if (!["choice", "multi_choice"].includes(qtypeSel.value) && r.answer_text) $("fAnsText").value = r.answer_text;
       if (r.explain && !$("fExplain").value.trim()) $("fExplain").value = r.explain;
       if (r.derivation) $("fDerivation").value = r.derivation;
       if (r.mistake_hint && !$("fReason").value.trim()) $("fReason").value = r.mistake_hint;
@@ -574,7 +576,7 @@ async function importQueue(opts = {}) {
     $("importResult").textContent = `❌ 同步失败：${msg}`;
     return false;
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = "批量导入到网站错题本"; }
+    if (btn) { btn.disabled = !state.queue.some(it => it.__status === "passed" && it.review_id); btn.textContent = "仅上传GPT审核通过题"; }
   }
 }
 
@@ -649,7 +651,7 @@ async function autoProcess(files) {
   if (!files.length) { toast("没有可处理的图片"); return; }
   autoBusy = true;
   const info = $("autoInfo");
-  let total = 0, imgCount = 0, usedChannel = "", imgFail = 0;
+  let total = 0, imgCount = 0, usedChannel = "";
   for (let i = 0; i < files.length; i += 1) {
     const f = files[i];
     if (state.done.has(f.path)) continue;

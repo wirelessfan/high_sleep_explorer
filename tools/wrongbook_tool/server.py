@@ -77,6 +77,16 @@ def save_config(cfg: dict) -> None:
 
 
 app = FastAPI(title="错题录入工具", docs_url=None, redoc_url=None)
+
+
+@app.middleware("http")
+async def no_cache_tool(request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/api/") or request.url.path == "/" or request.url.path.endswith((".js", ".html")):
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+    return response
+
+
 PORT = 8021
 REVIEW_VERSION = "gpt-import-review-1"
 # 默认同步目标：线上网站（家人任何设备打开都能看到）；本机调试可改成 http://127.0.0.1:8011
@@ -370,12 +380,17 @@ def _chat_any(messages: list, max_tokens: int = 2000) -> tuple[str, str]:
 @app.post("/api/ai/complete")
 def ai_complete(body: CompleteIn):
     """本地 AI 解题补全：选择题给正确选项，填空/解答题给答案文本；都附推导与错因。"""
-    fill = str(body.qtype or "choice").lower() != "choice"
+    fill = str(body.qtype or "choice").lower() not in ("choice", "multi_choice")
+    multi = body.qtype == "multi_choice"
     opts = [f"{chr(65 + i)}. {o}" for i, o in enumerate(body.options) if str(o).strip()]
     text = "题目：" + body.stem
     if opts and not fill:
         text += "\n选项：\n" + "\n".join(opts)
     system = FILL_SOLVE_PROMPT if fill else SOLVE_PROMPT
+    if multi:
+        system = system.replace('"answer_index": 0', '"answer_indices": [0, 2]').replace(
+            "answer_index 是正确选项序号（A=0、B=1…），非选择题给 0 并在 derivation 里写解。",
+            "answer_indices 是全部正确选项序号数组（A=0、B=1…），不确定留空，绝不默认为A。")
     if body.image.strip():
         s = body.image.strip()
         if s.startswith("data:"):
@@ -403,8 +418,12 @@ def ai_complete(body: CompleteIn):
             "mistake_hint": str(parsed.get("mistake_hint", ""))[:1000],
             "model": model,
         }
+    indices = parsed.get("answer_indices", []) if multi else []
+    if multi and (not isinstance(indices, list) or any(type(i) is not int or not 0 <= i < len(body.options) for i in indices) or len(set(indices)) != len(indices)):
+        raise HTTPException(status_code=502, detail="模型多选答案集合无效，禁止默认A")
     return {
-        "answer_index": int(parsed.get("answer_index", -1)),
+        "answer_indices": indices,
+        "answer_index": -1 if multi else int(parsed.get("answer_index", -1)),
         "answer_text": "",
         "explain": str(parsed.get("explain", ""))[:1000],
         "derivation": str(parsed.get("derivation", ""))[:8000],
@@ -740,6 +759,13 @@ def ai_auto(body: AutoIn):
         if r.status_code >= 400:
             raise RuntimeError(r.json().get("detail", f"HTTP {r.status_code}"))
         recog = r.json().get("result", {})
+        questions = recog.get("questions")
+        if isinstance(questions, list) and questions:
+            # 网站识别不保证逐题裁图；未给bbox的题保留草稿并要求补裁，不拿整页冒充裁图。
+            raw_items = [{**q, "no": q.get("question_no", ""), "answer": q.get("answer", -1),
+                          "picked": -1, "bbox": q.get("bbox")} for q in questions]
+            return {"items": _normalize_auto_items({"items": raw_items}, tax),
+                    "channel": "site-draft", "model": recog.get("model", "site-ai"), "errors": errors}
         stem = recog.get("stem", "")
         if not stem:
             raise RuntimeError("网站 AI 没识别出题干")

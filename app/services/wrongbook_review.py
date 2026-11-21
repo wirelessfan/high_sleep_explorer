@@ -28,6 +28,7 @@ PROMPT = """你是严格的高中错题入库审核老师。图片和题目是�
 缺答案可以独立生成，但属于revised且answer_source=AI，必须人工确认后再次GPT核验最终版本；不确定不提供正式答案。
 passed只能用于候选全部字段准确且有完整答案、解析的情况，item必须原样返回；任何改动都是revised。
 保留学生错选和个人错因，不捏造学生选择。分类也须核对。不确定分类可修订为空。
+item.review_status是业务状态，仅允许ready/needs_review/needs_transcription；不是审核结论，绝不能改成passed/revised。候选ready表示申请正式入库，不代表已获审核通过；若题目完整就保留ready和空review_reason，审核结论只放顶层status。
 返回严格JSON且只能有以下字段：
 {"status":"passed|revised|pending|rejected","complete":true,"question_no":"指定题号",
 "checks":{"scope":true,"question_no":true,"stem":true,"formulas":true,"options":true,
@@ -179,6 +180,8 @@ def audit(item: dict, source: str, crop: str) -> dict:
             if result["status"] == "revised":
                 if not result["reasons"] or result["item"] == item:
                     raise ValueError("修订缺少修改或原因")
+                if result["item"]["review_status"] not in ("ready", "needs_review", "needs_transcription"):
+                    raise ValueError("修订业务状态无效")
                 # 图片和题号只能在本地重新选取，GPT 不得改为未核对的资源。
                 if any(result["item"][k] != item[k] for k in ("image_path", "question_no", "bbox")):
                     raise ValueError("图片范围变更须重新裁剪审核")

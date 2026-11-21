@@ -162,6 +162,64 @@ def test_old_photo_manual_save_is_pending_not_ready(client, context):
         assert row[0] == "needs_review"
 
 
+def test_source_image_change_requires_new_review(client, context, monkeypatch):
+    auth, item = context
+    stub(monkeypatch, result(item))
+    first = audit(client, auth, item).json()["review_id"]
+    changed = base64.b64encode(b"\x89PNG\r\n\x1a\n" + b"y" * 80).decode()
+    response = client.post("/api/v1/wrongbook/import/review", headers=auth,
+                           json={"item": item, "source_image": changed, "crop_image": IMAGE})
+    assert response.status_code == 200
+    assert response.json()["cached"] is False and response.json()["review_id"] != first
+
+
+def test_cross_user_receipt_replay_is_rejected(client, context, monkeypatch):
+    auth, item = context
+    stub(monkeypatch, result(item))
+    item["review_id"] = audit(client, auth, item).json()["review_id"]
+    other = {"Authorization": "Bearer " + client.post("/api/v1/session").json()["token"]}
+    assert client.post("/api/v1/wrongbook/import", headers=other, json={"items": [item]}).status_code == 409
+
+
+@pytest.mark.parametrize("status", ["pending", "rejected"])
+def test_pending_rejected_records_never_authorize_import(client, context, monkeypatch, status):
+    auth, item = context
+    stub(monkeypatch, result(item, status))
+    response = audit(client, auth, item)
+    assert response.status_code == 200
+    item["review_id"] = response.json()["review_id"]
+    assert client.post("/api/v1/wrongbook/import", headers=auth, json={"items": [item]}).status_code == 409
+
+
+def test_local_normalization_never_defaults_answer_a_or_drops_multi():
+    from tools.wrongbook_tool import server
+    items = server._normalize_auto_items({"items": [
+        {"stem": "未知单选", "qtype": "choice", "options": ["甲", "乙"]},
+        {"stem": "多选", "qtype": "multi_choice", "options": ["甲", "乙", "丙"], "answer_indices": [0, 2]},
+        {"stem": "缺选项", "qtype": "choice", "options": []},
+    ]}, {})
+    assert items[0]["answer"] == -1
+    assert items[1]["qtype"] == "multi_choice" and items[1]["answer_indices"] == [0, 2]
+    assert items[2]["qtype"] == "choice"
+
+
+def test_non_gpt_channel_cannot_sign_passed(client, context, monkeypatch):
+    auth, item = context
+    stub(monkeypatch, result(item))
+    monkeypatch.setattr(review, "review_channels", lambda: [{"id": "glm"}])
+    assert audit(client, auth, item).status_code == 503
+
+
+def test_launcher_refuses_old_service_version(monkeypatch):
+    import io
+    import urllib.request
+    from tools.wrongbook_tool import launcher
+    monkeypatch.setattr(urllib.request, "urlopen", lambda *a, **k: io.BytesIO(b'{"ok": true}'))
+    assert launcher.review_version_ok("http://127.0.0.1:8021/api/state") is False
+    monkeypatch.setattr(urllib.request, "urlopen", lambda *a, **k: io.BytesIO(json.dumps({"review_version": review.VERSION}).encode()))
+    assert launcher.review_version_ok("http://127.0.0.1:8021/api/state") is True
+
+
 def test_local_import_endpoint_does_not_proxy_unreviewed_items(monkeypatch):
     from tools.wrongbook_tool import server
     monkeypatch.setattr(server, "load_config", lambda: {})
