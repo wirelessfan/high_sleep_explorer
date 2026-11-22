@@ -182,10 +182,10 @@ export async function renderMomentumEnergyLab(view) {
     <div style="font-size:17px;font-weight:800;margin-bottom:4px">U 形轨道滑球：势能与动能互换，总高度为什么不变？</div>
     <div style="font-size:12.5px;color:var(--ink-2)">调释放高度并切换摩擦阻力，看右侧势能/动能/热能/总能四根柱子实时联动。</div>
     <div class="me-predict">
-      <div class="me-predict-q">① 先猜一猜：光滑 U 形槽左边 8 米放开小球，右边轨道更缓，小球最高能爬到几米？</div>
+      <div class="me-predict-q" data-q="coa">① 先猜一猜：光滑 U 形槽左边 8 米放开小球，右边轨道更缓，小球最高能爬到几米？</div>
       <div class="me-opts" data-lab="coaster">
-        <button type="button" class="me-opt" data-val="lower">右边更长，肯定爬不到 8 米</button>
-        <button type="button" class="me-opt" data-val="equal">不管右边多缓，照样精准爬回 8 米！</button>
+        <button type="button" class="me-opt" data-val="lower" data-opt="lower">右边更长，肯定爬不到 8 米</button>
+        <button type="button" class="me-opt" data-val="equal" data-opt="equal">不管右边多缓，照样精准爬回 8 米！</button>
       </div>
     </div>
     <div class="me-stage"><canvas data-cv="coaster" width="740" height="310"></canvas></div>
@@ -202,7 +202,7 @@ export async function renderMomentumEnergyLab(view) {
     <div class="me-insight hidden" data-insight="coaster">
       <div style="font-size:11px;font-weight:800;color:#059669">✦ 顿悟时刻已解锁</div>
       <div class="me-insight-q">“机械能像口袋里的两张钞票：高处全存成势能，谷底全换成动能，只要没漏税，总额一分不差。”</div>
-      <p class="me-insight-b">无摩擦时 <code>mgh + ½mv² = 恒量</code>；开启摩擦后机械能减少量严格等于热能增加量，总能量永远守恒。</p>
+      <p class="me-insight-b">无摩擦时 <code>mgh + ½mv² = 恒量</code>：速度只由高度决定，右坡更缓只是路更长、花的时间更久，最高点仍精确回到释放高度；开启摩擦后机械能减少量严格等于热能增加量，总能量永远守恒。</p>
       <div class="row-between" style="gap:8px;flex-wrap:wrap"><span style="font-size:11.5px;font-weight:700;color:#2563eb" data-guess="coaster"></span><button type="button" class="btn sm" data-jump="spring">下一场：弹簧三方转化 →</button></div>
     </div>
   </section>
@@ -464,12 +464,31 @@ export async function renderMomentumEnergyLab(view) {
   $('[data-act="expBoom"]').addEventListener('click', () => { cancelAnimationFrame(rafs.exp); exp.boom = true; exp.t = 0; exp.x1 = 370; exp.x2 = 370; exp.lastTs = 0; exp.v1 = -160; exp.v2 = 160 / exp.ratio; state.tasks.expRatios.add(exp.ratio); checkExp(); rafs.exp = requestAnimationFrame(stepExp); });
   $('[data-act="expReset"]').addEventListener('click', () => { cancelAnimationFrame(rafs.exp); exp.boom = false; exp.x1 = 370; exp.x2 = 370; drawExplode(); });
 
-  /* ---- 2a 势能与动能转化 ---- */
+  /* ---- 2a 势能与动能转化（严格能量守恒） ----
+   * 轨道：左支 y=10x²，右支 y=10(x/1.35)²（更缓、更长）。
+   * 以「米」为能量单位（E/mg = h）：势能 = 轨道高度，动能 = E - 势能 - 热能。
+   * 沿轨道速率 v=√(2gK)，dx/dt = v/√(1+y'²)；转折点直接由 y=E-Q 反解，
+   * 所以无摩擦时右坡最高点精确落在释放高度，不会因数值积分漂低或越过虚线。 */
   const cCoa = $('[data-cv="coaster"]'), ctxCo = cCoa.getContext('2d');
-  const coa = { h0: 8, fric: false, run: false, x: -0.89, vx: 0, heat: 0, maxE: 8, lastTs: 0 };
+  const COA_G = 12, COA_MU = 0.12;
   const ty = (x) => (x < 0 ? 10 * x * x : 10 * (x / 1.35) ** 2);
   const tsSlope = (x) => (x < 0 ? 20 * x : (20 / (1.35 * 1.35)) * x);
-  function resetCoa() { cancelAnimationFrame(rafs.coa); coa.run = false; coa.x = -Math.sqrt(coa.h0 / 10); coa.vx = 0; coa.heat = 0; coa.maxE = coa.h0; }
+  const coaArc = (x) => Math.hypot(1, tsSlope(x));
+  const coaRightX = (h) => 1.35 * Math.sqrt(Math.max(0, h) / 10);
+  const coaLeftX = (h) => -Math.sqrt(Math.max(0, h) / 10);
+  const coa = { h0: 8, fric: false, run: false, x: coaLeftX(8), dir: 1, heat: 0, maxE: 8, peak: null, peakX: null, lastTs: 0 };
+  // 题干与两个押注选项跟着释放高度走，避免滑块调到 10 m 时题目还写「8 米」
+  function updateCoaQuestion() {
+    const h = coa.h0;
+    $('[data-q="coa"]').textContent = `① 先猜一猜：光滑 U 形槽左边 ${h} 米放开小球，右边轨道更缓，小球最高能爬到几米？`;
+    $('[data-opt="lower"]').textContent = `右边更长，肯定爬不到 ${h} 米`;
+    $('[data-opt="equal"]').textContent = `不管右边多缓，照样精准爬回 ${h} 米！`;
+  }
+  function resetCoa() {
+    cancelAnimationFrame(rafs.coa);
+    coa.run = false; coa.x = coaLeftX(coa.h0); coa.dir = 1;
+    coa.heat = 0; coa.maxE = coa.h0; coa.peak = null; coa.peakX = null; coa.lastTs = 0;
+  }
   function checkCoa() {
     setTask('coa1', state.tasks.coaNoFric, '目标 1：无摩擦释放，观察势能动能互换与等高爬升');
     setTask('coa2', state.tasks.coaFric, '目标 2：开启摩擦阻力，观察机械能转化为热能');
@@ -483,10 +502,22 @@ export async function renderMomentumEnergyLab(view) {
     ctxCo.strokeStyle = '#5a463a'; ctxCo.lineWidth = 4.5; ctxCo.beginPath();
     for (let x = -1; x <= 1.35; x += 0.03) { const px = mx(x), py = my(ty(x)); if (x === -1) ctxCo.moveTo(px, py); else ctxCo.lineTo(px, py); }
     ctxCo.stroke();
-    const curH = Math.min(coa.h0, ty(coa.x)), curKe = Math.max(0, coa.maxE - curH - coa.heat);
+    // 右坡最高点标记：无摩擦时恰好压在释放高度虚线上，有摩擦时明显更低
+    if (coa.peakX !== null && coa.peakX > 0) {
+      const px = mx(coa.peakX), py = my(coa.peak);
+      ctxCo.strokeStyle = coa.fric ? '#dc2626' : '#059669'; ctxCo.lineWidth = 2;
+      ctxCo.beginPath(); ctxCo.arc(px, py - 10, 13, 0, Math.PI * 2); ctxCo.stroke();
+      ctxCo.fillStyle = coa.fric ? '#dc2626' : '#059669'; ctxCo.font = FS.small; ctxCo.textAlign = 'right';
+      ctxCo.fillText(`右坡最高 ${coa.peak.toFixed(1)} m`, px - 18, py - 20);
+      ctxCo.textAlign = 'left';
+    }
+    const curH = ty(coa.x), curKe = Math.max(0, coa.maxE - curH - coa.heat);
     ctxCo.fillStyle = '#2563eb'; ctxCo.beginPath(); ctxCo.arc(mx(coa.x), my(curH) - 10, 10, 0, Math.PI * 2); ctxCo.fill();
     ctxCo.fillStyle = '#fff'; ctxCo.strokeStyle = '#efe4d3'; ctxCo.beginPath(); ctxCo.roundRect(485, 18, 236, 268, 12); ctxCo.fill(); ctxCo.stroke();
     ctxCo.fillStyle = '#2f2a26'; ctxCo.font = FS.hud; ctxCo.fillText('能量守恒', 502, 52);
+    ctxCo.fillStyle = '#8c7b70'; ctxCo.font = FS.small;
+    ctxCo.fillText(`释放 ${coa.h0.toFixed(1)} m · 总能恒定`, 502, 76);
+    ctxCo.fillText(coa.peak === null ? '点「释放小球」看爬升' : (coa.fric ? `摩擦生热 ${coa.heat.toFixed(1)} m` : '光滑：势↔动，两端等高'), 502, 94);
     [{ x: 510, v: curH, l: '势能', c: '#2563eb' }, { x: 562, v: curKe, l: '动能', c: '#059669' }, { x: 614, v: coa.heat, l: '热能', c: '#dc2626' }, { x: 666, v: coa.maxE, l: '总能', c: '#5a463a' }].forEach((b) => {
       const bh = (b.v / 10) * 165;
       ctxCo.fillStyle = b.c; ctxCo.beginPath(); ctxCo.roundRect(b.x, 248 - bh, 32, Math.max(2, bh), 6); ctxCo.fill();
@@ -497,19 +528,35 @@ export async function renderMomentumEnergyLab(view) {
     if (disposed) return;
     if (!coa.lastTs) coa.lastTs = ts;
     const dt = Math.min(0.03, (ts - coa.lastTs) / 1000); coa.lastTs = ts;
-    for (let s = 0; s < 4; s++) {
-      const hdt = dt / 4, sl = tsSlope(coa.x);
-      coa.vx += ((-sl * 1.45) / (1 + sl * sl * 0.04)) * hdt;
-      if (coa.fric) { const pv = coa.vx; coa.vx *= (1 - 0.55 * hdt); coa.heat = Math.min(coa.maxE, coa.heat + Math.abs(pv * pv - coa.vx * coa.vx) * 0.38); }
-      coa.x += coa.vx * hdt;
-      if (ty(coa.x) > coa.maxE - coa.heat && !coa.fric) coa.vx = -coa.vx;
+    for (let s = 0; s < 6; s++) {
+      const hdt = dt / 6;
+      const K = Math.max(0, coa.maxE - coa.heat - ty(coa.x));   // 动能（以「米」计）
+      const ar = coaArc(coa.x), v = Math.sqrt(2 * COA_G * K);    // 沿轨道速率 ds/dt
+      if (v < 1e-5) {
+        // 端点静止释放：用切向重力加速度起步，避免 √K 奇点把小球卡在起点
+        const aTan = COA_G * Math.abs(tsSlope(coa.x)) / ar;
+        if (aTan < 1e-5) break;                                  // 谷底且能量耗尽 → 静止
+        coa.x += coa.dir * (0.5 * aTan * hdt * hdt) / ar;
+        continue;
+      }
+      if (coa.fric) coa.heat += Math.min(K, COA_MU * v * hdt);   // 摩擦做功 ∝ 路程，等量转成热能
+      coa.x += coa.dir * (v / ar) * hdt;
+      if (coa.maxE - coa.heat - ty(coa.x) <= 0) {
+        const hTurn = Math.max(0, coa.maxE - coa.heat);           // 精确转折点高度
+        coa.x = coa.dir > 0 ? coaRightX(hTurn) : coaLeftX(hTurn);
+        coa.dir = -coa.dir;
+        if (coa.x > 0 && (coa.peak === null || hTurn > coa.peak)) { coa.peak = hTurn; coa.peakX = coa.x; }
+      } else if (coa.x > 0) {
+        const y = ty(coa.x);
+        if (coa.peak === null || y > coa.peak) { coa.peak = y; coa.peakX = coa.x; }
+      }
     }
     if (coa.x > 0.2 && !coa.fric) { state.tasks.coaNoFric = true; checkCoa(); }
     if (coa.fric && coa.heat > 0.6) { state.tasks.coaFric = true; checkCoa(); }
     drawCoaster();
     if (coa.run) rafs.coa = requestAnimationFrame(stepCoa);
   }
-  $('[data-in="coaH"]').addEventListener('input', (e) => { coa.h0 = Number(e.target.value); $('[data-out="coaH"]').textContent = `${coa.h0} m`; resetCoa(); drawCoaster(); });
+  $('[data-in="coaH"]').addEventListener('input', (e) => { coa.h0 = Number(e.target.value); $('[data-out="coaH"]').textContent = `${coa.h0} m`; updateCoaQuestion(); resetCoa(); drawCoaster(); });
   $('[data-act="coaRun"]').addEventListener('click', () => { resetCoa(); coa.run = true; coa.lastTs = 0; rafs.coa = requestAnimationFrame(stepCoa); });
   $('[data-act="coaFric"]').addEventListener('click', (e) => { coa.fric = !coa.fric; e.currentTarget.textContent = coa.fric ? '当前：开启摩擦阻力' : '当前：光滑无摩擦'; resetCoa(); coa.run = true; coa.lastTs = 0; rafs.coa = requestAnimationFrame(stepCoa); });
   $('[data-act="coaReset"]').addEventListener('click', () => { resetCoa(); drawCoaster(); });
@@ -592,7 +639,7 @@ export async function renderMomentumEnergyLab(view) {
   view.innerHTML = '';
   view.appendChild(root);
 
-  resetBil(); resetCoa();
+  resetBil(); resetCoa(); updateCoaQuestion();
   checkBul(); checkBil(); checkExp(); checkCoa(); checkSpr();
   updateProgress();
   drawBullet(); drawBilliard(); drawExplode(); drawCoaster(); drawSpring();
