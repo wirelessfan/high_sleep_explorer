@@ -31,6 +31,7 @@ import { renderThermalMicroLab } from './views/thermal-micro-lab.js';
 import { renderFluidWindtunnelLab } from './views/fluid-windtunnel-lab.js';
 import { renderRelativityNuclearLab } from './views/relativity-nuclear-lab.js';
 import { renderMathTrigLab } from './views/math-trig-lab.js';
+import { renderMotorGeneratorLab } from './views/motor-generator-lab.js';
 import { renderEssays, renderEssay } from './views/essays.js';
 
 function registerRoutes() {
@@ -47,6 +48,7 @@ function registerRoutes() {
   route('/fluid-windtunnel', renderFluidWindtunnelLab);
   route('/relativity-nuclear', renderRelativityNuclearLab);
   route('/math-trig-lab', renderMathTrigLab);
+  route('/motor-generator', renderMotorGeneratorLab);
   route('/essays', renderEssays);
   route('/essays/:slug', renderEssay);
   route('/intuition-guide', (view) => renderEssay(view, { slug: 'intuition' }));

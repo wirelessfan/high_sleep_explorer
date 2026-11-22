@@ -62,6 +62,15 @@ export const LABS_BY_SUBJECT = {
       featured: true,
     },
     {
+      id: 'motor-generator',
+      icon: '⚙️',
+      title: '生活中的物理：电机',
+      kw: '电动机换向器 · 交流发电机',
+      category: '电磁',
+      route: '#/motor-generator',
+      featured: false,
+    },
+    {
       id: 'optics-waves',
       icon: '🔦',
       title: '光与波的魔法',
