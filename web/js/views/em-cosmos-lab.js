@@ -228,7 +228,7 @@ export async function renderEmCosmosLab(view) {
 
   /* ==================== 1: CYCLOTRON ==================== */
   const cCyc = $('[data-cv="cyclotron"]'), ctxCy = cCyc.getContext('2d');
-  const cyc = { B: 1.4, U: 25, cx: 255, cy: 165, R: 125, running: false, escaped: false, x: 255, y: 165, vx: 0, vy: 0, trail: [], gapFlash: 0, kicks: 0, lastSide: 0, lastTs: 0 };
+  const cyc = { B: 1.4, U: 25, cx: 255, cy: 165, R: 125, running: false, escaped: false, x: 255, y: 165, vx: 0, vy: 0, trail: [], gapFlash: 0, kicks: 0, lastSide: 0, polarity: 1, lastTs: 0 };
   function checkCyc() {
     const t2 = state.tasks.cycBSet.size >= 2;
     setTask('cyc1', state.tasks.cycShot, '目标 1：发射粒子看螺旋加速并冲出出口');
@@ -238,10 +238,20 @@ export async function renderEmCosmosLab(view) {
   function drawCyc() {
     const W = cCyc.width, H = cCyc.height;
     ctxCy.clearRect(0, 0, W, H); ctxCy.fillStyle = '#0b1120'; ctxCy.fillRect(0, 0, W, H);
-    // D-shaped chambers
-    ctxCy.fillStyle = 'rgba(30, 58, 138, 0.35)'; ctxCy.strokeStyle = '#38bdf8'; ctxCy.lineWidth = 2;
+    // D-shaped chambers（随交变电压正反切换染色，直观区分左右电势高低）
+    const leftPos = cyc.polarity > 0;
+    ctxCy.fillStyle = leftPos ? 'rgba(245, 158, 11, 0.20)' : 'rgba(30, 58, 138, 0.38)';
+    ctxCy.strokeStyle = leftPos ? '#fbbf24' : '#38bdf8'; ctxCy.lineWidth = 2;
     ctxCy.beginPath(); ctxCy.arc(cyc.cx - 8, cyc.cy, cyc.R, Math.PI * 0.5, Math.PI * 1.5); ctxCy.closePath(); ctxCy.fill(); ctxCy.stroke();
+    ctxCy.fillStyle = leftPos ? 'rgba(30, 58, 138, 0.38)' : 'rgba(245, 158, 11, 0.20)';
+    ctxCy.strokeStyle = leftPos ? '#38bdf8' : '#fbbf24';
     ctxCy.beginPath(); ctxCy.arc(cyc.cx + 8, cyc.cy, cyc.R, -Math.PI * 0.5, Math.PI * 0.5); ctxCy.closePath(); ctxCy.fill(); ctxCy.stroke();
+    // 交变电压极性标记与缝隙电场方向箭头（每次过缝自动翻转）
+    ctxCy.font = '900 18px monospace';
+    ctxCy.fillStyle = leftPos ? '#fbbf24' : '#38bdf8'; ctxCy.fillText(leftPos ? '+' : '−', cyc.cx - 32, cyc.cy - cyc.R + 24);
+    ctxCy.fillStyle = leftPos ? '#38bdf8' : '#fbbf24'; ctxCy.fillText(leftPos ? '−' : '+', cyc.cx + 20, cyc.cy - cyc.R + 24);
+    ctxCy.fillStyle = '#fde047'; ctxCy.font = '800 13px sans-serif';
+    ctxCy.fillText(leftPos ? 'E →' : '← E', cyc.cx - 12, cyc.cy - cyc.R - 8);
     // Electric gap flash
     if (cyc.gapFlash > 0.05) {
       ctxCy.fillStyle = `rgba(251, 191, 36, ${cyc.gapFlash * 0.65})`;
@@ -269,7 +279,8 @@ export async function renderEmCosmosLab(view) {
     const eMaxMeV = (cyc.B * cyc.B * 12.5).toFixed(1);
     canvasHud(ctxCy, { x: 728, y: 12, lh: 34, align: 'right', stroke: '#243044', lines: [
       { text: '回旋加速器遥测', font: '800 20px sans-serif', color: '#7dd3fc' },
-      { text: `B ${cyc.B.toFixed(1)} T · U ${cyc.U} kV`, font: FS.hudSub, color: '#cbd5e1' },
+      { text: `B ${cyc.B.toFixed(1)} T · 交流 ±${cyc.U} kV`, font: FS.hudSub, color: '#cbd5e1' },
+      { text: `电场 ${leftPos ? '左+右− (E→)' : '左−右+ (←E)'}`, font: FS.hudSub, color: '#fbbf24' },
       { text: `加速 ${cyc.kicks} 次`, font: FS.hudSub, color: '#cbd5e1' },
       { text: `速率 ${(speed * 0.08).toFixed(1)} ×10⁶ m/s`, font: FS.hudSub, color: '#fde047' },
       { text: `最大动能 ${eMaxMeV} MeV`, font: FS.hudSub, color: '#34d399' },
@@ -281,8 +292,8 @@ export async function renderEmCosmosLab(view) {
     if (!cyc.lastTs) cyc.lastTs = ts;
     const dt = Math.min(0.03, (ts - cyc.lastTs) / 1000); cyc.lastTs = ts;
     cyc.gapFlash = Math.max(0, cyc.gapFlash - dt * 4);
-    for (let s = 0; s < 6; s++) {
-      const hdt = dt / 6;
+    for (let s = 0; s < 8; s++) {
+      const hdt = dt / 8;
       const dx = cyc.x - cyc.cx, dy = cyc.y - cyc.cy, dist = Math.hypot(dx, dy);
       if (!cyc.escaped && dist >= cyc.R - 4) {
         cyc.escaped = true;
@@ -290,18 +301,24 @@ export async function renderEmCosmosLab(view) {
       }
       if (!cyc.escaped) {
         const side = dx >= 0 ? 1 : -1;
-        if (Math.abs(dx) < 8 && cyc.lastSide !== 0 && side !== cyc.lastSide) {
+        if (Math.abs(dx) < 7 && cyc.lastSide !== 0 && side !== cyc.lastSide) {
+          // 交流电源每半周期同步翻转极性，保证每次过缝电场方向与速度同向加速
+          cyc.polarity = cyc.vx >= 0 ? 1 : -1;
           const v = Math.hypot(cyc.vx, cyc.vy);
-          const vNew = Math.sqrt(v * v + cyc.U * 1100);
+          const vNew = Math.sqrt(v * v + cyc.U * 260);
           cyc.vx = (cyc.vx / Math.max(1, v)) * vNew;
           cyc.vy = (cyc.vy / Math.max(1, v)) * vNew;
+          cyc.lastSide = side;
           cyc.gapFlash = 1; cyc.kicks++;
         }
-        if (Math.abs(dx) >= 8) {
+        if (Math.abs(dx) >= 7) {
           cyc.lastSide = side;
-          const om = cyc.B * 3.8;
-          const ax = -om * cyc.vy, ay = om * cyc.vx;
-          cyc.vx += ax * hdt; cyc.vy += ay * hdt;
+          // 精确保能旋转（洛伦兹力严格不做功，消除欧拉积分能量漂移）
+          const dTheta = cyc.B * 4.2 * hdt;
+          const ca = Math.cos(dTheta), sa = Math.sin(dTheta);
+          const nvx = cyc.vx * ca - cyc.vy * sa;
+          const nvy = cyc.vx * sa + cyc.vy * ca;
+          cyc.vx = nvx; cyc.vy = nvy;
         }
       }
       cyc.x += cyc.vx * hdt; cyc.y += cyc.vy * hdt;
@@ -320,11 +337,11 @@ export async function renderEmCosmosLab(view) {
     state.tasks.cycBSet.add(cyc.B);
     checkCyc();
     cancelAnimationFrame(rafs.cyc);
-    cyc.x = cyc.cx + 10; cyc.y = cyc.cy; cyc.vx = 48; cyc.vy = 0; cyc.trail = [{ x: cyc.x, y: cyc.y }];
-    cyc.kicks = 0; cyc.escaped = false; cyc.lastSide = 1; cyc.running = true; cyc.lastTs = 0;
+    cyc.x = cyc.cx - 8; cyc.y = cyc.cy; cyc.vx = 52; cyc.vy = 0; cyc.trail = [{ x: cyc.cx - 8, y: cyc.cy }];
+    cyc.kicks = 0; cyc.escaped = false; cyc.lastSide = -1; cyc.polarity = 1; cyc.running = true; cyc.lastTs = 0;
     rafs.cyc = requestAnimationFrame(stepCyc);
   });
-  $('[data-act="cycReset"]').addEventListener('click', () => { cancelAnimationFrame(rafs.cyc); cyc.running = false; cyc.x = cyc.cx; cyc.y = cyc.cy; cyc.vx = 0; cyc.vy = 0; cyc.trail = []; cyc.kicks = 0; cyc.escaped = false; drawCyc(); });
+  $('[data-act="cycReset"]').addEventListener('click', () => { cancelAnimationFrame(rafs.cyc); cyc.running = false; cyc.x = cyc.cx; cyc.y = cyc.cy; cyc.vx = 0; cyc.vy = 0; cyc.trail = []; cyc.kicks = 0; cyc.escaped = false; cyc.polarity = 1; drawCyc(); });
 
   /* ==================== 2: RAILGUN ==================== */
   const cRail = $('[data-cv="railgun"]'), ctxRa = cRail.getContext('2d');

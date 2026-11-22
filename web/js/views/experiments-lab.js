@@ -358,7 +358,7 @@ export async function renderExperimentsLab(view) {
 
   /* ---- 2. 牛顿大炮 ---- */
   const cNew = $('[data-cv="newton"]'), ctxN = cNew.getContext('2d');
-  const nSim = { v0: 5.0, R: 86, cx: 360, cy: 178, mountH: 20, trails: [], active: null, status: '拖动初速度并点击「开炮发射」' };
+  const nSim = { v0: 5.0, R: 86, cx: 360, cy: 178, mountH: 4, trails: [], active: null, status: '拖动初速度并点击「开炮发射」' };
   function checkNewt() {
     setTask('new1', state.tasks.newFall, '目标 1：低速开炮看炮弹落地');
     setTask('new2', state.tasks.newOrbit, '目标 2：调到 ≥ 7.9 km/s 发射绕地卫星');
@@ -370,7 +370,7 @@ export async function renderExperimentsLab(view) {
     const g = ctxN.createRadialGradient(nSim.cx - 26, nSim.cy - 26, 12, nSim.cx, nSim.cy, nSim.R);
     g.addColorStop(0, '#60a5fa'); g.addColorStop(0.65, '#2563eb'); g.addColorStop(1, '#1e3a8a');
     ctxN.fillStyle = g; ctxN.beginPath(); ctxN.arc(nSim.cx, nSim.cy, nSim.R, 0, Math.PI * 2); ctxN.fill();
-    ctxN.fillStyle = '#a8a29e'; ctxN.beginPath(); ctxN.moveTo(nSim.cx - 12, nSim.cy - nSim.R + 2); ctxN.lineTo(nSim.cx, nSim.cy - nSim.R - nSim.mountH); ctxN.lineTo(nSim.cx + 12, nSim.cy - nSim.R + 2); ctxN.closePath(); ctxN.fill();
+    ctxN.fillStyle = '#a8a29e'; ctxN.beginPath(); ctxN.moveTo(nSim.cx - 7, nSim.cy - nSim.R + 1); ctxN.lineTo(nSim.cx, nSim.cy - nSim.R - nSim.mountH); ctxN.lineTo(nSim.cx + 7, nSim.cy - nSim.R + 1); ctxN.closePath(); ctxN.fill();
     nSim.trails.forEach((tr) => { ctxN.strokeStyle = tr.color; ctxN.lineWidth = 2; ctxN.beginPath(); tr.pts.forEach((p, i) => (i ? ctxN.lineTo(p.x, p.y) : ctxN.moveTo(p.x, p.y))); ctxN.stroke(); });
     if (nSim.active) {
       const a = nSim.active;
@@ -385,6 +385,7 @@ export async function renderExperimentsLab(view) {
   function fireCannon() {
     cancelAnimationFrame(rafs.newt);
     if (nSim.active) { nSim.trails.push({ pts: nSim.active.pts, color: 'rgba(148,163,184,.45)' }); if (nSim.trails.length > 5) nSim.trails.shift(); }
+    // 近地发射（mountH=4）：7.8 km/s 远地点/近地点 r_min ≈ 85.6 < R=86 必撞地，7.9 km/s 精准圆轨入轨
     const r0 = nSim.R + nSim.mountH, GM = 7.9 * 7.9 * r0;
     const color = nSim.v0 < 7.85 ? '#f97316' : nSim.v0 < 11.1 ? '#34d399' : '#38bdf8';
     nSim.active = { x: nSim.cx, y: nSim.cy - r0, vx: nSim.v0, vy: 0, pts: [{ x: nSim.cx, y: nSim.cy - r0 }], steps: 0, color, GM, swept: 0, prevAng: -Math.PI / 2 };
@@ -392,11 +393,11 @@ export async function renderExperimentsLab(view) {
     const step = () => {
       if (disposed || !nSim.active) return;
       const a = nSim.active;
-      for (let sub = 0; sub < 4; sub++) {
+      for (let sub = 0; sub < 6; sub++) {
         const dx = a.x - nSim.cx, dy = a.y - nSim.cy, dist = Math.hypot(dx, dy);
         if (dist <= nSim.R) { nSim.status = '💥 速度不够，落回地球表面！'; state.tasks.newFall = true; checkNewt(); drawNewton(); return; }
         if (dist > 390) { nSim.status = '🚀 超过第二宇宙速度，挣脱地球！'; state.tasks.newOrbit = true; checkNewt(); drawNewton(); return; }
-        const dt = 0.22, acc = -a.GM / (dist * dist * dist);
+        const dt = 0.15, acc = -a.GM / (dist * dist * dist);
         a.vx += acc * dx * dt; a.vy += acc * dy * dt; a.x += a.vx * dt; a.y += a.vy * dt;
         let dAng = Math.atan2(a.y - nSim.cy, a.x - nSim.cx) - a.prevAng;
         if (dAng > Math.PI) dAng -= 2 * Math.PI;
