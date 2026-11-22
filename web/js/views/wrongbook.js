@@ -566,6 +566,149 @@ function openPendingEditor(it, view) {
   });
 }
 
+/* ---------- 纠错环节：错因 → 重做 → 订正，完成自动补偿抽奖 ---------- */
+const CORRECT_REASONS = ['概念没弄清', '审题看漏条件', '公式/定理记混', '计算或单位出错', '思路没找到', '粗心笔误'];
+
+function correctStep(text) {
+  return el('div', { style: 'font-size:11.5px;font-weight:800;color:#8a6d3b;margin:2px 0 6px', text });
+}
+
+function openCorrectSheet(it, onDone) {
+  const box = el('div', { class: 'stack', style: 'gap:12px' });
+
+  box.appendChild(el('div', {
+    style: 'font-size:11.5px;line-height:1.7;color:#6b5b52;background:#faf7f2;border:1px solid #efe4d3;border-radius:11px;padding:9px 11px',
+    text: '把这道题真正弄懂：选错因 → 不看答案重做 → 写一句订正。完成后自动补偿 10 次普通抽奖 + 1 次实体奖（30 天有效，同一题只发一次）。',
+  }));
+  if (it.corrected_by_me) {
+    box.appendChild(el('div', {
+      style: 'font-size:12px;line-height:1.7;color:#047857;background:#ecfdf5;border:1px solid #a7f3d0;border-radius:11px;padding:9px 11px',
+      text: '✅ 这道题你已经完成过纠错，奖励已经领过啦。下面可以再复盘一遍，不会重复发奖。',
+    }));
+  }
+
+  box.appendChild(el('div', {
+    style: 'font-size:13px;line-height:1.7;color:#3b2f2a;white-space:pre-line',
+    text: questionText(it.stem),
+  }));
+  for (const node of imageList(it)) box.appendChild(node);
+
+  /* ① 错因 */
+  let reason = '';
+  const reasonRow = el('div', { class: 'row', style: 'gap:6px;flex-wrap:wrap' });
+  CORRECT_REASONS.forEach((r) => {
+    const b = el('button', { class: 'btn ghost sm', text: r });
+    b.addEventListener('click', () => {
+      reason = r;
+      for (const x of reasonRow.children) {
+        const on = x === b;
+        x.style.background = on ? '#eff6ff' : '';
+        x.style.borderColor = on ? '#2563eb' : '';
+        x.style.color = on ? '#2563eb' : '';
+      }
+    });
+    reasonRow.appendChild(b);
+  });
+  box.appendChild(correctStep('① 这次错在哪？（点一个）'));
+  box.appendChild(reasonRow);
+
+  /* ② 重做 */
+  const qtype = it.qtype || 'choice';
+  const options = Array.isArray(it.options) ? it.options : [];
+  let redoIndex = null;
+  const redoIndices = new Set();
+  let redoText = '';
+  const redoBox = el('div');
+  if ((qtype === 'choice' || qtype === 'multi_choice') && options.length) {
+    const opts = el('div', { style: 'display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px' });
+    options.forEach((o, oi) => {
+      const b = el('button', {
+        class: 'btn ghost sm', style: 'text-align:left;white-space:normal;line-height:1.5',
+        text: `${LETTERS[oi]}. ${prettyMath(o)}`,
+      });
+      b.addEventListener('click', () => {
+        if (qtype === 'multi_choice') {
+          if (redoIndices.has(oi)) redoIndices.delete(oi); else redoIndices.add(oi);
+        } else {
+          redoIndex = oi;
+        }
+        for (const [k, x] of [...opts.children].entries()) {
+          const on = qtype === 'multi_choice' ? redoIndices.has(k) : k === redoIndex;
+          x.style.background = on ? '#eff6ff' : '';
+          x.style.borderColor = on ? '#2563eb' : '';
+          x.style.color = on ? '#2563eb' : '';
+        }
+      });
+      opts.appendChild(b);
+    });
+    redoBox.appendChild(opts);
+  } else {
+    const inp = el('input', { type: 'text', style: FIELD_STYLE, placeholder: '把答案再写一遍' });
+    inp.addEventListener('input', () => { redoText = inp.value; });
+    redoBox.appendChild(inp);
+    redoBox.appendChild(el('div', {
+      class: 'hint', style: 'margin-top:5px',
+      text: '填空 / 解答题没有唯一写法，主要看下面的订正笔记。',
+    }));
+  }
+  box.appendChild(correctStep('② 不看答案，重新做一遍'));
+  box.appendChild(redoBox);
+
+  /* ③ 订正笔记 */
+  const note = el('textarea', {
+    rows: '3', style: FIELD_STYLE,
+    placeholder: '关键一步是……；下次我要先……（至少 6 个字）',
+  });
+  box.appendChild(correctStep('③ 写一句订正（关键一步 + 下次怎么避免）'));
+  box.appendChild(note);
+  if (it.correct_note) {
+    box.appendChild(el('div', {
+      style: 'font-size:11.5px;line-height:1.7;color:#6b5b52;background:#f0f6ff;border-radius:9px;padding:8px 10px',
+      text: `上次写的订正：${it.correct_note}`,
+    }));
+  }
+
+  const result = el('div');
+  const submit = el('button', { class: 'btn', text: '提交纠错 · 领补偿' });
+  submit.addEventListener('click', async () => {
+    if (!reason) { toast('先选一个错因'); return; }
+    if (note.value.trim().length < 6) { toast('订正笔记至少写 6 个字'); return; }
+    if (qtype === 'choice' && options.length && redoIndex === null) { toast('先重新选一个答案'); return; }
+    submit.disabled = true; submit.textContent = '提交中…';
+    try {
+      const res = await api.correctWrong(it.id, {
+        reason, note: note.value.trim(),
+        redo_index: redoIndex, redo_indices: [...redoIndices], redo_text: redoText,
+      });
+      result.innerHTML = '';
+      result.appendChild(el('div', {
+        style: 'margin-top:10px;padding:12px;border-radius:13px;background:linear-gradient(135deg,#ecfdf5 0%,#eff6ff 100%);border:1px solid #a7f3d0',
+      }, [
+        el('div', { style: 'font-size:13px;font-weight:900;color:#047857', text: '🎉 纠错完成' }),
+        el('div', { style: 'font-size:12px;line-height:1.8;color:#1e3a5f;margin-top:6px', text: res.message }),
+        res.reward.regular
+          ? el('div', { style: 'font-size:11.5px;color:#6b5b52;margin-top:4px', text: `有效期至 ${res.reward.end_day}，可在「休闲广场」里使用。同一道题只发一次。` })
+          : el('div', { style: 'font-size:11.5px;color:#6b5b52;margin-top:4px', text: '复盘很棒，这道题的奖励之前已经领过了。' }),
+      ]));
+      submit.style.display = 'none';
+      if (res.corrected_at) onDone?.(res);
+      // 弹窗里有原图，内容很长；提交后把奖励卡滚到眼前，别让孩子以为没反应
+      requestAnimationFrame(() => result.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+      toast(res.message);
+    } catch (err) {
+      toast(err.message || '提交失败');
+      submit.disabled = false; submit.textContent = '提交纠错 · 领补偿';
+    }
+  });
+  box.appendChild(submit);
+  box.appendChild(result);
+
+  openSheet(box, {
+    title: '🔧 纠错 · 把这道题真正弄懂',
+    sub: '错因 → 重做 → 订正，完成自动补偿 10 次普通抽奖 + 1 次实体奖',
+  });
+}
+
 /* ---------- 逐题查看 + AI 分析 ---------- */
 function showTopicSheet(topicId, title, items, ai, onUsage) {
   const holder = el('div', { class: 'stack', style: 'gap:14px' });
@@ -573,6 +716,18 @@ function showTopicSheet(topicId, title, items, ai, onUsage) {
   items.forEach((it, i) => {
     /* 题干 / 配图 / 选项放进可重绘容器：AI 提取或人工校对后能立刻刷新版面 */
     const qBody = el('div');
+    const correctedSlot = el('span');
+    function paintBadge() {
+      correctedSlot.innerHTML = '';
+      if (it.corrected_by_me || it.corrected_at) {
+        correctedSlot.appendChild(el('span', {
+          class: 'chip',
+          style: 'font-size:10px;padding:2px 8px;background:#ecfdf5;border-color:#a7f3d0;color:#047857',
+          text: it.corrected_by_me ? '✅ 我已纠错' : '✅ 已纠错',
+        }));
+      }
+    }
+    paintBadge();
     const block = el('div', { style: 'border-top:1px solid #f6ede0;padding-top:12px' }, [
       el('div', { style: 'display:flex;gap:6px;align-items:center;flex-wrap:wrap' }, [
         el('span', { class: 'chip', style: 'font-size:10px;padding:2px 8px', text: `第 ${i + 1} 题` }),
@@ -581,6 +736,7 @@ function showTopicSheet(topicId, title, items, ai, onUsage) {
         it.review_status === 'needs_transcription'
           ? el('span', { class: 'chip', style: 'font-size:10px;padding:2px 8px;background:#fffbeb;border-color:#fde68a;color:#b45309', text: '待文字化' })
           : null,
+        correctedSlot,
       ]),
       qBody,
       el('div', { style: 'font-size:11.5px;color:#6b5b52;line-height:1.7;margin-top:7px', text: it.explain }),
@@ -710,6 +866,17 @@ function showTopicSheet(topicId, title, items, ai, onUsage) {
       textTools.appendChild(ocrBtn);
     }
     textTools.appendChild(el('button', { class: 'btn ghost sm', text: '✏️ 编辑文字', onclick: () => editor.show() }));
+    const correctBtn = el('button', {
+      class: 'btn sm', text: it.corrected_by_me ? '✅ 已纠错 · 查看' : '🔧 纠错 · 领补偿',
+    });
+    correctBtn.addEventListener('click', () => openCorrectSheet(it, (res) => {
+      it.corrected_by_me = true;
+      it.corrected_at = res.corrected_at;
+      it.correct_note = res.correct_note;
+      paintBadge();
+      correctBtn.textContent = '✅ 已纠错 · 查看';
+    }));
+    textTools.appendChild(correctBtn);
     textTools.appendChild(el('button', {
       class: 'btn ghost sm', text: '📋 复制题干',
       onclick: async () => {

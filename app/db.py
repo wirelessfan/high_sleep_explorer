@@ -36,7 +36,7 @@ DB_PATH = Path(os.environ.get("LEARN_DB", Path(__file__).resolve().parent.parent
 # v21 = 错题本支持题型：qtype（choice/fill/solution）+ answer_text，
 #     填空题不再被迫编造 ABCD 选项。
 # v23 = 多选答案集合、待补录隔离与题目内容版本；不重置原错题进度。
-SCHEMA_VERSION = 23
+SCHEMA_VERSION = 24
 
 # 家庭共享错题本的归属 id：不对应真实用户，仅作 wrong_questions.user_id 的归属标记。
 SHARED_WRONG_OWNER = "u_family"
@@ -221,7 +221,9 @@ CREATE TABLE IF NOT EXISTS wrong_questions (
     wrong_reason TEXT NOT NULL DEFAULT '', -- 错因分析与记录
     derivation TEXT NOT NULL DEFAULT '',   -- 正确解法的过程推导（Markdown）
     qtype TEXT NOT NULL DEFAULT 'choice',  -- choice 选择 / fill 填空 / solution 解答
-    answer_text TEXT NOT NULL DEFAULT ''   -- 非选择题的正确答案文本
+    answer_text TEXT NOT NULL DEFAULT '',  -- 非选择题的正确答案文本
+    corrected_at TEXT NOT NULL DEFAULT '', -- 纠错环节完成时间（空=还没纠错）
+    correct_note TEXT NOT NULL DEFAULT ''  -- 纠错时写下的「关键/下次怎么避免」
 );
 
 CREATE INDEX IF NOT EXISTS idx_wq_user ON wrong_questions(user_id, topic_id, status);
@@ -679,8 +681,19 @@ def _migrate_wrongbook_review(conn: sqlite3.Connection) -> None:
     )
 
 
-def _migrate_wrongbook_shared(conn: sqlite3.Connection) -> None:
+def _migrate_wrongbook_correct(conn: sqlite3.Connection) -> None:
+    """v24：错题纠错环节记录（完成时间 + 一句话订正）。幂等：按列是否存在逐个补齐。"""
+    cols = {
+        "corrected_at": "TEXT NOT NULL DEFAULT ''",
+        "correct_note": "TEXT NOT NULL DEFAULT ''",
+    }
+    existing = {r["name"] for r in conn.execute("PRAGMA table_info(wrong_questions)")}
+    for name, decl in cols.items():
+        if name not in existing:
+            conn.execute(f"ALTER TABLE wrong_questions ADD COLUMN {name} {decl}")
 
+
+def _migrate_wrongbook_shared(conn: sqlite3.Connection) -> None:
     """v20：把各账号的错题并入家庭共享一本账。
 
     同一题（topic_id + question_id 相同）被不同账号各收过一次时合并为一条：
@@ -737,6 +750,7 @@ def init_db() -> None:
         _migrate_wrongbook_import(conn)
         _migrate_wrongbook_qtype(conn)
         _migrate_wrongbook_review(conn)
+        _migrate_wrongbook_correct(conn)
         _migrate_wrongbook_shared(conn)
         _migrate_account_categories(conn, current)
         if current < 10:

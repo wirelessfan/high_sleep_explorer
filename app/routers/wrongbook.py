@@ -6,6 +6,7 @@ import binascii
 import json
 import hashlib
 import time
+from datetime import date, datetime, timedelta
 import os
 import re
 import sqlite3
@@ -890,3 +891,90 @@ def _photo_save_items(items: list[PhotoSaveIn], user: sqlite3.Row, automatic: bo
             conn.execute("UPDATE photo_jobs SET result_json=?,state=? WHERE id=? AND user_id=?",
                          (json.dumps(document, ensure_ascii=False), document.get("state", job["state"]), job_id, owner))
     return results
+
+
+# ---------- 错题纠错环节：错因 + 重做 + 订正，自动补偿抽奖 ----------
+
+CORRECT_REWARD_REGULAR = 10      # 每完成一道题的纠错补偿的普通抽奖次数
+CORRECT_REWARD_PRIZE = 1         # 实体奖抽奖次数
+CORRECT_REWARD_DAYS = 30         # 赠送池有效期（与 lab-bonus 一致）
+
+
+class CorrectIn(BaseModel):
+    reason: str = Field(..., min_length=1, max_length=40)   # 错因分类
+    note: str = Field(..., max_length=500)                  # 长度在端点里校验，保证返回中文提示
+    redo_index: int | None = None                          # 单选题重做的选项下标
+    redo_indices: list[int] | None = None                  # 多选题重做的选项集合
+    redo_text: str = ""                                    # 填空 / 解答题重做答案（仅留档）
+
+
+def _correct_is_right(row: sqlite3.Row, body: "CorrectIn") -> tuple[bool, str]:
+    """判分：选择题必须真的做对才发奖；开放题没有唯一答案，靠订正笔记保证想过一遍。"""
+    qtype = row["qtype"] if "qtype" in row.keys() else "choice"
+    if qtype == "choice":
+        answer = row["answer"]
+        if answer is None or int(answer) < 0 or not row["options_json"]:
+            return True, ""   # 没录正确答案 / 没选项，跳过判分
+        if body.redo_index is None:
+            return False, "先重新选一个答案再提交"
+        if int(body.redo_index) != int(answer):
+            return False, "这次还没做对，再看一眼解析，想清楚再提交"
+    elif qtype == "multi_choice":
+        try:
+            expected = sorted(json.loads(row["answer_indices_json"] or "[]"))
+        except (ValueError, TypeError):
+            expected = []
+        if expected and sorted(body.redo_indices or []) != expected:
+            return False, "多选还没全对，再检查一下"
+    return True, ""
+
+
+@router.post("/wrongbook/{qid}/correct")
+def correct_wrong(qid: str, body: CorrectIn, user: sqlite3.Row = Depends(current_user)):
+    """完成一道错题的纠错环节，自动补偿 10 次普通抽奖 + 1 次实体奖。
+
+    - 判分：选择题/多选题必须重做正确；填空与解答题只要求写订正笔记。
+    - 幂等：按「用户 + 错题」写 events，同一人对同一题只发一次奖。
+    - 奖励记在操作者账号上（错题本本身是家庭共享的一本账）。
+    """
+    note = body.note.strip()
+    if len(note) < 6:
+        raise HTTPException(status_code=400,
+                            detail="订正笔记至少写 6 个字，写清「关键一步」或「下次怎么避免」")
+    day = wrongbook.today_str()
+    end_day = (date.fromisoformat(day) + timedelta(days=CORRECT_REWARD_DAYS - 1)).isoformat()
+    now = datetime.now().isoformat(timespec="seconds")
+
+    with db.tx() as conn:
+        row = _find_editable_wrong(conn, qid, user)
+        if row["review_status"] != "ready":
+            raise HTTPException(status_code=409, detail="这道题还没补录完整文字，先补录再纠错")
+        ok, tip = _correct_is_right(row, body)
+        if not ok:
+            raise HTTPException(status_code=422, detail=tip)
+
+        first = events.log(conn, user["id"], wrongbook.CORRECT_EVENT_KEY + qid, "wrong_correct",
+                           {"qid": qid, "reason": body.reason, "note": note,
+                            "redo_index": body.redo_index, "redo_text": body.redo_text})
+        if not first:
+            return {"ok": True, "id": qid, "already_done": True,
+                    "reward": {"regular": 0, "prize": 0},
+                    "corrected_at": row["corrected_at"], "correct_note": note,
+                    "message": "这道题你已经完成过纠错啦，奖励不重复发放"}
+
+        for kind, amount in (("regular", CORRECT_REWARD_REGULAR), ("prize", CORRECT_REWARD_PRIZE)):
+            conn.execute(
+                "INSERT INTO relax_grant(user_id,kind,amount,used,start_day,end_day,created_at) "
+                "VALUES(?,?,?,0,?,?,?)",
+                (user["id"], kind, amount, day, end_day, now),
+            )
+        conn.execute(
+            "UPDATE wrong_questions SET corrected_at=?, correct_note=?, wrong_reason=? WHERE id=?",
+            (now, note, body.reason.strip() or row["wrong_reason"], qid),
+        )
+    return {"ok": True, "id": qid, "already_done": False,
+            "reward": {"regular": CORRECT_REWARD_REGULAR, "prize": CORRECT_REWARD_PRIZE,
+                       "days": CORRECT_REWARD_DAYS, "end_day": end_day},
+            "corrected_at": now, "correct_note": note,
+            "message": f"纠错完成！已补偿 {CORRECT_REWARD_REGULAR} 次普通抽奖 + {CORRECT_REWARD_PRIZE} 次实体奖"}
+

@@ -247,6 +247,8 @@ export const transcribeWrong = (id) =>
   request(`/wrongbook/${id}/transcribe`, { method: 'POST' });
 export const updateWrongText = (id, payload) =>
   request(`/wrongbook/${id}/text`, { method: 'PATCH', body: payload });
+export const correctWrong = (id, payload) =>
+  request(`/wrongbook/${id}/correct`, { method: 'POST', body: payload });
 
 /* ---------- 管理中心（仅管理员） ---------- */
 

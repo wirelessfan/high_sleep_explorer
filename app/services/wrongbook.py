@@ -18,6 +18,9 @@ from datetime import date
 
 from app import content_loader
 
+# 纠错事件键前缀（与 routers/wrongbook.py 共用，按「用户 + 错题」幂等）
+CORRECT_EVENT_KEY = "wrongcorrect:v1:"
+
 
 def _cfg() -> dict:
     return content_loader.rewards().get("wrongbook", {})
@@ -446,6 +449,11 @@ def topic_items(conn: sqlite3.Connection, user_id: str, topic_id: str,
             "content_version": r["content_version"],
             "wrong_reason": r["wrong_reason"] if "wrong_reason" in r.keys() else "",
             "derivation": r["derivation"] if "derivation" in r.keys() else "",
+            "corrected_at": r["corrected_at"] if "corrected_at" in r.keys() else "",
+            "correct_note": r["correct_note"] if "correct_note" in r.keys() else "",
+            "corrected_by_me": bool(conn.execute(
+                "SELECT 1 FROM events WHERE user_id=? AND key=?",
+                (viewer_id or user_id, f"{viewer_id or user_id}:{CORRECT_EVENT_KEY}{r['id']}")).fetchone()),
             "ai": cached_ai(r["ai_analysis"]),
             "ai_solve": cached_ai(r["ai_solve"]),
             "variants": cached_ai(r["variants"]),

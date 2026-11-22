@@ -38,6 +38,18 @@ const LAB_CSS = `
 .explab .el-stat b{display:block;font-size:18px;color:#2563eb}
 .explab .el-stat span{font-size:11px;color:var(--ink-3)}
 .explab .el-recap{border:1px solid var(--line);border-radius:12px;padding:11px 13px;background:#fffdf9;margin-bottom:8px}
+/* 思维扩展：可折叠的数学推导，默认收起不挤占画布首屏 */
+.explab .el-math{margin-top:12px;border:1px solid #dbeafe;border-radius:13px;background:#f8fbff;overflow:hidden}
+.explab .el-math>summary{cursor:pointer;list-style:none;padding:11px 13px;font-size:12.5px;font-weight:800;color:#1e40af;background:#eff6ff;line-height:1.5}
+.explab .el-math>summary::-webkit-details-marker{display:none}
+.explab .el-math>summary::before{content:'▸  ';font-weight:900}
+.explab .el-math[open]>summary::before{content:'▾  '}
+.explab .el-math-body{padding:2px 13px 14px;font-size:12px;line-height:1.85;color:var(--ink-2)}
+.explab .el-math-body h4{margin:13px 0 4px;font-size:12.5px;font-weight:900;color:#1e3a5f}
+.explab .el-math-body p{margin:4px 0}
+.explab .el-math-body .m{display:block;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:7px 9px;margin:6px 0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.85;color:#0f172a;white-space:normal;word-break:break-word}
+.explab .el-math-body .k{color:#b45309;font-weight:800}
+.explab .el-math-body .tip{margin-top:10px;padding:8px 10px;border-radius:9px;background:#fffbeb;border:1px solid #fde68a;color:#92400e;font-size:11.5px;line-height:1.75}
 .explab .hidden{display:none !important}
 `;
 
@@ -172,6 +184,52 @@ export async function renderExperimentsLab(view) {
       <p class="el-insight-b">摆线前期更陡尽早换取高速，还具备神奇的<strong>等时性</strong>。1696 年这场公开挑战直接催生了变分法，支撑现代火箭最优轨道与过山车设计。</p>
       <div class="row-between" style="gap:8px;flex-wrap:wrap"><span style="font-size:11.5px;font-weight:700;color:#2563eb" data-guess="brach"></span><button type="button" class="btn sm" data-goto="centri">下一场：向心力与离心 →</button></div>
     </div>
+
+    <details class="el-math">
+      <summary>🧠 思维扩展 · 为什么偏偏是摆线最快？（点开看完整推导）</summary>
+      <div class="el-math-body">
+        <p>先说结论：<span class="k">最速降线是一段摆线（旋轮线）</span>——圆沿直线滚动时，圆周上一点画出的轨迹。下面用两条路把它算出来，难度控制在「高中物理 + 一点导数」。</p>
+
+        <h4>一、先把「最快」写成一道数学题</h4>
+        <p>设起点 A 为原点，向下为 y 正方向。无摩擦，机械能守恒：下降 y 后速度只由高度决定，与路径无关：</p>
+        <div class="m">½mv² = mgy &nbsp;→&nbsp; v = √(2gy)</div>
+        <p>一小段弧长 ds = √(dx² + dy²) = √(1 + y′²) dx，走完它用时 ds / v。于是总时间是关于「整条曲线 y(x)」的泛函：</p>
+        <div class="m">T[y] = ∫ √(1 + y′²) / √(2gy) dx&nbsp;&nbsp;（y′ = dy/dx）</div>
+        <p>分子是「路有多长」，分母是「当下跑多快」。<span class="k">直线只让分子最小，却让分母一直很小</span>；摆线前期俯冲把 y 迅速做大，分母早早变大，后面路虽长却一路高速。这就是「先蓄能、后赶路」。</p>
+
+        <h4>二、变分法四步（核心推导）</h4>
+        <p><b>第 1 步</b>：丢掉与路径无关的常数 1/√(2g)，记被积函数为 F = √(1 + y′²) / √y。要让 T 最小，F 必须满足欧拉–拉格朗日方程。</p>
+        <p><b>第 2 步（关键简化）</b>：F 里<span class="k">不显含 x</span>，所以有一条「捷径」——Beltrami 恒等式（相当于这里有个守恒量）：</p>
+        <div class="m">F − y′·∂F/∂y′ = 常数 C</div>
+        <p>把 ∂F/∂y′ = y′ / (√y·√(1 + y′²)) 代进去，化简得：</p>
+        <div class="m">1 / (√y·√(1 + y′²)) = C<br>→ y(1 + y′²) = 1/C² ≡ 2a</div>
+        <p>一个一阶微分方程，比直接解二阶欧拉方程轻松得多。</p>
+        <p><b>第 3 步</b>：由上式 y′ = √((2a − y)/y)。做换元，令 y = a(1 − cos θ)，则 dy = a sin θ dθ，于是</p>
+        <div class="m">dx = dy / y′ = a(1 − cos θ) dθ<br>→ x = a(θ − sin θ)</div>
+        <p><b>第 4 步</b>：合起来就是摆线的参数方程，θ 从 0 走到 π 恰好到达终点 B：</p>
+        <div class="m">x = a(θ − sin θ),&nbsp; y = a(1 − cos θ)</div>
+        <p>所以「哪条曲线最快」这个看似无从下手的问题，答案是一个具体的几何图形。1696 年伯努利公开征解，牛顿、莱布尼茨、洛必达都给出了摆线，变分法由此诞生。</p>
+
+        <h4>三、物理视角：费马原理（伯努利本人的巧解）</h4>
+        <p>光总是走「用时最短」的路。把下落空间切成许多水平薄层，每层里速度 v = √(2gy) 随深度增大；光从一层穿到下一层就像发生一次折射。由折射定律（斯涅尔定律）：</p>
+        <div class="m">sin α / v = 常数&nbsp;&nbsp;（α 为轨迹与竖直方向的夹角）</div>
+        <p>因为 sin α = dx/ds = 1/√(1 + y′²)，代入 v = √(2gy)：</p>
+        <div class="m">1 / (√y·√(1 + y′²)) = 常数</div>
+        <p><span class="k">和变分法第 2 步得到的是同一个式子！</span>物理的「光走最速路」和数学的「泛函取极值」在这里会师，薄层取无限多就得到连续曲线。</p>
+
+        <h4>四、顺手算出快多少（可自己验算）</h4>
+        <p>取 A(0,0) → B(πa, 2a)，也就是摆线滚过半圈。<b>摆线</b>：ds = 2a sin(θ/2)dθ，v = 2√(ga) sin(θ/2)，两者相除后 θ 被消掉：</p>
+        <div class="m">T<sub>摆线</sub> = ∫₀<sup>π</sup> √(a/g) dθ = π√(a/g) ≈ 3.142√(a/g)</div>
+        <p><b>直线</b>：长度 L = a√(π² + 4)，沿斜面加速度 g·sinφ = 2ag/L，由 L = ½·g sinφ·t² 得：</p>
+        <div class="m">T<sub>直线</sub> = √(π² + 4)·√(a/g) ≈ 3.724√(a/g)</div>
+        <p>摆线快 <span class="k">约 18.6%</span>；圆弧夹在两者中间。注意起点越「平」，直线的劣势越明显。</p>
+
+        <h4>五、彩蛋：等时性（对应实验第 2 个目标）</h4>
+        <p>摆线还是<span class="k">等时降落曲线</span>：从曲线上任意高度静止释放，滑到最低点用时都相同，T = π√(a/g)。原因是沿摆线的切向加速度正比于「离最低点的弧长」，正好是简谐运动，周期与振幅无关。惠更斯据此做出摆线摆钟，让钟摆不因摆幅变小而走慢。</p>
+
+        <div class="tip">💡 一句话记住：<b>最短 ≠ 最快</b>。路程要短，更要尽早把速度换到手；把「时间」写成积分再求极值，就自然逼出了摆线。火箭最优轨道、过山车俯冲段、光线在渐变介质里的弯曲，用的都是这套变分思想。</div>
+      </div>
+    </details>
   </section>
 
   <section class="panel hidden" data-pane="centri">
