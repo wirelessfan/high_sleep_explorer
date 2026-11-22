@@ -159,6 +159,27 @@ export async function renderMe(view) {
     ]),
   ]));
 
+  /* ---- 学习心得专栏 ---- */
+  root.appendChild(el('section', {
+    class: 'panel',
+    style: 'cursor:pointer;background:linear-gradient(135deg,#fff7e6,#fff);border-color:#f3d7a8',
+    onclick: () => { location.hash = '#/essays'; },
+  }, [
+    el('div', { class: 'row-between' }, [
+      el('div', { class: 'row', style: 'gap:11px' }, [
+        el('div', {
+          style: 'width:40px;height:40px;border-radius:12px;background:#fff1d6;display:grid;place-items:center;font-size:17px',
+          text: '📖',
+        }),
+        el('div', {}, [
+          el('div', { style: 'font-size:13.5px;font-weight:800', text: '学习心得体会' }),
+          el('div', { style: 'font-size:11.5px;color:#a3928a;margin-top:3px', text: '数理直觉怎么养 · 带插图 · 可打印' }),
+        ]),
+      ]),
+      el('div', { style: 'font-size:18px;color:#d9c8b4', text: '›' }),
+    ]),
+  ]));
+
   /* ---- 盲盒入口 ---- */
   root.appendChild(el('section', {
     class: 'panel',
