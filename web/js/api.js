@@ -243,6 +243,10 @@ export const solveWrong = (ids) =>
   request('/wrongbook/ai/solve', { method: 'POST', body: { ids } });
 export const variantsWrong = (id, n = 2) =>
   request('/wrongbook/ai/variants', { method: 'POST', body: { id, n } });
+export const transcribeWrong = (id) =>
+  request(`/wrongbook/${id}/transcribe`, { method: 'POST' });
+export const updateWrongText = (id, payload) =>
+  request(`/wrongbook/${id}/text`, { method: 'PATCH', body: payload });
 
 /* ---------- 管理中心（仅管理员） ---------- */
 

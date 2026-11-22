@@ -717,6 +717,92 @@ def photo_save_batch(body: PhotoSaveBatchIn, user: sqlite3.Row = Depends(current
     return {"results": _photo_save_items(body.items, user)}
 
 
+class WrongTextPatchIn(BaseModel):
+    stem: str = Field(..., min_length=1, max_length=4000)
+    options: list[str] | None = None
+    answer_text: str | None = None
+
+
+def _load_wrong_image_b64(conn: sqlite3.Connection, image_path: str) -> str | None:
+    if not image_path:
+        return None
+    if image_path.startswith("/api/v1/wrongbook/photo/image/"):
+        job_id = image_path.rsplit("/", 1)[-1]
+        row = conn.execute("SELECT image_b64 FROM photo_jobs WHERE id=?", (job_id,)).fetchone()
+        return _clean_b64(row["image_b64"]) if row and row["image_b64"] else None
+    for prefix in ("/assets/wrongbook/", "/wb-images/"):
+        if image_path.startswith(prefix):
+            fname = Path(image_path[len(prefix):]).name
+            fp = _IMAGES_DIR / fname
+            if fp.is_file():
+                return base64.b64encode(fp.read_bytes()).decode("ascii")
+    return None
+
+
+def _find_editable_wrong(conn: sqlite3.Connection, qid: str, user: sqlite3.Row) -> sqlite3.Row:
+    row = conn.execute("SELECT * FROM wrong_questions WHERE id=?", (qid,)).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="错题不存在")
+    owner = wrongbook.book_owner(user["id"])
+    allowed = {user["id"], owner}
+    if row["user_id"] not in allowed and user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="仅所有者或管理员可编辑此错题文字")
+    return row
+
+
+@router.post("/wrongbook/{qid}/transcribe")
+def transcribe_wrong_text(qid: str, user: sqlite3.Row = Depends(current_user)):
+    """从已保存的错题原图提取结构化题干与选项文本，便于校对和打印试卷。"""
+    if not ai_client.enabled():
+        raise HTTPException(status_code=503, detail="AI 视觉服务未配置（缺少通道 Key）")
+    with db.ro() as conn:
+        row = _find_editable_wrong(conn, qid, user)
+        img_b64 = _load_wrong_image_b64(conn, row["image_path"] or "")
+        if not img_b64:
+            raise HTTPException(status_code=400, detail="该错题没有可识别的原图")
+        rec = ai_client.recognize(img_b64, conn=conn)
+    qs = rec.get("questions") or []
+    first = qs[0] if qs else rec
+    stem = str(first.get("stem") or rec.get("raw_text") or "").strip()
+    options = [str(o).strip() for o in (first.get("options") or []) if str(o).strip()]
+    answer_text = str(first.get("answer_text") or "").strip()
+    if not stem:
+        raise HTTPException(status_code=422, detail="未能从原图中提取出有效题干文字")
+    return {
+        "id": qid,
+        "stem": stem,
+        "options": options,
+        "answer_text": answer_text,
+        "raw_text": str(rec.get("raw_text") or stem),
+    }
+
+
+@router.patch("/wrongbook/{qid}/text")
+def update_wrong_text(qid: str, body: WrongTextPatchIn, user: sqlite3.Row = Depends(current_user)):
+    """保存人工校对或 AI 提取后的错题文字，并将待转录状态升级为 ready。"""
+    stem = body.stem.strip()
+    if not stem:
+        raise HTTPException(status_code=400, detail="题干不能为空")
+    with db.tx() as conn:
+        row = _find_editable_wrong(conn, qid, user)
+        opts_json = json.dumps([o.strip() for o in body.options if o.strip()], ensure_ascii=False) if body.options is not None else row["options_json"]
+        ans_text = body.answer_text.strip() if body.answer_text is not None else row["answer_text"]
+        new_status = "ready" if row["review_status"] == "needs_transcription" else row["review_status"]
+        new_reason = "" if row["review_status"] == "needs_transcription" else row["review_reason"]
+        conn.execute(
+            "UPDATE wrong_questions SET stem=?, options_json=?, answer_text=?, review_status=?, review_reason=? WHERE id=?",
+            (stem, opts_json, ans_text, new_status, new_reason, qid),
+        )
+    return {
+        "ok": True,
+        "id": qid,
+        "stem": stem,
+        "options": json.loads(opts_json or "[]"),
+        "answer_text": ans_text or "",
+        "review_status": new_status,
+    }
+
+
 def _photo_save_items(items: list[PhotoSaveIn], user: sqlite3.Row, automatic: bool = False) -> list[dict]:
     owner = user["id"]
     results = []

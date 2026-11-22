@@ -492,3 +492,37 @@ def test_vision_rejects_non_stop_even_valid_json(monkeypatch, finish):
     monkeypatch.setattr(httpx,'Client',Fake)
     with pytest.raises(RuntimeError,match='截断'):
         ai_client._post({'base_url':'https://test.invalid','key':'test','name':'test'},'gpt-6.1-sol',[{'role':'user','content':[{'type':'image_url'}]}],True,10)
+
+
+
+
+def test_transcribe_and_update_wrong_text(client, auth, monkeypatch):
+    from app.services import ai_client
+    uid = _uid(client, auth)
+    job_id = 'pj_transcribe_demo'
+    qid = 'wq_transcribe_demo'
+    with db.tx() as conn:
+        conn.execute(
+            "INSERT INTO photo_jobs(id,user_id,image_hash,state,image_b64,original_json,result_json,created_at) VALUES(?,?,?,?,?,?,?,?)",
+            (job_id, uid, 'hash_transcribe_demo', 'saved', 'data:image/png;base64,iVBORw0KGgo=', '{}', '{}',
+             '2026-01-01T00:00:00'),
+        )
+        conn.execute(
+            "INSERT INTO wrong_questions(id,user_id,topic_id,section_id,tier,question_id,source,stem,options_json,answer,picked,explain,image_path,review_status,review_reason,created_at,last_wrong_at) "
+            "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (qid, uid, 'math-trig', 'photo', 'basic', 'q1', 'photo', '原图待转录', '[]', -1, -1, '', f'/api/v1/wrongbook/photo/image/{job_id}', 'needs_transcription', '待文字化',
+             '2026-01-01T00:00:00', '2026-01-01T00:00:00'),
+        )
+    monkeypatch.setattr(ai_client, 'enabled', lambda: True)
+    monkeypatch.setattr(ai_client, 'recognize', lambda img, conn=None: {
+        'questions': [{'stem': '求 f(x)=2cos(2x+π/3) 的最小值', 'options': ['A. -2', 'B. -1'], 'answer_text': 'A'}],
+        'raw_text': '求 f(x)=2cos(2x+π/3) 的最小值',
+    })
+    r1 = client.post(f'/api/v1/wrongbook/{qid}/transcribe', headers=auth)
+    assert r1.status_code == 200
+    assert r1.json()['stem'] == '求 f(x)=2cos(2x+π/3) 的最小值'
+    r2 = client.patch(f'/api/v1/wrongbook/{qid}/text', json={'stem': r1.json()['stem'], 'options': r1.json()['options'], 'answer_text': 'A'}, headers=auth)
+    assert r2.status_code == 200 and r2.json()['review_status'] == 'ready'
+    with db.ro() as conn:
+        row = conn.execute("SELECT stem, review_status FROM wrong_questions WHERE id=?", (qid,)).fetchone()
+        assert row['stem'] == '求 f(x)=2cos(2x+π/3) 的最小值' and row['review_status'] == 'ready'

@@ -4,8 +4,9 @@ import { mountReflection } from '../reflection.js';
 import * as api from '../api.js';
 import { el, toast, openSheet, SUBJECT_LABEL, SUBJECT_CLASS } from '../ui.js';
 
-import { questionText } from '../question-content.js';
+import { questionText, prettyMath } from '../question-content.js';
 import { feedbackButton } from '../question-feedback.js';
+import { wrongImage } from '../wrong-image.js';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
@@ -15,22 +16,9 @@ function subjectLabel(s) {
   return SUBJECT_LABEL[s] || SUBJECT_FALLBACK[s] || s || '未分类';
 }
 function imageList(it) {
-  return (it.images || []).map((p) => {
-    const privatePhoto = p.startsWith('/api/v1/wrongbook/photo/image/');
-    const img = el('img', {
-      ...(privatePhoto ? {} : { src: p }),
-      alt: '题目配图',
-      style: 'max-width:100%;border-radius:10px;border:1px solid #f0e4d5;margin-top:8px;display:block',
-      loading: 'lazy',
-    });
-    if (privatePhoto) {
-      fetch(p, { headers: { Authorization: `Bearer ${api.getToken()}` } })
-        .then(r => { if (!r.ok) throw new Error('图片读取失败'); return r.blob(); })
-        .then(blob => { const url = URL.createObjectURL(blob); img.onload = () => URL.revokeObjectURL(url); img.src = url; })
-        .catch(() => { img.alt = '图片读取失败，请重新登录后重试'; });
-    }
-    return img;
-  });
+  return (it.images || []).map((p) => wrongImage(p, {
+    style: 'max-width:100%;border-radius:10px;border:1px solid #f0e4d5;margin-top:8px;display:block',
+  }));
 }
 function reasonBlock(it) {
   const frag = [];
@@ -181,12 +169,19 @@ export async function renderWrongbook(view) {
        el('span', { text: '家庭题库按原规则共享；个人拍照题保留录入者归属，明确共享的照片供其他站内用户只读查看，重做及修改仅限所有者。' })]),
   ]));
 
-  /* ---- 拍照录入入口（演示页） ---- */
-  root.appendChild(el('button', {
-    class: 'btn soft full',
-    text: '📷 拍照录入错题（演示）',
-    onclick: () => { location.href = '/demo/photo.html'; },
-  }));
+  /* ---- 拍照录入入口（演示页）+ 打印试卷 ---- */
+  root.appendChild(el('div', { class: 'row', style: 'gap:8px;flex-wrap:wrap' }, [
+    el('button', {
+      class: 'btn soft', style: 'flex:1;min-width:150px',
+      text: '📷 拍照录入',
+      onclick: () => { location.href = '/demo/photo.html'; },
+    }),
+    el('button', {
+      class: 'btn', style: 'flex:1;min-width:150px',
+      text: '🖨️ 错题回顾试卷',
+      onclick: () => navigate('#/wrongbook/paper'),
+    }),
+  ]));
 
   if (!data.items.length) {
     root.appendChild(el('section', { class: 'panel', style: 'text-align:center;padding:34px 18px' }, [
@@ -289,6 +284,13 @@ export async function renderWrongbook(view) {
         el('strong', { text: `待补录 · ${it.review_reason || '原题信息待核对'}` }),
         el('div', { style: 'margin-top:4px;white-space:pre-line', text: questionText(it.stem) }),
         ...imageList(it),
+        it.can_edit === false
+          ? el('div', { class: 'hint', style: 'margin-top:6px', text: `${it.owner_name || '其他用户'} 的个人错题 · 共享只读` })
+          : el('button', {
+              class: 'btn ghost sm', style: 'margin-top:7px',
+              text: '✍️ 补录文字（AI 提取 / 手填）',
+              onclick: () => openPendingEditor(it, view),
+            }),
       ]));
     });
 
@@ -444,41 +446,187 @@ function showRedoResult(res, onClose) {
 }
 
 
-/* ---------- 逐题查看 + AI 分析 ---------- */
+/* ---------- 题目文字校对器（错题本弹窗与「待补录」共用） ---------- */
 
+const FIELD_STYLE = 'width:100%;box-sizing:border-box;font:inherit;font-size:12px;line-height:1.6;padding:7px 9px;border:1px solid #dfd2be;border-radius:8px;background:#fff';
+
+/** 去掉识别结果自带的 "A." "B、" 前缀，避免与前端字母重复 */
+function stripOptionLead(text) {
+  return String(text || '').replace(/^[A-Fa-f][.、)．:：\s]+/, '').trim();
+}
+
+/**
+ * 编辑一道错题的题干 / 选项 / 答案。
+ * - it: 题目对象（保存后就地更新，调用方负责重绘）
+ * - onSaved: 保存成功后的回调
+ * - visible: 是否默认展开
+ * - includeTranscribe: 是否在编辑器里自带「AI 提取」按钮（独立弹窗用）
+ */
+function buildTextEditor(it, onSaved, { visible = false, includeTranscribe = false } = {}) {
+  const node = el('div', {
+    style: `display:${visible ? '' : 'none'};margin-top:8px;padding:10px;background:#faf7f2;border:1px solid #efe4d3;border-radius:11px`,
+  });
+  const stemArea = el('textarea', { rows: '3', style: FIELD_STYLE, placeholder: '题干文字，公式可写成 f(x)=2cos(2x+π/3) 这样' });
+  const optArea = el('textarea', { rows: '4', style: `${FIELD_STYLE};margin-top:6px`, placeholder: '选项，一行一个（A/B/C/D 前缀可省略）' });
+  const ansInput = el('input', { type: 'text', style: `${FIELD_STYLE};margin-top:6px`, placeholder: '正确答案（选择题填 A/B/C/D，填空解答题直接写答案）' });
+  const saveBtn = el('button', { class: 'btn sm', style: 'margin-top:7px', text: '保存文字' });
+  const cancelBtn = el('button', {
+    class: 'btn ghost sm', style: 'margin-top:7px;margin-left:6px', text: '取消',
+    onclick: () => { node.style.display = 'none'; },
+  });
+  const canTranscribe = !!(it.image_path || (Array.isArray(it.images) && it.images.length));
+
+  function fillFromItem() {
+    stemArea.value = it.stem || '';
+    optArea.value = (Array.isArray(it.options) ? it.options : []).map(stripOptionLead).join('\n');
+    ansInput.value = it.answer_text || '';
+  }
+
+  async function transcribe() {
+    try {
+      const res = await api.transcribeWrong(it.id);
+      stemArea.value = res.stem || '';
+      optArea.value = (res.options || []).map(stripOptionLead).join('\n');
+      ansInput.value = res.answer_text || '';
+      toast('已提取文字，核对后点「保存文字」');
+      return true;
+    } catch (err) {
+      toast(err.message || '提取失败');
+      return false;
+    }
+  }
+
+  saveBtn.addEventListener('click', async () => {
+    const stem = stemArea.value.trim();
+    if (!stem) { toast('题干不能为空'); return; }
+    const options = optArea.value.split('\n').map(stripOptionLead).filter(Boolean);
+    saveBtn.disabled = true;
+    try {
+      const res = await api.updateWrongText(it.id, { stem, options, answer_text: ansInput.value.trim() });
+      it.stem = res.stem;
+      it.options = res.options || [];
+      it.answer_text = res.answer_text || '';
+      it.review_status = res.review_status || it.review_status;
+      const letter = (it.answer_text || '').trim().toUpperCase();
+      const idx = LETTERS.indexOf(letter);
+      if (['choice', 'multi_choice'].includes(it.qtype) && idx >= 0 && idx < it.options.length) {
+        if (it.qtype === 'multi_choice') it.answer_indices = [idx];
+        else it.answer = idx;
+      }
+      node.style.display = 'none';
+      toast('错题文字已保存');
+      onSaved?.(res);
+    } catch (err) { toast(err.message || '保存失败'); }
+    saveBtn.disabled = false;
+  });
+
+  node.appendChild(el('div', { style: 'font-size:11px;font-weight:800;color:#8a6d3b;margin-bottom:6px', text: '校对文字 · 保存后重做与打印都用这份文字' }));
+  node.appendChild(stemArea);
+  node.appendChild(optArea);
+  node.appendChild(ansInput);
+  const actions = el('div', {});
+  if (includeTranscribe && canTranscribe) {
+    actions.appendChild(el('button', {
+      class: 'btn ghost sm', style: 'margin-top:7px;margin-right:6px', text: '✨ AI 提取原图文字',
+      onclick: async (e) => {
+        const tBtn = e.currentTarget;
+        tBtn.disabled = true; tBtn.textContent = '识别中…';
+        await transcribe();
+        tBtn.disabled = false; tBtn.textContent = '✨ AI 提取原图文字';
+      },
+    }));
+  }
+  actions.appendChild(saveBtn);
+  actions.appendChild(cancelBtn);
+  node.appendChild(actions);
+
+  return {
+    node,
+    canTranscribe,
+    transcribe,
+    show() { fillFromItem(); node.style.display = ''; stemArea.focus(); },
+  };
+}
+
+/** 「待补录」题目：弹出补录弹窗，保存后整页刷新进入正式错题 */
+function openPendingEditor(it, view) {
+  let handle = null;
+  const editor = buildTextEditor(it, () => {
+    handle?.close();
+    renderWrongbook(view).catch((err) => toast(err.message || '刷新失败'));
+  }, { visible: true, includeTranscribe: true });
+  const box = el('div', {}, [
+    el('div', { style: 'font-size:11.5px;color:#a3928a;margin-bottom:6px', text: '原图（对照着改字，数学公式可用 √2、x²、π/3 这类字符）' }),
+    ...imageList(it),
+    editor.node,
+  ]);
+  handle = openSheet(box, {
+    title: '补录这道错题的文字',
+    sub: '保存后这道题就会进入可打印、可重做的正式错题',
+  });
+}
+
+/* ---------- 逐题查看 + AI 分析 ---------- */
 function showTopicSheet(topicId, title, items, ai, onUsage) {
   const holder = el('div', { class: 'stack', style: 'gap:14px' });
 
   items.forEach((it, i) => {
+    /* 题干 / 配图 / 选项放进可重绘容器：AI 提取或人工校对后能立刻刷新版面 */
+    const qBody = el('div');
     const block = el('div', { style: 'border-top:1px solid #f6ede0;padding-top:12px' }, [
       el('div', { style: 'display:flex;gap:6px;align-items:center;flex-wrap:wrap' }, [
         el('span', { class: 'chip', style: 'font-size:10px;padding:2px 8px', text: `第 ${i + 1} 题` }),
         it.skill ? el('span', { class: 'chip', style: 'font-size:10px;padding:2px 8px', text: it.skill }) : null,
         el('span', { style: 'font-size:10px;color:#a3928a', text: `曾错 ${it.wrong_count} 次` }),
+        it.review_status === 'needs_transcription'
+          ? el('span', { class: 'chip', style: 'font-size:10px;padding:2px 8px;background:#fffbeb;border-color:#fde68a;color:#b45309', text: '待文字化' })
+          : null,
       ]),
-      el('div', { style: 'font-size:13px;line-height:1.65;color:#3b2f2a;margin-top:8px;white-space:pre-line', text: questionText(it.stem) }),
-      ...imageList(it),
-      ...((it.qtype && !['choice', 'multi_choice'].includes(it.qtype))
-        ? [el('div', {
-            style: 'margin-top:8px;font-size:12px;line-height:1.7;background:#f0f6ff;color:#1e3a5f;border-radius:9px;padding:8px 10px',
-            text: it.answer_text ? `✅ 正确答案：${it.answer_text}` : '（这道题还没有填写正确答案）',
-          })]
-        : [el('div', { style: 'margin-top:8px;display:flex;flex-direction:column;gap:4px' },
-          it.options.map((o, oi) => {
-            const answers = it.qtype === 'multi_choice' ? (it.answer_indices || []) : [it.answer];
-            const picks = it.qtype === 'multi_choice' ? (it.picked_indices || []) : [it.picked];
-            return el('div', {
-              style: `font-size:12px;padding:5px 9px;border-radius:8px;${
-                answers.includes(oi) ? 'background:#f0fdf4;color:#047857;font-weight:700'
-                : picks.includes(oi) ? 'background:#fef2f2;color:#b91c1c' : 'color:#6b5b52'}`,
-              text: `${LETTERS[oi]}. ${o}${picks.includes(oi) ? ' ← 你的选择' : ''}${answers.includes(oi) ? ' ✓' : ''}`,
-            });
-          }))]),
-      it.qtype === 'multi_choice' ? el('div', { class: 'hint', style: 'margin-top:6px', text: `正确答案：${(it.answer_indices || []).map(i => LETTERS[i]).join('、') || '待补录'}` }) : null,
+      qBody,
       el('div', { style: 'font-size:11.5px;color:#6b5b52;line-height:1.7;margin-top:7px', text: it.explain }),
       ...reasonBlock(it),
       el('div', { class: 'ai-slot', style: 'margin-top:8px' }),
     ]);
+
+    function paintQuestion() {
+      qBody.innerHTML = '';
+      qBody.appendChild(el('div', { style: 'font-size:13px;line-height:1.65;color:#3b2f2a;margin-top:8px;white-space:pre-line', text: questionText(it.stem) }));
+      for (const node of imageList(it)) qBody.appendChild(node);
+
+      if (it.review_status === 'needs_transcription') {
+        qBody.appendChild(el('div', {
+          style: 'margin-top:8px;font-size:11.5px;line-height:1.7;background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:9px;padding:8px 10px',
+          text: '这道题目前只有图片：打印试卷会跳过它。点下面的「✨ AI 提取原图文字」生成可编辑的文字版，公式会转成可直接朗读的字符。',
+        }));
+      }
+
+      if (it.qtype && !['choice', 'multi_choice'].includes(it.qtype)) {
+        qBody.appendChild(el('div', {
+          style: 'margin-top:8px;font-size:12px;line-height:1.7;background:#f0f6ff;color:#1e3a5f;border-radius:9px;padding:8px 10px',
+          text: it.answer_text ? `✅ 正确答案：${it.answer_text}` : '（这道题还没有填写正确答案）',
+        }));
+        return;
+      }
+
+      const options = Array.isArray(it.options) ? it.options : [];
+      if (!options.length) {
+        qBody.appendChild(el('div', { class: 'hint', style: 'margin-top:6px', text: '还没有选项文字，可用下方「AI 提取原图文字」或手动补录。' }));
+        return;
+      }
+      const answers = it.qtype === 'multi_choice' ? (it.answer_indices || []) : [it.answer];
+      const picks = it.qtype === 'multi_choice' ? (it.picked_indices || []) : [it.picked];
+      qBody.appendChild(el('div', { style: 'margin-top:8px;display:flex;flex-direction:column;gap:4px' },
+        options.map((o, oi) => el('div', {
+          style: `font-size:12px;padding:5px 9px;border-radius:8px;${
+            answers.includes(oi) ? 'background:#f0fdf4;color:#047857;font-weight:700'
+            : picks.includes(oi) ? 'background:#fef2f2;color:#b91c1c' : 'color:#6b5b52'}`,
+          text: `${LETTERS[oi]}. ${prettyMath(o)}${picks.includes(oi) ? ' ← 你的选择' : ''}${answers.includes(oi) ? ' ✓' : ''}`,
+        }))));
+      if (it.qtype === 'multi_choice') {
+        qBody.appendChild(el('div', { class: 'hint', style: 'margin-top:6px', text: `正确答案：${(it.answer_indices || []).map((n) => LETTERS[n]).join('、') || '待补录'}` }));
+      }
+    }
+    paintQuestion();
 
     if (it.can_edit === false) {
       block.appendChild(el('div', { class: 'hint', text: `${it.owner_name || '其他用户'} 的个人错题 · 共享只读` }));
@@ -545,6 +693,32 @@ function showTopicSheet(topicId, title, items, ai, onUsage) {
         mountVariants();
       }));
     }
+
+    /* ---- 题目文字：AI 提取 / 人工校对 / 复制 ---- */
+    const editor = buildTextEditor(it, () => paintQuestion());
+    const textTools = el('div', { class: 'row', style: 'gap:7px;margin-top:8px;flex-wrap:wrap' });
+    if (editor.canTranscribe) {
+      const ocrBtn = el('button', {
+        class: 'btn ghost sm', text: '✨ AI 提取原图文字',
+        onclick: async () => {
+          ocrBtn.disabled = true; ocrBtn.textContent = '识别中…';
+          const ok = await editor.transcribe();
+          ocrBtn.disabled = false; ocrBtn.textContent = '✨ AI 提取原图文字';
+          if (ok) editor.show();
+        },
+      });
+      textTools.appendChild(ocrBtn);
+    }
+    textTools.appendChild(el('button', { class: 'btn ghost sm', text: '✏️ 编辑文字', onclick: () => editor.show() }));
+    textTools.appendChild(el('button', {
+      class: 'btn ghost sm', text: '📋 复制题干',
+      onclick: async () => {
+        try { await navigator.clipboard.writeText(it.stem || ''); toast('已复制题干文字'); }
+        catch { toast('复制失败，请手动选中复制'); }
+      },
+    }));
+    block.appendChild(textTools);
+    block.appendChild(editor.node);
 
     mountSolve();
     mountVariants();
