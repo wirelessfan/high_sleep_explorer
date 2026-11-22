@@ -35,8 +35,11 @@ export function essayNeighbors(slug) {
   return { prev: ESSAYS[i - 1] || null, next: ESSAYS[i + 1] || null };
 }
 
-/* 正文字数（去掉标签与空白），用于自动算阅读时长 */
+/* 正文字数（去掉插图 SVG、标签与空白），用于自动算阅读时长 */
 export function countChars(html) {
-  const text = String(html || '').replace(/<[^>]*>/g, ' ').replace(/&[a-z]+;/gi, 'x');
+  const text = String(html || '')
+    .replace(/<svg[\s\S]*?<\/svg>/gi, ' ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&[a-z]+;/gi, 'x');
   return text.replace(/\s+/g, '').length;
 }
